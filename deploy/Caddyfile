@@ -1,0 +1,30 @@
+{$FAULTLINE_DOMAIN} {
+	encode zstd gzip
+	request_body {
+		max_size 1MB
+	}
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		# never framed (clickjacking on approve); scripts/styles/data only from this origin. Next.js inlines its
+		# hydration bootstrap and styles, hence 'unsafe-inline' for those two; no eval, no plugins, no foreign hosts
+		Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+		X-Frame-Options DENY
+		Cross-Origin-Opener-Policy same-origin
+		Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+		-Server
+	}
+	handle /api/* {
+		reverse_proxy api:8400
+	}
+	handle /mcp* {
+		reverse_proxy mcp:8401
+	}
+	handle /.well-known/oauth-protected-resource* {
+		reverse_proxy mcp:8401
+	}
+	handle {
+		reverse_proxy ui:3000
+	}
+}

@@ -1,0 +1,50 @@
+# Live demo stack (one small VM): FalkorDB (pinned, never exposed) + API + MCP over HTTP + UI + Caddy (TLS).
+#   cp .env.example .env  (fill secrets on the VM only)   ·   docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.prod.yml up -d --build
+# Public mode is keyless by default: simulated GitHub, deterministic investigator, no LLM spend.
+services:
+  falkordb:
+    ports: !reset []                     # nothing published in prod; only the internal network reaches it
+    volumes:
+      - falkordb-data:/var/lib/falkordb/data
+      - ./users.acl:/etc/falkordb/users.acl:ro
+    environment:
+      # keep the base file's memory guard (this override replaces REDIS_ARGS wholesale): size it for the VM
+      REDIS_ARGS: "--appendonly yes --aclfile /etc/falkordb/users.acl --maxmemory ${FALKORDB_MAXMEMORY:-3500mb} --maxmemory-policy noeviction"
+  api:
+    build: {context: .., dockerfile: deploy/Dockerfile.api}
+    restart: unless-stopped
+    env_file: ../.env
+    environment:
+      FALKORDB_HOST: falkordb
+      FAULTLINE_GITHUB: sim
+      FAULTLINE_PUBLIC: "true"   # run tokens on choose/approve; forget/preflight on clean-room copies; no anonymous LLM
+      FAULTLINE_CORS_ORIGINS: "https://${FAULTLINE_DOMAIN}${FAULTLINE_PAGES_ORIGIN:+,${FAULTLINE_PAGES_ORIGIN}}"
+    depends_on: {falkordb: {condition: service_healthy}}
+  mcp:
+    build: {context: .., dockerfile: deploy/Dockerfile.api}
+    restart: unless-stopped
+    env_file: ../.env
+    environment:
+      FALKORDB_HOST: falkordb
+      FALKORDB_ENGINE_PASSWORD: ""   # the hosted MCP never gets the engine (write) credential; reads only as ro_<tenant>
+    command: ["/app/.venv/bin/python", "-m", "faultline.mcp_server.http", "--host", "0.0.0.0", "--port", "8401",
+              "--public-url", "https://${FAULTLINE_DOMAIN}", "--forwarded-allow-ips", "*"]  # only Caddy reaches it
+    depends_on: {falkordb: {condition: service_healthy}}
+  ui:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.ui
+      args: {NEXT_PUBLIC_FAULTLINE_API_URL: "https://${FAULTLINE_DOMAIN}"}
+    restart: unless-stopped
+  caddy:
+    image: caddy:2.8.4@sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    environment: {FAULTLINE_DOMAIN: "${FAULTLINE_DOMAIN}"}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+    depends_on: [api, mcp, ui]
+volumes:
+  falkordb-data: {}
+  caddy-data: {}

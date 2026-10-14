@@ -1,0 +1,53 @@
+# Faultline preflight for the demo app repo (copy to .github/workflows/ in faultline-demo-app).
+# On every PR: build {repo, number, files[{path, before, after}]} from the PR, POST it to Faultline's /api/preflight,
+# comment only when the verdict is require_review or block (quiet on allow), and fail the check on block.
+name: faultline-preflight
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+permissions:
+  contents: read
+  pull-requests: write
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build the PR description
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          python3 - <<'PY'
+          import json, os, subprocess
+          base, head = os.environ["BASE"], os.environ["HEAD"]
+          paths = subprocess.run(["git", "diff", "--name-only", base, head], capture_output=True, text=True, check=True).stdout.split()
+          def show(ref, p):
+              r = subprocess.run(["git", "show", f"{ref}:{p}"], capture_output=True, text=True)
+              return r.stdout if r.returncode == 0 else None
+          pr = {"repo": os.environ["GITHUB_REPOSITORY"], "number": ${{ github.event.pull_request.number }},
+                "title": ${{ toJSON(github.event.pull_request.title) }}, "author": "${{ github.event.pull_request.user.login }}",
+                "head_sha": head, "files": [{"path": p, "before": show(base, p), "after": show(head, p)} for p in paths[:200]]}
+          json.dump(pr, open("pr.json", "w"))
+          PY
+      - name: Ask Faultline
+        id: ask
+        env:
+          FAULTLINE_URL: ${{ vars.FAULTLINE_URL }}
+          FAULTLINE_PREFLIGHT_KEY: ${{ secrets.FAULTLINE_PREFLIGHT_KEY }}
+        run: |
+          curl -sS --fail-with-body -X POST "$FAULTLINE_URL/api/preflight?tenant=acme" \
+            -H "Authorization: Bearer $FAULTLINE_PREFLIGHT_KEY" -H "Content-Type: application/json" \
+            --data @pr.json -o result.json
+          python3 -c "import json;r=json.load(open('result.json'));print('verdict', r['verdict'], 'risk', r['risk']);open('comment.md','w').write(r.get('comment') or '');open('verdict','w').write(r['verdict'])"
+      - name: Comment (require_review / block only)
+        if: hashFiles('comment.md') != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -s comment.md ]; then gh pr comment ${{ github.event.pull_request.number }} --body-file comment.md; fi
+      - name: Status check
+        run: |
+          if [ "$(cat verdict)" = "block" ]; then echo "Faultline preflight: block"; exit 1; fi
