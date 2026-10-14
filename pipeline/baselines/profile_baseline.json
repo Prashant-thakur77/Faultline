@@ -1,0 +1,1195 @@
+{
+  "stg_orders": {
+    "per_day": [
+      {
+        "day": "2026-05-12",
+        "row_count": 372,
+        "amount_median": 62.58,
+        "amount_mean": 81.79,
+        "amount_min": 8.38,
+        "amount_max": 490.0,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-05-13",
+        "row_count": 359,
+        "amount_median": 61.97,
+        "amount_mean": 79.34,
+        "amount_min": 5.0,
+        "amount_max": 353.36,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-05-14",
+        "row_count": 345,
+        "amount_median": 59.77,
+        "amount_mean": 79.99,
+        "amount_min": 7.15,
+        "amount_max": 583.8,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-05-15",
+        "row_count": 392,
+        "amount_median": 62.9,
+        "amount_mean": 80.17,
+        "amount_min": 5.0,
+        "amount_max": 515.8,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-05-16",
+        "row_count": 305,
+        "amount_median": 64.19,
+        "amount_mean": 82.95,
+        "amount_min": 9.04,
+        "amount_max": 733.08,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-05-17",
+        "row_count": 322,
+        "amount_median": 59.91,
+        "amount_mean": 78.04,
+        "amount_min": 11.0,
+        "amount_max": 581.12,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-05-18",
+        "row_count": 363,
+        "amount_median": 61.21,
+        "amount_mean": 81.63,
+        "amount_min": 7.07,
+        "amount_max": 768.12,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-05-19",
+        "row_count": 351,
+        "amount_median": 55.67,
+        "amount_mean": 73.95,
+        "amount_min": 12.93,
+        "amount_max": 513.74,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-05-20",
+        "row_count": 333,
+        "amount_median": 62.55,
+        "amount_mean": 81.74,
+        "amount_min": 6.56,
+        "amount_max": 625.23,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-05-21",
+        "row_count": 408,
+        "amount_median": 60.36,
+        "amount_mean": 79.23,
+        "amount_min": 7.42,
+        "amount_max": 598.33,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-05-22",
+        "row_count": 355,
+        "amount_median": 58.7,
+        "amount_mean": 78.17,
+        "amount_min": 5.35,
+        "amount_max": 669.19,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-05-23",
+        "row_count": 314,
+        "amount_median": 59.08,
+        "amount_mean": 78.94,
+        "amount_min": 10.25,
+        "amount_max": 461.35,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-05-24",
+        "row_count": 274,
+        "amount_median": 63.12,
+        "amount_mean": 80.86,
+        "amount_min": 7.87,
+        "amount_max": 509.45,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-05-25",
+        "row_count": 350,
+        "amount_median": 64.6,
+        "amount_mean": 79.93,
+        "amount_min": 7.62,
+        "amount_max": 384.73,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-05-26",
+        "row_count": 376,
+        "amount_median": 60.16,
+        "amount_mean": 76.41,
+        "amount_min": 7.17,
+        "amount_max": 673.9,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-05-27",
+        "row_count": 388,
+        "amount_median": 64.73,
+        "amount_mean": 84.22,
+        "amount_min": 6.08,
+        "amount_max": 704.43,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-05-28",
+        "row_count": 362,
+        "amount_median": 59.94,
+        "amount_mean": 81.78,
+        "amount_min": 8.67,
+        "amount_max": 655.91,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-05-29",
+        "row_count": 326,
+        "amount_median": 60.4,
+        "amount_mean": 76.99,
+        "amount_min": 9.15,
+        "amount_max": 430.65,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-05-30",
+        "row_count": 286,
+        "amount_median": 65.9,
+        "amount_mean": 84.49,
+        "amount_min": 8.66,
+        "amount_max": 458.68,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-05-31",
+        "row_count": 293,
+        "amount_median": 60.6,
+        "amount_mean": 82.49,
+        "amount_min": 10.03,
+        "amount_max": 586.87,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-06-01",
+        "row_count": 398,
+        "amount_median": 64.02,
+        "amount_mean": 80.6,
+        "amount_min": 6.79,
+        "amount_max": 462.43,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-06-02",
+        "row_count": 349,
+        "amount_median": 65.85,
+        "amount_mean": 81.68,
+        "amount_min": 6.08,
+        "amount_max": 456.6,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-06-03",
+        "row_count": 361,
+        "amount_median": 62.17,
+        "amount_mean": 80.7,
+        "amount_min": 5.51,
+        "amount_max": 445.74,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-06-04",
+        "row_count": 385,
+        "amount_median": 62.19,
+        "amount_mean": 84.3,
+        "amount_min": 7.96,
+        "amount_max": 668.28,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-06-05",
+        "row_count": 371,
+        "amount_median": 59.97,
+        "amount_mean": 76.75,
+        "amount_min": 6.59,
+        "amount_max": 441.32,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-06-06",
+        "row_count": 311,
+        "amount_median": 62.4,
+        "amount_mean": 82.42,
+        "amount_min": 10.76,
+        "amount_max": 499.82,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-06-07",
+        "row_count": 324,
+        "amount_median": 63.96,
+        "amount_mean": 76.64,
+        "amount_min": 9.93,
+        "amount_max": 273.36,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-06-08",
+        "row_count": 374,
+        "amount_median": 60.39,
+        "amount_mean": 82.85,
+        "amount_min": 8.4,
+        "amount_max": 578.38,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-06-09",
+        "row_count": 380,
+        "amount_median": 62.86,
+        "amount_mean": 83.96,
+        "amount_min": 8.21,
+        "amount_max": 495.14,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-06-10",
+        "row_count": 349,
+        "amount_median": 59.91,
+        "amount_mean": 80.8,
+        "amount_min": 5.63,
+        "amount_max": 566.23,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-06-11",
+        "row_count": 333,
+        "amount_median": 59.93,
+        "amount_mean": 77.62,
+        "amount_min": 9.15,
+        "amount_max": 442.07,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-06-12",
+        "row_count": 435,
+        "amount_median": 63.01,
+        "amount_mean": 81.45,
+        "amount_min": 5.46,
+        "amount_max": 547.73,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-06-13",
+        "row_count": 326,
+        "amount_median": 68.78,
+        "amount_mean": 86.55,
+        "amount_min": 14.71,
+        "amount_max": 704.44,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-06-14",
+        "row_count": 317,
+        "amount_median": 60.7,
+        "amount_mean": 77.32,
+        "amount_min": 8.45,
+        "amount_max": 336.49,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-06-15",
+        "row_count": 353,
+        "amount_median": 59.06,
+        "amount_mean": 74.37,
+        "amount_min": 6.29,
+        "amount_max": 366.8,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-06-16",
+        "row_count": 360,
+        "amount_median": 58.4,
+        "amount_mean": 79.8,
+        "amount_min": 5.0,
+        "amount_max": 631.26,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-06-17",
+        "row_count": 339,
+        "amount_median": 62.92,
+        "amount_mean": 80.68,
+        "amount_min": 7.43,
+        "amount_max": 500.01,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-06-18",
+        "row_count": 407,
+        "amount_median": 63.25,
+        "amount_mean": 74.87,
+        "amount_min": 6.91,
+        "amount_max": 375.62,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-06-19",
+        "row_count": 378,
+        "amount_median": 60.03,
+        "amount_mean": 80.45,
+        "amount_min": 5.93,
+        "amount_max": 689.63,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-06-20",
+        "row_count": 308,
+        "amount_median": 64.63,
+        "amount_mean": 82.45,
+        "amount_min": 5.7,
+        "amount_max": 483.39,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-06-21",
+        "row_count": 319,
+        "amount_median": 63.64,
+        "amount_mean": 73.1,
+        "amount_min": 5.0,
+        "amount_max": 271.5,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-06-22",
+        "row_count": 431,
+        "amount_median": 64.73,
+        "amount_mean": 82.91,
+        "amount_min": 6.37,
+        "amount_max": 532.79,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-06-23",
+        "row_count": 412,
+        "amount_median": 59.16,
+        "amount_mean": 77.39,
+        "amount_min": 9.08,
+        "amount_max": 393.13,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-06-24",
+        "row_count": 383,
+        "amount_median": 56.21,
+        "amount_mean": 75.04,
+        "amount_min": 6.55,
+        "amount_max": 449.44,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-06-25",
+        "row_count": 363,
+        "amount_median": 65.7,
+        "amount_mean": 82.79,
+        "amount_min": 7.02,
+        "amount_max": 483.85,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-06-26",
+        "row_count": 392,
+        "amount_median": 61.93,
+        "amount_mean": 78.32,
+        "amount_min": 6.24,
+        "amount_max": 476.01,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-06-27",
+        "row_count": 335,
+        "amount_median": 65.09,
+        "amount_mean": 83.75,
+        "amount_min": 6.39,
+        "amount_max": 506.22,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-06-28",
+        "row_count": 292,
+        "amount_median": 55.84,
+        "amount_mean": 71.25,
+        "amount_min": 8.03,
+        "amount_max": 340.4,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-06-29",
+        "row_count": 361,
+        "amount_median": 65.18,
+        "amount_mean": 81.71,
+        "amount_min": 5.41,
+        "amount_max": 453.28,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-06-30",
+        "row_count": 429,
+        "amount_median": 60.56,
+        "amount_mean": 77.39,
+        "amount_min": 7.72,
+        "amount_max": 420.2,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-07-01",
+        "row_count": 420,
+        "amount_median": 61.14,
+        "amount_mean": 79.0,
+        "amount_min": 5.0,
+        "amount_max": 360.79,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-07-02",
+        "row_count": 444,
+        "amount_median": 60.72,
+        "amount_mean": 84.31,
+        "amount_min": 6.46,
+        "amount_max": 602.14,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-07-03",
+        "row_count": 389,
+        "amount_median": 63.65,
+        "amount_mean": 84.49,
+        "amount_min": 8.57,
+        "amount_max": 388.19,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-07-04",
+        "row_count": 309,
+        "amount_median": 64.24,
+        "amount_mean": 81.19,
+        "amount_min": 6.69,
+        "amount_max": 631.07,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-07-05",
+        "row_count": 307,
+        "amount_median": 60.51,
+        "amount_mean": 79.65,
+        "amount_min": 7.05,
+        "amount_max": 548.69,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-07-06",
+        "row_count": 347,
+        "amount_median": 60.31,
+        "amount_mean": 80.78,
+        "amount_min": 9.14,
+        "amount_max": 956.3,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-07-07",
+        "row_count": 353,
+        "amount_median": 56.05,
+        "amount_mean": 74.7,
+        "amount_min": 9.09,
+        "amount_max": 388.2,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-07-08",
+        "row_count": 358,
+        "amount_median": 62.45,
+        "amount_mean": 82.31,
+        "amount_min": 9.4,
+        "amount_max": 510.03,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-07-09",
+        "row_count": 371,
+        "amount_median": 61.01,
+        "amount_mean": 77.67,
+        "amount_min": 6.66,
+        "amount_max": 343.25,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-07-10",
+        "row_count": 387,
+        "amount_median": 56.0,
+        "amount_mean": 78.95,
+        "amount_min": 10.65,
+        "amount_max": 678.96,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-07-11",
+        "row_count": 308,
+        "amount_median": 68.15,
+        "amount_mean": 83.83,
+        "amount_min": 5.0,
+        "amount_max": 550.31,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-07-12",
+        "row_count": 322,
+        "amount_median": 68.68,
+        "amount_mean": 83.82,
+        "amount_min": 10.75,
+        "amount_max": 378.53,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-07-13",
+        "row_count": 420,
+        "amount_median": 62.23,
+        "amount_mean": 80.8,
+        "amount_min": 5.62,
+        "amount_max": 460.54,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-07-14",
+        "row_count": 364,
+        "amount_median": 66.35,
+        "amount_mean": 79.81,
+        "amount_min": 7.87,
+        "amount_max": 463.98,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-07-15",
+        "row_count": 358,
+        "amount_median": 62.4,
+        "amount_mean": 80.31,
+        "amount_min": 9.59,
+        "amount_max": 494.51,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-07-16",
+        "row_count": 427,
+        "amount_median": 61.22,
+        "amount_mean": 82.2,
+        "amount_min": 6.21,
+        "amount_max": 551.61,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-07-17",
+        "row_count": 459,
+        "amount_median": 63.34,
+        "amount_mean": 79.69,
+        "amount_min": 6.49,
+        "amount_max": 431.5,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-07-18",
+        "row_count": 287,
+        "amount_median": 63.3,
+        "amount_mean": 81.13,
+        "amount_min": 9.3,
+        "amount_max": 502.7,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-07-19",
+        "row_count": 321,
+        "amount_median": 62.04,
+        "amount_mean": 81.29,
+        "amount_min": 7.77,
+        "amount_max": 539.01,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-07-20",
+        "row_count": 419,
+        "amount_median": 66.36,
+        "amount_mean": 79.35,
+        "amount_min": 5.0,
+        "amount_max": 480.07,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-07-21",
+        "row_count": 416,
+        "amount_median": 60.77,
+        "amount_mean": 79.5,
+        "amount_min": 6.89,
+        "amount_max": 642.92,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-07-22",
+        "row_count": 356,
+        "amount_median": 58.01,
+        "amount_mean": 74.3,
+        "amount_min": 6.95,
+        "amount_max": 420.49,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-07-23",
+        "row_count": 429,
+        "amount_median": 61.33,
+        "amount_mean": 83.39,
+        "amount_min": 5.0,
+        "amount_max": 704.72,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-07-24",
+        "row_count": 424,
+        "amount_median": 58.74,
+        "amount_mean": 76.81,
+        "amount_min": 8.25,
+        "amount_max": 394.14,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-07-25",
+        "row_count": 306,
+        "amount_median": 63.1,
+        "amount_mean": 77.64,
+        "amount_min": 10.53,
+        "amount_max": 344.93,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-07-26",
+        "row_count": 347,
+        "amount_median": 62.58,
+        "amount_mean": 80.67,
+        "amount_min": 9.88,
+        "amount_max": 436.51,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-07-27",
+        "row_count": 374,
+        "amount_median": 59.39,
+        "amount_mean": 79.0,
+        "amount_min": 8.65,
+        "amount_max": 1114.51,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-07-28",
+        "row_count": 405,
+        "amount_median": 65.65,
+        "amount_mean": 82.25,
+        "amount_min": 9.03,
+        "amount_max": 473.58,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-07-29",
+        "row_count": 450,
+        "amount_median": 60.03,
+        "amount_mean": 78.72,
+        "amount_min": 6.5,
+        "amount_max": 382.0,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-07-30",
+        "row_count": 393,
+        "amount_median": 60.9,
+        "amount_mean": 84.27,
+        "amount_min": 7.29,
+        "amount_max": 792.38,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-07-31",
+        "row_count": 421,
+        "amount_median": 60.69,
+        "amount_mean": 81.92,
+        "amount_min": 8.12,
+        "amount_max": 527.54,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-08-01",
+        "row_count": 337,
+        "amount_median": 62.99,
+        "amount_mean": 77.21,
+        "amount_min": 5.15,
+        "amount_max": 437.68,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-08-02",
+        "row_count": 364,
+        "amount_median": 61.42,
+        "amount_mean": 82.55,
+        "amount_min": 7.96,
+        "amount_max": 597.24,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-08-03",
+        "row_count": 407,
+        "amount_median": 64.1,
+        "amount_mean": 84.46,
+        "amount_min": 9.74,
+        "amount_max": 413.64,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-08-04",
+        "row_count": 394,
+        "amount_median": 64.11,
+        "amount_mean": 80.92,
+        "amount_min": 8.74,
+        "amount_max": 489.42,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-08-05",
+        "row_count": 438,
+        "amount_median": 58.57,
+        "amount_mean": 80.91,
+        "amount_min": 6.64,
+        "amount_max": 467.6,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-08-06",
+        "row_count": 387,
+        "amount_median": 64.03,
+        "amount_mean": 86.13,
+        "amount_min": 10.2,
+        "amount_max": 877.94,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "legacy_pos",
+          "shopgate"
+        ]
+      },
+      {
+        "day": "2026-08-07",
+        "row_count": 334,
+        "amount_median": 64.22,
+        "amount_mean": 79.34,
+        "amount_min": 5.62,
+        "amount_max": 329.45,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "cloudpay_v2"
+        ]
+      },
+      {
+        "day": "2026-08-08",
+        "row_count": 349,
+        "amount_median": 59.8,
+        "amount_mean": 78.26,
+        "amount_min": 8.21,
+        "amount_max": 410.79,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "cloudpay_v2"
+        ]
+      },
+      {
+        "day": "2026-08-09",
+        "row_count": 327,
+        "amount_median": 61.34,
+        "amount_mean": 83.4,
+        "amount_min": 12.23,
+        "amount_max": 552.62,
+        "amount_null_rate": 0.0,
+        "payment_processors": [
+          "cloudpay_v2"
+        ]
+      }
+    ]
+  },
+  "stg_customers": {
+    "row_count": 3000,
+    "customer_id_null_rate": 0.0,
+    "segment_null_rate": 0.0,
+    "segments": [
+      "consumer",
+      "enterprise",
+      "smb"
+    ]
+  },
+  "stg_fx_rates": {
+    "row_count": 360,
+    "usd_rate_null_rate": 0.0,
+    "currencies": [
+      "CAD",
+      "EUR",
+      "GBP",
+      "USD"
+    ],
+    "usd_rate_min": 0.714899,
+    "usd_rate_max": 1.27464
+  }
+}
