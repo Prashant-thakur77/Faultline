@@ -1,0 +1,13 @@
+.git
+.venv
+.cache
+**/.env
+**/.env*
+!.env.example
+frontend/node_modules
+frontend/.next
+frontend/test-results
+**/__pycache__
+*.zip
+tmp
+data/warehouse/*.duckdb.wal

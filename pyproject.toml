@@ -1,0 +1,74 @@
+[project]
+name = "faultline"
+version = "1.0.0"
+description = "Faultline: an on-call agent that will not blame a change until FalkorDB returns the path"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.11"
+dependencies = [
+    "duckdb>=1.1",
+    "pandas>=2.2",
+    "numpy>=1.26",
+    "pydantic>=2.8",
+    "pydantic-settings>=2.4",
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "sse-starlette>=2.1",
+    "anthropic>=0.40",
+    "python-dotenv>=1.0",
+    "httpx>=0.27",
+    "requests>=2.32",
+    "pytest>=8.3",
+    "tenacity>=9.0",
+    "mcp>=2.0.0",
+    "sqlparse>=0.5.5",
+    "falkordb==1.7.1",
+    "pyyaml>=6.0",
+    "redis>=5.0,<9",
+    "fastembed==0.8.1",
+]
+
+[project.optional-dependencies]
+tracing = [
+    "arize-phoenix>=14.6.0",
+    "openinference-instrumentation-anthropic>=1.1.2",
+    "opentelemetry-exporter-otlp>=1.44.0",
+    "opentelemetry-sdk>=1.44.0",
+]
+
+[dependency-groups]
+dev = [
+    "playwright>=1.62.0",
+    "ruff>=0.6",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["backend/faultline"]
+
+[tool.pytest.ini_options]
+# `make test` = unit tests; `make invariants` = the fixture-dependent pipeline suite; `make smoke` = engine.
+testpaths = ["tests"]
+addopts = "-q"
+markers = [
+    "smoke: needs a running FalkorDB (engine smoke suite)",
+    "live: needs a running FalkorDB with seeded tenants",
+    "slow: long-running",
+]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+
+# Pinned explicitly: newer ruff releases have widened what an unqualified
+# `[tool.ruff]` block lints for (this repo's default pulled in bandit/blind-except/
+# pylint-style checks that flag the agent's deliberate catch-broad-and-record-as-
+# evidence error handling — see tools.py's dispatch()/t_confirm_root_cause and
+# repair.py's publish_repair_pr, where a narrow except would defeat the "no tool
+# failure may crash the loop" design). Pycodestyle errors + pyflakes is what this
+# project actually enforces; select is explicit so `ruff check` doesn't silently
+# gain or lose rules on a ruff upgrade.
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]

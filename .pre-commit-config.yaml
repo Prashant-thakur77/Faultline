@@ -1,0 +1,8 @@
+# Mirrors the `ruff check` step in CI (.github/workflows/ci.yml). Install with:
+#   uv run pre-commit install
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.2
+    hooks:
+      - id: ruff
+        args: [--exit-non-zero-on-fix]
