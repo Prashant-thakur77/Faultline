@@ -1,0 +1,1948 @@
+{
+  "seed": 20261015,
+  "variant": "full",
+  "cases": 100,
+  "correct": 100,
+  "by_category": {
+    "G2": {
+      "cases": 25,
+      "correct": 25
+    },
+    "G5": {
+      "cases": 20,
+      "correct": 20
+    },
+    "origin": {
+      "cases": 20,
+      "correct": 20
+    },
+    "abstain": {
+      "cases": 20,
+      "correct": 20
+    },
+    "control": {
+      "cases": 15,
+      "correct": 15
+    }
+  },
+  "abstain_inferred_origin": 8,
+  "seconds": 43.9,
+  "failures": [],
+  "cases_detail": [
+    {
+      "id": "gb001",
+      "category": "G2",
+      "symptom": "chatbot",
+      "origin": "chatbot",
+      "changes": [
+        "D-gb001-cause@chatbot",
+        "D-gb001-d1@flagd",
+        "D-gb001-d2@image-provider"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb001-cause",
+        "eliminated": {
+          "D-gb001-d1": "G2",
+          "D-gb001-d2": "G2"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb001-cause",
+      "correct": true
+    },
+    {
+      "id": "gb002",
+      "category": "G2",
+      "symptom": "accounting",
+      "origin": "accounting",
+      "changes": [
+        "D-gb002-cause@accounting",
+        "D-gb002-d1@frontend-proxy",
+        "D-gb002-d2@queue"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb002-cause",
+        "eliminated": {
+          "D-gb002-d1": "G2",
+          "D-gb002-d2": "G2"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb002-cause",
+      "correct": true
+    },
+    {
+      "id": "gb003",
+      "category": "G2",
+      "symptom": "checkout",
+      "origin": "checkout",
+      "changes": [
+        "D-gb003-cause@checkout",
+        "D-gb003-d1@flagd"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb003-cause",
+        "eliminated": {
+          "D-gb003-d1": "G2"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb003-cause",
+      "correct": true
+    },
+    {
+      "id": "gb004",
+      "category": "G2",
+      "symptom": "currency",
+      "origin": "currency",
+      "changes": [
+        "D-gb004-cause@currency",
+        "D-gb004-d1@checkout",
+        "D-gb004-d2@recommendation"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb004-cause",
+        "eliminated": {
+          "D-gb004-d1": "G2",
+          "D-gb004-d2": "G2"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb004-cause",
+      "correct": true
+    },
+    {
+      "id": "gb005",
+      "category": "G2",
+      "symptom": "cart",
+      "origin": "cart",
+      "changes": [
+        "D-gb005-cause@cart",
+        "D-gb005-d1@accounting"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb005-cause",
+        "eliminated": {
+          "D-gb005-d1": "G2"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb005-cause",
+      "correct": true
+    },
+    {
+      "id": "gb006",
+      "category": "G2",
+      "symptom": "cart",
+      "origin": "cart",
+      "changes": [
+        "D-gb006-cause@cart",
+        "D-gb006-d1@ad",
+        "D-gb006-d2@mcp"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb006-cause",
+        "eliminated": {
+          "D-gb006-d1": "G2",
+          "D-gb006-d2": "G2"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb006-cause",
+      "correct": true
+    },
+    {
+      "id": "gb007",
+      "category": "G2",
+      "symptom": "chatbot",
+      "origin": "chatbot",
+      "changes": [
+        "D-gb007-cause@chatbot",
+        "D-gb007-d1@flagd-ui",
+        "D-gb007-d2@load-generator"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb007-cause",
+        "eliminated": {
+          "D-gb007-d1": "G2",
+          "D-gb007-d2": "G2"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb007-cause",
+      "correct": true
+    },
+    {
+      "id": "gb008",
+      "category": "G2",
+      "symptom": "queue",
+      "origin": "queue",
+      "changes": [
+        "D-gb008-cause@queue",
+        "D-gb008-d1@email",
+        "D-gb008-d2@image-provider"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb008-cause",
+        "eliminated": {
+          "D-gb008-d1": "G2",
+          "D-gb008-d2": "G2"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb008-cause",
+      "correct": true
+    },
+    {
+      "id": "gb009",
+      "category": "G2",
+      "symptom": "accounting",
+      "origin": "astronomy-db",
+      "changes": [
+        "D-gb009-cause@astronomy-db",
+        "D-gb009-d1@agent"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb009-cause",
+        "eliminated": {
+          "D-gb009-d1": "G2"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb009-cause",
+      "correct": true
+    },
+    {
+      "id": "gb010",
+      "category": "G2",
+      "symptom": "checkout",
+      "origin": "checkout",
+      "changes": [
+        "D-gb010-cause@checkout",
+        "D-gb010-d1@ad",
+        "D-gb010-d2@image-provider"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb010-cause",
+        "eliminated": {
+          "D-gb010-d1": "G2",
+          "D-gb010-d2": "G2"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb010-cause",
+      "correct": true
+    },
+    {
+      "id": "gb011",
+      "category": "G2",
+      "symptom": "shipping",
+      "origin": "quote",
+      "changes": [
+        "D-gb011-cause@quote",
+        "D-gb011-d1@checkout"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb011-cause",
+        "eliminated": {
+          "D-gb011-d1": "G2"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb011-cause",
+      "correct": true
+    },
+    {
+      "id": "gb012",
+      "category": "G2",
+      "symptom": "recommendation",
+      "origin": "product-catalog",
+      "changes": [
+        "D-gb012-cause@product-catalog",
+        "D-gb012-d1@currency",
+        "D-gb012-d2@queue"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb012-cause",
+        "eliminated": {
+          "D-gb012-d1": "G2",
+          "D-gb012-d2": "G2"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb012-cause",
+      "correct": true
+    },
+    {
+      "id": "gb013",
+      "category": "G2",
+      "symptom": "queue",
+      "origin": "accounting",
+      "changes": [
+        "D-gb013-cause@accounting",
+        "D-gb013-d1@image-provider"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb013-cause",
+        "eliminated": {
+          "D-gb013-d1": "G2"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb013-cause",
+      "correct": true
+    },
+    {
+      "id": "gb014",
+      "category": "G2",
+      "symptom": "astronomy-db",
+      "origin": "astronomy-db",
+      "changes": [
+        "D-gb014-cause@astronomy-db",
+        "D-gb014-d1@frontend"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb014-cause",
+        "eliminated": {
+          "D-gb014-d1": "G2"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb014-cause",
+      "correct": true
+    },
+    {
+      "id": "gb015",
+      "category": "G2",
+      "symptom": "shipping",
+      "origin": "shipping",
+      "changes": [
+        "D-gb015-cause@shipping",
+        "D-gb015-d1@agent"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb015-cause",
+        "eliminated": {
+          "D-gb015-d1": "G2"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb015-cause",
+      "correct": true
+    },
+    {
+      "id": "gb016",
+      "category": "G2",
+      "symptom": "accounting",
+      "origin": "accounting",
+      "changes": [
+        "D-gb016-cause@accounting",
+        "D-gb016-d1@flagd-ui"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb016-cause",
+        "eliminated": {
+          "D-gb016-d1": "G2"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb016-cause",
+      "correct": true
+    },
+    {
+      "id": "gb017",
+      "category": "G2",
+      "symptom": "agent",
+      "origin": "agent",
+      "changes": [
+        "D-gb017-cause@agent",
+        "D-gb017-d1@image-provider",
+        "D-gb017-d2@load-generator"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb017-cause",
+        "eliminated": {
+          "D-gb017-d1": "G2",
+          "D-gb017-d2": "G2"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb017-cause",
+      "correct": true
+    },
+    {
+      "id": "gb018",
+      "category": "G2",
+      "symptom": "email",
+      "origin": "email",
+      "changes": [
+        "D-gb018-cause@email",
+        "D-gb018-d1@load-generator",
+        "D-gb018-d2@product-catalog"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb018-cause",
+        "eliminated": {
+          "D-gb018-d1": "G2",
+          "D-gb018-d2": "G2"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb018-cause",
+      "correct": true
+    },
+    {
+      "id": "gb019",
+      "category": "G2",
+      "symptom": "flagd-ui",
+      "origin": "flagd-ui",
+      "changes": [
+        "D-gb019-cause@flagd-ui",
+        "D-gb019-d1@quote"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb019-cause",
+        "eliminated": {
+          "D-gb019-d1": "G2"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb019-cause",
+      "correct": true
+    },
+    {
+      "id": "gb020",
+      "category": "G2",
+      "symptom": "cache",
+      "origin": "cache",
+      "changes": [
+        "D-gb020-cause@cache",
+        "D-gb020-d1@ad",
+        "D-gb020-d2@chatbot"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb020-cause",
+        "eliminated": {
+          "D-gb020-d1": "G2",
+          "D-gb020-d2": "G2"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb020-cause",
+      "correct": true
+    },
+    {
+      "id": "gb021",
+      "category": "G2",
+      "symptom": "ad",
+      "origin": "ad",
+      "changes": [
+        "D-gb021-cause@ad",
+        "D-gb021-d1@flagd",
+        "D-gb021-d2@shipping"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb021-cause",
+        "eliminated": {
+          "D-gb021-d1": "G2",
+          "D-gb021-d2": "G2"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb021-cause",
+      "correct": true
+    },
+    {
+      "id": "gb022",
+      "category": "G2",
+      "symptom": "quote",
+      "origin": "quote",
+      "changes": [
+        "D-gb022-cause@quote",
+        "D-gb022-d1@product-catalog"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb022-cause",
+        "eliminated": {
+          "D-gb022-d1": "G2"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb022-cause",
+      "correct": true
+    },
+    {
+      "id": "gb023",
+      "category": "G2",
+      "symptom": "cart",
+      "origin": "cache",
+      "changes": [
+        "D-gb023-cause@cache",
+        "D-gb023-d1@accounting",
+        "D-gb023-d2@shipping"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb023-cause",
+        "eliminated": {
+          "D-gb023-d1": "G2",
+          "D-gb023-d2": "G2"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb023-cause",
+      "correct": true
+    },
+    {
+      "id": "gb024",
+      "category": "G2",
+      "symptom": "astronomy-db",
+      "origin": "astronomy-db",
+      "changes": [
+        "D-gb024-cause@astronomy-db",
+        "D-gb024-d1@queue"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb024-cause",
+        "eliminated": {
+          "D-gb024-d1": "G2"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb024-cause",
+      "correct": true
+    },
+    {
+      "id": "gb025",
+      "category": "G2",
+      "symptom": "frontend",
+      "origin": "frontend",
+      "changes": [
+        "D-gb025-cause@frontend",
+        "D-gb025-d1@flagd-ui",
+        "D-gb025-d2@frontend-proxy"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb025-cause",
+        "eliminated": {
+          "D-gb025-d1": "G2",
+          "D-gb025-d2": "G2"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb025-cause",
+      "correct": true
+    },
+    {
+      "id": "gb026",
+      "category": "G5",
+      "symptom": "chatbot",
+      "origin": "chatbot",
+      "changes": [
+        "D-gb026-cause@chatbot",
+        "D-gb026-d1@accounting"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb026-cause",
+        "eliminated": {
+          "D-gb026-d1": "G5"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb026-cause",
+      "correct": true
+    },
+    {
+      "id": "gb027",
+      "category": "G5",
+      "symptom": "checkout",
+      "origin": "shipping",
+      "changes": [
+        "D-gb027-cause@shipping",
+        "D-gb027-d1@email"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb027-cause",
+        "eliminated": {
+          "D-gb027-d1": "G5"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb027-cause",
+      "correct": true
+    },
+    {
+      "id": "gb028",
+      "category": "G5",
+      "symptom": "checkout",
+      "origin": "currency",
+      "changes": [
+        "D-gb028-cause@currency",
+        "D-gb028-d1@email"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb028-cause",
+        "eliminated": {
+          "D-gb028-d1": "G5"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb028-cause",
+      "correct": true
+    },
+    {
+      "id": "gb029",
+      "category": "G5",
+      "symptom": "checkout",
+      "origin": "payment",
+      "changes": [
+        "D-gb029-cause@payment",
+        "D-gb029-d1@accounting"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb029-cause",
+        "eliminated": {
+          "D-gb029-d1": "G5"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb029-cause",
+      "correct": true
+    },
+    {
+      "id": "gb030",
+      "category": "G5",
+      "symptom": "chatbot",
+      "origin": "chatbot",
+      "changes": [
+        "D-gb030-cause@chatbot",
+        "D-gb030-d1@fraud-detection"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb030-cause",
+        "eliminated": {
+          "D-gb030-d1": "G5"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb030-cause",
+      "correct": true
+    },
+    {
+      "id": "gb031",
+      "category": "G5",
+      "symptom": "frontend",
+      "origin": "frontend",
+      "changes": [
+        "D-gb031-cause@frontend",
+        "D-gb031-d1@email"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb031-cause",
+        "eliminated": {
+          "D-gb031-d1": "G5"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb031-cause",
+      "correct": true
+    },
+    {
+      "id": "gb032",
+      "category": "G5",
+      "symptom": "mcp",
+      "origin": "mcp",
+      "changes": [
+        "D-gb032-cause@mcp",
+        "D-gb032-d1@recommendation"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb032-cause",
+        "eliminated": {
+          "D-gb032-d1": "G5"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb032-cause",
+      "correct": true
+    },
+    {
+      "id": "gb033",
+      "category": "G5",
+      "symptom": "checkout",
+      "origin": "cart",
+      "changes": [
+        "D-gb033-cause@cart",
+        "D-gb033-d1@email"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb033-cause",
+        "eliminated": {
+          "D-gb033-d1": "G5"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb033-cause",
+      "correct": true
+    },
+    {
+      "id": "gb034",
+      "category": "G5",
+      "symptom": "frontend",
+      "origin": "frontend",
+      "changes": [
+        "D-gb034-cause@frontend",
+        "D-gb034-d1@accounting"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb034-cause",
+        "eliminated": {
+          "D-gb034-d1": "G5"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb034-cause",
+      "correct": true
+    },
+    {
+      "id": "gb035",
+      "category": "G5",
+      "symptom": "agent",
+      "origin": "frontend",
+      "changes": [
+        "D-gb035-cause@frontend",
+        "D-gb035-d1@fraud-detection"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb035-cause",
+        "eliminated": {
+          "D-gb035-d1": "G5"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb035-cause",
+      "correct": true
+    },
+    {
+      "id": "gb036",
+      "category": "G5",
+      "symptom": "chatbot",
+      "origin": "agent",
+      "changes": [
+        "D-gb036-cause@agent",
+        "D-gb036-d1@fraud-detection"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb036-cause",
+        "eliminated": {
+          "D-gb036-d1": "G5"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb036-cause",
+      "correct": true
+    },
+    {
+      "id": "gb037",
+      "category": "G5",
+      "symptom": "agent",
+      "origin": "frontend",
+      "changes": [
+        "D-gb037-cause@frontend",
+        "D-gb037-d1@email"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb037-cause",
+        "eliminated": {
+          "D-gb037-d1": "G5"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb037-cause",
+      "correct": true
+    },
+    {
+      "id": "gb038",
+      "category": "G5",
+      "symptom": "agent",
+      "origin": "agent",
+      "changes": [
+        "D-gb038-cause@agent",
+        "D-gb038-d1@ad"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb038-cause",
+        "eliminated": {
+          "D-gb038-d1": "G5"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb038-cause",
+      "correct": true
+    },
+    {
+      "id": "gb039",
+      "category": "G5",
+      "symptom": "checkout",
+      "origin": "product-catalog",
+      "changes": [
+        "D-gb039-cause@product-catalog",
+        "D-gb039-d1@accounting"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb039-cause",
+        "eliminated": {
+          "D-gb039-d1": "G5"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb039-cause",
+      "correct": true
+    },
+    {
+      "id": "gb040",
+      "category": "G5",
+      "symptom": "checkout",
+      "origin": "checkout",
+      "changes": [
+        "D-gb040-cause@checkout",
+        "D-gb040-d1@email"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb040-cause",
+        "eliminated": {
+          "D-gb040-d1": "G5"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb040-cause",
+      "correct": true
+    },
+    {
+      "id": "gb041",
+      "category": "G5",
+      "symptom": "checkout",
+      "origin": "payment",
+      "changes": [
+        "D-gb041-cause@payment",
+        "D-gb041-d1@queue"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb041-cause",
+        "eliminated": {
+          "D-gb041-d1": "G5"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb041-cause",
+      "correct": true
+    },
+    {
+      "id": "gb042",
+      "category": "G5",
+      "symptom": "checkout",
+      "origin": "cart",
+      "changes": [
+        "D-gb042-cause@cart",
+        "D-gb042-d1@accounting"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb042-cause",
+        "eliminated": {
+          "D-gb042-d1": "G5"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb042-cause",
+      "correct": true
+    },
+    {
+      "id": "gb043",
+      "category": "G5",
+      "symptom": "mcp",
+      "origin": "mcp",
+      "changes": [
+        "D-gb043-cause@mcp",
+        "D-gb043-d1@fraud-detection"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb043-cause",
+        "eliminated": {
+          "D-gb043-d1": "G5"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb043-cause",
+      "correct": true
+    },
+    {
+      "id": "gb044",
+      "category": "G5",
+      "symptom": "checkout",
+      "origin": "shipping",
+      "changes": [
+        "D-gb044-cause@shipping",
+        "D-gb044-d1@queue"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb044-cause",
+        "eliminated": {
+          "D-gb044-d1": "G5"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb044-cause",
+      "correct": true
+    },
+    {
+      "id": "gb045",
+      "category": "G5",
+      "symptom": "frontend",
+      "origin": "frontend",
+      "changes": [
+        "D-gb045-cause@frontend",
+        "D-gb045-d1@queue"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb045-cause",
+        "eliminated": {
+          "D-gb045-d1": "G5"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb045-cause",
+      "correct": true
+    },
+    {
+      "id": "gb046",
+      "category": "origin",
+      "symptom": "chatbot",
+      "origin": "chatbot",
+      "changes": [
+        "D-gb046-cause@chatbot",
+        "D-gb046-d1@agent"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb046-cause",
+        "eliminated": {
+          "D-gb046-d1": "G4 origin"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb046-cause",
+      "correct": true
+    },
+    {
+      "id": "gb047",
+      "category": "origin",
+      "symptom": "product-catalog",
+      "origin": "product-catalog",
+      "changes": [
+        "D-gb047-cause@product-catalog",
+        "D-gb047-d1@astronomy-db"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb047-cause",
+        "eliminated": {
+          "D-gb047-d1": "G4 origin"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb047-cause",
+      "correct": true
+    },
+    {
+      "id": "gb048",
+      "category": "origin",
+      "symptom": "chatbot",
+      "origin": "chatbot",
+      "changes": [
+        "D-gb048-cause@chatbot",
+        "D-gb048-d1@currency"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb048-cause",
+        "eliminated": {
+          "D-gb048-d1": "G4 origin"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb048-cause",
+      "correct": true
+    },
+    {
+      "id": "gb049",
+      "category": "origin",
+      "symptom": "chatbot",
+      "origin": "chatbot",
+      "changes": [
+        "D-gb049-cause@chatbot",
+        "D-gb049-d1@product-catalog"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb049-cause",
+        "eliminated": {
+          "D-gb049-d1": "G4 origin"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb049-cause",
+      "correct": true
+    },
+    {
+      "id": "gb050",
+      "category": "origin",
+      "symptom": "checkout",
+      "origin": "product-catalog",
+      "changes": [
+        "D-gb050-cause@product-catalog",
+        "D-gb050-d1@currency"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb050-cause",
+        "eliminated": {
+          "D-gb050-d1": "G4 origin"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb050-cause",
+      "correct": true
+    },
+    {
+      "id": "gb051",
+      "category": "origin",
+      "symptom": "queue",
+      "origin": "fraud-detection",
+      "changes": [
+        "D-gb051-cause@fraud-detection",
+        "D-gb051-d1@accounting"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb051-cause",
+        "eliminated": {
+          "D-gb051-d1": "G4 origin"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb051-cause",
+      "correct": true
+    },
+    {
+      "id": "gb052",
+      "category": "origin",
+      "symptom": "checkout",
+      "origin": "product-catalog",
+      "changes": [
+        "D-gb052-cause@product-catalog",
+        "D-gb052-d1@quote"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb052-cause",
+        "eliminated": {
+          "D-gb052-d1": "G4 origin"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb052-cause",
+      "correct": true
+    },
+    {
+      "id": "gb053",
+      "category": "origin",
+      "symptom": "agent",
+      "origin": "agent",
+      "changes": [
+        "D-gb053-cause@agent",
+        "D-gb053-d1@quote"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb053-cause",
+        "eliminated": {
+          "D-gb053-d1": "G4 origin"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb053-cause",
+      "correct": true
+    },
+    {
+      "id": "gb054",
+      "category": "origin",
+      "symptom": "agent",
+      "origin": "agent",
+      "changes": [
+        "D-gb054-cause@agent",
+        "D-gb054-d1@currency"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb054-cause",
+        "eliminated": {
+          "D-gb054-d1": "G4 origin"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb054-cause",
+      "correct": true
+    },
+    {
+      "id": "gb055",
+      "category": "origin",
+      "symptom": "queue",
+      "origin": "queue",
+      "changes": [
+        "D-gb055-cause@queue",
+        "D-gb055-d1@fraud-detection"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb055-cause",
+        "eliminated": {
+          "D-gb055-d1": "G4 origin"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb055-cause",
+      "correct": true
+    },
+    {
+      "id": "gb056",
+      "category": "origin",
+      "symptom": "agent",
+      "origin": "mcp",
+      "changes": [
+        "D-gb056-cause@mcp",
+        "D-gb056-d1@currency"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb056-cause",
+        "eliminated": {
+          "D-gb056-d1": "G4 origin"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb056-cause",
+      "correct": true
+    },
+    {
+      "id": "gb057",
+      "category": "origin",
+      "symptom": "queue",
+      "origin": "accounting",
+      "changes": [
+        "D-gb057-cause@accounting",
+        "D-gb057-d1@fraud-detection"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb057-cause",
+        "eliminated": {
+          "D-gb057-d1": "G4 origin"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb057-cause",
+      "correct": true
+    },
+    {
+      "id": "gb058",
+      "category": "origin",
+      "symptom": "recommendation",
+      "origin": "product-catalog",
+      "changes": [
+        "D-gb058-cause@product-catalog",
+        "D-gb058-d1@astronomy-db"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb058-cause",
+        "eliminated": {
+          "D-gb058-d1": "G4 origin"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb058-cause",
+      "correct": true
+    },
+    {
+      "id": "gb059",
+      "category": "origin",
+      "symptom": "queue",
+      "origin": "queue",
+      "changes": [
+        "D-gb059-cause@queue",
+        "D-gb059-d1@accounting"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb059-cause",
+        "eliminated": {
+          "D-gb059-d1": "G4 origin"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb059-cause",
+      "correct": true
+    },
+    {
+      "id": "gb060",
+      "category": "origin",
+      "symptom": "chatbot",
+      "origin": "chatbot",
+      "changes": [
+        "D-gb060-cause@chatbot",
+        "D-gb060-d1@shipping"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb060-cause",
+        "eliminated": {
+          "D-gb060-d1": "G4 origin"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb060-cause",
+      "correct": true
+    },
+    {
+      "id": "gb061",
+      "category": "origin",
+      "symptom": "checkout",
+      "origin": "cart",
+      "changes": [
+        "D-gb061-cause@cart",
+        "D-gb061-d1@cache"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb061-cause",
+        "eliminated": {
+          "D-gb061-d1": "G4 origin"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb061-cause",
+      "correct": true
+    },
+    {
+      "id": "gb062",
+      "category": "origin",
+      "symptom": "recommendation",
+      "origin": "recommendation",
+      "changes": [
+        "D-gb062-cause@recommendation",
+        "D-gb062-d1@astronomy-db"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb062-cause",
+        "eliminated": {
+          "D-gb062-d1": "G4 origin"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb062-cause",
+      "correct": true
+    },
+    {
+      "id": "gb063",
+      "category": "origin",
+      "symptom": "checkout",
+      "origin": "checkout",
+      "changes": [
+        "D-gb063-cause@checkout",
+        "D-gb063-d1@payment"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb063-cause",
+        "eliminated": {
+          "D-gb063-d1": "G4 origin"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb063-cause",
+      "correct": true
+    },
+    {
+      "id": "gb064",
+      "category": "origin",
+      "symptom": "checkout",
+      "origin": "cart",
+      "changes": [
+        "D-gb064-cause@cart",
+        "D-gb064-d1@product-catalog"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb064-cause",
+        "eliminated": {
+          "D-gb064-d1": "G4 origin"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb064-cause",
+      "correct": true
+    },
+    {
+      "id": "gb065",
+      "category": "origin",
+      "symptom": "accounting",
+      "origin": "accounting",
+      "changes": [
+        "D-gb065-cause@accounting",
+        "D-gb065-d1@astronomy-db"
+      ],
+      "expected": {
+        "outcome": "CONFIRMED",
+        "cause": "D-gb065-cause",
+        "eliminated": {
+          "D-gb065-d1": "G4 origin"
+        }
+      },
+      "outcome": "CONFIRMED",
+      "cause": "D-gb065-cause",
+      "correct": true
+    },
+    {
+      "id": "gb066",
+      "category": "abstain",
+      "symptom": "ad",
+      "origin": "ad",
+      "changes": [],
+      "expected": {
+        "outcome": "NOT_CONFIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "UNKNOWN_ESCALATED",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb067",
+      "category": "abstain",
+      "symptom": "product-catalog",
+      "origin": "astronomy-db",
+      "changes": [
+        "D-gb067-d1@ad",
+        "D-gb067-d2@currency"
+      ],
+      "expected": {
+        "outcome": "NOT_CONFIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "NOT_CONFIDENT",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb068",
+      "category": "abstain",
+      "symptom": "checkout",
+      "origin": "checkout",
+      "changes": [
+        "D-gb068-d1@flagd-ui",
+        "D-gb068-d2@recommendation"
+      ],
+      "expected": {
+        "outcome": "NOT_CONFIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "UNKNOWN_ESCALATED",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb069",
+      "category": "abstain",
+      "symptom": "agent",
+      "origin": "agent",
+      "changes": [
+        "D-gb069-d1@shipping"
+      ],
+      "expected": {
+        "outcome": "NOT_CONFIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "NOT_CONFIDENT",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb070",
+      "category": "abstain",
+      "symptom": "accounting",
+      "origin": "accounting",
+      "changes": [
+        "D-gb070-d1@cache"
+      ],
+      "expected": {
+        "outcome": "NOT_CONFIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "UNKNOWN_ESCALATED",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb071",
+      "category": "abstain",
+      "symptom": "shipping",
+      "origin": "shipping",
+      "changes": [
+        "D-gb071-d1@currency"
+      ],
+      "expected": {
+        "outcome": "NOT_CONFIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "UNKNOWN_ESCALATED",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb072",
+      "category": "abstain",
+      "symptom": "checkout",
+      "origin": "currency",
+      "changes": [],
+      "expected": {
+        "outcome": "NOT_CONFIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "NOT_CONFIDENT",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb073",
+      "category": "abstain",
+      "symptom": "product-catalog",
+      "origin": "product-catalog",
+      "changes": [],
+      "expected": {
+        "outcome": "NOT_CONFIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "UNKNOWN_ESCALATED",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb074",
+      "category": "abstain",
+      "symptom": "shipping",
+      "origin": "shipping",
+      "changes": [],
+      "expected": {
+        "outcome": "NOT_CONFIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "UNKNOWN_ESCALATED",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb075",
+      "category": "abstain",
+      "symptom": "email",
+      "origin": "email",
+      "changes": [],
+      "expected": {
+        "outcome": "NOT_CONFIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "UNKNOWN_ESCALATED",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb076",
+      "category": "abstain",
+      "symptom": "image-provider",
+      "origin": "image-provider",
+      "changes": [],
+      "expected": {
+        "outcome": "NOT_CONFIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "UNKNOWN_ESCALATED",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb077",
+      "category": "abstain",
+      "symptom": "checkout",
+      "origin": "checkout",
+      "changes": [],
+      "expected": {
+        "outcome": "NOT_CONFIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "UNKNOWN_ESCALATED",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb078",
+      "category": "abstain",
+      "symptom": "product-catalog",
+      "origin": "astronomy-db",
+      "changes": [
+        "D-gb078-d1@currency"
+      ],
+      "expected": {
+        "outcome": "NOT_CONFIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "NOT_CONFIDENT",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb079",
+      "category": "abstain",
+      "symptom": "queue",
+      "origin": "fraud-detection",
+      "changes": [],
+      "expected": {
+        "outcome": "NOT_CONFIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "NOT_CONFIDENT",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb080",
+      "category": "abstain",
+      "symptom": "mcp",
+      "origin": "frontend",
+      "changes": [],
+      "expected": {
+        "outcome": "NOT_CONFIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "NOT_CONFIDENT",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb081",
+      "category": "abstain",
+      "symptom": "checkout",
+      "origin": "shipping",
+      "changes": [
+        "D-gb081-d1@product-catalog"
+      ],
+      "expected": {
+        "outcome": "NOT_CONFIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "NOT_CONFIDENT",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb082",
+      "category": "abstain",
+      "symptom": "agent",
+      "origin": "mcp",
+      "changes": [
+        "D-gb082-d1@flagd",
+        "D-gb082-d2@image-provider"
+      ],
+      "expected": {
+        "outcome": "NOT_CONFIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "NOT_CONFIDENT",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb083",
+      "category": "abstain",
+      "symptom": "product-catalog",
+      "origin": "product-catalog",
+      "changes": [
+        "D-gb083-d1@currency"
+      ],
+      "expected": {
+        "outcome": "NOT_CONFIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "UNKNOWN_ESCALATED",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb084",
+      "category": "abstain",
+      "symptom": "queue",
+      "origin": "fraud-detection",
+      "changes": [
+        "D-gb084-d1@cache",
+        "D-gb084-d2@load-generator"
+      ],
+      "expected": {
+        "outcome": "NOT_CONFIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "NOT_CONFIDENT",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb085",
+      "category": "abstain",
+      "symptom": "chatbot",
+      "origin": "agent",
+      "changes": [
+        "D-gb085-d1@astronomy-db",
+        "D-gb085-d2@product-catalog"
+      ],
+      "expected": {
+        "outcome": "NOT_CONFIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "NOT_CONFIDENT",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb086",
+      "category": "control",
+      "symptom": "payment",
+      "origin": null,
+      "changes": [
+        "D-gb086-d1@flagd-ui",
+        "D-gb086-d2@queue"
+      ],
+      "expected": {
+        "outcome": "NO_INCIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb087",
+      "category": "control",
+      "symptom": "recommendation",
+      "origin": null,
+      "changes": [
+        "D-gb087-d1@image-provider"
+      ],
+      "expected": {
+        "outcome": "NO_INCIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb088",
+      "category": "control",
+      "symptom": "ad",
+      "origin": null,
+      "changes": [
+        "D-gb088-d1@quote"
+      ],
+      "expected": {
+        "outcome": "NO_INCIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb089",
+      "category": "control",
+      "symptom": "checkout",
+      "origin": null,
+      "changes": [
+        "D-gb089-d1@flagd-ui"
+      ],
+      "expected": {
+        "outcome": "NO_INCIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb090",
+      "category": "control",
+      "symptom": "ad",
+      "origin": null,
+      "changes": [
+        "D-gb090-d1@queue"
+      ],
+      "expected": {
+        "outcome": "NO_INCIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb091",
+      "category": "control",
+      "symptom": "queue",
+      "origin": null,
+      "changes": [
+        "D-gb091-d1@astronomy-db",
+        "D-gb091-d2@payment"
+      ],
+      "expected": {
+        "outcome": "NO_INCIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb092",
+      "category": "control",
+      "symptom": "agent",
+      "origin": null,
+      "changes": [
+        "D-gb092-d1@checkout"
+      ],
+      "expected": {
+        "outcome": "NO_INCIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb093",
+      "category": "control",
+      "symptom": "checkout",
+      "origin": null,
+      "changes": [
+        "D-gb093-d1@flagd"
+      ],
+      "expected": {
+        "outcome": "NO_INCIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb094",
+      "category": "control",
+      "symptom": "checkout",
+      "origin": null,
+      "changes": [
+        "D-gb094-d1@currency",
+        "D-gb094-d2@frontend"
+      ],
+      "expected": {
+        "outcome": "NO_INCIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb095",
+      "category": "control",
+      "symptom": "chatbot",
+      "origin": null,
+      "changes": [
+        "D-gb095-d1@flagd-ui"
+      ],
+      "expected": {
+        "outcome": "NO_INCIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb096",
+      "category": "control",
+      "symptom": "recommendation",
+      "origin": null,
+      "changes": [
+        "D-gb096-d1@image-provider",
+        "D-gb096-d2@mcp"
+      ],
+      "expected": {
+        "outcome": "NO_INCIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb097",
+      "category": "control",
+      "symptom": "recommendation",
+      "origin": null,
+      "changes": [
+        "D-gb097-d1@checkout"
+      ],
+      "expected": {
+        "outcome": "NO_INCIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb098",
+      "category": "control",
+      "symptom": "email",
+      "origin": null,
+      "changes": [
+        "D-gb098-d1@load-generator",
+        "D-gb098-d2@shipping"
+      ],
+      "expected": {
+        "outcome": "NO_INCIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb099",
+      "category": "control",
+      "symptom": "frontend",
+      "origin": null,
+      "changes": [
+        "D-gb099-d1@currency"
+      ],
+      "expected": {
+        "outcome": "NO_INCIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "correct": true
+    },
+    {
+      "id": "gb100",
+      "category": "control",
+      "symptom": "queue",
+      "origin": null,
+      "changes": [
+        "D-gb100-d1@load-generator"
+      ],
+      "expected": {
+        "outcome": "NO_INCIDENT",
+        "cause": null,
+        "eliminated": {}
+      },
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "correct": true
+    }
+  ]
+}

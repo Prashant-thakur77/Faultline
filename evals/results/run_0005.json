@@ -1,0 +1,2655 @@
+{
+  "started": "2026-10-13T04:50:24",
+  "finished": "2026-10-13T04:51:04",
+  "n": 3,
+  "arms": [
+    "N",
+    "A2",
+    "A3",
+    "A3-noG5",
+    "A4"
+  ],
+  "skipped_arms": [
+    "A0",
+    "A1"
+  ],
+  "scenarios": [
+    "S1",
+    "S2",
+    "S3",
+    "S4D",
+    "S4S",
+    "S12",
+    "S1b"
+  ],
+  "investigator": "baseline-policy (deterministic, no LLM)",
+  "engine": "6.0.2",
+  "trials": [
+    {
+      "scenario": "S1",
+      "arm": "N",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-email-88",
+      "tied": [
+        "D-email-88",
+        "D-pay-417"
+      ],
+      "top1": 0.5,
+      "outcome_correct": false,
+      "false_blame": true,
+      "abstention_correct": null,
+      "tool_calls": 0,
+      "seconds": 0.0
+    },
+    {
+      "scenario": "S1",
+      "arm": "A2",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-417",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 21,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.37,
+      "error": null,
+      "confident": true,
+      "sweep": [
+        {
+          "change": "D-pay-417",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.2433 (observed 0.3041 \u00d7 0.8)"
+        },
+        {
+          "change": "D-email-88",
+          "status": "eliminated",
+          "reason": "G5: max flow 0.0200 < needed 0.2433 (observed 0.3041 \u00d7 0.8); the other suspects can carry 1.0000"
+        },
+        {
+          "change": "D-rec-12",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pay-417",
+        "payment",
+        "checkout"
+      ]
+    },
+    {
+      "scenario": "S1",
+      "arm": "A2",
+      "trial": 2,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-417",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 21,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.27,
+      "error": null,
+      "confident": true,
+      "sweep": [
+        {
+          "change": "D-pay-417",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.2433 (observed 0.3041 \u00d7 0.8)"
+        },
+        {
+          "change": "D-email-88",
+          "status": "eliminated",
+          "reason": "G5: max flow 0.0200 < needed 0.2433 (observed 0.3041 \u00d7 0.8); the other suspects can carry 1.0000"
+        },
+        {
+          "change": "D-rec-12",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pay-417",
+        "payment",
+        "checkout"
+      ]
+    },
+    {
+      "scenario": "S1",
+      "arm": "A2",
+      "trial": 3,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-417",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 21,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.37,
+      "error": null,
+      "confident": true,
+      "sweep": [
+        {
+          "change": "D-pay-417",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.2433 (observed 0.3041 \u00d7 0.8)"
+        },
+        {
+          "change": "D-email-88",
+          "status": "eliminated",
+          "reason": "G5: max flow 0.0200 < needed 0.2433 (observed 0.3041 \u00d7 0.8); the other suspects can carry 1.0000"
+        },
+        {
+          "change": "D-rec-12",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pay-417",
+        "payment",
+        "checkout"
+      ]
+    },
+    {
+      "scenario": "S1",
+      "arm": "A3",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-417",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 20,
+      "gate_attempts": 1,
+      "precedents": 5,
+      "seconds": 0.36,
+      "error": null,
+      "confident": true,
+      "sweep": [
+        {
+          "change": "D-pay-417",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.2433 (observed 0.3041 \u00d7 0.8)"
+        },
+        {
+          "change": "D-email-88",
+          "status": "eliminated",
+          "reason": "G5: max flow 0.0200 < needed 0.2433 (observed 0.3041 \u00d7 0.8); the other suspects can carry 1.0000"
+        },
+        {
+          "change": "D-rec-12",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pay-417",
+        "payment",
+        "checkout"
+      ]
+    },
+    {
+      "scenario": "S1",
+      "arm": "A3",
+      "trial": 2,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-417",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 20,
+      "gate_attempts": 1,
+      "precedents": 5,
+      "seconds": 0.4,
+      "error": null,
+      "confident": true,
+      "sweep": [
+        {
+          "change": "D-pay-417",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.2433 (observed 0.3041 \u00d7 0.8)"
+        },
+        {
+          "change": "D-email-88",
+          "status": "eliminated",
+          "reason": "G5: max flow 0.0200 < needed 0.2433 (observed 0.3041 \u00d7 0.8); the other suspects can carry 1.0000"
+        },
+        {
+          "change": "D-rec-12",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pay-417",
+        "payment",
+        "checkout"
+      ]
+    },
+    {
+      "scenario": "S1",
+      "arm": "A3",
+      "trial": 3,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-417",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 20,
+      "gate_attempts": 1,
+      "precedents": 5,
+      "seconds": 0.32,
+      "error": null,
+      "confident": true,
+      "sweep": [
+        {
+          "change": "D-pay-417",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.2433 (observed 0.3041 \u00d7 0.8)"
+        },
+        {
+          "change": "D-email-88",
+          "status": "eliminated",
+          "reason": "G5: max flow 0.0200 < needed 0.2433 (observed 0.3041 \u00d7 0.8); the other suspects can carry 1.0000"
+        },
+        {
+          "change": "D-rec-12",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pay-417",
+        "payment",
+        "checkout"
+      ]
+    },
+    {
+      "scenario": "S1",
+      "arm": "A3-noG5",
+      "trial": 1,
+      "outcome": "UNKNOWN_ESCALATED",
+      "cause": null,
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": false,
+      "grounded": null,
+      "tool_calls": 23,
+      "gate_attempts": 2,
+      "precedents": 5,
+      "seconds": 0.23,
+      "error": null,
+      "confident": false,
+      "sweep": [
+        {
+          "change": "D-email-88",
+          "status": "candidate",
+          "reason": "G5: max flow 0.0200 \u2265 needed 0.0000 (observed 0.3041 \u00d7 0.0)"
+        },
+        {
+          "change": "D-pay-417",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.0000 (observed 0.3041 \u00d7 0.0)"
+        },
+        {
+          "change": "D-rec-12",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": null
+    },
+    {
+      "scenario": "S1",
+      "arm": "A3-noG5",
+      "trial": 2,
+      "outcome": "UNKNOWN_ESCALATED",
+      "cause": null,
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": false,
+      "grounded": null,
+      "tool_calls": 23,
+      "gate_attempts": 2,
+      "precedents": 5,
+      "seconds": 0.22,
+      "error": null,
+      "confident": false,
+      "sweep": [
+        {
+          "change": "D-email-88",
+          "status": "candidate",
+          "reason": "G5: max flow 0.0200 \u2265 needed 0.0000 (observed 0.3041 \u00d7 0.0)"
+        },
+        {
+          "change": "D-pay-417",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.0000 (observed 0.3041 \u00d7 0.0)"
+        },
+        {
+          "change": "D-rec-12",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": null
+    },
+    {
+      "scenario": "S1",
+      "arm": "A3-noG5",
+      "trial": 3,
+      "outcome": "UNKNOWN_ESCALATED",
+      "cause": null,
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": false,
+      "grounded": null,
+      "tool_calls": 23,
+      "gate_attempts": 2,
+      "precedents": 5,
+      "seconds": 0.26,
+      "error": null,
+      "confident": false,
+      "sweep": [
+        {
+          "change": "D-email-88",
+          "status": "candidate",
+          "reason": "G5: max flow 0.0200 \u2265 needed 0.0000 (observed 0.3041 \u00d7 0.0)"
+        },
+        {
+          "change": "D-pay-417",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.0000 (observed 0.3041 \u00d7 0.0)"
+        },
+        {
+          "change": "D-rec-12",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": null
+    },
+    {
+      "scenario": "S1",
+      "arm": "A4",
+      "trial": 1,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.15,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "confident": false,
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S1",
+      "arm": "A4",
+      "trial": 2,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.19,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "confident": false,
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S1",
+      "arm": "A4",
+      "trial": 3,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.16,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "confident": false,
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S2",
+      "arm": "N",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-fx-pause-7",
+      "tied": [
+        "D-fx-pause-7"
+      ],
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": true,
+      "abstention_correct": null,
+      "tool_calls": 0,
+      "seconds": 0.0
+    },
+    {
+      "scenario": "S2",
+      "arm": "A2",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-cutover-1",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 17,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 1.23,
+      "error": null,
+      "confident": true,
+      "sweep": [
+        {
+          "change": "D-cutover-1",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.8000 (observed 1.0000 \u00d7 0.8)"
+        },
+        {
+          "change": "D-fx-pause-7",
+          "status": "eliminated",
+          "reason": "G5: max flow 0.0692 < needed 0.8000 (observed 1.0000 \u00d7 0.8); the other suspects can carry 1.0000"
+        }
+      ],
+      "chain": [
+        "D-cutover-1",
+        "payment",
+        "raw.raw_orders",
+        "staging.stg_orders",
+        "marts.fct_revenue",
+        "marts.exec_revenue_metric",
+        "kpi.exec_revenue"
+      ]
+    },
+    {
+      "scenario": "S2",
+      "arm": "A2",
+      "trial": 2,
+      "outcome": "CONFIRMED",
+      "cause": "D-cutover-1",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 17,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 1.12,
+      "error": null,
+      "confident": true,
+      "sweep": [
+        {
+          "change": "D-cutover-1",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.8000 (observed 1.0000 \u00d7 0.8)"
+        },
+        {
+          "change": "D-fx-pause-7",
+          "status": "eliminated",
+          "reason": "G5: max flow 0.0692 < needed 0.8000 (observed 1.0000 \u00d7 0.8); the other suspects can carry 1.0000"
+        }
+      ],
+      "chain": [
+        "D-cutover-1",
+        "payment",
+        "raw.raw_orders",
+        "staging.stg_orders",
+        "marts.fct_revenue",
+        "marts.exec_revenue_metric",
+        "kpi.exec_revenue"
+      ]
+    },
+    {
+      "scenario": "S2",
+      "arm": "A2",
+      "trial": 3,
+      "outcome": "CONFIRMED",
+      "cause": "D-cutover-1",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 17,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 1.03,
+      "error": null,
+      "confident": true,
+      "sweep": [
+        {
+          "change": "D-cutover-1",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.8000 (observed 1.0000 \u00d7 0.8)"
+        },
+        {
+          "change": "D-fx-pause-7",
+          "status": "eliminated",
+          "reason": "G5: max flow 0.0692 < needed 0.8000 (observed 1.0000 \u00d7 0.8); the other suspects can carry 1.0000"
+        }
+      ],
+      "chain": [
+        "D-cutover-1",
+        "payment",
+        "raw.raw_orders",
+        "staging.stg_orders",
+        "marts.fct_revenue",
+        "marts.exec_revenue_metric",
+        "kpi.exec_revenue"
+      ]
+    },
+    {
+      "scenario": "S2",
+      "arm": "A3",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-cutover-1",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 17,
+      "gate_attempts": 1,
+      "precedents": 5,
+      "seconds": 1.11,
+      "error": null,
+      "confident": true,
+      "sweep": [
+        {
+          "change": "D-cutover-1",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.8000 (observed 1.0000 \u00d7 0.8)"
+        },
+        {
+          "change": "D-fx-pause-7",
+          "status": "eliminated",
+          "reason": "G5: max flow 0.0692 < needed 0.8000 (observed 1.0000 \u00d7 0.8); the other suspects can carry 1.0000"
+        }
+      ],
+      "chain": [
+        "D-cutover-1",
+        "payment",
+        "raw.raw_orders",
+        "staging.stg_orders",
+        "marts.fct_revenue",
+        "marts.exec_revenue_metric",
+        "kpi.exec_revenue"
+      ]
+    },
+    {
+      "scenario": "S2",
+      "arm": "A3",
+      "trial": 2,
+      "outcome": "CONFIRMED",
+      "cause": "D-cutover-1",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 17,
+      "gate_attempts": 1,
+      "precedents": 5,
+      "seconds": 1.22,
+      "error": null,
+      "confident": true,
+      "sweep": [
+        {
+          "change": "D-cutover-1",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.8000 (observed 1.0000 \u00d7 0.8)"
+        },
+        {
+          "change": "D-fx-pause-7",
+          "status": "eliminated",
+          "reason": "G5: max flow 0.0692 < needed 0.8000 (observed 1.0000 \u00d7 0.8); the other suspects can carry 1.0000"
+        }
+      ],
+      "chain": [
+        "D-cutover-1",
+        "payment",
+        "raw.raw_orders",
+        "staging.stg_orders",
+        "marts.fct_revenue",
+        "marts.exec_revenue_metric",
+        "kpi.exec_revenue"
+      ]
+    },
+    {
+      "scenario": "S2",
+      "arm": "A3",
+      "trial": 3,
+      "outcome": "CONFIRMED",
+      "cause": "D-cutover-1",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 17,
+      "gate_attempts": 1,
+      "precedents": 5,
+      "seconds": 1.12,
+      "error": null,
+      "confident": true,
+      "sweep": [
+        {
+          "change": "D-cutover-1",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.8000 (observed 1.0000 \u00d7 0.8)"
+        },
+        {
+          "change": "D-fx-pause-7",
+          "status": "eliminated",
+          "reason": "G5: max flow 0.0692 < needed 0.8000 (observed 1.0000 \u00d7 0.8); the other suspects can carry 1.0000"
+        }
+      ],
+      "chain": [
+        "D-cutover-1",
+        "payment",
+        "raw.raw_orders",
+        "staging.stg_orders",
+        "marts.fct_revenue",
+        "marts.exec_revenue_metric",
+        "kpi.exec_revenue"
+      ]
+    },
+    {
+      "scenario": "S2",
+      "arm": "A3-noG5",
+      "trial": 1,
+      "outcome": "UNKNOWN_ESCALATED",
+      "cause": null,
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": false,
+      "grounded": null,
+      "tool_calls": 19,
+      "gate_attempts": 2,
+      "precedents": 5,
+      "seconds": 1.01,
+      "error": null,
+      "confident": false,
+      "sweep": [
+        {
+          "change": "D-cutover-1",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.0000 (observed 1.0000 \u00d7 0.0)"
+        },
+        {
+          "change": "D-fx-pause-7",
+          "status": "candidate",
+          "reason": "G5: max flow 0.0692 \u2265 needed 0.0000 (observed 1.0000 \u00d7 0.0)"
+        }
+      ],
+      "chain": null
+    },
+    {
+      "scenario": "S2",
+      "arm": "A3-noG5",
+      "trial": 2,
+      "outcome": "UNKNOWN_ESCALATED",
+      "cause": null,
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": false,
+      "grounded": null,
+      "tool_calls": 19,
+      "gate_attempts": 2,
+      "precedents": 5,
+      "seconds": 0.98,
+      "error": null,
+      "confident": false,
+      "sweep": [
+        {
+          "change": "D-cutover-1",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.0000 (observed 1.0000 \u00d7 0.0)"
+        },
+        {
+          "change": "D-fx-pause-7",
+          "status": "candidate",
+          "reason": "G5: max flow 0.0692 \u2265 needed 0.0000 (observed 1.0000 \u00d7 0.0)"
+        }
+      ],
+      "chain": null
+    },
+    {
+      "scenario": "S2",
+      "arm": "A3-noG5",
+      "trial": 3,
+      "outcome": "UNKNOWN_ESCALATED",
+      "cause": null,
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": false,
+      "grounded": null,
+      "tool_calls": 19,
+      "gate_attempts": 2,
+      "precedents": 5,
+      "seconds": 1.04,
+      "error": null,
+      "confident": false,
+      "sweep": [
+        {
+          "change": "D-cutover-1",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.0000 (observed 1.0000 \u00d7 0.0)"
+        },
+        {
+          "change": "D-fx-pause-7",
+          "status": "candidate",
+          "reason": "G5: max flow 0.0692 \u2265 needed 0.0000 (observed 1.0000 \u00d7 0.0)"
+        }
+      ],
+      "chain": null
+    },
+    {
+      "scenario": "S2",
+      "arm": "A4",
+      "trial": 1,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.88,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "confident": false,
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S2",
+      "arm": "A4",
+      "trial": 2,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.88,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "confident": false,
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S2",
+      "arm": "A4",
+      "trial": 3,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.85,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "confident": false,
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S3",
+      "arm": "N",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-cart-9",
+      "tied": [
+        "D-cart-9"
+      ],
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": true,
+      "abstention_correct": null,
+      "tool_calls": 0,
+      "seconds": 0.0
+    },
+    {
+      "scenario": "S3",
+      "arm": "A2",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-pgcfg-3",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 13,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.34,
+      "error": null,
+      "confident": true,
+      "sweep": [
+        {
+          "change": "D-pgcfg-3",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.1743 (observed 0.2178 \u00d7 0.8)"
+        },
+        {
+          "change": "D-cart-9",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pgcfg-3",
+        "astronomy-db",
+        "product-catalog"
+      ]
+    },
+    {
+      "scenario": "S3",
+      "arm": "A2",
+      "trial": 2,
+      "outcome": "CONFIRMED",
+      "cause": "D-pgcfg-3",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 13,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.34,
+      "error": null,
+      "confident": true,
+      "sweep": [
+        {
+          "change": "D-pgcfg-3",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.1743 (observed 0.2178 \u00d7 0.8)"
+        },
+        {
+          "change": "D-cart-9",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pgcfg-3",
+        "astronomy-db",
+        "product-catalog"
+      ]
+    },
+    {
+      "scenario": "S3",
+      "arm": "A2",
+      "trial": 3,
+      "outcome": "CONFIRMED",
+      "cause": "D-pgcfg-3",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 13,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.3,
+      "error": null,
+      "confident": true,
+      "sweep": [
+        {
+          "change": "D-pgcfg-3",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.1743 (observed 0.2178 \u00d7 0.8)"
+        },
+        {
+          "change": "D-cart-9",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pgcfg-3",
+        "astronomy-db",
+        "product-catalog"
+      ]
+    },
+    {
+      "scenario": "S3",
+      "arm": "A3",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-pgcfg-3",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 13,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.32,
+      "error": null,
+      "confident": true,
+      "sweep": [
+        {
+          "change": "D-pgcfg-3",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.1743 (observed 0.2178 \u00d7 0.8)"
+        },
+        {
+          "change": "D-cart-9",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pgcfg-3",
+        "astronomy-db",
+        "product-catalog"
+      ]
+    },
+    {
+      "scenario": "S3",
+      "arm": "A3",
+      "trial": 2,
+      "outcome": "CONFIRMED",
+      "cause": "D-pgcfg-3",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 13,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.35,
+      "error": null,
+      "confident": true,
+      "sweep": [
+        {
+          "change": "D-pgcfg-3",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.1743 (observed 0.2178 \u00d7 0.8)"
+        },
+        {
+          "change": "D-cart-9",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pgcfg-3",
+        "astronomy-db",
+        "product-catalog"
+      ]
+    },
+    {
+      "scenario": "S3",
+      "arm": "A3",
+      "trial": 3,
+      "outcome": "CONFIRMED",
+      "cause": "D-pgcfg-3",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 13,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.3,
+      "error": null,
+      "confident": true,
+      "sweep": [
+        {
+          "change": "D-pgcfg-3",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.1743 (observed 0.2178 \u00d7 0.8)"
+        },
+        {
+          "change": "D-cart-9",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pgcfg-3",
+        "astronomy-db",
+        "product-catalog"
+      ]
+    },
+    {
+      "scenario": "S3",
+      "arm": "A3-noG5",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-pgcfg-3",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 13,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.28,
+      "error": null,
+      "confident": true,
+      "sweep": [
+        {
+          "change": "D-pgcfg-3",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.0000 (observed 0.2178 \u00d7 0.0)"
+        },
+        {
+          "change": "D-cart-9",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pgcfg-3",
+        "astronomy-db",
+        "product-catalog"
+      ]
+    },
+    {
+      "scenario": "S3",
+      "arm": "A3-noG5",
+      "trial": 2,
+      "outcome": "CONFIRMED",
+      "cause": "D-pgcfg-3",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 13,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.3,
+      "error": null,
+      "confident": true,
+      "sweep": [
+        {
+          "change": "D-pgcfg-3",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.0000 (observed 0.2178 \u00d7 0.0)"
+        },
+        {
+          "change": "D-cart-9",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pgcfg-3",
+        "astronomy-db",
+        "product-catalog"
+      ]
+    },
+    {
+      "scenario": "S3",
+      "arm": "A3-noG5",
+      "trial": 3,
+      "outcome": "CONFIRMED",
+      "cause": "D-pgcfg-3",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 13,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.32,
+      "error": null,
+      "confident": true,
+      "sweep": [
+        {
+          "change": "D-pgcfg-3",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.0000 (observed 0.2178 \u00d7 0.0)"
+        },
+        {
+          "change": "D-cart-9",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pgcfg-3",
+        "astronomy-db",
+        "product-catalog"
+      ]
+    },
+    {
+      "scenario": "S3",
+      "arm": "A4",
+      "trial": 1,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.14,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "confident": false,
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S3",
+      "arm": "A4",
+      "trial": 2,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.11,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "confident": false,
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S3",
+      "arm": "A4",
+      "trial": 3,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.11,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "confident": false,
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S4D",
+      "arm": "N",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-cutover-1",
+      "tied": [
+        "D-cutover-1"
+      ],
+      "top1": null,
+      "outcome_correct": false,
+      "false_blame": true,
+      "abstention_correct": false,
+      "tool_calls": 0,
+      "seconds": 0.0
+    },
+    {
+      "scenario": "S4D",
+      "arm": "A2",
+      "trial": 1,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": true,
+      "tool_calls": 17,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.97,
+      "error": null,
+      "confident": false,
+      "sweep": [
+        {
+          "change": "D-cutover-1",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.0000 (observed 0.0000 \u00d7 0.8)"
+        }
+      ],
+      "chain": []
+    },
+    {
+      "scenario": "S4D",
+      "arm": "A2",
+      "trial": 2,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": true,
+      "tool_calls": 17,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.94,
+      "error": null,
+      "confident": false,
+      "sweep": [
+        {
+          "change": "D-cutover-1",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.0000 (observed 0.0000 \u00d7 0.8)"
+        }
+      ],
+      "chain": []
+    },
+    {
+      "scenario": "S4D",
+      "arm": "A2",
+      "trial": 3,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": true,
+      "tool_calls": 17,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 1.02,
+      "error": null,
+      "confident": false,
+      "sweep": [
+        {
+          "change": "D-cutover-1",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.0000 (observed 0.0000 \u00d7 0.8)"
+        }
+      ],
+      "chain": []
+    },
+    {
+      "scenario": "S4D",
+      "arm": "A3",
+      "trial": 1,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": true,
+      "tool_calls": 17,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.94,
+      "error": null,
+      "confident": false,
+      "sweep": [
+        {
+          "change": "D-cutover-1",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.0000 (observed 0.0000 \u00d7 0.8)"
+        }
+      ],
+      "chain": []
+    },
+    {
+      "scenario": "S4D",
+      "arm": "A3",
+      "trial": 2,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": true,
+      "tool_calls": 17,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.98,
+      "error": null,
+      "confident": false,
+      "sweep": [
+        {
+          "change": "D-cutover-1",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.0000 (observed 0.0000 \u00d7 0.8)"
+        }
+      ],
+      "chain": []
+    },
+    {
+      "scenario": "S4D",
+      "arm": "A3",
+      "trial": 3,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": true,
+      "tool_calls": 17,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.96,
+      "error": null,
+      "confident": false,
+      "sweep": [
+        {
+          "change": "D-cutover-1",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.0000 (observed 0.0000 \u00d7 0.8)"
+        }
+      ],
+      "chain": []
+    },
+    {
+      "scenario": "S4D",
+      "arm": "A3-noG5",
+      "trial": 1,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": true,
+      "tool_calls": 17,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 1.0,
+      "error": null,
+      "confident": false,
+      "sweep": [
+        {
+          "change": "D-cutover-1",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.0000 (observed 0.0000 \u00d7 0.0)"
+        }
+      ],
+      "chain": []
+    },
+    {
+      "scenario": "S4D",
+      "arm": "A3-noG5",
+      "trial": 2,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": true,
+      "tool_calls": 17,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 1.08,
+      "error": null,
+      "confident": false,
+      "sweep": [
+        {
+          "change": "D-cutover-1",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.0000 (observed 0.0000 \u00d7 0.0)"
+        }
+      ],
+      "chain": []
+    },
+    {
+      "scenario": "S4D",
+      "arm": "A3-noG5",
+      "trial": 3,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": true,
+      "tool_calls": 17,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 1.04,
+      "error": null,
+      "confident": false,
+      "sweep": [
+        {
+          "change": "D-cutover-1",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.0000 (observed 0.0000 \u00d7 0.0)"
+        }
+      ],
+      "chain": []
+    },
+    {
+      "scenario": "S4D",
+      "arm": "A4",
+      "trial": 1,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": false,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.86,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "confident": false,
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S4D",
+      "arm": "A4",
+      "trial": 2,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": false,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.84,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "confident": false,
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S4D",
+      "arm": "A4",
+      "trial": 3,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": false,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.85,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "confident": false,
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S4S",
+      "arm": "N",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-ad-5",
+      "tied": [
+        "D-ad-5"
+      ],
+      "top1": null,
+      "outcome_correct": false,
+      "false_blame": true,
+      "abstention_correct": false,
+      "tool_calls": 0,
+      "seconds": 0.0
+    },
+    {
+      "scenario": "S4S",
+      "arm": "A2",
+      "trial": 1,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": true,
+      "tool_calls": 12,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.19,
+      "error": null,
+      "confident": false,
+      "sweep": [],
+      "chain": []
+    },
+    {
+      "scenario": "S4S",
+      "arm": "A2",
+      "trial": 2,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": true,
+      "tool_calls": 12,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.2,
+      "error": null,
+      "confident": false,
+      "sweep": [],
+      "chain": []
+    },
+    {
+      "scenario": "S4S",
+      "arm": "A2",
+      "trial": 3,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": true,
+      "tool_calls": 12,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.21,
+      "error": null,
+      "confident": false,
+      "sweep": [],
+      "chain": []
+    },
+    {
+      "scenario": "S4S",
+      "arm": "A3",
+      "trial": 1,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": true,
+      "tool_calls": 12,
+      "gate_attempts": 0,
+      "precedents": 5,
+      "seconds": 0.21,
+      "error": null,
+      "confident": false,
+      "sweep": [],
+      "chain": []
+    },
+    {
+      "scenario": "S4S",
+      "arm": "A3",
+      "trial": 2,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": true,
+      "tool_calls": 12,
+      "gate_attempts": 0,
+      "precedents": 5,
+      "seconds": 0.17,
+      "error": null,
+      "confident": false,
+      "sweep": [],
+      "chain": []
+    },
+    {
+      "scenario": "S4S",
+      "arm": "A3",
+      "trial": 3,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": true,
+      "tool_calls": 12,
+      "gate_attempts": 0,
+      "precedents": 5,
+      "seconds": 0.17,
+      "error": null,
+      "confident": false,
+      "sweep": [],
+      "chain": []
+    },
+    {
+      "scenario": "S4S",
+      "arm": "A3-noG5",
+      "trial": 1,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": true,
+      "tool_calls": 12,
+      "gate_attempts": 0,
+      "precedents": 5,
+      "seconds": 0.17,
+      "error": null,
+      "confident": false,
+      "sweep": [],
+      "chain": []
+    },
+    {
+      "scenario": "S4S",
+      "arm": "A3-noG5",
+      "trial": 2,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": true,
+      "tool_calls": 12,
+      "gate_attempts": 0,
+      "precedents": 5,
+      "seconds": 0.17,
+      "error": null,
+      "confident": false,
+      "sweep": [],
+      "chain": []
+    },
+    {
+      "scenario": "S4S",
+      "arm": "A3-noG5",
+      "trial": 3,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": true,
+      "tool_calls": 12,
+      "gate_attempts": 0,
+      "precedents": 5,
+      "seconds": 0.16,
+      "error": null,
+      "confident": false,
+      "sweep": [],
+      "chain": []
+    },
+    {
+      "scenario": "S4S",
+      "arm": "A4",
+      "trial": 1,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": false,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.11,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "confident": false,
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S4S",
+      "arm": "A4",
+      "trial": 2,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": false,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.13,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "confident": false,
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S4S",
+      "arm": "A4",
+      "trial": 3,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": false,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.12,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "confident": false,
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S12",
+      "arm": "N",
+      "trial": 1,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": false
+    },
+    {
+      "scenario": "S12",
+      "arm": "A2",
+      "trial": 1,
+      "outcome": "NOT_CONFIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 12,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.35,
+      "error": null,
+      "confident": false,
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S12",
+      "arm": "A2",
+      "trial": 2,
+      "outcome": "NOT_CONFIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 12,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.35,
+      "error": null,
+      "confident": false,
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S12",
+      "arm": "A2",
+      "trial": 3,
+      "outcome": "NOT_CONFIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 12,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.33,
+      "error": null,
+      "confident": false,
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S12",
+      "arm": "A3",
+      "trial": 1,
+      "outcome": "NOT_CONFIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 12,
+      "gate_attempts": 0,
+      "precedents": 5,
+      "seconds": 0.36,
+      "error": null,
+      "confident": false,
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S12",
+      "arm": "A3",
+      "trial": 2,
+      "outcome": "NOT_CONFIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 12,
+      "gate_attempts": 0,
+      "precedents": 5,
+      "seconds": 0.32,
+      "error": null,
+      "confident": false,
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S12",
+      "arm": "A3",
+      "trial": 3,
+      "outcome": "NOT_CONFIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 12,
+      "gate_attempts": 0,
+      "precedents": 5,
+      "seconds": 0.3,
+      "error": null,
+      "confident": false,
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S12",
+      "arm": "A3-noG5",
+      "trial": 1,
+      "outcome": "NOT_CONFIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 12,
+      "gate_attempts": 0,
+      "precedents": 5,
+      "seconds": 0.38,
+      "error": null,
+      "confident": false,
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S12",
+      "arm": "A3-noG5",
+      "trial": 2,
+      "outcome": "NOT_CONFIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 12,
+      "gate_attempts": 0,
+      "precedents": 5,
+      "seconds": 0.29,
+      "error": null,
+      "confident": false,
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S12",
+      "arm": "A3-noG5",
+      "trial": 3,
+      "outcome": "NOT_CONFIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 12,
+      "gate_attempts": 0,
+      "precedents": 5,
+      "seconds": 0.24,
+      "error": null,
+      "confident": false,
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S12",
+      "arm": "A4",
+      "trial": 1,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": false,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.12,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "confident": false,
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S12",
+      "arm": "A4",
+      "trial": 2,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": false,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.11,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "confident": false,
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S12",
+      "arm": "A4",
+      "trial": 3,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": false,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.12,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "confident": false,
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S1b",
+      "arm": "N",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-ad-3",
+      "tied": [
+        "D-ad-3"
+      ],
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": true,
+      "abstention_correct": null,
+      "tool_calls": 0,
+      "seconds": 0.0
+    },
+    {
+      "scenario": "S1b",
+      "arm": "A2",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-421",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 13,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.29,
+      "error": null,
+      "confident": true,
+      "sweep": [
+        {
+          "change": "D-pay-421",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.1950 (observed 0.2437 \u00d7 0.8)"
+        },
+        {
+          "change": "D-ad-3",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pay-421",
+        "payment",
+        "checkout"
+      ]
+    },
+    {
+      "scenario": "S1b",
+      "arm": "A2",
+      "trial": 2,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-421",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 13,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.37,
+      "error": null,
+      "confident": true,
+      "sweep": [
+        {
+          "change": "D-pay-421",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.1950 (observed 0.2437 \u00d7 0.8)"
+        },
+        {
+          "change": "D-ad-3",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pay-421",
+        "payment",
+        "checkout"
+      ]
+    },
+    {
+      "scenario": "S1b",
+      "arm": "A2",
+      "trial": 3,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-421",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 13,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.25,
+      "error": null,
+      "confident": true,
+      "sweep": [
+        {
+          "change": "D-pay-421",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.1950 (observed 0.2437 \u00d7 0.8)"
+        },
+        {
+          "change": "D-ad-3",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pay-421",
+        "payment",
+        "checkout"
+      ]
+    },
+    {
+      "scenario": "S1b",
+      "arm": "A3",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-421",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 13,
+      "gate_attempts": 1,
+      "precedents": 5,
+      "seconds": 0.34,
+      "error": null,
+      "confident": true,
+      "sweep": [
+        {
+          "change": "D-pay-421",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.1950 (observed 0.2437 \u00d7 0.8)"
+        },
+        {
+          "change": "D-ad-3",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pay-421",
+        "payment",
+        "checkout"
+      ]
+    },
+    {
+      "scenario": "S1b",
+      "arm": "A3",
+      "trial": 2,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-421",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 13,
+      "gate_attempts": 1,
+      "precedents": 5,
+      "seconds": 0.34,
+      "error": null,
+      "confident": true,
+      "sweep": [
+        {
+          "change": "D-pay-421",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.1950 (observed 0.2437 \u00d7 0.8)"
+        },
+        {
+          "change": "D-ad-3",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pay-421",
+        "payment",
+        "checkout"
+      ]
+    },
+    {
+      "scenario": "S1b",
+      "arm": "A3",
+      "trial": 3,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-421",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 13,
+      "gate_attempts": 1,
+      "precedents": 5,
+      "seconds": 0.32,
+      "error": null,
+      "confident": true,
+      "sweep": [
+        {
+          "change": "D-pay-421",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.1950 (observed 0.2437 \u00d7 0.8)"
+        },
+        {
+          "change": "D-ad-3",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pay-421",
+        "payment",
+        "checkout"
+      ]
+    },
+    {
+      "scenario": "S1b",
+      "arm": "A3-noG5",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-421",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 13,
+      "gate_attempts": 1,
+      "precedents": 5,
+      "seconds": 0.32,
+      "error": null,
+      "confident": true,
+      "sweep": [
+        {
+          "change": "D-pay-421",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.0000 (observed 0.2437 \u00d7 0.0)"
+        },
+        {
+          "change": "D-ad-3",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pay-421",
+        "payment",
+        "checkout"
+      ]
+    },
+    {
+      "scenario": "S1b",
+      "arm": "A3-noG5",
+      "trial": 2,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-421",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 13,
+      "gate_attempts": 1,
+      "precedents": 5,
+      "seconds": 0.33,
+      "error": null,
+      "confident": true,
+      "sweep": [
+        {
+          "change": "D-pay-421",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.0000 (observed 0.2437 \u00d7 0.0)"
+        },
+        {
+          "change": "D-ad-3",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pay-421",
+        "payment",
+        "checkout"
+      ]
+    },
+    {
+      "scenario": "S1b",
+      "arm": "A3-noG5",
+      "trial": 3,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-421",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 13,
+      "gate_attempts": 1,
+      "precedents": 5,
+      "seconds": 0.29,
+      "error": null,
+      "confident": true,
+      "sweep": [
+        {
+          "change": "D-pay-421",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.0000 (observed 0.2437 \u00d7 0.0)"
+        },
+        {
+          "change": "D-ad-3",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pay-421",
+        "payment",
+        "checkout"
+      ]
+    },
+    {
+      "scenario": "S1b",
+      "arm": "A4",
+      "trial": 1,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.11,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "confident": false,
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S1b",
+      "arm": "A4",
+      "trial": 2,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.11,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "confident": false,
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S1b",
+      "arm": "A4",
+      "trial": 3,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.11,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "confident": false,
+      "sweep": [],
+      "chain": null
+    }
+  ],
+  "checks": {
+    "S13": {
+      "scenario": "S13",
+      "tenant": "acme",
+      "workers": 16,
+      "rounds": 100,
+      "readers": 4,
+      "rounds_with_exactly_one_owner": 100,
+      "max_claim_edges_per_task": 1,
+      "counter_expected": 1600,
+      "counter_actual": 1600,
+      "lost_updates": 0,
+      "write_errors": 0,
+      "read_errors": 0,
+      "claims_per_s": 1389.6,
+      "storm_s": 1.15,
+      "ro_read_ms": {
+        "quiet": {
+          "n": 1525,
+          "p50": 2.595,
+          "p95": 3.957
+        },
+        "during_writes": {
+          "n": 834,
+          "p50": 5.224,
+          "p95": 10.47,
+          "mean": 5.529
+        }
+      },
+      "engine": "FalkorDB (pinned; see backend/faultline/graph/algo/resolved.json)",
+      "sample_errors": [],
+      "passed": true
+    },
+    "S1b_cold_vs_warm": {
+      "cold": {
+        "outcome": "CONFIRMED",
+        "tool_calls": 13,
+        "seconds": 0.19,
+        "prior_payment": 0.7681,
+        "top_precedent": "inc-h037"
+      },
+      "warm": {
+        "outcome": "CONFIRMED",
+        "tool_calls": 13,
+        "seconds": 0.25,
+        "prior_payment": 0.8423,
+        "top_precedent_is_s1": true,
+        "derived_runbook_first": true
+      },
+      "gate_verdicts_identical": true,
+      "s1_writeback": "7/7"
+    },
+    "S6": {
+      "verdict": "block",
+      "risk": 0.8,
+      "decisions": [
+        "ADR-012",
+        "ADR-013"
+      ],
+      "reviewers": 5
+    },
+    "S5": {
+      "verdict": "NOT_APPLIED",
+      "success_written": false,
+      "stage": "AWAITING_APPROVAL"
+    },
+    "S9": {
+      "verdict": "UNKNOWN",
+      "success_written": false,
+      "stage": "UNKNOWN_ESCALATED",
+      "reconciled": [
+        [
+          "at_main",
+          "APPLIED",
+          "7/7"
+        ]
+      ]
+    },
+    "S10": {
+      "before_cites_ADR-021": true,
+      "after_cites_ADR-021": false,
+      "receipt_nodes": 2,
+      "receipt_relationships": 15,
+      "vectors_still_found": 0,
+      "guard_ok_after": true
+    },
+    "S8": {
+      "precedents": 5,
+      "precedents_in_family": 5,
+      "family_size": 23,
+      "first_runbook": "rb-derived-86fb23c933",
+      "first_runbook_derived": true,
+      "first_runbook_support": 13
+    },
+    "S11": {
+      "bus_factor": 0,
+      "top_contributor_inactive": true,
+      "paged_first": "gx-p-011",
+      "paged_first_active": true,
+      "escalation_edges": 4,
+      "managers_in_tree": 8
+    },
+    "S7": {
+      "passed": 34,
+      "failed": 0,
+      "skipped": 1,
+      "ok": true
+    }
+  },
+  "repo": {
+    "templates": 102,
+    "algorithms": 10,
+    "mcp_tools": 31,
+    "mcp_tools_hosted": 27
+  }
+}

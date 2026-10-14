@@ -1,0 +1,3804 @@
+{
+  "engine": "6.0.2",
+  "digest": "sha256:107455e862a824e45e8e9f5a7fbfdf5e00a08b14e13eae2577c72fd9e3f59ba6",
+  "started": "2026-10-13T11:53:27+00:00",
+  "profile_runs": 20,
+  "seed": 20261013,
+  "machine": {
+    "mem_available_mb": 6780,
+    "cpus": 20
+  },
+  "sizes": {
+    "1k": {
+      "label": "1k",
+      "tenant": "scale1k",
+      "services": 1000,
+      "units": 5,
+      "engine_used_mb_before": 2013.8,
+      "memory_estimate_mb": 50.0,
+      "seed": {
+        "graph": "golden_scale1k",
+        "units": 5,
+        "data_hash": "c7c6734ddc6c",
+        "node_rows": 30630,
+        "edge_rows": 107158,
+        "generate_s": 0.77,
+        "write_s": 2.88,
+        "finalise_s": 0.01,
+        "learn_s": 0.07,
+        "derived_runbooks": 35,
+        "seed_s": 3.75
+      },
+      "clean_room": "GRAPH.COPY of the golden graph",
+      "memory_mb": 42,
+      "memory_detail": {
+        "total_graph_sz_mb": 42,
+        "label_matrices_sz_mb": 1,
+        "relation_matrices_sz_mb": 3,
+        "amortized_node_block_sz_mb": 0,
+        "amortized_unlabeled_nodes_attributes_sz_mb": 0,
+        "amortized_edge_block_sz_mb": 2,
+        "indices_sz_mb": 15
+      },
+      "nodes": 29131,
+      "edges": 107528,
+      "counts": {
+        "nodes": {
+          "Service": 1000,
+          "Endpoint": 45,
+          "Datastore": 30,
+          "ExternalDependency": 15,
+          "Repo": 60,
+          "File": 4000,
+          "Commit": 9736,
+          "PR": 4840,
+          "Deploy": 5244,
+          "FeatureFlag": 45,
+          "Incident": 750,
+          "Symptom": 40,
+          "Person": 900,
+          "Team": 60,
+          "Runbook": 70,
+          "Decision": 35,
+          "Postmortem": 750,
+          "Doc": 70,
+          "Action": 755,
+          "SLO": 650,
+          "Customer": 35,
+          "Meta": 1
+        },
+        "edges": {
+          "AFFECTED": 2820,
+          "ATTEMPTED": 5,
+          "AUTHORED": 14576,
+          "CALLS": 2814,
+          "CAUSED": 750,
+          "CHANGED": 5244,
+          "CITES": 40,
+          "COLLABORATES": 7106,
+          "COMMITTED": 5325,
+          "CONSTRAINS": 55,
+          "CONSUMES": 45,
+          "CONTAINS": 23472,
+          "DEPENDS_ON": 1646,
+          "DOCUMENTS": 750,
+          "EXPOSES": 45,
+          "FOR": 650,
+          "GATES": 45,
+          "HAS_SYMPTOM": 750,
+          "MEMBER_OF": 880,
+          "ON_CALL": 1320,
+          "OWNED_AT": 1040,
+          "OWNS": 1020,
+          "PART_OF": 4000,
+          "PRODUCED": 70,
+          "PROPAGATES_TO": 1646,
+          "REPORTS_TO": 895,
+          "RESOLVED": 750,
+          "RESOLVED_BY": 750,
+          "RUNBOOK_FOR": 110,
+          "SUPERSEDES": 10,
+          "TOUCHES": 28564,
+          "DERIVED_FROM": 335
+        }
+      },
+      "copy_ms": 341.0,
+      "incident": {
+        "home_unit": 2,
+        "cause_target": "card-gateway-u002",
+        "symptom": "order-orchestrator-u002",
+        "hub": "experiment-service",
+        "roles": {
+          "cause": "D-d0a135a2b6",
+          "g2": "D-1277068eb8",
+          "g5": "D-7b9cb0273e",
+          "hub": "D-bdf46335d0",
+          "origin": "D-cc1bae6040"
+        },
+        "distractors": {
+          "D-1277068eb8": {
+            "target": "recommender-u003",
+            "category": "G2"
+          },
+          "D-7b9cb0273e": {
+            "target": "route-planner-u002",
+            "category": "G5"
+          },
+          "D-bdf46335d0": {
+            "target": "experiment-service",
+            "category": "origin"
+          },
+          "D-cc1bae6040": {
+            "target": "pricing-events-u002",
+            "category": "origin"
+          }
+        },
+        "expected": {
+          "outcome": "CONFIRMED",
+          "cause": "D-d0a135a2b6",
+          "eliminated": {
+            "D-1277068eb8": "G2",
+            "D-7b9cb0273e": "G5",
+            "D-cc1bae6040": "G4 origin",
+            "D-bdf46335d0": "G4 origin"
+          },
+          "ambient": [
+            "D-38295bcb8c",
+            "D-fac0c65722"
+          ]
+        },
+        "ambient": 2,
+        "monitored": 82
+      },
+      "run": {
+        "outcome": "CONFIRMED",
+        "cause": "D-d0a135a2b6",
+        "confident": true,
+        "sweep": {
+          "D-d0a135a2b6": "candidate: G5: max flow 1.0000 \u2265 needed 0.2691 (observed 0.3363 \u00d7 0.8)",
+          "D-1277068eb8": "eliminated: G2: no path to any primary symptom (no path, no claim)",
+          "D-38295bcb8c": "eliminated: G5: max flow 0.0200 < needed 0.2691 (observed 0.3363 \u00d7 0.8); another suspect alone can carry 1.0000",
+          "D-7b9cb0273e": "eliminated: G5: max flow 0.0200 < needed 0.2691 (observed 0.3363 \u00d7 0.8); another suspect alone can carry 1.0000",
+          "D-bdf46335d0": "eliminated: G4 origin: experiment-service measured in band this run while card-gateway-u002 is anomalous; a path and capacity alone do not make it the origin",
+          "D-cc1bae6040": "eliminated: G4 origin: pricing-events-u002 measured in band this run while card-gateway-u002 is anomalous; a path and capacity alone do not make it the origin",
+          "D-fac0c65722": "eliminated: G2: no path to any primary symptom (no path, no claim)"
+        },
+        "correct": true,
+        "why": [],
+        "ambient_left_candidate": [],
+        "seconds": 0.98,
+        "error": null,
+        "tool_calls": 37,
+        "swept": 7,
+        "windows_written": 2952,
+        "protect": [
+          "edge-gateway-u002"
+        ],
+        "cut": [
+          {
+            "u": "card-gateway-u002",
+            "v": "edge-router-u002",
+            "cut_cost": 0.0735,
+            "domain": "service"
+          },
+          {
+            "u": "card-gateway-u002",
+            "v": "refund-service-u002",
+            "cut_cost": 0.0025,
+            "domain": "service"
+          },
+          {
+            "u": "order-api-u002",
+            "v": "mobile-bff-u002",
+            "cut_cost": 0.02,
+            "domain": "service"
+          },
+          {
+            "u": "order-api-u002",
+            "v": "partner-api-u002",
+            "cut_cost": 0.005,
+            "domain": "service"
+          },
+          {
+            "u": "order-api-u002",
+            "v": "storefront-bff-u002",
+            "cut_cost": 0.04,
+            "domain": "service"
+          }
+        ],
+        "max_flow": 0.141,
+        "whatif": {
+          "verdict": "contains",
+          "removed_edges": 5,
+          "reach_before": [
+            "edge-gateway-u002",
+            "edge-router-u002",
+            "mobile-bff-u002",
+            "order-api-u002",
+            "order-orchestrator-u002",
+            "partner-api-u002",
+            "refund-service-u002",
+            "storefront-bff-u002"
+          ],
+          "reach_after": [
+            "order-api-u002",
+            "order-orchestrator-u002"
+          ],
+          "no_longer_reached": [
+            "edge-gateway-u002",
+            "edge-router-u002",
+            "mobile-bff-u002",
+            "partner-api-u002",
+            "refund-service-u002",
+            "storefront-bff-u002"
+          ],
+          "protected_still_reached": [],
+          "still_connected": {
+            "auth-service": true,
+            "auth-service-u001": true,
+            "auth-service-u002": true,
+            "auth-service-u003": true,
+            "auth-service-u004": true,
+            "basket-service": true,
+            "basket-service-u001": true,
+            "basket-service-u002": true,
+            "basket-service-u003": true,
+            "basket-service-u004": true
+          }
+        },
+        "options": [
+          "rollback_deploy",
+          "open_issue",
+          "flip_flag"
+        ],
+        "truncated_calls": [
+          {
+            "tool": "chokepoints",
+            "template": "Q-CHOKE-1",
+            "rows": 10
+          },
+          {
+            "tool": "rank_causes",
+            "template": "Q-RANK-1",
+            "rows": 50
+          },
+          {
+            "tool": "who_fixes",
+            "template": "Q-ORG-HARM",
+            "rows": 10
+          }
+        ],
+        "call_list_truncated": false
+      },
+      "sweep_ms": {
+        "n": 3,
+        "p50": 114.396,
+        "p95": 132.131,
+        "max": 132.131,
+        "changes": 7,
+        "eliminated": 6
+      },
+      "preflight": [
+        {
+          "component": "card-gateway-u002",
+          "verdict": "require_review",
+          "risk": 0.5564,
+          "error": null,
+          "ms": 14.1,
+          "template_ms": 1.05,
+          "terms": {
+            "blast": {
+              "value": 0.8,
+              "weighted": 0.2,
+              "why": "a failure reaches 8 components: edge-gateway-u002, edge-router-u002, mobile-bff-u002, order-api-u002, order-orchestrator-u002, partner-api-u002"
+            },
+            "revenue": {
+              "value": 1.0,
+              "weighted": 0.2,
+              "why": "reaches revenue path: edge-gateway-u002, mobile-bff-u002, order-api-u002, order-orchestrator-u002, storefront-bff-u002"
+            },
+            "betweenness": {
+              "value": 0.064,
+              "weighted": 0.0064,
+              "why": "chokepoint score 10.0 (top 155.6)"
+            },
+            "past_incidents": {
+              "value": 1.0,
+              "weighted": 0.15,
+              "why": "changes here caused 20 incidents (card-gateway-u002)"
+            },
+            "decision": {
+              "value": 0.0,
+              "weighted": 0.0,
+              "why": "no active decision contradicted"
+            },
+            "bus_factor": {
+              "value": 0.0,
+              "weighted": 0.0,
+              "why": "bus factor card-gateway-u002=3"
+            },
+            "uncertainty": {
+              "value": 0.0,
+              "weighted": 0.0,
+              "why": "owners and runbooks present"
+            }
+          }
+        },
+        {
+          "component": "experiment-service",
+          "verdict": "require_review",
+          "risk": 0.5501,
+          "error": null,
+          "ms": 11.6,
+          "template_ms": 1.56,
+          "terms": {
+            "blast": {
+              "value": 1.0,
+              "weighted": 0.25,
+              "why": "a failure reaches 100 components: address-book, address-book-u001, address-book-u002, address-book-u004, auth-service, auth-service-u001"
+            },
+            "revenue": {
+              "value": 1.0,
+              "weighted": 0.2,
+              "why": "reaches revenue path: auth-service, auth-service-u001, auth-service-u002, auth-service-u003, auth-service-u004, basket-service-u001, basket-service-u002, basket-service-u004, card-gateway-u001, card-gateway-u002, card-gateway-u004, carrier-adapter-u002, carrier-adapter-u004, catalog-service, catalog-service-u002, catalog-service-u003, catalog-service-u004, dispatch-service, dispatch-service-u001, dispatch-service-u002, dispatch-service-u003, dispatch-service-u004, edge-gateway, edge-gateway-u001, edge-gateway-u002, edge-gateway-u003, edge-gateway-u004, fx-converter-u002, fx-converter-u003, ledger-service-u001, ledger-service-u002, ledger-service-u004, mobile-bff, mobile-bff-u001, mobile-bff-u002, mobile-bff-u003, mobile-bff-u004, order-api, order-api-u001, order-api-u002, order-api-u003, order-api-u004, order-orchestrator, order-orchestrator-u001, order-orchestrator-u002, order-orchestrator-u003, order-orchestrator-u004, pricing, pricing-u001, pricing-u002, pricing-u003, pricing-u004, reservation-service, reservation-service-u001, reservation-service-u002, reservation-service-u003, reservation-service-u004, search-api, search-api-u001, search-api-u002, search-api-u003, search-api-u004, session-service-u002, stock-api-u001, stock-api-u003, storefront-bff, storefront-bff-u001, storefront-bff-u002, storefront-bff-u003, storefront-bff-u004, tax-calculator, tax-calculator-u001, tax-calculator-u002"
+            },
+            "betweenness": {
+              "value": 0.5015,
+              "weighted": 0.0501,
+              "why": "chokepoint score 78.0 (top 155.6)"
+            },
+            "past_incidents": {
+              "value": 0.0,
+              "weighted": 0.0,
+              "why": "changes here caused "
+            },
+            "decision": {
+              "value": 0.0,
+              "weighted": 0.0,
+              "why": "no active decision contradicted"
+            },
+            "bus_factor": {
+              "value": 0.0,
+              "weighted": 0.0,
+              "why": "bus factor experiment-service=3"
+            },
+            "uncertainty": {
+              "value": 1.0,
+              "weighted": 0.05,
+              "why": "missing owner or runbook: experiment-service"
+            }
+          }
+        }
+      ],
+      "templates": {
+        "Q-BLAST-1": {
+          "instances": [
+            {
+              "instance": "cause",
+              "params": {
+                "id": "card-gateway-u002"
+              },
+              "runs": 20,
+              "rows": 8,
+              "truncated": false,
+              "engine_ms_p50": 0.118,
+              "engine_ms_p95": 0.167,
+              "wall_ms_p50": 0.364,
+              "wall_ms_p95": 0.579
+            },
+            {
+              "instance": "hub",
+              "params": {
+                "id": "experiment-service"
+              },
+              "runs": 20,
+              "rows": 100,
+              "truncated": true,
+              "engine_ms_p50": 0.475,
+              "engine_ms_p95": 0.504,
+              "wall_ms_p50": 1.193,
+              "wall_ms_p95": 1.545
+            },
+            {
+              "instance": "run",
+              "params": {
+                "id": "order-orchestrator-u002"
+              },
+              "runs": 20,
+              "rows": 5,
+              "truncated": false,
+              "engine_ms_p50": 0.077,
+              "engine_ms_p95": 0.122,
+              "wall_ms_p50": 0.189,
+              "wall_ms_p95": 0.278
+            }
+          ],
+          "engine_ms_p50": 0.475,
+          "engine_ms_p95": 0.504,
+          "wall_ms_p50": 1.193,
+          "wall_ms_p95": 1.545,
+          "rows": 100,
+          "instance": "hub",
+          "truncated": true,
+          "errors": 0
+        },
+        "Q-BLAST-2": {
+          "instances": [
+            {
+              "instance": "cause",
+              "params": {
+                "id": "card-gateway-u002"
+              },
+              "runs": 20,
+              "rows": 8,
+              "truncated": false,
+              "engine_ms_p50": 0.076,
+              "engine_ms_p95": 0.099,
+              "wall_ms_p50": 0.379,
+              "wall_ms_p95": 0.589
+            },
+            {
+              "instance": "hub",
+              "params": {
+                "id": "experiment-service"
+              },
+              "runs": 20,
+              "rows": 100,
+              "truncated": true,
+              "engine_ms_p50": 2.103,
+              "engine_ms_p95": 2.322,
+              "wall_ms_p50": 3.138,
+              "wall_ms_p95": 3.476
+            }
+          ],
+          "engine_ms_p50": 2.103,
+          "engine_ms_p95": 2.322,
+          "wall_ms_p50": 3.138,
+          "wall_ms_p95": 3.476,
+          "rows": 100,
+          "instance": "hub",
+          "truncated": true,
+          "errors": 0
+        },
+        "Q-CHAIN-MON": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "chain": [
+                  "D-d0a135a2b6",
+                  "card-gateway-u002",
+                  "order-orchestrator-u002"
+                ],
+                "since": 1792031400000,
+                "until": 1792033800000
+              },
+              "runs": 20,
+              "rows": 3,
+              "truncated": false,
+              "engine_ms_p50": 0.083,
+              "engine_ms_p95": 0.089,
+              "wall_ms_p50": 0.254,
+              "wall_ms_p95": 0.308
+            }
+          ],
+          "engine_ms_p50": 0.083,
+          "engine_ms_p95": 0.089,
+          "wall_ms_p50": 0.254,
+          "wall_ms_p95": 0.308,
+          "rows": 3,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-CHANGE-2": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "id": "D-d0a135a2b6"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.058,
+              "engine_ms_p95": 0.073,
+              "wall_ms_p50": 0.177,
+              "wall_ms_p95": 0.194
+            },
+            {
+              "instance": "run",
+              "params": {
+                "id": "D-7b9cb0273e"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.058,
+              "engine_ms_p95": 0.07,
+              "wall_ms_p50": 0.229,
+              "wall_ms_p95": 0.503
+            },
+            {
+              "instance": "run",
+              "params": {
+                "id": "D-cc1bae6040"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.04,
+              "engine_ms_p95": 0.066,
+              "wall_ms_p50": 0.16,
+              "wall_ms_p95": 0.295
+            },
+            {
+              "instance": "run",
+              "params": {
+                "id": "D-bdf46335d0"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.035,
+              "engine_ms_p95": 0.054,
+              "wall_ms_p50": 0.134,
+              "wall_ms_p95": 0.168
+            },
+            {
+              "instance": "run",
+              "params": {
+                "id": "D-38295bcb8c"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.032,
+              "engine_ms_p95": 0.038,
+              "wall_ms_p50": 0.127,
+              "wall_ms_p95": 0.154
+            }
+          ],
+          "engine_ms_p50": 0.058,
+          "engine_ms_p95": 0.073,
+          "wall_ms_p50": 0.177,
+          "wall_ms_p95": 0.194,
+          "rows": 1,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-CHOKE-1": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {},
+              "runs": 20,
+              "rows": 10,
+              "truncated": true,
+              "engine_ms_p50": 0.703,
+              "engine_ms_p95": 0.818,
+              "wall_ms_p50": 0.905,
+              "wall_ms_p95": 1.011
+            }
+          ],
+          "engine_ms_p50": 0.703,
+          "engine_ms_p95": 0.818,
+          "wall_ms_p50": 0.905,
+          "wall_ms_p95": 1.011,
+          "rows": 10,
+          "instance": "run",
+          "truncated": true,
+          "errors": 0
+        },
+        "Q-CODE-1": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "id": "D-d0a135a2b6"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 11.587,
+              "engine_ms_p95": 13.168,
+              "wall_ms_p50": 12.265,
+              "wall_ms_p95": 14.163
+            },
+            {
+              "instance": "run",
+              "params": {
+                "id": "D-7b9cb0273e"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 11.498,
+              "engine_ms_p95": 12.232,
+              "wall_ms_p50": 12.213,
+              "wall_ms_p95": 12.672
+            },
+            {
+              "instance": "run",
+              "params": {
+                "id": "D-cc1bae6040"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 11.504,
+              "engine_ms_p95": 11.834,
+              "wall_ms_p50": 12.269,
+              "wall_ms_p95": 12.461
+            },
+            {
+              "instance": "run",
+              "params": {
+                "id": "D-bdf46335d0"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 11.4,
+              "engine_ms_p95": 11.648,
+              "wall_ms_p50": 12.046,
+              "wall_ms_p95": 12.541
+            },
+            {
+              "instance": "run",
+              "params": {
+                "id": "D-38295bcb8c"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 11.476,
+              "engine_ms_p95": 12.0,
+              "wall_ms_p50": 12.221,
+              "wall_ms_p95": 13.069
+            }
+          ],
+          "engine_ms_p50": 11.587,
+          "engine_ms_p95": 13.168,
+          "wall_ms_p50": 12.265,
+          "wall_ms_p95": 14.163,
+          "rows": 1,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-CONN-2": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "protect": [
+                  "edge-gateway-u002"
+                ],
+                "target": "card-gateway-u002"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.518,
+              "engine_ms_p95": 0.533,
+              "wall_ms_p50": 0.684,
+              "wall_ms_p95": 0.729
+            }
+          ],
+          "engine_ms_p50": 0.518,
+          "engine_ms_p95": 0.533,
+          "wall_ms_p50": 0.684,
+          "wall_ms_p95": 0.729,
+          "rows": 1,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-CTX-1": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "id": "order-orchestrator-u002",
+                "now": 1792033200000
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.045,
+              "engine_ms_p95": 0.067,
+              "wall_ms_p50": 0.189,
+              "wall_ms_p95": 0.24
+            }
+          ],
+          "engine_ms_p50": 0.045,
+          "engine_ms_p95": 0.067,
+          "wall_ms_p50": 0.189,
+          "wall_ms_p95": 0.24,
+          "rows": 1,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-CUT-1": {
+          "instances": [
+            {
+              "instance": "cause\u2192protect",
+              "params": {
+                "failing": "card-gateway-u002",
+                "protect": [
+                  "edge-gateway-u002"
+                ]
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 3.319,
+              "engine_ms_p95": 6.165,
+              "wall_ms_p50": 4.229,
+              "wall_ms_p95": 7.027
+            }
+          ],
+          "engine_ms_p50": 3.319,
+          "engine_ms_p95": 6.165,
+          "wall_ms_p50": 4.229,
+          "wall_ms_p95": 7.027,
+          "rows": 1,
+          "instance": "cause\u2192protect",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-CUT-2": {
+          "instances": [
+            {
+              "instance": "cause",
+              "params": {
+                "failing": "card-gateway-u002"
+              },
+              "runs": 20,
+              "rows": 12,
+              "truncated": false,
+              "engine_ms_p50": 0.058,
+              "engine_ms_p95": 0.068,
+              "wall_ms_p50": 0.285,
+              "wall_ms_p95": 0.762
+            },
+            {
+              "instance": "hub",
+              "params": {
+                "failing": "experiment-service"
+              },
+              "runs": 20,
+              "rows": 100,
+              "truncated": true,
+              "engine_ms_p50": 1.88,
+              "engine_ms_p95": 1.967,
+              "wall_ms_p50": 3.132,
+              "wall_ms_p95": 3.314
+            }
+          ],
+          "engine_ms_p50": 1.88,
+          "engine_ms_p95": 1.967,
+          "wall_ms_p50": 3.132,
+          "wall_ms_p95": 3.314,
+          "rows": 100,
+          "instance": "hub",
+          "truncated": true,
+          "errors": 0
+        },
+        "Q-DEC-1": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "change": "D-d0a135a2b6"
+              },
+              "runs": 20,
+              "rows": 0,
+              "truncated": false,
+              "engine_ms_p50": 0.004,
+              "engine_ms_p95": 0.008,
+              "wall_ms_p50": 0.117,
+              "wall_ms_p95": 0.301
+            },
+            {
+              "instance": "run",
+              "params": {
+                "change": "D-7b9cb0273e"
+              },
+              "runs": 20,
+              "rows": 0,
+              "truncated": false,
+              "engine_ms_p50": 0.004,
+              "engine_ms_p95": 0.005,
+              "wall_ms_p50": 0.126,
+              "wall_ms_p95": 0.163
+            },
+            {
+              "instance": "run",
+              "params": {
+                "change": "D-cc1bae6040"
+              },
+              "runs": 20,
+              "rows": 0,
+              "truncated": false,
+              "engine_ms_p50": 0.004,
+              "engine_ms_p95": 0.007,
+              "wall_ms_p50": 0.151,
+              "wall_ms_p95": 0.524
+            },
+            {
+              "instance": "run",
+              "params": {
+                "change": "D-bdf46335d0"
+              },
+              "runs": 20,
+              "rows": 0,
+              "truncated": false,
+              "engine_ms_p50": 0.003,
+              "engine_ms_p95": 0.004,
+              "wall_ms_p50": 0.099,
+              "wall_ms_p95": 0.116
+            },
+            {
+              "instance": "run",
+              "params": {
+                "change": "D-38295bcb8c"
+              },
+              "runs": 20,
+              "rows": 0,
+              "truncated": false,
+              "engine_ms_p50": 0.003,
+              "engine_ms_p95": 0.004,
+              "wall_ms_p50": 0.096,
+              "wall_ms_p95": 0.107
+            }
+          ],
+          "engine_ms_p50": 0.004,
+          "engine_ms_p95": 0.008,
+          "wall_ms_p50": 0.117,
+          "wall_ms_p95": 0.301,
+          "rows": 0,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-GATE-1": {
+          "instances": [
+            {
+              "instance": "cause\u2192symptom",
+              "params": {
+                "cause": "D-d0a135a2b6",
+                "symptom": "order-orchestrator-u002"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.044,
+              "engine_ms_p95": 0.073,
+              "wall_ms_p50": 0.307,
+              "wall_ms_p95": 0.66
+            },
+            {
+              "instance": "hub\u2192symptom",
+              "params": {
+                "cause": "D-bdf46335d0",
+                "symptom": "order-orchestrator-u002"
+              },
+              "runs": 20,
+              "rows": 3,
+              "truncated": false,
+              "engine_ms_p50": 1.069,
+              "engine_ms_p95": 1.179,
+              "wall_ms_p50": 1.671,
+              "wall_ms_p95": 1.971
+            },
+            {
+              "instance": "run",
+              "params": {
+                "cause": "D-7b9cb0273e",
+                "symptom": "order-orchestrator-u002"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.034,
+              "engine_ms_p95": 0.047,
+              "wall_ms_p50": 0.149,
+              "wall_ms_p95": 0.456
+            },
+            {
+              "instance": "run",
+              "params": {
+                "cause": "D-cc1bae6040",
+                "symptom": "order-orchestrator-u002"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.034,
+              "engine_ms_p95": 0.043,
+              "wall_ms_p50": 0.142,
+              "wall_ms_p95": 0.171
+            },
+            {
+              "instance": "run",
+              "params": {
+                "cause": "D-38295bcb8c",
+                "symptom": "order-orchestrator-u002"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.03,
+              "engine_ms_p95": 0.035,
+              "wall_ms_p50": 0.174,
+              "wall_ms_p95": 0.22
+            },
+            {
+              "instance": "run",
+              "params": {
+                "cause": "D-1277068eb8",
+                "symptom": "order-orchestrator-u002"
+              },
+              "runs": 20,
+              "rows": 0,
+              "truncated": false,
+              "engine_ms_p50": 0.01,
+              "engine_ms_p95": 0.013,
+              "wall_ms_p50": 0.086,
+              "wall_ms_p95": 0.108
+            }
+          ],
+          "engine_ms_p50": 1.069,
+          "engine_ms_p95": 1.179,
+          "wall_ms_p50": 1.671,
+          "wall_ms_p95": 1.971,
+          "rows": 3,
+          "instance": "hub\u2192symptom",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-GATE-2": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "cause": "D-d0a135a2b6",
+                "onset": 1792033200000,
+                "window_ms": 1800000
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.733,
+              "engine_ms_p95": 0.763,
+              "wall_ms_p50": 0.92,
+              "wall_ms_p95": 0.979
+            }
+          ],
+          "engine_ms_p50": 0.733,
+          "engine_ms_p95": 0.763,
+          "wall_ms_p50": 0.92,
+          "wall_ms_p95": 0.979,
+          "rows": 1,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-GATE-3": {
+          "instances": [
+            {
+              "instance": "cause\u2192symptom",
+              "params": {
+                "sources": [
+                  "card-gateway-u002"
+                ],
+                "symptom": "order-orchestrator-u002"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 1.102,
+              "engine_ms_p95": 1.65,
+              "wall_ms_p50": 1.62,
+              "wall_ms_p95": 2.152
+            },
+            {
+              "instance": "hub\u2192symptom",
+              "params": {
+                "sources": [
+                  "experiment-service"
+                ],
+                "symptom": "order-orchestrator-u002"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 1.825,
+              "engine_ms_p95": 1.903,
+              "wall_ms_p50": 2.322,
+              "wall_ms_p95": 2.547
+            },
+            {
+              "instance": "run",
+              "params": {
+                "sources": [
+                  "logistics-admin-u002"
+                ],
+                "symptom": "order-orchestrator-u002"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 1.577,
+              "engine_ms_p95": 1.653,
+              "wall_ms_p50": 1.979,
+              "wall_ms_p95": 2.102
+            },
+            {
+              "instance": "run",
+              "params": {
+                "sources": [
+                  "route-planner-u002"
+                ],
+                "symptom": "order-orchestrator-u002"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 1.563,
+              "engine_ms_p95": 1.679,
+              "wall_ms_p50": 1.796,
+              "wall_ms_p95": 2.308
+            },
+            {
+              "instance": "run",
+              "params": {
+                "sources": [
+                  "pricing-events-u002"
+                ],
+                "symptom": "order-orchestrator-u002"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 1.287,
+              "engine_ms_p95": 1.312,
+              "wall_ms_p50": 1.809,
+              "wall_ms_p95": 1.868
+            }
+          ],
+          "engine_ms_p50": 1.825,
+          "engine_ms_p95": 1.903,
+          "wall_ms_p50": 2.322,
+          "wall_ms_p95": 2.547,
+          "rows": 1,
+          "instance": "hub\u2192symptom",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-GATE-4": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "chain": [
+                  "D-d0a135a2b6",
+                  "card-gateway-u002",
+                  "order-orchestrator-u002"
+                ],
+                "evidence": [
+                  "ev_4c7fb5ef5b",
+                  "ev_13ab13a24a",
+                  "ev_953612a0e1",
+                  "ev_005ffb9c55",
+                  "ev_b453300bdc",
+                  "ev_324d055792"
+                ],
+                "run": "run-scale-1k-ce31f35c"
+              },
+              "runs": 20,
+              "rows": 2,
+              "truncated": false,
+              "engine_ms_p50": 0.052,
+              "engine_ms_p95": 0.072,
+              "wall_ms_p50": 0.22,
+              "wall_ms_p95": 0.281
+            }
+          ],
+          "engine_ms_p50": 0.052,
+          "engine_ms_p95": 0.072,
+          "wall_ms_p50": 0.22,
+          "wall_ms_p95": 0.281,
+          "rows": 2,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-GATE-7": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "chain": [
+                  "D-d0a135a2b6",
+                  "card-gateway-u002",
+                  "order-orchestrator-u002"
+                ],
+                "evidence": [
+                  "ev_4c7fb5ef5b",
+                  "ev_13ab13a24a",
+                  "ev_953612a0e1",
+                  "ev_005ffb9c55",
+                  "ev_b453300bdc",
+                  "ev_324d055792",
+                  "ev_13ab13a24a",
+                  "ev_fab26f40e1"
+                ],
+                "run": "run-scale-1k-ce31f35c"
+              },
+              "runs": 20,
+              "rows": 2,
+              "truncated": false,
+              "engine_ms_p50": 0.053,
+              "engine_ms_p95": 0.081,
+              "wall_ms_p50": 0.193,
+              "wall_ms_p95": 0.266
+            }
+          ],
+          "engine_ms_p50": 0.053,
+          "engine_ms_p95": 0.081,
+          "wall_ms_p50": 0.193,
+          "wall_ms_p95": 0.266,
+          "rows": 2,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-GATE-CORR": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "cause": "D-d0a135a2b6",
+                "chain": [
+                  "D-d0a135a2b6",
+                  "card-gateway-u002",
+                  "order-orchestrator-u002"
+                ],
+                "roles": [
+                  "change",
+                  "code",
+                  "data"
+                ],
+                "run": "run-scale-1k-ce31f35c"
+              },
+              "runs": 20,
+              "rows": 3,
+              "truncated": false,
+              "engine_ms_p50": 0.129,
+              "engine_ms_p95": 0.138,
+              "wall_ms_p50": 0.295,
+              "wall_ms_p95": 0.322
+            }
+          ],
+          "engine_ms_p50": 0.129,
+          "engine_ms_p95": 0.138,
+          "wall_ms_p50": 0.295,
+          "wall_ms_p95": 0.322,
+          "rows": 3,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-GATE-G1": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "evidence": [
+                  "ev_4c7fb5ef5b",
+                  "ev_13ab13a24a",
+                  "ev_953612a0e1",
+                  "ev_005ffb9c55",
+                  "ev_b453300bdc",
+                  "ev_324d055792"
+                ],
+                "ids": [
+                  "D-d0a135a2b6"
+                ],
+                "run": "run-scale-1k-ce31f35c"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.317,
+              "engine_ms_p95": 0.371,
+              "wall_ms_p50": 0.536,
+              "wall_ms_p95": 0.866
+            }
+          ],
+          "engine_ms_p50": 0.317,
+          "engine_ms_p95": 0.371,
+          "wall_ms_p50": 0.536,
+          "wall_ms_p95": 0.866,
+          "rows": 1,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-GATE-MULT": {
+          "instances": [
+            {
+              "instance": "cause\u2192symptom",
+              "params": {
+                "sources": [
+                  "card-gateway-u002"
+                ],
+                "symptom": "order-orchestrator-u002"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.039,
+              "engine_ms_p95": 0.057,
+              "wall_ms_p50": 0.168,
+              "wall_ms_p95": 0.627
+            },
+            {
+              "instance": "hub\u2192symptom",
+              "params": {
+                "sources": [
+                  "experiment-service"
+                ],
+                "symptom": "order-orchestrator-u002"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.739,
+              "engine_ms_p95": 1.089,
+              "wall_ms_p50": 1.197,
+              "wall_ms_p95": 1.696
+            },
+            {
+              "instance": "run",
+              "params": {
+                "sources": [
+                  "logistics-admin-u002"
+                ],
+                "symptom": "order-orchestrator-u002"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.032,
+              "engine_ms_p95": 0.047,
+              "wall_ms_p50": 0.418,
+              "wall_ms_p95": 0.533
+            },
+            {
+              "instance": "run",
+              "params": {
+                "sources": [
+                  "route-planner-u002"
+                ],
+                "symptom": "order-orchestrator-u002"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.037,
+              "engine_ms_p95": 0.045,
+              "wall_ms_p50": 0.185,
+              "wall_ms_p95": 0.499
+            },
+            {
+              "instance": "run",
+              "params": {
+                "sources": [
+                  "pricing-events-u002"
+                ],
+                "symptom": "order-orchestrator-u002"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.029,
+              "engine_ms_p95": 0.041,
+              "wall_ms_p50": 0.15,
+              "wall_ms_p95": 0.49
+            }
+          ],
+          "engine_ms_p50": 0.739,
+          "engine_ms_p95": 1.089,
+          "wall_ms_p50": 1.197,
+          "wall_ms_p95": 1.696,
+          "rows": 1,
+          "instance": "hub\u2192symptom",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-HYP-1": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "inc": "inc-scale-1k-ce31f35c"
+              },
+              "runs": 20,
+              "rows": 7,
+              "truncated": false,
+              "engine_ms_p50": 0.091,
+              "engine_ms_p95": 0.124,
+              "wall_ms_p50": 0.306,
+              "wall_ms_p95": 0.382
+            }
+          ],
+          "engine_ms_p50": 0.091,
+          "engine_ms_p95": 0.124,
+          "wall_ms_p50": 0.306,
+          "wall_ms_p95": 0.382,
+          "rows": 7,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-LIN-1": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "symptom": "order-orchestrator-u002"
+              },
+              "runs": 20,
+              "rows": 87,
+              "truncated": false,
+              "engine_ms_p50": 0.754,
+              "engine_ms_p95": 0.812,
+              "wall_ms_p50": 1.219,
+              "wall_ms_p95": 1.39
+            }
+          ],
+          "engine_ms_p50": 0.754,
+          "engine_ms_p95": 0.812,
+          "wall_ms_p50": 1.219,
+          "wall_ms_p95": 1.39,
+          "rows": 87,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-MEM-1": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "current": "inc-scale-1k-ce31f35c",
+                "half_life_ms": 2592000000.0,
+                "now": 1792033200000
+              },
+              "runs": 20,
+              "rows": 0,
+              "truncated": false,
+              "engine_ms_p50": 0.065,
+              "engine_ms_p95": 0.092,
+              "wall_ms_p50": 0.262,
+              "wall_ms_p95": 0.668
+            }
+          ],
+          "engine_ms_p50": 0.065,
+          "engine_ms_p95": 0.092,
+          "wall_ms_p50": 0.262,
+          "wall_ms_p95": 0.668,
+          "rows": 0,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-MEM-3": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "ids": [
+                  "order-orchestrator-u002"
+                ]
+              },
+              "runs": 20,
+              "rows": 0,
+              "truncated": false,
+              "engine_ms_p50": 0.054,
+              "engine_ms_p95": 0.068,
+              "wall_ms_p50": 0.176,
+              "wall_ms_p95": 0.216
+            }
+          ],
+          "engine_ms_p50": 0.054,
+          "engine_ms_p95": 0.068,
+          "wall_ms_p50": 0.176,
+          "wall_ms_p95": 0.216,
+          "rows": 0,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-NEG-1": {
+          "instances": [
+            {
+              "instance": "window",
+              "params": {
+                "now": 1792033200000,
+                "window_ms": 1800000,
+                "anomalous_ids": [
+                  "order-orchestrator-u002"
+                ]
+              },
+              "runs": 20,
+              "rows": 5,
+              "truncated": false,
+              "engine_ms_p50": 1.876,
+              "engine_ms_p95": 1.963,
+              "wall_ms_p50": 2.425,
+              "wall_ms_p95": 2.565
+            }
+          ],
+          "engine_ms_p50": 1.876,
+          "engine_ms_p95": 1.963,
+          "wall_ms_p50": 2.425,
+          "wall_ms_p95": 2.565,
+          "rows": 5,
+          "instance": "window",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-NOTIFY-1": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "ids": [
+                  "edge-gateway-u002",
+                  "edge-router-u002",
+                  "mobile-bff-u002",
+                  "order-api-u002",
+                  "order-orchestrator-u002",
+                  "partner-api-u002",
+                  "refund-service-u002",
+                  "storefront-bff-u002"
+                ],
+                "now": 1792033200000
+              },
+              "runs": 20,
+              "rows": 3,
+              "truncated": false,
+              "engine_ms_p50": 0.07,
+              "engine_ms_p95": 0.1,
+              "wall_ms_p50": 0.251,
+              "wall_ms_p95": 0.331
+            }
+          ],
+          "engine_ms_p50": 0.07,
+          "engine_ms_p95": 0.1,
+          "wall_ms_p50": 0.251,
+          "wall_ms_p95": 0.331,
+          "rows": 3,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-OBL-CUST": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "id": "card-gateway-u002"
+              },
+              "runs": 20,
+              "rows": 5,
+              "truncated": false,
+              "engine_ms_p50": 0.139,
+              "engine_ms_p95": 0.147,
+              "wall_ms_p50": 0.423,
+              "wall_ms_p95": 0.446
+            }
+          ],
+          "engine_ms_p50": 0.139,
+          "engine_ms_p95": 0.147,
+          "wall_ms_p50": 0.423,
+          "wall_ms_p95": 0.446,
+          "rows": 5,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-OBL-SLO": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "current_since": 1792033020000,
+                "id": "card-gateway-u002",
+                "now": 1792033200000
+              },
+              "runs": 20,
+              "rows": 9,
+              "truncated": false,
+              "engine_ms_p50": 0.336,
+              "engine_ms_p95": 0.372,
+              "wall_ms_p50": 0.707,
+              "wall_ms_p95": 0.754
+            }
+          ],
+          "engine_ms_p50": 0.336,
+          "engine_ms_p95": 0.372,
+          "wall_ms_p50": 0.707,
+          "wall_ms_p95": 0.754,
+          "rows": 9,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-ORG-BUS": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "target": "card-gateway-u002"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.05,
+              "engine_ms_p95": 0.056,
+              "wall_ms_p50": 0.176,
+              "wall_ms_p95": 0.19
+            }
+          ],
+          "engine_ms_p50": 0.05,
+          "engine_ms_p95": 0.056,
+          "wall_ms_p50": 0.176,
+          "wall_ms_p95": 0.19,
+          "rows": 1,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-OWN-AT": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "at": 1792033020000,
+                "id": "card-gateway-u002"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.017,
+              "engine_ms_p95": 0.03,
+              "wall_ms_p50": 0.128,
+              "wall_ms_p95": 0.147
+            }
+          ],
+          "engine_ms_p50": 0.017,
+          "engine_ms_p95": 0.03,
+          "wall_ms_p50": 0.128,
+          "wall_ms_p95": 0.147,
+          "rows": 1,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-REM-1": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "inc": "inc-scale-1k-ce31f35c",
+                "incidents": [],
+                "symptoms": [
+                  "sym-error_rate-order-orchestrator-u002"
+                ]
+              },
+              "runs": 20,
+              "rows": 3,
+              "truncated": false,
+              "engine_ms_p50": 6.957,
+              "engine_ms_p95": 7.099,
+              "wall_ms_p50": 7.376,
+              "wall_ms_p95": 7.546
+            }
+          ],
+          "engine_ms_p50": 6.957,
+          "engine_ms_p95": 7.099,
+          "wall_ms_p50": 7.376,
+          "wall_ms_p95": 7.546,
+          "rows": 3,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-RESIDUE-1": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "cause": "D-d0a135a2b6",
+                "inc": "inc-scale-1k-ce31f35c"
+              },
+              "runs": 20,
+              "rows": 2,
+              "truncated": false,
+              "engine_ms_p50": 0.212,
+              "engine_ms_p95": 0.23,
+              "wall_ms_p50": 0.433,
+              "wall_ms_p95": 0.532
+            }
+          ],
+          "engine_ms_p50": 0.212,
+          "engine_ms_p95": 0.23,
+          "wall_ms_p50": 0.433,
+          "wall_ms_p95": 0.532,
+          "rows": 2,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-SUS-1": {
+          "instances": [
+            {
+              "instance": "symptom",
+              "params": {
+                "symptom": "order-orchestrator-u002",
+                "onset": 1792033200000,
+                "window_ms": 1800000
+              },
+              "runs": 20,
+              "rows": 5,
+              "truncated": false,
+              "engine_ms_p50": 1.924,
+              "engine_ms_p95": 3.198,
+              "wall_ms_p50": 2.778,
+              "wall_ms_p95": 4.086
+            }
+          ],
+          "engine_ms_p50": 1.924,
+          "engine_ms_p95": 3.198,
+          "wall_ms_p50": 2.778,
+          "wall_ms_p95": 4.086,
+          "rows": 5,
+          "instance": "symptom",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-SUS-2": {
+          "instances": [
+            {
+              "instance": "window",
+              "params": {
+                "onset": 1792033200000,
+                "window_ms": 1800000
+              },
+              "runs": 20,
+              "rows": 7,
+              "truncated": false,
+              "engine_ms_p50": 0.171,
+              "engine_ms_p95": 0.246,
+              "wall_ms_p50": 0.878,
+              "wall_ms_p95": 1.155
+            }
+          ],
+          "engine_ms_p50": 0.171,
+          "engine_ms_p95": 0.246,
+          "wall_ms_p50": 0.878,
+          "wall_ms_p95": 1.155,
+          "rows": 7,
+          "instance": "window",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-WHATIF-1": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "failing": "card-gateway-u002"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.065,
+              "engine_ms_p95": 0.077,
+              "wall_ms_p50": 0.172,
+              "wall_ms_p95": 0.208
+            }
+          ],
+          "engine_ms_p50": 0.065,
+          "engine_ms_p95": 0.077,
+          "wall_ms_p50": 0.172,
+          "wall_ms_p95": 0.208,
+          "rows": 1,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        }
+      },
+      "slowlog": [
+        {
+          "template": "Q-CODE-1",
+          "ms": 19.777,
+          "command": "GRAPH.RO_QUERY"
+        },
+        {
+          "template": null,
+          "ms": 19.271,
+          "command": "GRAPH.QUERY"
+        },
+        {
+          "template": "Q-ORG-1",
+          "ms": 14.602,
+          "command": "GRAPH.RO_QUERY"
+        }
+      ],
+      "memory_mb_after_run": 47,
+      "wall_s": 11.1,
+      "kept": [],
+      "engine_used_mb_after_cleanup": 2017.0
+    },
+    "10k": {
+      "label": "10k",
+      "tenant": "scale10k",
+      "services": 10000,
+      "units": 50,
+      "engine_used_mb_before": 2017.0,
+      "memory_estimate_mb": 420.0,
+      "seed": {
+        "graph": "eval_scale10k_scale_bench_10k_1_c8f63b56",
+        "units": 50,
+        "data_hash": "fb175f9dfc9b",
+        "node_rows": 311261,
+        "edge_rows": 1094024,
+        "generate_s": 9.31,
+        "write_s": 30.48,
+        "finalise_s": 0.08,
+        "learn_s": 0.9,
+        "derived_runbooks": 349,
+        "seed_s": 40.81
+      },
+      "clean_room": "seeded directly into the clean room (no golden kept: a copy would not fit in memory)",
+      "memory_mb": 489,
+      "memory_detail": {
+        "total_graph_sz_mb": 489,
+        "label_matrices_sz_mb": 12,
+        "relation_matrices_sz_mb": 34,
+        "amortized_node_block_sz_mb": 4,
+        "amortized_unlabeled_nodes_attributes_sz_mb": 0,
+        "amortized_edge_block_sz_mb": 26,
+        "indices_sz_mb": 155
+      },
+      "nodes": 296261,
+      "edges": 1097675,
+      "counts": {
+        "nodes": {
+          "Service": 10000,
+          "Endpoint": 450,
+          "Datastore": 300,
+          "ExternalDependency": 150,
+          "Repo": 600,
+          "File": 40000,
+          "Commit": 100389,
+          "PR": 49314,
+          "Deploy": 53458,
+          "FeatureFlag": 450,
+          "Incident": 7500,
+          "Symptom": 400,
+          "Person": 9000,
+          "Team": 600,
+          "Runbook": 699,
+          "Decision": 350,
+          "Postmortem": 7500,
+          "Doc": 700,
+          "Action": 7550,
+          "SLO": 6500,
+          "Customer": 350,
+          "Meta": 1
+        },
+        "edges": {
+          "AFFECTED": 28200,
+          "ATTEMPTED": 50,
+          "AUTHORED": 149703,
+          "CALLS": 28320,
+          "CAUSED": 7500,
+          "CHANGED": 53458,
+          "CITES": 400,
+          "COLLABORATES": 71548,
+          "COMMITTED": 54734,
+          "CONSTRAINS": 550,
+          "CONSUMES": 450,
+          "CONTAINS": 240778,
+          "DEPENDS_ON": 17357,
+          "DOCUMENTS": 7500,
+          "EXPOSES": 450,
+          "FOR": 6500,
+          "GATES": 450,
+          "HAS_SYMPTOM": 7500,
+          "MEMBER_OF": 8800,
+          "ON_CALL": 13200,
+          "OWNED_AT": 10400,
+          "OWNS": 10200,
+          "PART_OF": 40000,
+          "PRODUCED": 700,
+          "PROPAGATES_TO": 17357,
+          "REPORTS_TO": 8950,
+          "RESOLVED": 7500,
+          "RESOLVED_BY": 7500,
+          "RUNBOOK_FOR": 1099,
+          "SUPERSEDES": 100,
+          "TOUCHES": 293119,
+          "DERIVED_FROM": 3302
+        }
+      },
+      "incident": {
+        "home_unit": 25,
+        "cause_target": "card-gateway-u025",
+        "symptom": "order-orchestrator-u025",
+        "hub": "experiment-service",
+        "roles": {
+          "cause": "D-d0a135a2b6",
+          "g2": "D-1277068eb8",
+          "g5": "D-7b9cb0273e",
+          "hub": "D-bdf46335d0",
+          "origin": "D-cc1bae6040"
+        },
+        "distractors": {
+          "D-1277068eb8": {
+            "target": "recommender-u026",
+            "category": "G2"
+          },
+          "D-7b9cb0273e": {
+            "target": "logistics-sync-u025",
+            "category": "G5"
+          },
+          "D-bdf46335d0": {
+            "target": "experiment-service",
+            "category": "origin"
+          },
+          "D-cc1bae6040": {
+            "target": "pricing-admin-u025",
+            "category": "origin"
+          }
+        },
+        "expected": {
+          "outcome": "CONFIRMED",
+          "cause": "D-d0a135a2b6",
+          "eliminated": {
+            "D-1277068eb8": "G2",
+            "D-7b9cb0273e": "G5",
+            "D-cc1bae6040": "G4 origin",
+            "D-bdf46335d0": "G4 origin"
+          },
+          "ambient": [
+            "D-0151f670c3",
+            "D-0ca398a633",
+            "D-1378e4d1ec",
+            "D-2712d5d6fe",
+            "D-38295bcb8c",
+            "D-38c9a0b745",
+            "D-38e2752333",
+            "D-3e058ab87e",
+            "D-55e7932f4c",
+            "D-6653744aef",
+            "D-6cbf80cfa6",
+            "D-6cc906a416",
+            "D-94761fc872",
+            "D-c019ca9b66",
+            "D-c0703add3f",
+            "D-e97374d052",
+            "D-ed8c2e1c8a",
+            "D-f821b181e7",
+            "D-f85ad890f3",
+            "D-fac0c65722"
+          ]
+        },
+        "ambient": 20,
+        "monitored": 106
+      },
+      "run": {
+        "outcome": "CONFIRMED",
+        "cause": "D-d0a135a2b6",
+        "confident": true,
+        "sweep": {
+          "D-d0a135a2b6": "candidate: G5: max flow 1.0000 \u2265 needed 0.2689 (observed 0.3361 \u00d7 0.8)",
+          "D-0151f670c3": "eliminated: G2: no path to any primary symptom (no path, no claim)",
+          "D-0ca398a633": "eliminated: G2: no path to any primary symptom (no path, no claim)",
+          "D-1277068eb8": "eliminated: G2: no path to any primary symptom (no path, no claim)",
+          "D-1378e4d1ec": "eliminated: G2: no path to any primary symptom (no path, no claim)",
+          "D-2712d5d6fe": "eliminated: G2: no path to any primary symptom (no path, no claim)",
+          "D-38295bcb8c": "eliminated: G2: no path to any primary symptom (no path, no claim)",
+          "D-38c9a0b745": "eliminated: G2: no path to any primary symptom (no path, no claim)",
+          "D-38e2752333": "eliminated: G2: no path to any primary symptom (no path, no claim)",
+          "D-3e058ab87e": "eliminated: G2: no path to any primary symptom (no path, no claim)",
+          "D-55e7932f4c": "eliminated: G2: no path to any primary symptom (no path, no claim)",
+          "D-6653744aef": "eliminated: G2: no path to any primary symptom (no path, no claim)",
+          "D-6cbf80cfa6": "eliminated: G2: no path to any primary symptom (no path, no claim)",
+          "D-6cc906a416": "eliminated: G2: no path to any primary symptom (no path, no claim)",
+          "D-7b9cb0273e": "eliminated: G5: max flow 0.0200 < needed 0.2689 (observed 0.3361 \u00d7 0.8); another suspect alone can carry 1.0000",
+          "D-94761fc872": "eliminated: G2: no path to any primary symptom (no path, no claim)",
+          "D-bdf46335d0": "eliminated: G4 origin: experiment-service measured in band this run while card-gateway-u025 is anomalous; a path and capacity alone do not make it the origin",
+          "D-c019ca9b66": "eliminated: G2: no path to any primary symptom (no path, no claim)",
+          "D-c0703add3f": "eliminated: G2: no path to any primary symptom (no path, no claim)",
+          "D-cc1bae6040": "eliminated: G4 origin: pricing-admin-u025 measured in band this run while card-gateway-u025 is anomalous; a path and capacity alone do not make it the origin",
+          "D-e97374d052": "eliminated: G2: no path to any primary symptom (no path, no claim)",
+          "D-ed8c2e1c8a": "eliminated: G2: no path to any primary symptom (no path, no claim)",
+          "D-f821b181e7": "eliminated: G2: no path to any primary symptom (no path, no claim)",
+          "D-f85ad890f3": "eliminated: G2: no path to any primary symptom (no path, no claim)",
+          "D-fac0c65722": "eliminated: G2: no path to any primary symptom (no path, no claim)"
+        },
+        "correct": true,
+        "why": [],
+        "ambient_left_candidate": [],
+        "seconds": 6.35,
+        "error": null,
+        "tool_calls": 32,
+        "swept": 25,
+        "windows_written": 3816,
+        "protect": [
+          "edge-gateway-u025"
+        ],
+        "cut": [
+          {
+            "u": "card-gateway-u025",
+            "v": "refund-service-u025",
+            "cut_cost": 0.0025,
+            "domain": "service"
+          },
+          {
+            "u": "order-api-u025",
+            "v": "mobile-bff-u025",
+            "cut_cost": 0.02,
+            "domain": "service"
+          },
+          {
+            "u": "order-api-u025",
+            "v": "partner-api-u025",
+            "cut_cost": 0.005,
+            "domain": "service"
+          },
+          {
+            "u": "order-api-u025",
+            "v": "storefront-bff-u025",
+            "cut_cost": 0.04,
+            "domain": "service"
+          }
+        ],
+        "max_flow": 0.0675,
+        "whatif": {
+          "verdict": "contains",
+          "removed_edges": 4,
+          "reach_before": [
+            "edge-gateway-u025",
+            "mobile-bff-u025",
+            "order-api-u025",
+            "order-orchestrator-u025",
+            "partner-api-u025",
+            "refund-service-u025",
+            "storefront-bff-u025"
+          ],
+          "reach_after": [
+            "order-api-u025",
+            "order-orchestrator-u025"
+          ],
+          "no_longer_reached": [
+            "edge-gateway-u025",
+            "mobile-bff-u025",
+            "partner-api-u025",
+            "refund-service-u025",
+            "storefront-bff-u025"
+          ],
+          "protected_still_reached": [],
+          "still_connected": {
+            "auth-service": true,
+            "auth-service-u001": true,
+            "auth-service-u002": true,
+            "auth-service-u003": true,
+            "auth-service-u004": true,
+            "auth-service-u005": true,
+            "auth-service-u006": true,
+            "auth-service-u007": true,
+            "auth-service-u008": true,
+            "auth-service-u009": true
+          }
+        },
+        "options": [
+          "rollback_deploy",
+          "open_issue",
+          "flip_flag"
+        ],
+        "truncated_calls": [
+          {
+            "tool": "chokepoints",
+            "template": "Q-CHOKE-1",
+            "rows": 10
+          },
+          {
+            "tool": "rank_causes",
+            "template": "Q-RANK-1",
+            "rows": 50
+          },
+          {
+            "tool": "who_fixes",
+            "template": "Q-ORG-HARM",
+            "rows": 10
+          }
+        ],
+        "call_list_truncated": false
+      },
+      "sweep_ms": {
+        "n": 3,
+        "p50": 487.165,
+        "p95": 557.137,
+        "max": 557.137,
+        "changes": 25,
+        "eliminated": 24
+      },
+      "preflight": [
+        {
+          "component": "card-gateway-u025",
+          "verdict": "require_review",
+          "risk": 0.525,
+          "error": null,
+          "ms": 27.0,
+          "template_ms": 2.31,
+          "terms": {
+            "blast": {
+              "value": 0.7,
+              "weighted": 0.175,
+              "why": "a failure reaches 7 components: edge-gateway-u025, mobile-bff-u025, order-api-u025, order-orchestrator-u025, partner-api-u025, refund-service-u025"
+            },
+            "revenue": {
+              "value": 1.0,
+              "weighted": 0.2,
+              "why": "reaches revenue path: edge-gateway-u025, mobile-bff-u025, order-api-u025, order-orchestrator-u025, storefront-bff-u025"
+            },
+            "betweenness": {
+              "value": 0.0,
+              "weighted": 0.0,
+              "why": "chokepoint score 0.0 (top 169.1)"
+            },
+            "past_incidents": {
+              "value": 1.0,
+              "weighted": 0.15,
+              "why": "changes here caused 20 incidents (card-gateway-u025)"
+            },
+            "decision": {
+              "value": 0.0,
+              "weighted": 0.0,
+              "why": "no active decision contradicted"
+            },
+            "bus_factor": {
+              "value": 0.0,
+              "weighted": 0.0,
+              "why": "bus factor card-gateway-u025=4"
+            },
+            "uncertainty": {
+              "value": 0.0,
+              "weighted": 0.0,
+              "why": "owners and runbooks present"
+            }
+          }
+        },
+        {
+          "component": "experiment-service",
+          "verdict": "require_review",
+          "risk": 0.516,
+          "error": null,
+          "ms": 60.3,
+          "template_ms": 4.24,
+          "terms": {
+            "blast": {
+              "value": 1.0,
+              "weighted": 0.25,
+              "why": "a failure reaches 100 components: auth-service, auth-service-u001, auth-service-u002, auth-service-u003, auth-service-u004, auth-service-u005"
+            },
+            "revenue": {
+              "value": 1.0,
+              "weighted": 0.2,
+              "why": "reaches revenue path: auth-service, auth-service-u001, auth-service-u002, auth-service-u003, auth-service-u004, auth-service-u005, auth-service-u006, auth-service-u007, auth-service-u008, auth-service-u009, auth-service-u010, auth-service-u011, auth-service-u012, auth-service-u013, auth-service-u014, auth-service-u015, auth-service-u016, auth-service-u017, auth-service-u018, auth-service-u019, auth-service-u020, auth-service-u021, auth-service-u022, auth-service-u023, auth-service-u024, auth-service-u025, auth-service-u026, auth-service-u027, auth-service-u028, auth-service-u029, auth-service-u030, auth-service-u031, auth-service-u032, auth-service-u033, auth-service-u034, auth-service-u035, auth-service-u036, auth-service-u037, auth-service-u038, auth-service-u039, auth-service-u040, auth-service-u041, auth-service-u042, auth-service-u043, auth-service-u044, auth-service-u045, auth-service-u046, auth-service-u047, auth-service-u048, auth-service-u049, basket-service-u001, basket-service-u002, basket-service-u004, basket-service-u007, basket-service-u008, basket-service-u010, basket-service-u011, basket-service-u014, basket-service-u017, basket-service-u019, basket-service-u020, basket-service-u022, basket-service-u024, basket-service-u025, basket-service-u027, basket-service-u028, basket-service-u030, basket-service-u033, basket-service-u035, basket-service-u038, basket-service-u039, basket-service-u041, basket-service-u042, basket-service-u044, basket-service-u045, basket-service-u047, basket-service-u048, basket-service-u049, card-gateway-u001, card-gateway-u002, card-gateway-u004, card-gateway-u006, card-gateway-u007, card-gateway-u008, card-gateway-u010, card-gateway-u011, card-gateway-u012, card-gateway-u013, card-gateway-u014, card-gateway-u015, card-gateway-u017, card-gateway-u019, card-gateway-u021, card-gateway-u027, card-gateway-u028, card-gateway-u029, card-gateway-u030, card-gateway-u033, card-gateway-u034, card-gateway-u035"
+            },
+            "betweenness": {
+              "value": 0.1603,
+              "weighted": 0.016,
+              "why": "chokepoint score 27.1 (top 169.1)"
+            },
+            "past_incidents": {
+              "value": 0.0,
+              "weighted": 0.0,
+              "why": "changes here caused "
+            },
+            "decision": {
+              "value": 0.0,
+              "weighted": 0.0,
+              "why": "no active decision contradicted"
+            },
+            "bus_factor": {
+              "value": 0.0,
+              "weighted": 0.0,
+              "why": "bus factor experiment-service=3"
+            },
+            "uncertainty": {
+              "value": 1.0,
+              "weighted": 0.05,
+              "why": "missing owner or runbook: experiment-service"
+            }
+          }
+        }
+      ],
+      "templates": {
+        "Q-BLAST-1": {
+          "instances": [
+            {
+              "instance": "cause",
+              "params": {
+                "id": "card-gateway-u025"
+              },
+              "runs": 20,
+              "rows": 7,
+              "truncated": false,
+              "engine_ms_p50": 1.015,
+              "engine_ms_p95": 1.252,
+              "wall_ms_p50": 1.292,
+              "wall_ms_p95": 1.474
+            },
+            {
+              "instance": "hub",
+              "params": {
+                "id": "experiment-service"
+              },
+              "runs": 20,
+              "rows": 100,
+              "truncated": true,
+              "engine_ms_p50": 3.9,
+              "engine_ms_p95": 4.177,
+              "wall_ms_p50": 4.986,
+              "wall_ms_p95": 5.279
+            },
+            {
+              "instance": "run",
+              "params": {
+                "id": "order-orchestrator-u025"
+              },
+              "runs": 20,
+              "rows": 5,
+              "truncated": false,
+              "engine_ms_p50": 1.033,
+              "engine_ms_p95": 1.09,
+              "wall_ms_p50": 1.294,
+              "wall_ms_p95": 1.419
+            }
+          ],
+          "engine_ms_p50": 3.9,
+          "engine_ms_p95": 4.177,
+          "wall_ms_p50": 4.986,
+          "wall_ms_p95": 5.279,
+          "rows": 100,
+          "instance": "hub",
+          "truncated": true,
+          "errors": 0
+        },
+        "Q-BLAST-2": {
+          "instances": [
+            {
+              "instance": "cause",
+              "params": {
+                "id": "card-gateway-u025"
+              },
+              "runs": 20,
+              "rows": 7,
+              "truncated": false,
+              "engine_ms_p50": 0.038,
+              "engine_ms_p95": 0.059,
+              "wall_ms_p50": 0.176,
+              "wall_ms_p95": 0.211
+            },
+            {
+              "instance": "hub",
+              "params": {
+                "id": "experiment-service"
+              },
+              "runs": 20,
+              "rows": 100,
+              "truncated": true,
+              "engine_ms_p50": 4.35,
+              "engine_ms_p95": 4.76,
+              "wall_ms_p50": 5.369,
+              "wall_ms_p95": 5.622
+            }
+          ],
+          "engine_ms_p50": 4.35,
+          "engine_ms_p95": 4.76,
+          "wall_ms_p50": 5.369,
+          "wall_ms_p95": 5.622,
+          "rows": 100,
+          "instance": "hub",
+          "truncated": true,
+          "errors": 0
+        },
+        "Q-CHAIN-MON": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "chain": [
+                  "D-d0a135a2b6",
+                  "card-gateway-u025",
+                  "order-orchestrator-u025"
+                ],
+                "since": 1792031400000,
+                "until": 1792033800000
+              },
+              "runs": 20,
+              "rows": 3,
+              "truncated": false,
+              "engine_ms_p50": 0.08,
+              "engine_ms_p95": 0.101,
+              "wall_ms_p50": 0.264,
+              "wall_ms_p95": 0.318
+            }
+          ],
+          "engine_ms_p50": 0.08,
+          "engine_ms_p95": 0.101,
+          "wall_ms_p50": 0.264,
+          "wall_ms_p95": 0.318,
+          "rows": 3,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-CHANGE-2": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "id": "D-d0a135a2b6"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.06,
+              "engine_ms_p95": 0.076,
+              "wall_ms_p50": 0.211,
+              "wall_ms_p95": 0.32
+            },
+            {
+              "instance": "run",
+              "params": {
+                "id": "D-bdf46335d0"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.057,
+              "engine_ms_p95": 0.081,
+              "wall_ms_p50": 0.199,
+              "wall_ms_p95": 0.288
+            },
+            {
+              "instance": "run",
+              "params": {
+                "id": "D-7b9cb0273e"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.044,
+              "engine_ms_p95": 0.09,
+              "wall_ms_p50": 0.17,
+              "wall_ms_p95": 0.312
+            },
+            {
+              "instance": "run",
+              "params": {
+                "id": "D-cc1bae6040"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.038,
+              "engine_ms_p95": 0.068,
+              "wall_ms_p50": 0.151,
+              "wall_ms_p95": 0.379
+            }
+          ],
+          "engine_ms_p50": 0.044,
+          "engine_ms_p95": 0.09,
+          "wall_ms_p50": 0.17,
+          "wall_ms_p95": 0.312,
+          "rows": 1,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-CHOKE-1": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {},
+              "runs": 20,
+              "rows": 10,
+              "truncated": true,
+              "engine_ms_p50": 5.136,
+              "engine_ms_p95": 5.871,
+              "wall_ms_p50": 5.254,
+              "wall_ms_p95": 6.119
+            }
+          ],
+          "engine_ms_p50": 5.136,
+          "engine_ms_p95": 5.871,
+          "wall_ms_p50": 5.254,
+          "wall_ms_p95": 6.119,
+          "rows": 10,
+          "instance": "run",
+          "truncated": true,
+          "errors": 0
+        },
+        "Q-CODE-1": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "id": "D-d0a135a2b6"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 133.235,
+              "engine_ms_p95": 138.442,
+              "wall_ms_p50": 133.67,
+              "wall_ms_p95": 157.628
+            },
+            {
+              "instance": "run",
+              "params": {
+                "id": "D-bdf46335d0"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 132.034,
+              "engine_ms_p95": 135.319,
+              "wall_ms_p50": 132.699,
+              "wall_ms_p95": 136.394
+            },
+            {
+              "instance": "run",
+              "params": {
+                "id": "D-7b9cb0273e"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 132.658,
+              "engine_ms_p95": 139.147,
+              "wall_ms_p50": 132.917,
+              "wall_ms_p95": 137.558
+            },
+            {
+              "instance": "run",
+              "params": {
+                "id": "D-cc1bae6040"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 133.595,
+              "engine_ms_p95": 135.652,
+              "wall_ms_p50": 134.199,
+              "wall_ms_p95": 137.402
+            }
+          ],
+          "engine_ms_p50": 132.658,
+          "engine_ms_p95": 139.147,
+          "wall_ms_p50": 132.917,
+          "wall_ms_p95": 137.558,
+          "rows": 1,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-CONN-2": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "protect": [
+                  "edge-gateway-u025"
+                ],
+                "target": "card-gateway-u025"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 5.257,
+              "engine_ms_p95": 6.192,
+              "wall_ms_p50": 5.926,
+              "wall_ms_p95": 6.737
+            }
+          ],
+          "engine_ms_p50": 5.257,
+          "engine_ms_p95": 6.192,
+          "wall_ms_p50": 5.926,
+          "wall_ms_p95": 6.737,
+          "rows": 1,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-CTX-1": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "id": "order-orchestrator-u025",
+                "now": 1792033200000
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.054,
+              "engine_ms_p95": 0.07,
+              "wall_ms_p50": 0.222,
+              "wall_ms_p95": 0.246
+            }
+          ],
+          "engine_ms_p50": 0.054,
+          "engine_ms_p95": 0.07,
+          "wall_ms_p50": 0.222,
+          "wall_ms_p95": 0.246,
+          "rows": 1,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-CUT-1": {
+          "instances": [
+            {
+              "instance": "cause\u2192protect",
+              "params": {
+                "failing": "card-gateway-u025",
+                "protect": [
+                  "edge-gateway-u025"
+                ]
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 13.043,
+              "engine_ms_p95": 17.543,
+              "wall_ms_p50": 14.451,
+              "wall_ms_p95": 18.826
+            }
+          ],
+          "engine_ms_p50": 13.043,
+          "engine_ms_p95": 17.543,
+          "wall_ms_p50": 14.451,
+          "wall_ms_p95": 18.826,
+          "rows": 1,
+          "instance": "cause\u2192protect",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-CUT-2": {
+          "instances": [
+            {
+              "instance": "cause",
+              "params": {
+                "failing": "card-gateway-u025"
+              },
+              "runs": 20,
+              "rows": 10,
+              "truncated": false,
+              "engine_ms_p50": 0.054,
+              "engine_ms_p95": 0.097,
+              "wall_ms_p50": 0.257,
+              "wall_ms_p95": 0.414
+            },
+            {
+              "instance": "hub",
+              "params": {
+                "failing": "experiment-service"
+              },
+              "runs": 20,
+              "rows": 100,
+              "truncated": true,
+              "engine_ms_p50": 7.998,
+              "engine_ms_p95": 11.953,
+              "wall_ms_p50": 9.452,
+              "wall_ms_p95": 13.208
+            }
+          ],
+          "engine_ms_p50": 7.998,
+          "engine_ms_p95": 11.953,
+          "wall_ms_p50": 9.452,
+          "wall_ms_p95": 13.208,
+          "rows": 100,
+          "instance": "hub",
+          "truncated": true,
+          "errors": 0
+        },
+        "Q-DEC-1": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "change": "D-d0a135a2b6"
+              },
+              "runs": 20,
+              "rows": 0,
+              "truncated": false,
+              "engine_ms_p50": 0.004,
+              "engine_ms_p95": 0.011,
+              "wall_ms_p50": 0.125,
+              "wall_ms_p95": 0.635
+            },
+            {
+              "instance": "run",
+              "params": {
+                "change": "D-bdf46335d0"
+              },
+              "runs": 20,
+              "rows": 0,
+              "truncated": false,
+              "engine_ms_p50": 0.003,
+              "engine_ms_p95": 0.003,
+              "wall_ms_p50": 0.104,
+              "wall_ms_p95": 0.14
+            },
+            {
+              "instance": "run",
+              "params": {
+                "change": "D-7b9cb0273e"
+              },
+              "runs": 20,
+              "rows": 0,
+              "truncated": false,
+              "engine_ms_p50": 0.004,
+              "engine_ms_p95": 0.007,
+              "wall_ms_p50": 0.136,
+              "wall_ms_p95": 0.568
+            },
+            {
+              "instance": "run",
+              "params": {
+                "change": "D-cc1bae6040"
+              },
+              "runs": 20,
+              "rows": 0,
+              "truncated": false,
+              "engine_ms_p50": 0.003,
+              "engine_ms_p95": 0.005,
+              "wall_ms_p50": 0.115,
+              "wall_ms_p95": 0.147
+            }
+          ],
+          "engine_ms_p50": 0.004,
+          "engine_ms_p95": 0.011,
+          "wall_ms_p50": 0.125,
+          "wall_ms_p95": 0.635,
+          "rows": 0,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-GATE-1": {
+          "instances": [
+            {
+              "instance": "cause\u2192symptom",
+              "params": {
+                "cause": "D-d0a135a2b6",
+                "symptom": "order-orchestrator-u025"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.083,
+              "engine_ms_p95": 0.127,
+              "wall_ms_p50": 0.413,
+              "wall_ms_p95": 0.859
+            },
+            {
+              "instance": "hub\u2192symptom",
+              "params": {
+                "cause": "D-bdf46335d0",
+                "symptom": "order-orchestrator-u025"
+              },
+              "runs": 20,
+              "rows": 3,
+              "truncated": false,
+              "engine_ms_p50": 7.572,
+              "engine_ms_p95": 7.956,
+              "wall_ms_p50": 8.441,
+              "wall_ms_p95": 8.725
+            },
+            {
+              "instance": "run",
+              "params": {
+                "cause": "D-7b9cb0273e",
+                "symptom": "order-orchestrator-u025"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.033,
+              "engine_ms_p95": 0.048,
+              "wall_ms_p50": 0.157,
+              "wall_ms_p95": 0.262
+            },
+            {
+              "instance": "run",
+              "params": {
+                "cause": "D-cc1bae6040",
+                "symptom": "order-orchestrator-u025"
+              },
+              "runs": 20,
+              "rows": 2,
+              "truncated": false,
+              "engine_ms_p50": 0.033,
+              "engine_ms_p95": 0.061,
+              "wall_ms_p50": 0.165,
+              "wall_ms_p95": 0.313
+            },
+            {
+              "instance": "run",
+              "params": {
+                "cause": "D-0151f670c3",
+                "symptom": "order-orchestrator-u025"
+              },
+              "runs": 20,
+              "rows": 0,
+              "truncated": false,
+              "engine_ms_p50": 0.012,
+              "engine_ms_p95": 0.044,
+              "wall_ms_p50": 0.095,
+              "wall_ms_p95": 0.135
+            },
+            {
+              "instance": "run",
+              "params": {
+                "cause": "D-0ca398a633",
+                "symptom": "order-orchestrator-u025"
+              },
+              "runs": 20,
+              "rows": 0,
+              "truncated": false,
+              "engine_ms_p50": 0.013,
+              "engine_ms_p95": 0.033,
+              "wall_ms_p50": 0.092,
+              "wall_ms_p95": 0.148
+            }
+          ],
+          "engine_ms_p50": 7.572,
+          "engine_ms_p95": 7.956,
+          "wall_ms_p50": 8.441,
+          "wall_ms_p95": 8.725,
+          "rows": 3,
+          "instance": "hub\u2192symptom",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-GATE-2": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "cause": "D-d0a135a2b6",
+                "onset": 1792033200000,
+                "window_ms": 1800000
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 6.949,
+              "engine_ms_p95": 7.571,
+              "wall_ms_p50": 7.529,
+              "wall_ms_p95": 7.897
+            }
+          ],
+          "engine_ms_p50": 6.949,
+          "engine_ms_p95": 7.571,
+          "wall_ms_p50": 7.529,
+          "wall_ms_p95": 7.897,
+          "rows": 1,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-GATE-3": {
+          "instances": [
+            {
+              "instance": "cause\u2192symptom",
+              "params": {
+                "sources": [
+                  "card-gateway-u025"
+                ],
+                "symptom": "order-orchestrator-u025"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 7.482,
+              "engine_ms_p95": 14.643,
+              "wall_ms_p50": 8.473,
+              "wall_ms_p95": 16.307
+            },
+            {
+              "instance": "hub\u2192symptom",
+              "params": {
+                "sources": [
+                  "experiment-service"
+                ],
+                "symptom": "order-orchestrator-u025"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 9.422,
+              "engine_ms_p95": 11.295,
+              "wall_ms_p50": 10.037,
+              "wall_ms_p95": 11.58
+            },
+            {
+              "instance": "run",
+              "params": {
+                "sources": [
+                  "logistics-sync-u025"
+                ],
+                "symptom": "order-orchestrator-u025"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 9.394,
+              "engine_ms_p95": 11.011,
+              "wall_ms_p50": 9.843,
+              "wall_ms_p95": 11.426
+            },
+            {
+              "instance": "run",
+              "params": {
+                "sources": [
+                  "pricing-admin-u025"
+                ],
+                "symptom": "order-orchestrator-u025"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 19.259,
+              "engine_ms_p95": 23.295,
+              "wall_ms_p50": 19.453,
+              "wall_ms_p95": 24.312
+            }
+          ],
+          "engine_ms_p50": 19.259,
+          "engine_ms_p95": 23.295,
+          "wall_ms_p50": 19.453,
+          "wall_ms_p95": 24.312,
+          "rows": 1,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-GATE-4": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "chain": [
+                  "D-d0a135a2b6",
+                  "card-gateway-u025",
+                  "order-orchestrator-u025"
+                ],
+                "evidence": [
+                  "ev_cf114e853c",
+                  "ev_8b12c05ebe",
+                  "ev_2211322c25",
+                  "ev_4a4be76ebc",
+                  "ev_a04be56ec5"
+                ],
+                "run": "run-scale-10k-c8f63b56"
+              },
+              "runs": 20,
+              "rows": 2,
+              "truncated": false,
+              "engine_ms_p50": 0.061,
+              "engine_ms_p95": 0.087,
+              "wall_ms_p50": 0.266,
+              "wall_ms_p95": 0.384
+            }
+          ],
+          "engine_ms_p50": 0.061,
+          "engine_ms_p95": 0.087,
+          "wall_ms_p50": 0.266,
+          "wall_ms_p95": 0.384,
+          "rows": 2,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-GATE-7": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "chain": [
+                  "D-d0a135a2b6",
+                  "card-gateway-u025",
+                  "order-orchestrator-u025"
+                ],
+                "evidence": [
+                  "ev_cf114e853c",
+                  "ev_8b12c05ebe",
+                  "ev_2211322c25",
+                  "ev_4a4be76ebc",
+                  "ev_a04be56ec5",
+                  "ev_8b12c05ebe",
+                  "ev_456e864b1e"
+                ],
+                "run": "run-scale-10k-c8f63b56"
+              },
+              "runs": 20,
+              "rows": 2,
+              "truncated": false,
+              "engine_ms_p50": 0.057,
+              "engine_ms_p95": 0.074,
+              "wall_ms_p50": 0.204,
+              "wall_ms_p95": 0.245
+            }
+          ],
+          "engine_ms_p50": 0.057,
+          "engine_ms_p95": 0.074,
+          "wall_ms_p50": 0.204,
+          "wall_ms_p95": 0.245,
+          "rows": 2,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-GATE-CORR": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "cause": "D-d0a135a2b6",
+                "chain": [
+                  "D-d0a135a2b6",
+                  "card-gateway-u025",
+                  "order-orchestrator-u025"
+                ],
+                "roles": [
+                  "change",
+                  "code",
+                  "data"
+                ],
+                "run": "run-scale-10k-c8f63b56"
+              },
+              "runs": 20,
+              "rows": 3,
+              "truncated": false,
+              "engine_ms_p50": 0.157,
+              "engine_ms_p95": 0.172,
+              "wall_ms_p50": 0.367,
+              "wall_ms_p95": 0.394
+            }
+          ],
+          "engine_ms_p50": 0.157,
+          "engine_ms_p95": 0.172,
+          "wall_ms_p50": 0.367,
+          "wall_ms_p95": 0.394,
+          "rows": 3,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-GATE-G1": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "evidence": [
+                  "ev_cf114e853c",
+                  "ev_8b12c05ebe",
+                  "ev_2211322c25",
+                  "ev_4a4be76ebc",
+                  "ev_a04be56ec5"
+                ],
+                "ids": [
+                  "D-d0a135a2b6"
+                ],
+                "run": "run-scale-10k-c8f63b56"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.462,
+              "engine_ms_p95": 0.565,
+              "wall_ms_p50": 0.767,
+              "wall_ms_p95": 1.193
+            }
+          ],
+          "engine_ms_p50": 0.462,
+          "engine_ms_p95": 0.565,
+          "wall_ms_p50": 0.767,
+          "wall_ms_p95": 1.193,
+          "rows": 1,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-GATE-MULT": {
+          "instances": [
+            {
+              "instance": "cause\u2192symptom",
+              "params": {
+                "sources": [
+                  "card-gateway-u025"
+                ],
+                "symptom": "order-orchestrator-u025"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.035,
+              "engine_ms_p95": 0.048,
+              "wall_ms_p50": 0.161,
+              "wall_ms_p95": 0.208
+            },
+            {
+              "instance": "hub\u2192symptom",
+              "params": {
+                "sources": [
+                  "experiment-service"
+                ],
+                "symptom": "order-orchestrator-u025"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 6.843,
+              "engine_ms_p95": 8.244,
+              "wall_ms_p50": 7.409,
+              "wall_ms_p95": 8.315
+            },
+            {
+              "instance": "run",
+              "params": {
+                "sources": [
+                  "logistics-sync-u025"
+                ],
+                "symptom": "order-orchestrator-u025"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.032,
+              "engine_ms_p95": 0.042,
+              "wall_ms_p50": 0.156,
+              "wall_ms_p95": 0.213
+            },
+            {
+              "instance": "run",
+              "params": {
+                "sources": [
+                  "pricing-admin-u025"
+                ],
+                "symptom": "order-orchestrator-u025"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.035,
+              "engine_ms_p95": 0.051,
+              "wall_ms_p50": 0.167,
+              "wall_ms_p95": 0.205
+            }
+          ],
+          "engine_ms_p50": 6.843,
+          "engine_ms_p95": 8.244,
+          "wall_ms_p50": 7.409,
+          "wall_ms_p95": 8.315,
+          "rows": 1,
+          "instance": "hub\u2192symptom",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-HYP-1": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "inc": "inc-scale-10k-c8f63b56"
+              },
+              "runs": 20,
+              "rows": 25,
+              "truncated": false,
+              "engine_ms_p50": 0.165,
+              "engine_ms_p95": 0.205,
+              "wall_ms_p50": 0.63,
+              "wall_ms_p95": 0.706
+            }
+          ],
+          "engine_ms_p50": 0.165,
+          "engine_ms_p95": 0.205,
+          "wall_ms_p50": 0.63,
+          "wall_ms_p95": 0.706,
+          "rows": 25,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-LIN-1": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "symptom": "order-orchestrator-u025"
+              },
+              "runs": 20,
+              "rows": 96,
+              "truncated": false,
+              "engine_ms_p50": 1.199,
+              "engine_ms_p95": 1.398,
+              "wall_ms_p50": 1.836,
+              "wall_ms_p95": 2.316
+            }
+          ],
+          "engine_ms_p50": 1.199,
+          "engine_ms_p95": 1.398,
+          "wall_ms_p50": 1.836,
+          "wall_ms_p95": 2.316,
+          "rows": 96,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-MEM-1": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "current": "inc-scale-10k-c8f63b56",
+                "half_life_ms": 2592000000.0,
+                "now": 1792033200000
+              },
+              "runs": 20,
+              "rows": 0,
+              "truncated": false,
+              "engine_ms_p50": 0.068,
+              "engine_ms_p95": 0.159,
+              "wall_ms_p50": 0.286,
+              "wall_ms_p95": 0.959
+            }
+          ],
+          "engine_ms_p50": 0.068,
+          "engine_ms_p95": 0.159,
+          "wall_ms_p50": 0.286,
+          "wall_ms_p95": 0.959,
+          "rows": 0,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-MEM-3": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "ids": [
+                  "order-orchestrator-u025"
+                ]
+              },
+              "runs": 20,
+              "rows": 0,
+              "truncated": false,
+              "engine_ms_p50": 0.412,
+              "engine_ms_p95": 0.56,
+              "wall_ms_p50": 0.605,
+              "wall_ms_p95": 0.79
+            }
+          ],
+          "engine_ms_p50": 0.412,
+          "engine_ms_p95": 0.56,
+          "wall_ms_p50": 0.605,
+          "wall_ms_p95": 0.79,
+          "rows": 0,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-NEG-1": {
+          "instances": [
+            {
+              "instance": "window",
+              "params": {
+                "now": 1792033200000,
+                "window_ms": 1800000,
+                "anomalous_ids": [
+                  "order-orchestrator-u025"
+                ]
+              },
+              "runs": 20,
+              "rows": 4,
+              "truncated": false,
+              "engine_ms_p50": 7.052,
+              "engine_ms_p95": 7.943,
+              "wall_ms_p50": 7.555,
+              "wall_ms_p95": 8.561
+            }
+          ],
+          "engine_ms_p50": 7.052,
+          "engine_ms_p95": 7.943,
+          "wall_ms_p50": 7.555,
+          "wall_ms_p95": 8.561,
+          "rows": 4,
+          "instance": "window",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-NOTIFY-1": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "ids": [
+                  "edge-gateway-u025",
+                  "mobile-bff-u025",
+                  "order-api-u025",
+                  "order-orchestrator-u025",
+                  "partner-api-u025",
+                  "refund-service-u025",
+                  "storefront-bff-u025"
+                ],
+                "now": 1792033200000
+              },
+              "runs": 20,
+              "rows": 3,
+              "truncated": false,
+              "engine_ms_p50": 0.075,
+              "engine_ms_p95": 0.098,
+              "wall_ms_p50": 0.26,
+              "wall_ms_p95": 0.569
+            }
+          ],
+          "engine_ms_p50": 0.075,
+          "engine_ms_p95": 0.098,
+          "wall_ms_p50": 0.26,
+          "wall_ms_p95": 0.569,
+          "rows": 3,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-OBL-CUST": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "id": "card-gateway-u025"
+              },
+              "runs": 20,
+              "rows": 5,
+              "truncated": false,
+              "engine_ms_p50": 1.064,
+              "engine_ms_p95": 1.169,
+              "wall_ms_p50": 1.641,
+              "wall_ms_p95": 1.728
+            }
+          ],
+          "engine_ms_p50": 1.064,
+          "engine_ms_p95": 1.169,
+          "wall_ms_p50": 1.641,
+          "wall_ms_p95": 1.728,
+          "rows": 5,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-OBL-SLO": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "current_since": 1792033020000,
+                "id": "card-gateway-u025",
+                "now": 1792033200000
+              },
+              "runs": 20,
+              "rows": 8,
+              "truncated": false,
+              "engine_ms_p50": 1.217,
+              "engine_ms_p95": 1.263,
+              "wall_ms_p50": 1.658,
+              "wall_ms_p95": 1.725
+            }
+          ],
+          "engine_ms_p50": 1.217,
+          "engine_ms_p95": 1.263,
+          "wall_ms_p50": 1.658,
+          "wall_ms_p95": 1.725,
+          "rows": 8,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-ORG-BUS": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "target": "card-gateway-u025"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.055,
+              "engine_ms_p95": 0.066,
+              "wall_ms_p50": 0.18,
+              "wall_ms_p95": 0.437
+            }
+          ],
+          "engine_ms_p50": 0.055,
+          "engine_ms_p95": 0.066,
+          "wall_ms_p50": 0.18,
+          "wall_ms_p95": 0.437,
+          "rows": 1,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-OWN-AT": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "at": 1792033020000,
+                "id": "card-gateway-u025"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.016,
+              "engine_ms_p95": 0.029,
+              "wall_ms_p50": 0.135,
+              "wall_ms_p95": 0.238
+            }
+          ],
+          "engine_ms_p50": 0.016,
+          "engine_ms_p95": 0.029,
+          "wall_ms_p50": 0.135,
+          "wall_ms_p95": 0.238,
+          "rows": 1,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-REM-1": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "inc": "inc-scale-10k-c8f63b56",
+                "incidents": [],
+                "symptoms": [
+                  "sym-error_rate-order-orchestrator-u025"
+                ]
+              },
+              "runs": 20,
+              "rows": 3,
+              "truncated": false,
+              "engine_ms_p50": 73.248,
+              "engine_ms_p95": 76.724,
+              "wall_ms_p50": 72.453,
+              "wall_ms_p95": 75.474
+            }
+          ],
+          "engine_ms_p50": 73.248,
+          "engine_ms_p95": 76.724,
+          "wall_ms_p50": 72.453,
+          "wall_ms_p95": 75.474,
+          "rows": 3,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-RESIDUE-1": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "cause": "D-d0a135a2b6",
+                "inc": "inc-scale-10k-c8f63b56"
+              },
+              "runs": 20,
+              "rows": 2,
+              "truncated": false,
+              "engine_ms_p50": 0.261,
+              "engine_ms_p95": 0.28,
+              "wall_ms_p50": 0.514,
+              "wall_ms_p95": 0.683
+            }
+          ],
+          "engine_ms_p50": 0.261,
+          "engine_ms_p95": 0.28,
+          "wall_ms_p50": 0.514,
+          "wall_ms_p95": 0.683,
+          "rows": 2,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-SUS-1": {
+          "instances": [
+            {
+              "instance": "symptom",
+              "params": {
+                "symptom": "order-orchestrator-u025",
+                "onset": 1792033200000,
+                "window_ms": 1800000
+              },
+              "runs": 20,
+              "rows": 4,
+              "truncated": false,
+              "engine_ms_p50": 4.465,
+              "engine_ms_p95": 6.639,
+              "wall_ms_p50": 5.021,
+              "wall_ms_p95": 6.812
+            }
+          ],
+          "engine_ms_p50": 4.465,
+          "engine_ms_p95": 6.639,
+          "wall_ms_p50": 5.021,
+          "wall_ms_p95": 6.812,
+          "rows": 4,
+          "instance": "symptom",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-SUS-2": {
+          "instances": [
+            {
+              "instance": "window",
+              "params": {
+                "onset": 1792033200000,
+                "window_ms": 1800000
+              },
+              "runs": 20,
+              "rows": 25,
+              "truncated": false,
+              "engine_ms_p50": 0.104,
+              "engine_ms_p95": 0.12,
+              "wall_ms_p50": 0.398,
+              "wall_ms_p95": 0.549
+            }
+          ],
+          "engine_ms_p50": 0.104,
+          "engine_ms_p95": 0.12,
+          "wall_ms_p50": 0.398,
+          "wall_ms_p95": 0.549,
+          "rows": 25,
+          "instance": "window",
+          "truncated": false,
+          "errors": 0
+        },
+        "Q-WHATIF-1": {
+          "instances": [
+            {
+              "instance": "run",
+              "params": {
+                "failing": "card-gateway-u025"
+              },
+              "runs": 20,
+              "rows": 1,
+              "truncated": false,
+              "engine_ms_p50": 0.964,
+              "engine_ms_p95": 1.008,
+              "wall_ms_p50": 1.474,
+              "wall_ms_p95": 1.564
+            }
+          ],
+          "engine_ms_p50": 0.964,
+          "engine_ms_p95": 1.008,
+          "wall_ms_p50": 1.474,
+          "wall_ms_p95": 1.564,
+          "rows": 1,
+          "instance": "run",
+          "truncated": false,
+          "errors": 0
+        }
+      },
+      "slowlog": [
+        {
+          "template": "Q-CODE-1",
+          "ms": 156.04,
+          "command": "GRAPH.RO_QUERY"
+        },
+        {
+          "template": null,
+          "ms": 146.21,
+          "command": "GRAPH.QUERY"
+        },
+        {
+          "template": "Q-MEM-6P",
+          "ms": 110.43,
+          "command": "GRAPH.RO_QUERY"
+        },
+        {
+          "template": "Q-REM-1",
+          "ms": 84.973,
+          "command": "GRAPH.RO_QUERY"
+        },
+        {
+          "template": null,
+          "ms": 74.283,
+          "command": "GRAPH.QUERY"
+        },
+        {
+          "template": null,
+          "ms": 68.667,
+          "command": "GRAPH.QUERY"
+        },
+        {
+          "template": null,
+          "ms": 57.476,
+          "command": "GRAPH.QUERY"
+        },
+        {
+          "template": "Q-ORG-1",
+          "ms": 56.374,
+          "command": "GRAPH.RO_QUERY"
+        },
+        {
+          "template": null,
+          "ms": 54.38,
+          "command": "GRAPH.QUERY"
+        },
+        {
+          "template": null,
+          "ms": 53.442,
+          "command": "GRAPH.QUERY"
+        }
+      ],
+      "memory_mb_after_run": 492,
+      "wall_s": 80.2,
+      "kept": [],
+      "engine_used_mb_after_cleanup": 2006.0
+    }
+  },
+  "analysis": {
+    "dominant": {
+      "1k": {
+        "template": "Q-CUT-1",
+        "instance": "cause\u2192protect",
+        "engine_ms_p95": 6.165
+      },
+      "10k": {
+        "template": "Q-GATE-3",
+        "instance": "run",
+        "engine_ms_p95": 23.295
+      }
+    },
+    "growth": {
+      "Q-BLAST-1": {
+        "engine_ms_p50": {
+          "1k": 0.475,
+          "10k": 3.9
+        },
+        "steps": [
+          {
+            "from": 1000,
+            "to": 10000,
+            "size_x": 10.0,
+            "time_x": 8.21,
+            "exponent": 0.91,
+            "shape": "linear"
+          }
+        ]
+      },
+      "Q-BLAST-2": {
+        "engine_ms_p50": {
+          "1k": 2.103,
+          "10k": 4.35
+        },
+        "steps": [
+          {
+            "from": 1000,
+            "to": 10000,
+            "size_x": 10.0,
+            "time_x": 2.07,
+            "exponent": 0.32,
+            "shape": "sublinear"
+          }
+        ]
+      },
+      "Q-CUT-1": {
+        "engine_ms_p50": {
+          "1k": 3.319,
+          "10k": 13.043
+        },
+        "steps": [
+          {
+            "from": 1000,
+            "to": 10000,
+            "size_x": 10.0,
+            "time_x": 3.93,
+            "exponent": 0.59,
+            "shape": "sublinear"
+          }
+        ]
+      },
+      "Q-CUT-2": {
+        "engine_ms_p50": {
+          "1k": 1.88,
+          "10k": 7.998
+        },
+        "steps": [
+          {
+            "from": 1000,
+            "to": 10000,
+            "size_x": 10.0,
+            "time_x": 4.25,
+            "exponent": 0.63,
+            "shape": "sublinear"
+          }
+        ]
+      },
+      "Q-GATE-1": {
+        "engine_ms_p50": {
+          "1k": 1.069,
+          "10k": 7.572
+        },
+        "steps": [
+          {
+            "from": 1000,
+            "to": 10000,
+            "size_x": 10.0,
+            "time_x": 7.08,
+            "exponent": 0.85,
+            "shape": "linear"
+          }
+        ]
+      },
+      "Q-GATE-3": {
+        "engine_ms_p50": {
+          "1k": 1.825,
+          "10k": 19.259
+        },
+        "steps": [
+          {
+            "from": 1000,
+            "to": 10000,
+            "size_x": 10.0,
+            "time_x": 10.55,
+            "exponent": 1.02,
+            "shape": "linear"
+          }
+        ]
+      },
+      "Q-GATE-MULT": {
+        "engine_ms_p50": {
+          "1k": 0.739,
+          "10k": 6.843
+        },
+        "steps": [
+          {
+            "from": 1000,
+            "to": 10000,
+            "size_x": 10.0,
+            "time_x": 9.26,
+            "exponent": 0.97,
+            "shape": "linear"
+          }
+        ]
+      },
+      "Q-NEG-1": {
+        "engine_ms_p50": {
+          "1k": 1.876,
+          "10k": 7.052
+        },
+        "steps": [
+          {
+            "from": 1000,
+            "to": 10000,
+            "size_x": 10.0,
+            "time_x": 3.76,
+            "exponent": 0.58,
+            "shape": "sublinear"
+          }
+        ]
+      },
+      "Q-SUS-1": {
+        "engine_ms_p50": {
+          "1k": 1.924,
+          "10k": 4.465
+        },
+        "steps": [
+          {
+            "from": 1000,
+            "to": 10000,
+            "size_x": 10.0,
+            "time_x": 2.32,
+            "exponent": 0.37,
+            "shape": "sublinear"
+          }
+        ]
+      },
+      "Q-SUS-2": {
+        "engine_ms_p50": {
+          "1k": 0.171,
+          "10k": 0.104
+        },
+        "steps": [
+          {
+            "from": 1000,
+            "to": 10000,
+            "size_x": 10.0,
+            "time_x": 0.61,
+            "exponent": -0.22,
+            "shape": "flat"
+          }
+        ]
+      },
+      "sweep": {
+        "ms_p50": {
+          "1k": 114.396,
+          "10k": 487.165
+        },
+        "steps": [
+          {
+            "from": 1000,
+            "to": 10000,
+            "size_x": 10.0,
+            "time_x": 4.26,
+            "exponent": 0.63,
+            "shape": "sublinear"
+          }
+        ]
+      },
+      "memory": {
+        "mb": {
+          "1k": 42,
+          "10k": 489
+        },
+        "steps": [
+          {
+            "from": 1000,
+            "to": 10000,
+            "size_x": 10.0,
+            "time_x": 11.64,
+            "exponent": 1.07,
+            "shape": "linear"
+          }
+        ]
+      },
+      "seed": {
+        "s": {
+          "1k": 3.75,
+          "10k": 40.81
+        },
+        "steps": [
+          {
+            "from": 1000,
+            "to": 10000,
+            "size_x": 10.0,
+            "time_x": 10.88,
+            "exponent": 1.04,
+            "shape": "linear"
+          }
+        ]
+      }
+    },
+    "truncated": [
+      {
+        "size": "1k",
+        "template": "Q-BLAST-1",
+        "instance": "hub",
+        "rows": 100
+      },
+      {
+        "size": "1k",
+        "template": "Q-BLAST-2",
+        "instance": "hub",
+        "rows": 100
+      },
+      {
+        "size": "1k",
+        "template": "Q-CHOKE-1",
+        "instance": "run",
+        "rows": 10
+      },
+      {
+        "size": "1k",
+        "template": "Q-CUT-2",
+        "instance": "hub",
+        "rows": 100
+      },
+      {
+        "size": "1k",
+        "template": "Q-CHOKE-1",
+        "instance": "run: chokepoints",
+        "rows": 10
+      },
+      {
+        "size": "1k",
+        "template": "Q-RANK-1",
+        "instance": "run: rank_causes",
+        "rows": 50
+      },
+      {
+        "size": "1k",
+        "template": "Q-ORG-HARM",
+        "instance": "run: who_fixes",
+        "rows": 10
+      },
+      {
+        "size": "10k",
+        "template": "Q-BLAST-1",
+        "instance": "hub",
+        "rows": 100
+      },
+      {
+        "size": "10k",
+        "template": "Q-BLAST-2",
+        "instance": "hub",
+        "rows": 100
+      },
+      {
+        "size": "10k",
+        "template": "Q-CHOKE-1",
+        "instance": "run",
+        "rows": 10
+      },
+      {
+        "size": "10k",
+        "template": "Q-CUT-2",
+        "instance": "hub",
+        "rows": 100
+      },
+      {
+        "size": "10k",
+        "template": "Q-CHOKE-1",
+        "instance": "run: chokepoints",
+        "rows": 10
+      },
+      {
+        "size": "10k",
+        "template": "Q-RANK-1",
+        "instance": "run: rank_causes",
+        "rows": 50
+      },
+      {
+        "size": "10k",
+        "template": "Q-ORG-HARM",
+        "instance": "run: who_fixes",
+        "rows": 10
+      }
+    ],
+    "errors": [],
+    "slowlog_top": {
+      "1k": {
+        "template": "Q-CODE-1",
+        "ms": 19.777,
+        "command": "GRAPH.RO_QUERY"
+      },
+      "10k": {
+        "template": "Q-CODE-1",
+        "ms": 156.04,
+        "command": "GRAPH.RO_QUERY"
+      }
+    }
+  },
+  "finished": "2026-10-13T11:55:03+00:00"
+}

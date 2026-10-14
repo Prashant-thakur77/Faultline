@@ -1,0 +1,34 @@
+{
+  "responders": 24,
+  "same_plan": {
+    "http": {
+      "409": 23,
+      "200": 1
+    },
+    "accepted": 1,
+    "refused": 23,
+    "final_stage": "RESOLVED",
+    "approved_actions": 1,
+    "intents": 1,
+    "operator_steps": 1,
+    "prs": 1,
+    "ok": true
+  },
+  "different_plans": {
+    "options": 3,
+    "http": {
+      "409": 23,
+      "200": 1
+    },
+    "accepted": 1,
+    "refused": 23,
+    "final_stage": "UNKNOWN_ESCALATED",
+    "approved_actions": 1,
+    "intents": 1,
+    "operator_steps": 1,
+    "prs": 0,
+    "ok": true
+  },
+  "ok": true,
+  "seconds": 5.0
+}
