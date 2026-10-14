@@ -1,0 +1,98 @@
+{
+  "graph": "eval_acme_api_v2_s1_9462_ee6d96e6",
+  "blast": {
+    "checkout": {
+      "rows": [
+        {
+          "id": "frontend",
+          "label": "Service",
+          "tier": 1,
+          "revenue": true,
+          "hops": 1,
+          "max_cap": 1.0,
+          "impact": 2.3125
+        },
+        {
+          "id": "frontend-proxy",
+          "label": "Service",
+          "tier": 1,
+          "revenue": true,
+          "hops": 2,
+          "max_cap": 1.0,
+          "impact": 1.5417
+        },
+        {
+          "id": "agent",
+          "label": "Service",
+          "tier": 3,
+          "revenue": false,
+          "hops": 2,
+          "max_cap": 1.0,
+          "impact": 0.3083
+        },
+        {
+          "id": "mcp",
+          "label": "Service",
+          "tier": 3,
+          "revenue": false,
+          "hops": 2,
+          "max_cap": 1.0,
+          "impact": 0.3083
+        },
+        {
+          "id": "chatbot",
+          "label": "Service",
+          "tier": 3,
+          "revenue": false,
+          "hops": 3,
+          "max_cap": 1.0,
+          "impact": 0.2312
+        }
+      ],
+      "template": "Q-BLAST-1",
+      "via": "algo.BFS((checkout), 8, 'PROPAGATES_TO')"
+    },
+    "frontend": {
+      "rows": [
+        {
+          "id": "frontend-proxy",
+          "label": "Service",
+          "tier": 1,
+          "revenue": true,
+          "hops": 1,
+          "max_cap": 1.0,
+          "impact": 2.3125
+        },
+        {
+          "id": "agent",
+          "label": "Service",
+          "tier": 3,
+          "revenue": false,
+          "hops": 1,
+          "max_cap": 1.0,
+          "impact": 0.4625
+        },
+        {
+          "id": "mcp",
+          "label": "Service",
+          "tier": 3,
+          "revenue": false,
+          "hops": 1,
+          "max_cap": 1.0,
+          "impact": 0.4625
+        },
+        {
+          "id": "chatbot",
+          "label": "Service",
+          "tier": 3,
+          "revenue": false,
+          "hops": 2,
+          "max_cap": 1.0,
+          "impact": 0.3083
+        }
+      ],
+      "template": "Q-BLAST-1",
+      "via": "algo.BFS((frontend), 8, 'PROPAGATES_TO')"
+    }
+  }
+}

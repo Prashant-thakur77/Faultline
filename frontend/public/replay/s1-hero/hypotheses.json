@@ -1,0 +1,43 @@
+[
+  {
+    "id": "hyp-inc-s1-ee6d96e6-D-email-88",
+    "cause": "D-email-88",
+    "status": "eliminated",
+    "score": 0.3256,
+    "reason": "G5: max flow 0.0200 < needed 0.2433 (observed 0.3041 \u00d7 0.8); another suspect alone can carry 1.0000",
+    "origin": "code",
+    "supports": [],
+    "refutes": [
+      "ev_d3ce0adb65",
+      "ev_1a986a73de",
+      "ev_03b4535c58"
+    ]
+  },
+  {
+    "id": "hyp-inc-s1-ee6d96e6-D-pay-417",
+    "cause": "D-pay-417",
+    "status": "confirmed",
+    "score": 0.3495,
+    "reason": "gate passed",
+    "origin": "code",
+    "supports": [
+      "ev_9dc2e8c800",
+      "ev_d3ce0adb65",
+      "ev_edbfd9c531",
+      "ev_0d9b87053a"
+    ],
+    "refutes": []
+  },
+  {
+    "id": "hyp-inc-s1-ee6d96e6-D-rec-12",
+    "cause": "D-rec-12",
+    "status": "eliminated",
+    "score": 0.3112,
+    "reason": "G2: no path to any primary symptom (no path, no claim)",
+    "origin": "code",
+    "supports": [],
+    "refutes": [
+      "ev_5b8e92d948"
+    ]
+  }
+]

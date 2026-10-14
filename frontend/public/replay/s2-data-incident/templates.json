@@ -1,0 +1,310 @@
+{
+  "Q-BLAST-1": {
+    "id": "Q-BLAST-1",
+    "purpose": "blast radius: everything a failure at $id can reach (algo.BFS over PROPAGATES_TO)",
+    "cypher": "MATCH (s:Node {id:$id})\nCALL algo.BFS(s, 8, 'PROPAGATES_TO') YIELD nodes\nUNWIND nodes AS n\nRETURN n.id AS id, [x IN labels(n) WHERE x <> 'Node'][0] AS label, n.tier AS tier, n.revenue_path AS revenue\nORDER BY id\nLIMIT 100",
+    "file": "blast_radius.cypher",
+    "limit": 100
+  },
+  "Q-CHAIN-MON": {
+    "id": "Q-CHAIN-MON",
+    "purpose": "why alerts missed it: for each hop of the proven causal chain, the alerts that fired on it (and when) and whether it has telemetry at all",
+    "cypher": "UNWIND range(0, size($chain) - 1) AS i\nMATCH (n:Node {id: $chain[i]})\nRETURN i AS hop, n.id AS id, [x IN labels(n) WHERE x <> 'Node'][0] AS label,\n       [(a:Alert)-[:FIRED_ON]->(n) WHERE a.fired_at >= $since AND a.fired_at <= $until | {id: a.id, at: a.fired_at, metric: a.metric}] AS alerts,\n       size([(m:MetricWindow)-[:WINDOW_OF]->(n) | m]) > 0 AS has_telemetry\nORDER BY hop\nLIMIT 20",
+    "file": "chain_monitors.cypher",
+    "limit": 20
+  },
+  "Q-CHANGE-2": {
+    "id": "Q-CHANGE-2",
+    "purpose": "a change's details (kind, time, actor, title, what it touched, the facts it asserts)",
+    "cypher": "MATCH (d:Deploy {id:$id})\nOPTIONAL MATCH (d)-[:CHANGED]->(t:Node)\nRETURN d.id AS id, d.kind AS kind, d.at AS at, d.title AS title, d.actor_id AS actor, d.sha AS sha, t.id AS target,\n       [(d)-[:ASSERTS]->(f:ChangeFact) | [f.key, f.value]] AS facts\nLIMIT 1",
+    "file": "change_detail.cypher",
+    "limit": 1
+  },
+  "Q-CHOKE-1": {
+    "id": "Q-CHOKE-1",
+    "purpose": "chokepoints: betweenness over service calls (seeded sampling → identical every run)",
+    "cypher": "CALL algo.betweenness({nodeLabels: ['Service', 'Datastore'], relationshipTypes: ['CALLS'], samplingSize: 64, samplingSeed: 42}) YIELD node, score\nRETURN node.id AS id, score\nORDER BY score DESC, id\nLIMIT 10",
+    "file": "chokepoints.cypher",
+    "limit": 10
+  },
+  "Q-CODE-1": {
+    "id": "Q-CODE-1",
+    "purpose": "code specialist (diff_summary): what the graph knows about one change's code. The component it CHANGED; the commits it CONTAINS, the files they TOUCH and the component each file is PART_OF; the PRs that contain those commits; the commit authors; the typed facts its diff ASSERTS. code_on_target / facts_on_target say whether that code lands on the CHANGED component. There is no function-level code graph: a file path is the finest grain",
+    "cypher": "MATCH (d:Deploy {id:$id})\nOPTIONAL MATCH (d)-[:CHANGED]->(t:Node)\nRETURN d.id AS id, d.kind AS kind, d.at AS at, d.sha AS sha, t.id AS target,\n       [(d)-[:CONTAINS]->(c:Commit) | c.id] AS commits,\n       [(d)-[:CONTAINS]->(:Commit)-[:TOUCHES]->(f:File) | f.id] AS files,\n       [(d)-[:CONTAINS]->(:Commit)-[:TOUCHES]->(:File)-[:PART_OF]->(x:Node) | x.id] AS file_components,\n       [(d)-[:CONTAINS]->(:Commit)<-[:CONTAINS]-(p:PR) | p.id] AS prs,\n       [(d)-[:CONTAINS]->(:Commit)<-[:AUTHORED]-(a:Person) | a.id] AS authors,\n       [(d)-[:ASSERTS]->(cf:ChangeFact) | [cf.key, cf.file_id]] AS facts,\n       size([(d)-[:CONTAINS]->(:Commit)-[:TOUCHES]->(:File)-[:PART_OF]->(t) | 1]) > 0 AS code_on_target,\n       size([(d)-[:ASSERTS]->(:ChangeFact)-[:ABOUT]->(t) | 1]) > 0 AS facts_on_target\nLIMIT 1",
+    "file": "code_diff.cypher",
+    "limit": 1
+  },
+  "Q-CONN-2": {
+    "id": "Q-CONN-2",
+    "purpose": "containment precondition (algo.WCC): is the failing component in the same connected component as anything protected? (no → nothing to cut)",
+    "cypher": "CALL algo.WCC({nodeLabels: ['Service', 'Datastore', 'Table', 'KPI', 'Dashboard'], relationshipTypes: ['PROPAGATES_TO']}) YIELD node, componentId\nWITH componentId, collect(node.id) AS members\nWHERE $target IN members\nRETURN componentId, [p IN $protect WHERE p IN members] AS protected_in_component, size(members) AS size\nORDER BY componentId\nLIMIT 1",
+    "file": "connectivity_linked.cypher",
+    "limit": 1
+  },
+  "Q-CTX-1": {
+    "id": "Q-CTX-1",
+    "purpose": "context of any target: owner team, current on-call, runbooks, active decisions",
+    "cypher": "MATCH (s:Node {id:$id})\nOPTIONAL MATCH (t:Team)-[:OWNS]->(s)\nOPTIONAL MATCH (p:Person)-[oc:ON_CALL]->(t)\nWHERE oc.from <= $now AND $now < oc.to AND p.active\nOPTIONAL MATCH (r:Runbook)-[:RUNBOOK_FOR]->(s)\nWHERE r.valid_to IS NULL\nOPTIONAL MATCH (d:Decision {status:'active'})-[:CONSTRAINS]->(s)\nRETURN s.id AS id, [x IN labels(s) WHERE x <> 'Node'][0] AS label, t.id AS team,\n       collect(DISTINCT p.id) AS oncall, collect(DISTINCT r.id) AS runbooks, collect(DISTINCT d.id) AS decisions\nLIMIT 1",
+    "file": "context.cypher",
+    "limit": 1
+  },
+  "Q-CUT-1": {
+    "id": "Q-CUT-1",
+    "purpose": "containment: max-flow from the failing component to the protected set over cut_cost (edges + edgeFlows; cut computed in code)",
+    "cypher": "MATCH (f:Node {id:$failing})\nMATCH (p:Node) WHERE p.id IN $protect\nWITH f, collect(p) AS prot\nWHERE size(prot) > 0\nCALL algo.maxFlow({sourceNodes: [f], targetNodes: prot, relationshipTypes: ['PROPAGATES_TO'], capacityProperty: 'cut_cost'}) YIELD edges, edgeFlows, maxFlow\nRETURN [e IN edges | [startNode(e).id, endNode(e).id]] AS flow_edges, edgeFlows AS flows, maxFlow AS max_flow\nLIMIT 1",
+    "file": "cut_flow.cypher",
+    "limit": 1
+  },
+  "Q-DEC-1": {
+    "id": "Q-DEC-1",
+    "purpose": "gate G8 / preflight: active, non-superseded decisions constraining what a change asserts about; with the reviewer override recorded for THIS change, if any (M15 #3: intentional / accidental / discuss); an override counts only while the change still asserts the value it was given for (a re-push with another value brings the violation back)",
+    "cypher": "MATCH (src:Node {id:$change})-[:ASSERTS]->(f:ChangeFact)-[:ABOUT]->(n)<-[:CONSTRAINS]-(d:Decision {status:'active'})\nWHERE f.key = d.rule_key AND NOT (d)<-[:SUPERSEDES]-(:Decision {status:'active'})\nRETURN d.id AS decision, d.title AS title, d.rule_key AS rule_key, d.rule_op AS op, d.rule_value AS expected,\n       f.value AS actual, toString(f.value) AS actual_text, d.url AS url, n.id AS about,\n       head([(d)<-[:OVERRIDES]-(o:Override) WHERE o.change_id = $change AND o.actual = toString(f.value) |\n             {verdict: o.verdict, by: o.by, why: o.why, at: o.at}]) AS override\nORDER BY decision, about\nLIMIT 20",
+    "file": "decision_contradiction.cypher",
+    "limit": 20
+  },
+  "Q-FUTURE-1": {
+    "id": "Q-FUTURE-1",
+    "purpose": "futures (CONTAIN, M14 #1): the predicted residual of the confirmed origin's fault at each target once a containment option is in place, read on that option's own GRAPH.COPY branch (its cut edges already removed; the live run graph for an option that cuts nothing). Model (the gate's and Q-VERIFY-ALLOW's, sim/telemetry.py): a node's excess rises by at most the sum over its in-edges of cap x the source's excess, so the origin's share at t is at most its excess x transfer, the sum over its PROPAGATES_TO paths of 1..8 hops (gate.max_len) of the product of the caps (the origin itself: transfer 1). Excess = the origin's peak since $since minus its mean over the pre-onset baseline, floored at 0, from its MetricWindows: what the graph measured, never the scenario's injected effect. residual = min(1, transfer x excess); 0 when the option removes the origin's fault ($removes_origin: rollback, data repair). Unknown (null) when the excess is unmeasured, an edge has no cap, or more than 1000 paths. Each target also returns its baseline windows (base_vals) and its peak since $since, so the caller applies VERIFY's own band rule",
+    "cypher": "MATCH (o:Node {id: $origin})\nCALL {\n  WITH o\n  MATCH (w:MetricWindow {target_id: o.id, metric: 'error_rate', kind: 'live'})\n  WHERE w.at >= $base_since AND w.at <= $until\n  RETURN avg(CASE WHEN w.at <= $base_until THEN w.value END) AS obase, max(CASE WHEN w.at >= $since THEN w.value END) AS opeak\n}\nWITH o, CASE WHEN opeak IS NULL OR obase IS NULL THEN null WHEN opeak - obase > 0.0 THEN opeak - obase ELSE 0.0 END AS excess\nMATCH (t:Node) WHERE t.id IN $targets\nCALL {\n  WITH o, t\n  OPTIONAL MATCH p = (o)-[:PROPAGATES_TO*1..8]->(t)\n  WITH p LIMIT 1001\n  RETURN count(p) AS paths, min(length(p)) AS hops,\n         sum(CASE WHEN p IS NOT NULL AND any(r IN relationships(p) WHERE r.cap IS NULL) THEN 1 ELSE 0 END) AS uncapped,\n         sum(CASE WHEN p IS NULL THEN 0.0 ELSE reduce(acc = 1.0, r IN relationships(p) | acc * coalesce(r.cap, 1.0)) END) AS walk\n}\nCALL {\n  WITH t\n  MATCH (w:MetricWindow {target_id: t.id, metric: 'error_rate', kind: 'live'})\n  WHERE w.at >= $base_since AND w.at <= $until\n  RETURN collect(CASE WHEN w.at <= $base_until THEN w.value END) AS base_vals,\n         max(CASE WHEN w.at >= $since THEN w.value END) AS peak\n}\nWITH o, t, excess, paths, hops, base_vals, peak,\n     CASE WHEN t.id = o.id THEN 1.0 WHEN paths > 1000 OR uncapped > 0 THEN null ELSE walk END AS transfer\nRETURN t.id AS target, o.id AS origin, t.id = o.id AS is_origin, CASE WHEN t.id = o.id THEN 0 ELSE hops END AS hops,\n       paths, transfer, excess, base_vals, peak,\n       CASE WHEN $removes_origin THEN 0.0\n            WHEN excess IS NULL OR transfer IS NULL THEN null\n            WHEN transfer * excess > 1.0 THEN 1.0 ELSE transfer * excess END AS residual\nORDER BY target\nLIMIT 50",
+    "file": "futures.cypher",
+    "limit": 50
+  },
+  "Q-GATE-1": {
+    "id": "Q-GATE-1",
+    "purpose": "THE load-bearing query (gate G2): shortest causal paths cause → symptom. Empty = no path, no claim. learned_from names, per hop, the incident whose verified fix taught a learned link ('' for an ordinary edge), so a proof that relies on one says so",
+    "cypher": "MATCH (c:Node {id:$cause}), (s:Node {id:$symptom})\nCALL algo.SPpaths({sourceNode: c, targetNode: s, relTypes: ['CHANGED', 'GATES', 'PROPAGATES_TO'], weightProp: 'w', relDirection: 'outgoing', maxLen: 8, pathCount: 3}) YIELD path, pathWeight\nRETURN [n IN nodes(path) | n.id] AS chain, [r IN relationships(path) | type(r)] AS rels, pathWeight AS weight, length(path) AS hops,\n       [r IN relationships(path) | coalesce(r.from_incident, '')] AS learned_from\nORDER BY weight, hops\nLIMIT 3",
+    "file": "gate_path.cypher",
+    "limit": 3
+  },
+  "Q-GATE-2": {
+    "id": "Q-GATE-2",
+    "purpose": "gate G3 time order: is the cause inside the window, and is there an earlier upstream change on its path?",
+    "cypher": "MATCH (c:Deploy {id:$cause})-[:CHANGED]->(cs)\nOPTIONAL MATCH (cs)-[:DEPENDS_ON*1..8]->(up)<-[:CHANGED]-(earlier:Deploy)\nWHERE earlier.at < c.at AND earlier.at >= $onset - $window_ms\nRETURN c.at <= $onset AND $onset <= c.at + $window_ms AS in_window, c.at AS cause_at, $onset AS onset_at,\n       collect(DISTINCT earlier.id) AS earlier_upstream_changes\nLIMIT 1",
+    "file": "gate_time.cypher",
+    "limit": 1
+  },
+  "Q-GATE-3": {
+    "id": "Q-GATE-3",
+    "purpose": "gate G5 sufficiency bound: max share of the symptom that the source set can explain (single or joint)",
+    "cypher": "MATCH (s:Node) WHERE s.id IN $sources\nWITH collect(s) AS srcs\nWHERE size(srcs) > 0\nMATCH (t:Node {id:$symptom})\nCALL algo.maxFlow({sourceNodes: srcs, targetNodes: [t], relationshipTypes: ['PROPAGATES_TO'], capacityProperty: 'cap'}) YIELD maxFlow\nRETURN maxFlow AS max_flow, size(srcs) AS sources\nLIMIT 1",
+    "file": "gate_flow.cypher",
+    "limit": 1
+  },
+  "Q-GATE-4": {
+    "id": "Q-GATE-4",
+    "purpose": "gate G4: cited quantitative evidence produced by this run that is ABOUT a node on the causal chain",
+    "cypher": "MATCH (run:Run {id:$run})-[:HAS_TOOL_CALL]->(:ToolCall)-[:PRODUCED_EVIDENCE]->(e:Evidence)-[:ABOUT]->(n:Node)\nWHERE e.id IN $evidence AND n.id IN $chain AND e.kind IN ['metric', 'profile', 'baseline_comparison', 'row_share', 'error_rate']\nRETURN e.id AS evidence, n.id AS about, e.kind AS kind, e.ratio AS ratio, e.band AS band, e.value AS value,\n       e.baseline AS baseline, e.anomalous AS anomalous, e.summary AS summary\nORDER BY evidence, about\nLIMIT 50",
+    "file": "gate_quant.cypher",
+    "limit": 50
+  },
+  "Q-GATE-7": {
+    "id": "Q-GATE-7",
+    "purpose": "gate G7 agreement: independent channels (sources) whose cited evidence is ABOUT nodes of the causal chain",
+    "cypher": "MATCH (run:Run {id:$run})-[:HAS_TOOL_CALL]->(:ToolCall)-[:PRODUCED_EVIDENCE]->(e:Evidence)-[:ABOUT]->(n:Node)\nWHERE e.id IN $evidence AND n.id IN $chain\nRETURN e.source AS source, collect(DISTINCT e.id) AS evidence, collect(DISTINCT n.id) AS about\nORDER BY source\nLIMIT 20",
+    "file": "gate_channels.cypher",
+    "limit": 20
+  },
+  "Q-GATE-CORR": {
+    "id": "Q-GATE-CORR",
+    "purpose": "gate G7 structural correlation: for every specialist report of this run (a done specialist Task; crew step records are never votes), the deploys it NAMES, and the chain nodes it reaches by naming the cause Deploy through its CHANGED edge (non-empty `via` = this report names the cause, and the cause CHANGED a node of the G2 chain)",
+    "cypher": "MATCH (run:Run {id:$run})-[:HAS_TASK]->(t:Task)\nWHERE t.state = 'done' AND t.kind = 'specialist' AND t.role IN $roles\nRETURN t.role AS role, t.status AS status, t.id AS task,\n       [(t)-[:NAMES]->(d:Deploy) | d.id] AS named,\n       [(t)-[:NAMES]->(d:Deploy)-[:CHANGED]->(x:Node) WHERE d.id = $cause AND x.id IN $chain | x.id] AS via\nORDER BY role, task\nLIMIT 20",
+    "file": "gate_correlation.cypher",
+    "limit": 20
+  },
+  "Q-GATE-G1": {
+    "id": "Q-GATE-G1",
+    "purpose": "gate G1 grounding: which of $ids this run SAW in graph results, and which cited evidence ids it produced",
+    "cypher": "MATCH (run:Run {id:$run})\nRETURN [(run)-[:HAS_TOOL_CALL]->(:ToolCall)-[:SAW]->(n:Node) WHERE n.id IN $ids | n.id] AS seen,\n       [(run)-[:HAS_TOOL_CALL]->(:ToolCall)-[:PRODUCED_EVIDENCE]->(e:Evidence) WHERE e.id IN $evidence | e.id] AS evidence\nLIMIT 1",
+    "file": "gate_grounding.cypher",
+    "limit": 1
+  },
+  "Q-GATE-MULT": {
+    "id": "Q-GATE-MULT",
+    "purpose": "G5 multiplicity per suspect: how many distinct failure paths (up to 100, algo.SPpaths) lead from each source to the symptom. A request can meet the same fault once per path, so a source's sound G5 bound is min(1, k × maxFlow); k = 1 leaves it unchanged (gate bench / G5 property finding)",
+    "cypher": "MATCH (t:Node {id: $symptom})\nUNWIND $sources AS sid\nMATCH (s:Node {id: sid})\nCALL algo.SPpaths({sourceNode: s, targetNode: t, relTypes: ['PROPAGATES_TO'], weightProp: 'w', relDirection: 'outgoing', maxLen: 8, pathCount: 100}) YIELD path\nRETURN s.id AS source, count(path) AS paths\nORDER BY source\nLIMIT 100",
+    "file": "gate_multiplicity.cypher",
+    "limit": 100
+  },
+  "Q-GATE-UPSTREAM": {
+    "id": "Q-GATE-UPSTREAM",
+    "purpose": "sweep, G4 upstream ELIMINATION under a strict lower bound (deep bench + adversarial review): for each suspect's changed component s, a component u upstream whose own measured fault fully accounts for s's anomaly: u's excess >= $min_excess, u's anomaly started no later than s's, no failure path leads back from s to u, and s's excess <= u's excess x the BEST SINGLE path's product of cap x share (share = the call share recorded on each PROPAGATES_TO edge at ingest, the propagation the services actually see; a hop without a share, e.g. data plane or a learned link, makes the path unusable). No slack: any surplus at s may be its own fault, so s stays a candidate. Excess = peak since $since minus the pre-onset baseline mean; onset = the first window after the baseline whose rise is >= $min_excess",
+    "cypher": "MATCH (s:Node) WHERE s.id IN $ids\nMATCH (u:Node)-[:PROPAGATES_TO*1..8]->(s)\nWITH DISTINCT u, s\nCALL {\n  WITH u, s\n  OPTIONAL MATCH back = (s)-[:PROPAGATES_TO*1..8]->(u)\n  WITH back LIMIT 1\n  RETURN count(back) AS backpaths\n}\nCALL {\n  WITH s\n  MATCH (w:MetricWindow {target_id: s.id, metric: 'error_rate', kind: 'live'})\n  WHERE w.at >= $base_since AND w.at <= $until\n  WITH collect(w) AS ws\n  WITH ws, [x IN ws WHERE x.at <= $base_until | x.value] AS bv\n  WITH ws, CASE WHEN size(bv) = 0 THEN null ELSE reduce(a = 0.0, v IN bv | a + v) / size(bv) END AS base\n  RETURN base AS sbase,\n         reduce(m = null, x IN ws | CASE WHEN x.at >= $since AND (m IS NULL OR x.value > m) THEN x.value ELSE m END) AS speak,\n         reduce(o = null, x IN ws | CASE WHEN base IS NOT NULL AND x.at > $base_until AND x.value - base >= $min_excess\n                                          AND (o IS NULL OR x.at < o) THEN x.at ELSE o END) AS sonset\n}\nCALL {\n  WITH u\n  MATCH (w:MetricWindow {target_id: u.id, metric: 'error_rate', kind: 'live'})\n  WHERE w.at >= $base_since AND w.at <= $until\n  WITH collect(w) AS ws\n  WITH ws, [x IN ws WHERE x.at <= $base_until | x.value] AS bv\n  WITH ws, CASE WHEN size(bv) = 0 THEN null ELSE reduce(a = 0.0, v IN bv | a + v) / size(bv) END AS base\n  RETURN base AS ubase,\n         reduce(m = null, x IN ws | CASE WHEN x.at >= $since AND (m IS NULL OR x.value > m) THEN x.value ELSE m END) AS upeak,\n         reduce(o = null, x IN ws | CASE WHEN base IS NOT NULL AND x.at > $base_until AND x.value - base >= $min_excess\n                                          AND (o IS NULL OR x.at < o) THEN x.at ELSE o END) AS uonset\n}\nCALL {\n  WITH u, s\n  MATCH p = (u)-[:PROPAGATES_TO*1..8]->(s)\n  WITH p LIMIT 1001\n  WITH p, all(r IN relationships(p) WHERE r.cap IS NOT NULL AND r.share IS NOT NULL) AS usable\n  RETURN count(p) AS paths, min(length(p)) AS hops,\n         max(CASE WHEN usable THEN reduce(acc = 1.0, r IN relationships(p) | acc * r.cap * r.share) END) AS best\n}\nWITH u, s, hops, backpaths, sonset, uonset,\n     CASE WHEN speak IS NULL OR sbase IS NULL THEN null WHEN speak - sbase > 0.0 THEN speak - sbase ELSE 0.0 END AS sex,\n     CASE WHEN upeak IS NULL OR ubase IS NULL THEN null WHEN upeak - ubase > 0.0 THEN upeak - ubase ELSE 0.0 END AS uex,\n     CASE WHEN paths > 1000 THEN null ELSE best END AS transfer\nWITH u, s, hops, backpaths, sonset, uonset, sex, uex, transfer,\n     CASE WHEN transfer IS NULL OR uex IS NULL THEN null WHEN transfer * uex > 1.0 THEN 1.0 ELSE transfer * uex END AS carried\nWHERE sex IS NOT NULL AND sex > 0.0 AND uex IS NOT NULL AND uex >= $min_excess AND backpaths = 0\n  AND carried IS NOT NULL AND sex <= carried\n  AND uonset IS NOT NULL AND sonset IS NOT NULL AND uonset <= sonset\nRETURN s.id AS s, u.id AS u, hops, transfer, uex AS u_excess, sex AS s_excess, carried, uonset AS u_onset, sonset AS s_onset\nORDER BY s, hops, u\nLIMIT 100",
+    "file": "gate_upstream.cypher",
+    "limit": 100
+  },
+  "Q-GATE-UPSTREAM-UB": {
+    "id": "Q-GATE-UPSTREAM-UB",
+    "purpose": "confirm phase, G4 upstream DOWNGRADE-ONLY check (deep bench + adversarial review): for the confirmed change's components s, any component u upstream (a failure path of 1..8 hops, no path back) whose measured excess could carry s's under the GENEROUS upper bound: s's excess <= min(1, u's excess x transfer) x $slack, transfer = Q-FUTURE-1's model (sum over the PROPAGATES_TO paths of the product of the caps), u's excess >= $min_excess. A row means the change may not be the origin, so the claim is downgraded to not confident; it never eliminates anything (an upper bound may only make the gate more careful). Excess = peak since $since minus the pre-onset baseline mean, from MetricWindows",
+    "cypher": "MATCH (s:Node) WHERE s.id IN $ids\nMATCH (u:Node)-[:PROPAGATES_TO*1..8]->(s)\nWITH DISTINCT u, s\nCALL {\n  WITH s\n  MATCH (w:MetricWindow {target_id: s.id, metric: 'error_rate', kind: 'live'})\n  WHERE w.at >= $base_since AND w.at <= $until\n  RETURN avg(CASE WHEN w.at <= $base_until THEN w.value END) AS sbase, max(CASE WHEN w.at >= $since THEN w.value END) AS speak\n}\nCALL {\n  WITH u\n  MATCH (w:MetricWindow {target_id: u.id, metric: 'error_rate', kind: 'live'})\n  WHERE w.at >= $base_since AND w.at <= $until\n  RETURN avg(CASE WHEN w.at <= $base_until THEN w.value END) AS ubase, max(CASE WHEN w.at >= $since THEN w.value END) AS upeak\n}\nCALL {\n  WITH u, s\n  MATCH p = (u)-[:PROPAGATES_TO*1..8]->(s)\n  WITH p LIMIT 1001\n  RETURN count(p) AS paths, min(length(p)) AS hops,\n         sum(CASE WHEN any(r IN relationships(p) WHERE r.cap IS NULL) THEN 1 ELSE 0 END) AS uncapped,\n         sum(reduce(acc = 1.0, r IN relationships(p) | acc * coalesce(r.cap, 1.0))) AS walk\n}\nCALL {\n  WITH u, s\n  OPTIONAL MATCH back = (s)-[:PROPAGATES_TO*1..8]->(u)\n  WITH back LIMIT 1\n  RETURN count(back) AS backpaths\n}\nWITH u, s, hops, backpaths,\n     CASE WHEN speak IS NULL OR sbase IS NULL THEN null WHEN speak - sbase > 0.0 THEN speak - sbase ELSE 0.0 END AS sex,\n     CASE WHEN upeak IS NULL OR ubase IS NULL THEN null WHEN upeak - ubase > 0.0 THEN upeak - ubase ELSE 0.0 END AS uex,\n     CASE WHEN paths > 1000 OR uncapped > 0 THEN null ELSE walk END AS transfer\nWITH u, s, hops, backpaths, sex, uex, transfer,\n     CASE WHEN transfer IS NULL OR uex IS NULL THEN null WHEN transfer * uex > 1.0 THEN 1.0 ELSE transfer * uex END AS carried\nWHERE sex IS NOT NULL AND sex > 0.0 AND uex IS NOT NULL AND uex >= $min_excess AND backpaths = 0\n  AND carried IS NOT NULL AND sex <= carried * $slack\nRETURN s.id AS s, u.id AS u, hops, transfer, uex AS u_excess, sex AS s_excess, carried\nORDER BY s, hops, u\nLIMIT 100",
+    "file": "gate_upstream_ub.cypher",
+    "limit": 100
+  },
+  "Q-HYP-1": {
+    "id": "Q-HYP-1",
+    "purpose": "hypotheses of an incident with the evidence that supports/refutes them (gate G6, UI)",
+    "cypher": "MATCH (i:Incident {id:$inc})-[:HYPOTHESIZES]->(h:Hypothesis)-[:BLAMES]->(c:Node)\nOPTIONAL MATCH (e:Evidence)-[:SUPPORTS]->(h)\nOPTIONAL MATCH (e2:Evidence)-[:REFUTES]->(h)\nRETURN h.id AS id, c.id AS cause, h.status AS status, h.score AS score, h.reason AS reason, h.origin AS origin,\n       collect(DISTINCT e.id) AS supports, collect(DISTINCT e2.id) AS refutes\nORDER BY id\nLIMIT 50",
+    "file": "hypotheses.cypher",
+    "limit": 50
+  },
+  "Q-LIN-1": {
+    "id": "Q-LIN-1",
+    "purpose": "",
+    "cypher": "MATCH (sym:Node {id:$symptom})\nCALL algo.SSpaths({sourceNode: sym, relTypes: ['DEPENDS_ON'], weightProp: 'w', relDirection: 'outgoing', maxLen: 8, pathCount: 1000}) YIELD path\nWITH last(nodes(path)) AS n, min(length(path)) AS hops\nRETURN n.id AS id, [x IN labels(n) WHERE x <> 'Node'][0] AS label, hops\nORDER BY hops, id\nLIMIT 100",
+    "file": "upstream_scope.cypher",
+    "limit": 100
+  },
+  "Q-MEM-1": {
+    "id": "Q-MEM-1",
+    "purpose": "recall (recency = 0.5^(age/half-life), scenario clock via onset_at): vector seed (the incident's own embedding in the FalkorDB vector index) → structural confirmation (a shared Symptom node); returns what fixed it before",
+    "cypher": "MATCH (cur:Incident {id:$current})\nCALL db.idx.vector.queryNodes('Incident', 'embedding', 10, cur.embedding) YIELD node, score\nWITH cur, node, score\nWHERE node.id <> cur.id AND (node)-[:HAS_SYMPTOM]->(:Symptom)<-[:HAS_SYMPTOM]-(cur)\nWITH cur, node, score, toFloat($now - coalesce(node.onset_at, node.opened_at)) AS age_ms\nRETURN node.id AS id, node.title AS title, score AS distance, 1.0 - score AS similarity, node.salience AS salience,\n       node.opened_at AS opened_at,\n       CASE WHEN age_ms <= 0 THEN 1.0 ELSE exp(-0.6931471805599453 * age_ms / $half_life_ms) END AS recency,\n       [(node)-[:HAS_SYMPTOM]->(sy:Symptom)<-[:HAS_SYMPTOM]-(cur) | sy.id] AS shared,\n       [(node)-[:RESOLVED_BY]->(a:Action) WHERE a.verdict = 'APPLIED' | a.kind] AS fixes,\n       [(t:Node)<-[:CHANGED]-(:Deploy)-[:CAUSED]->(node) | t.id] AS cause_targets,\n       [(pm:Postmortem)-[:DOCUMENTS]->(node) | pm.summary] AS postmortem\nORDER BY distance, id\nLIMIT 5",
+    "file": "recall.cypher",
+    "limit": 5
+  },
+  "Q-MEM-3": {
+    "id": "Q-MEM-3",
+    "purpose": "procedural memory first: current runbooks for the given components/symptoms (derived ones before human ones, then by support)",
+    "cypher": "MATCH (r:Runbook)-[:RUNBOOK_FOR]->(x:Node)\nWHERE x.id IN $ids AND r.valid_to IS NULL\nWITH r, collect(DISTINCT x.id) AS for_ids\nRETURN r.id AS id, r.title AS title, r.source AS source, coalesce(r.salience, 1.0) AS salience,\n       coalesce(r.support_count, 0) AS support, r.steps AS steps, for_ids,\n       [(r)-[:DERIVED_FROM]->(pm:Postmortem) | pm.id] AS derived_from\nORDER BY CASE r.source WHEN 'derived' THEN 0 ELSE 1 END, support DESC, salience DESC, id\nLIMIT 10",
+    "file": "runbook_for.cypher",
+    "limit": 10
+  },
+  "Q-MEM-4": {
+    "id": "Q-MEM-4",
+    "purpose": "what an incident recalled at RECALL (the RECALLED edges written then): similarity, recency, salience and the fixes that worked",
+    "cypher": "MATCH (cur:Incident {id:$inc})-[r:RECALLED]->(p:Incident)\nRETURN p.id AS id, p.title AS title, r.similarity AS similarity, r.recency AS recency, r.salience AS salience,\n       r.shared AS shared,\n       [(p)-[:RESOLVED_BY|ATTEMPTED]->(a:Action) | {kind: a.kind, verdict: a.verdict, target: a.target_id}] AS actions,\n       [(t:Node)<-[:CHANGED]-(:Deploy)-[:CAUSED]->(p) | t.id] AS cause_targets\nORDER BY similarity DESC, id\nLIMIT 10",
+    "file": "recalled.cypher",
+    "limit": 10
+  },
+  "Q-MEM-5": {
+    "id": "Q-MEM-5",
+    "purpose": "what the recalled precedents teach about each fix kind: how often it was APPLIED vs NOT_APPLIED (procedural memory for the plan)",
+    "cypher": "MATCH (cur:Incident {id:$inc})-[:RECALLED]->(p:Incident)-[:RESOLVED_BY|ATTEMPTED]->(a:Action)\nRETURN a.kind AS kind, a.verdict AS verdict, count(DISTINCT p) AS n, collect(DISTINCT p.id) AS incidents\nORDER BY kind, verdict\nLIMIT 20",
+    "file": "fix_history.cypher",
+    "limit": 20
+  },
+  "Q-NOTIFY-1": {
+    "id": "Q-NOTIFY-1",
+    "purpose": "who to NOTIFY (not who fixes): teams owning anything in the blast radius, the impacted nodes they own, and who is on call for them now",
+    "cypher": "MATCH (t:Team)-[:OWNS]->(n:Node)\nWHERE n.id IN $ids\nWITH t, collect(DISTINCT n.id) AS owns_impacted\nRETURN t.id AS team, t.name AS name, owns_impacted,\n       [x IN [(p:Person)-[oc:ON_CALL]->(t) WHERE oc.from <= $now AND $now < oc.to | p] WHERE x.active | x.id] AS oncall\nORDER BY size(owns_impacted) DESC, team\nLIMIT 20",
+    "file": "notify_set.cypher",
+    "limit": 20
+  },
+  "Q-OBL-CUST": {
+    "id": "Q-OBL-CUST",
+    "purpose": "obligation clock: customers reached through the failure. (:Customer)-[:CONSUMES]->(the failing component or anything in its blast radius, algo.BFS over PROPAGATES_TO, 8 hops), ONE row per distinct customer (a customer reached by several paths counts once) with every node that reached them, the nearest failure path (shortestPath) and, on every row, the revenue at risk = sum of mrr over the distinct customers",
+    "cypher": "MATCH (s:Node {id:$id})\nCALL { WITH s CALL algo.BFS(s, 8, 'PROPAGATES_TO') YIELD nodes UNWIND nodes AS x RETURN collect(x) AS reached }\nWITH s, reached + [s] AS reach\nUNWIND reach AS n\nMATCH (c:Customer)-[v:CONSUMES]->(n)\nWITH c, n, v.via AS via, shortestPath((s)-[:PROPAGATES_TO*0..8]->(n)) AS p\nWITH c, n, via, [x IN nodes(p) | x.id] AS path\nORDER BY size(path), n.id\nWITH c, collect(n.id) AS through, collect(via) AS vias, collect(path) AS paths\nWITH collect({c: c, through: through, vias: vias, path: paths[0]}) AS reached, sum(c.mrr) AS revenue_at_risk, count(c) AS customers_reached\nUNWIND reached AS r\nRETURN r.c.id AS customer, r.c.name AS name, r.c.tier AS tier, r.c.mrr AS mrr, r.through AS through, r.vias AS via,\n       size(r.through) AS paths, r.path AS path, size(r.path) - 1 AS hops, revenue_at_risk, customers_reached\nORDER BY mrr DESC, customer\nLIMIT 100",
+    "file": "obligation_customers.cypher",
+    "limit": 100
+  },
+  "Q-OBL-SLO": {
+    "id": "Q-OBL-SLO",
+    "purpose": "obligation clock: error-budget burn of every SLO on the failing component and its blast radius (algo.BFS over PROPAGATES_TO, 8 hops). From the (:MetricWindow)-[:WINDOW_OF]-> telemetry: the current error rate (mean over [$current_since, $now]), burn = current rate / budget, and the budget remaining = 1 - spent before the telemetry horizon - error-minutes in the SLO window / budget-minutes",
+    "cypher": "MATCH (s:Node {id:$id})\nCALL { WITH s CALL algo.BFS(s, 8, 'PROPAGATES_TO') YIELD nodes UNWIND nodes AS x RETURN collect(x) AS reached }\nUNWIND reached + [s] AS n\nMATCH (o:SLO)-[:FOR]->(n)\nWITH o, n, [(w:MetricWindow)-[:WINDOW_OF]->(n) WHERE w.kind = 'live' AND w.metric = o.metric AND w.at <= $now AND w.at > $now - o.window_days * 86400000 | w] AS ws\nWITH o, n, ws, [w IN ws WHERE w.at >= $current_since | w.value] AS cur\nWITH o, n, size(ws) AS windows, size(cur) AS current_windows, reduce(t = 0.0, w IN ws | t + w.value) AS error_minutes,\n     CASE WHEN size(cur) = 0 THEN null ELSE reduce(t = 0.0, v IN cur | t + v) / size(cur) END AS error_rate\nRETURN o.id AS slo, n.id AS service, [x IN labels(n) WHERE x <> 'Node'][0] AS label, n.tier AS tier,\n       o.objective AS objective, o.budget AS budget, o.window_days AS window_days, o.spent_prior AS spent_prior,\n       windows, current_windows, error_rate,\n       CASE WHEN error_rate IS NULL THEN null ELSE error_rate / o.budget END AS burn,\n       1.0 - o.spent_prior - error_minutes / (o.budget * o.window_days * 1440.0) AS budget_remaining\nORDER BY coalesce(burn, -1.0) DESC, slo\nLIMIT 100",
+    "file": "obligation_slo.cypher",
+    "limit": 100
+  },
+  "Q-ORG-BUS": {
+    "id": "Q-ORG-BUS",
+    "purpose": "bus factor in the graph: the fewest ACTIVE people (most commits first) whose commits cover > 50% of the component's commits (0 = nobody active does), plus whether the top contributor has left",
+    "cypher": "MATCH (s:Node {id:$target})<-[c:COMMITTED]-(p:Person)\nWITH p, c ORDER BY c.n DESC, p.id\nWITH collect({id: p.id, n: c.n, active: p.active}) AS rows, sum(c.n) AS total\nWITH rows, total WHERE size(rows) > 0\nWITH rows, total, [x IN rows WHERE x.active] AS act\nWITH rows, total, act, [i IN range(0, size(act) - 1) WHERE reduce(acc = 0, x IN act[0..i + 1] | acc + x.n) * 2 > total] AS covering\nRETURN total, CASE WHEN size(covering) = 0 THEN 0 ELSE covering[0] + 1 END AS bus_factor,\n       rows[0].id AS top_person, NOT coalesce(rows[0].active, true) AS top_contributor_inactive, size(rows) AS committers\nLIMIT 1",
+    "file": "bus_factor_calc.cypher",
+    "limit": 1
+  },
+  "Q-ORG-COLLAB-W": {
+    "id": "Q-ORG-COLLAB-W",
+    "purpose": "escalation weights, computed in Cypher (M14 #6): one row per pair of the given people with any COLLABORATES or REPORTS_TO edge between them (either direction), weight = the strongest tie (a COLLABORATES edge's w, default 1.0; a reporting line 0.5), for algo.MSF (maximize) on a scratch graph",
+    "cypher": "MATCH (a:Person)-[r:COLLABORATES|REPORTS_TO]-(b:Person)\nWHERE a.id IN $ids AND b.id IN $ids AND a.id < b.id\nRETURN a.id AS a, b.id AS b, max(CASE WHEN type(r) = 'COLLABORATES' THEN coalesce(r.w, 1.0) ELSE 0.5 END) AS w\nORDER BY a, b\nLIMIT 100",
+    "file": "collab_weights.cypher",
+    "limit": 100
+  },
+  "Q-ORG-HARM": {
+    "id": "Q-ORG-HARM",
+    "purpose": "who fixes it: algo.HarmonicCentrality over the symmetric KNOWS_ABOUT scratch projection (people close to the cause's code, incidents and on-call); people only, ranked before the LIMIT, so files and incidents in the projection never push a person out of the top 50 (a top-k read: who_fixes shows 10)",
+    "cypher": "CALL algo.HarmonicCentrality({nodeLabels: ['Node'], relationshipTypes: ['KNOWS_ABOUT']}) YIELD node, score, reachable\nWITH node, score, reachable\nWHERE node.kind = 'person'\nRETURN node.id AS id, node.kind AS kind, score, reachable\nORDER BY score DESC, id\nLIMIT 50",
+    "file": "harmonic.cypher",
+    "limit": 50
+  },
+  "Q-ORG-KNOWS": {
+    "id": "Q-ORG-KNOWS",
+    "purpose": "who_fixes projection, built in Cypher (M14 #6): the KNOWS_ABOUT pairs around a component, one row per undirected pair, keyset-paged on the (a, b) tuple after ($after_a, $after_b). Pairs: person-file (an active person's commits on the component's files since $since), file-component (every file of the component), person-incident and incident-component (active people who resolved an incident that affected it), person-component (active on-call for the owner team at $now), person-person (COLLABORATES with w >= $min_collab between any two of those people or the owner team's active members). The caller writes each pair both ways into a scratch graph for algo.HarmonicCentrality (Q-ORG-HARM)",
+    "cypher": "MATCH (c:Node {id: $target})\nCALL {\n  WITH c\n  MATCH (t:Team)-[:OWNS]->(c)\n  RETURN collect(t.id) AS owner_teams\n}\nCALL {\n  WITH c\n  MATCH (c)<-[:PART_OF]-(f:File)<-[:TOUCHES]-(cm:Commit)<-[:AUTHORED]-(p:Person)\n  WHERE cm.at >= $since AND p.active\n  RETURN collect(DISTINCT [p.id, 'person', f.id, 'file']) AS authored, collect(DISTINCT p.id) AS authors\n}\nCALL {\n  WITH c\n  MATCH (f:File)-[:PART_OF]->(c)\n  RETURN collect(DISTINCT [f.id, 'file', c.id, 'component']) AS files\n}\nCALL {\n  WITH c\n  MATCH (r:Person)-[:RESOLVED]->(i:Incident)-[:AFFECTED]->(c)\n  WHERE r.active\n  RETURN collect(DISTINCT [r.id, 'person', i.id, 'incident']) + collect(DISTINCT [i.id, 'incident', c.id, 'component']) AS resolved,\n         collect(DISTINCT r.id) AS resolvers\n}\nCALL {\n  WITH c, owner_teams\n  MATCH (o:Person)-[oc:ON_CALL]->(t:Team)\n  WHERE t.id IN owner_teams AND oc.from <= $now AND $now < oc.to AND o.active\n  RETURN collect(DISTINCT [o.id, 'person', c.id, 'component']) AS oncall, collect(DISTINCT o.id) AS oncallers\n}\nCALL {\n  WITH owner_teams\n  MATCH (m:Person)-[:MEMBER_OF]->(t:Team)\n  WHERE t.id IN owner_teams AND m.active\n  RETURN collect(DISTINCT m.id) AS members\n}\nWITH authored + files + resolved + oncall AS pairs, authors + resolvers + oncallers + members AS people\nCALL {\n  WITH people\n  MATCH (a:Person)-[k:COLLABORATES]->(b:Person)\n  WHERE a.id IN people AND b.id IN people AND coalesce(k.w, 1.0) >= $min_collab\n  RETURN collect(DISTINCT [a.id, 'person', b.id, 'person']) AS collab\n}\nUNWIND pairs + collab AS e\nWITH DISTINCT e[0] AS a, e[1] AS a_kind, e[2] AS b, e[3] AS b_kind\nWITH a, a_kind, b, b_kind\nWHERE a > $after_a OR (a = $after_a AND b > $after_b)\nRETURN a, a_kind, b, b_kind\nORDER BY a, b\nLIMIT 100",
+    "file": "who_knows.cypher",
+    "limit": 100
+  },
+  "Q-ORG-MGR": {
+    "id": "Q-ORG-MGR",
+    "purpose": "the reporting chain (managers, ≤3 levels) of a set of people, for escalation",
+    "cypher": "MATCH (p:Person)-[:REPORTS_TO*1..3]->(m:Person)\nWHERE p.id IN $ids AND m.active\nRETURN p.id AS person, m.id AS manager\nORDER BY person, manager\nLIMIT 100",
+    "file": "managers.cypher",
+    "limit": 100
+  },
+  "Q-ORG-MSF": {
+    "id": "Q-ORG-MSF",
+    "purpose": "escalation tree: algo.MSF (maximize w) over the responders and their managers, on a scratch projection; one row per tree edge, strongest tie first (the order is the escalation order, computed here)",
+    "cypher": "CALL algo.MSF({nodeLabels: ['Node'], relationshipTypes: ['COLLABORATES'], objective: 'maximize', weightAttribute: 'w'}) YIELD edges\nUNWIND edges AS e\nRETURN startNode(e).id AS from, endNode(e).id AS to, e.w AS w\nORDER BY w DESC, from, to\nLIMIT 100",
+    "file": "msf.cypher",
+    "limit": 100
+  },
+  "Q-ORG-WHO": {
+    "id": "Q-ORG-WHO",
+    "purpose": "who_fixes people and the reasons for each, computed in Cypher (M14 #6): every active recent author (commits on the component's files since $since), past resolver (an incident that affected it), on-call person of the owner team at $now and active owner-team member, with how many recent commits they made on it, which of its incidents they resolved (sorted), whether they are on call and whether they are an owner-team member; name, teams and the owner team for display. The caller only formats the reasons",
+    "cypher": "MATCH (c:Node {id: $target})\nCALL {\n  WITH c\n  MATCH (t:Team)-[:OWNS]->(c)\n  RETURN collect(t.id) AS owner_teams\n}\nCALL {\n  WITH c\n  MATCH (c)<-[:PART_OF]-(:File)<-[:TOUCHES]-(cm:Commit)<-[:AUTHORED]-(p:Person)\n  WHERE cm.at >= $since AND p.active\n  WITH p.id AS pid, count(DISTINCT cm) AS n\n  RETURN collect(pid) AS authors, collect([pid, n]) AS author_commits\n}\nCALL {\n  WITH c\n  MATCH (r:Person)-[:RESOLVED]->(i:Incident)-[:AFFECTED]->(c)\n  WHERE r.active\n  WITH r.id AS pid, i.id AS iid\n  ORDER BY pid, iid\n  WITH pid, collect(DISTINCT iid) AS iids\n  RETURN collect(pid) AS resolvers, collect([pid, iids]) AS resolver_incidents\n}\nCALL {\n  WITH owner_teams\n  MATCH (o:Person)-[oc:ON_CALL]->(t:Team)\n  WHERE t.id IN owner_teams AND oc.from <= $now AND $now < oc.to AND o.active\n  RETURN collect(DISTINCT o.id) AS oncall\n}\nCALL {\n  WITH owner_teams\n  MATCH (m:Person)-[:MEMBER_OF]->(t:Team)\n  WHERE t.id IN owner_teams AND m.active\n  RETURN collect(DISTINCT m.id) AS members\n}\n\n\nUNWIND authors + resolvers + oncall + members AS pid\nWITH DISTINCT owner_teams, pid, oncall, members, author_commits, resolver_incidents\nMATCH (p:Person {id: pid})\nRETURN p.id AS person, p.name AS name, [(p)-[:MEMBER_OF]->(tm:Team) | tm.id] AS teams, owner_teams[0] AS team,\n       coalesce(head([x IN author_commits WHERE x[0] = pid | x[1]]), 0) AS commits,\n       coalesce(head([x IN resolver_incidents WHERE x[0] = pid | x[1]]), []) AS resolved,\n       pid IN oncall AS oncall, pid IN members AS member\nORDER BY person\nLIMIT 100",
+    "file": "who_reasons.cypher",
+    "limit": 100
+  },
+  "Q-OWN-AT": {
+    "id": "Q-OWN-AT",
+    "purpose": "ownership over time: every OWNED_AT period of a component, which one covered time $at, and which is current",
+    "cypher": "MATCH (t:Team)-[o:OWNED_AT]->(n:Node {id: $id})\nRETURN t.id AS team, t.name AS name, o.from AS since, o.to AS until,\n       (o.from <= $at AND (o.to IS NULL OR $at < o.to)) AS covers_at,\n       o.to IS NULL AS current\nORDER BY since, team\nLIMIT 20",
+    "file": "owner_at.cypher",
+    "limit": 20
+  },
+  "Q-RANK-1": {
+    "id": "Q-RANK-1",
+    "purpose": "algorithmic cause ranking: algo.pageRank over DEPENDS_ON in the incident's scratch projection (mass flows to upstream nodes many symptoms depend on)",
+    "cypher": "CALL algo.pageRank('Node', 'DEPENDS_ON') YIELD node, score\nRETURN node.id AS id, score\nORDER BY score DESC, id\nLIMIT 50",
+    "file": "rank_causes.cypher",
+    "limit": 50
+  },
+  "Q-REM-1": {
+    "id": "Q-REM-1",
+    "purpose": "learned remediation ordering: past incidents that share a Symptom with $inc (or are listed in $incidents), and how each fix kind fared on them: successes (RESOLVED_BY an APPLIED action), failures (a NOT_APPLIED action), Beta(1,1)-smoothed success rate (s+1)/(s+f+2). Per kind (target '*') and per flag for flip_flag; UNKNOWN verdicts count as neither",
+    "cypher": "MATCH (p:Incident)\nWHERE p.id <> $inc AND (p.id IN $incidents OR size([(p)-[:HAS_SYMPTOM]->(y:Symptom) WHERE y.id IN $symptoms | y.id]) > 0)\nMATCH (p)-[r:RESOLVED_BY|ATTEMPTED]->(a:Action)\nWHERE (type(r) = 'RESOLVED_BY' AND a.verdict = 'APPLIED') OR a.verdict = 'NOT_APPLIED'\nWITH p, a, CASE WHEN type(r) = 'RESOLVED_BY' AND a.verdict = 'APPLIED' THEN 1 ELSE 0 END AS ok\nUNWIND (CASE WHEN a.kind = 'flip_flag' THEN ['*', a.target_id] ELSE ['*'] END) AS target\nWITH a.kind AS kind, target, toInteger(sum(ok)) AS successes, toInteger(sum(1 - ok)) AS failures, collect(DISTINCT p.id) AS incidents\nRETURN kind, target, successes, failures, successes + failures AS n,\n       (toFloat(successes) + 1.0) / (toFloat(successes + failures) + 2.0) AS rate,\n       size(incidents) AS incident_count, incidents[0..20] AS incidents\nORDER BY rate DESC, n DESC, kind, target\nLIMIT 50",
+    "file": "remedy_stats.cypher",
+    "limit": 50
+  },
+  "Q-RESIDUE-1": {
+    "id": "Q-RESIDUE-1",
+    "purpose": "residue check (advisory, never gating): every component this incident's runs MEASURED anomalous (the same Evidence.anomalous the gate reads), and whether it is downstream of the confirmed cause over the G2 relation set (CHANGED|GATES|PROPAGATES_TO, ≤ 8 hops). Unexplained ones mean another fault may be active",
+    "cypher": "MATCH (c:Node {id:$cause})\nMATCH (i:Incident {id:$inc})-[:HAS_RUN]->(:Run)-[:HAS_TOOL_CALL]->(:ToolCall)-[:PRODUCED_EVIDENCE]->(e:Evidence)-[:ABOUT]->(n:Node)\nWHERE e.anomalous = true AND e.kind IN ['metric', 'profile', 'baseline_comparison', 'row_share', 'error_rate'] AND NOT n:Column\nWITH c, n, collect(DISTINCT e.id) AS evidence, collect(DISTINCT e.kind) AS kinds\nRETURN n.id AS id, [x IN labels(n) WHERE x <> 'Node'][0] AS label, evidence, kinds,\n       size([(c)-[:CHANGED|GATES|PROPAGATES_TO*1..8]->(n) | 1]) > 0 AS explained\nORDER BY explained DESC, id\nLIMIT 100",
+    "file": "residue.cypher",
+    "limit": 100
+  },
+  "Q-SUS-1": {
+    "id": "Q-SUS-1",
+    "purpose": "changes in the window on the symptom or anything upstream of it, with hop distance",
+    "cypher": "MATCH (sym:Node {id:$symptom})\nCALL { WITH sym CALL algo.SSpaths({sourceNode: sym, relTypes: ['DEPENDS_ON'], weightProp: 'w', relDirection: 'outgoing', maxLen: 8, pathCount: 1000}) YIELD path\n       RETURN collect({id: last(nodes(path)).id, hops: length(path)}) AS found }\nWITH sym, found + [{id: sym.id, hops: 0}] AS ups\nMATCH (d:Deploy) WHERE d.at >= $onset - $window_ms AND d.at <= $onset\nWITH ups, d\nMATCH (d)-[:CHANGED]->(x)\nWITH d, x, [u IN ups WHERE u.id = x.id | u.hops] AS hs\nWHERE size(hs) > 0\nUNWIND hs AS h\nWITH d, x, min(h) AS hops\nRETURN d.id AS deploy, d.kind AS kind, x.id AS target, d.at AS at, hops\nORDER BY hops, at DESC, deploy\nLIMIT 20",
+    "file": "upstream_suspects.cypher",
+    "limit": 20
+  },
+  "Q-SUS-2": {
+    "id": "Q-SUS-2",
+    "purpose": "every change in the window anywhere (this is where look-alike distractors enter)",
+    "cypher": "MATCH (d:Deploy)-[:CHANGED]->(x)\nWHERE d.at >= $onset - $window_ms AND d.at <= $onset\nRETURN d.id AS deploy, d.kind AS kind, x.id AS target, d.at AS at\nORDER BY at DESC, deploy\nLIMIT 50",
+    "file": "window_changes.cypher",
+    "limit": 50
+  },
+  "Q-WHATIF-1": {
+    "id": "Q-WHATIF-1",
+    "purpose": "what-if (on a GRAPH.COPY branch with cut edges removed): what can the failing component still reach? (algo.BFS over PROPAGATES_TO)",
+    "cypher": "MATCH (f:Node {id:$failing})\nCALL algo.BFS(f, 8, 'PROPAGATES_TO') YIELD nodes\nRETURN [n IN nodes | n.id] AS reached\nORDER BY size(reached)\nLIMIT 1",
+    "file": "whatif_reach.cypher",
+    "limit": 1
+  },
+  "Q-WHATIF-2": {
+    "id": "Q-WHATIF-2",
+    "purpose": "what-if: WCC component ids of the protected entry and the given services on the branch (same id = still connected)",
+    "cypher": "CALL algo.WCC({nodeLabels: ['Service', 'Datastore', 'Table', 'KPI', 'Dashboard'], relationshipTypes: ['PROPAGATES_TO']}) YIELD node, componentId\nWITH node, componentId WHERE node.id IN $ids\nRETURN node.id AS id, componentId\nORDER BY id\nLIMIT 100",
+    "file": "whatif_connected.cypher",
+    "limit": 100
+  }
+}
