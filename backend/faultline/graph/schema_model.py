@@ -1,0 +1,96 @@
+"""Whitelists of labels and relationship types (docs/design/graph_model_sketch.md).
+The seeder and writes format these into Cypher; anything else is rejected."""
+
+NODE_LABELS = frozenset({
+    # data lineage
+    "KPI", "Dashboard", "Table", "Column", "Transform", "Job",
+    # services
+    "Service", "Endpoint", "Datastore", "ExternalDependency",
+    # change
+    "Repo", "File", "Commit", "PR", "Deploy", "FeatureFlag", "ChangeFact",
+    # incidents
+    "Alert", "Incident", "Symptom", "Hypothesis", "Evidence", "GateRun", "MetricWindow", "Anomaly", "Baseline",
+    # people and knowledge
+    "Person", "Team", "Runbook", "Decision", "Postmortem", "Doc",
+    # a reviewer's answer to a contradicted decision for one change (M15 #3)
+    "Override",
+    # a learned failure edge awaiting human approval (M15 #4)
+    "EdgeProposal",
+    # a recorded "break the graph" diff (M15 #2), in audit_<t>
+    "PlaygroundRun",
+    # obligations (M12 obligation clock): what we promised, and to whom
+    "SLO", "Customer",
+    # actions and coordination
+    "Intent", "Action", "Approval", "Remediation", "Task", "Agent", "Session", "Turn",
+    "Run", "StageEvent", "ToolCall", "ForgetReceipt", "Rearm", "Meta", "RunIndex", "LlmSpend",
+})
+
+REL_TYPES = frozenset({
+    "CALLS", "READS", "WRITES", "DERIVES_FROM", "OF", "COMPUTED_FROM", "SHOWS", "EMITS", "CONSUMES",
+    "PROPAGATES_TO", "DEPENDS_ON", "EXPOSES", "GATES", "CHANGED", "CONTAINS", "TOUCHES", "PART_OF",
+    "AUTHORED", "COMMITTED", "OWNS", "OWNED_AT", "MEMBER_OF", "REPORTS_TO", "ON_CALL", "COLLABORATES",
+    "FIRED_ON", "HAS_SYMPTOM", "AFFECTED", "HYPOTHESIZES", "BLAMES", "SUPPORTS", "REFUTES", "ABOUT",
+    "CAUSED", "PRECEDENT_FOR", "RESOLVED_BY", "ATTEMPTED", "RESOLVED", "DOCUMENTS", "DERIVED_FROM", "RUNBOOK_FOR",
+    "CONSTRAINS", "SUPERSEDES", "CITES", "DECIDED", "PRODUCED", "ASSERTS", "VIOLATES", "FOR",
+    "HAS_INTENT", "APPROVED", "EXECUTED", "CLAIMED_BY", "HANDED_OFF_TO", "HAS_TURN", "HAS_GATE_RUN",
+    "HAS_STAGE", "HAS_TOOL_CALL", "SAW", "RECALLED", "PRODUCED_EVIDENCE", "HAS_HYPOTHESIS", "HAS_RUN", "HAS_ALERT", "BASELINE_OF", "WINDOW_OF", "KNOWS_ABOUT", "HAS_PLAN", "HAS_ACTION",
+    # specialist work items (§6.3/§6.13): Run → Task, Task → named suspect
+    "HAS_TASK", "NAMES",
+    # the crew (M17): Task → the ToolCalls its agent MADE, Task → the next step's Task
+    "MADE", "NEXT",
+    # alert-storm correlation (M14 #2): Alert → the Incident INTAKE opened with it or attached it to
+    "DEGRADES",
+    # decision override (M15 #3): Override → the Decision it answers, and → the change it is about
+    "OVERRIDES", "FOR_CHANGE",
+    # learned edges (M15 #4): Incident → the EdgeProposal a verified fix produced
+    "HAS_PROPOSAL",
+})
+
+
+def check_label(label: str) -> str:
+    if label not in NODE_LABELS:
+        raise ValueError(f"label {label!r} not in schema_model.NODE_LABELS")
+    return label
+
+
+def check_rel(rel: str) -> str:
+    if rel not in REL_TYPES:
+        raise ValueError(f"relationship {rel!r} not in schema_model.REL_TYPES")
+    return rel
+
+
+# ---------------------------------------------------------------- schema drift (scripts/check_schema_drift.py)
+# Every node also carries this base label (cross-label id lookups); it is structural, not a domain label.
+BASE_LABEL = "Node"
+
+# Relationship types created only at runtime (agent runs, actions, write-back, scratch projections), so a freshly
+# seeded tenant graph may not contain them. Each one is written by graph/writes.py (or a scratch projection).
+RUNTIME_RELS = frozenset({
+    # run state, evidence and coordination (agent runs, MCP tool calls)
+    "HAS_RUN", "HAS_STAGE", "HAS_TOOL_CALL", "SAW", "PRODUCED_EVIDENCE", "HAS_GATE_RUN", "HYPOTHESIZES",
+    "SUPPORTS", "REFUTES", "BLAMES", "RECALLED", "PRECEDENT_FOR", "CLAIMED_BY", "HANDED_OFF_TO", "HAS_TURN",
+    # specialist reports: the claimed work item (Task) of a run, the suspects its contract NAMES, the evidence it CITES
+    "HAS_TASK", "NAMES",
+    # crew steps (M17): the tool calls each agent MADE, and the hand-off order between steps (NEXT)
+    "MADE", "NEXT",
+    # actions, approvals and write-back
+    "HAS_PLAN", "HAS_INTENT", "APPROVED", "EXECUTED",
+    # telemetry and change facts arriving at runtime (simulated alerts, preflight PR facts and decision checks)
+    "FIRED_ON", "ASSERTS", "VIOLATES",
+    # INTAKE: which incident an alert belongs to (opened with it, or attached to the nearest open confirmed origin)
+    "DEGRADES",
+    # a reviewer's override of a contradicted decision (written by graph/writes.py::record_override)
+    "OVERRIDES", "FOR_CHANGE",
+    # a learned-edge proposal after a verified fix (graph/writes.py::propose_edge)
+    "HAS_PROPOSAL",
+    # scratch projection only (who_fixes builds it in scratch_<t>_*, never in the tenant graph)
+    "KNOWS_ABOUT",
+})
+
+# Declared in the graph model but with no writer yet. Listed explicitly so the drift check can tell
+# "reserved on purpose" from "declared and forgotten"; a reserved type that shows up in a graph is reported.
+RESERVED_RELS = frozenset({
+    "HAS_ACTION",      # Incident → Action; written as RESOLVED_BY / ATTEMPTED (and Intent -[:EXECUTED]-> Action) instead
+    "HAS_ALERT",       # Incident → Alert; alerts attach to components (FIRED_ON) instead
+    "HAS_HYPOTHESIS",  # → Hypothesis; written as Incident -[:HYPOTHESIZES]-> Hypothesis -[:BLAMES]-> suspect instead
+})
