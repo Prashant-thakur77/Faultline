@@ -1,0 +1,1013 @@
+{
+  "incident": {
+    "id": "inc-s4s-b5a476e0",
+    "title": "service_control_no_incident",
+    "stage": "NO_INCIDENT",
+    "onset_at": 1792065600000,
+    "opened_at": 1791988505464,
+    "confident": false,
+    "targets": [
+      "checkout"
+    ],
+    "kinds": [
+      "error_rate"
+    ]
+  },
+  "run": {
+    "run": "run-s4s-b5a476e0",
+    "graph": "eval_acme_api_v2_s4s_4432_b5a476e0",
+    "scenario": "S4S",
+    "outcome": "NO_INCIDENT",
+    "cause": null,
+    "investigator": "baseline-policy (deterministic, no LLM)"
+  },
+  "stages": [
+    {
+      "id": "run-s4s-b5a476e0-se-INTAKE-1-03a4a3",
+      "stage": "INTAKE",
+      "ord": 1,
+      "at": 1791988505473,
+      "note": "alerts: ['al-s4s-checkout']"
+    },
+    {
+      "id": "run-s4s-b5a476e0-se-RECALL-2-0ff4a6",
+      "stage": "RECALL",
+      "ord": 2,
+      "at": 1791988505541,
+      "note": ""
+    },
+    {
+      "id": "run-s4s-b5a476e0-se-LOCALIZE-3-ac63da",
+      "stage": "LOCALIZE",
+      "ord": 3,
+      "at": 1791988505586,
+      "note": ""
+    },
+    {
+      "id": "run-s4s-b5a476e0-se-BLAST-4-264c91",
+      "stage": "BLAST",
+      "ord": 4,
+      "at": 1791988505599,
+      "note": ""
+    },
+    {
+      "id": "run-s4s-b5a476e0-se-HYPOTHESIZE-5-99ee5d",
+      "stage": "HYPOTHESIZE",
+      "ord": 5,
+      "at": 1791988505614,
+      "note": ""
+    },
+    {
+      "id": "run-s4s-b5a476e0-se-INVESTIGATE-6-ae0a48",
+      "stage": "INVESTIGATE",
+      "ord": 6,
+      "at": 1791988505644,
+      "note": ""
+    },
+    {
+      "id": "run-s4s-b5a476e0-se-NO_INCIDENT-100-5dd511",
+      "stage": "NO_INCIDENT",
+      "ord": 100,
+      "at": 1791988505696,
+      "note": "negative proof accepted"
+    }
+  ],
+  "tool_calls": [
+    {
+      "id": "run-s4s-b5a476e0-tc0001",
+      "tool": "similar_incidents",
+      "template": "Q-MEM-1",
+      "ms": 2.87,
+      "rows": 5,
+      "at": 1791988505552,
+      "evidence_id": "ev_83e0e71366",
+      "kind": "recall",
+      "summary": "5 structurally confirmed precedents: inc-h005, inc-h015, inc-h039",
+      "params": {
+        "current": "inc-s4s-b5a476e0",
+        "half_life_ms": 2592000000.0,
+        "now": 1792065600000
+      },
+      "digest": "b836b0a2ce8d9837d30c9ba923813c48e9ac11871bcb869d958dd4aa4c766e56"
+    },
+    {
+      "id": "run-s4s-b5a476e0-tc0002",
+      "tool": "runbook_for",
+      "template": "Q-MEM-3",
+      "ms": 1.04,
+      "rows": 3,
+      "at": 1791988505583,
+      "evidence_id": "ev_bd954fbe79",
+      "kind": "recall",
+      "summary": "3 runbooks",
+      "params": {
+        "ids": [
+          "checkout",
+          "sym-error_rate-checkout"
+        ]
+      },
+      "digest": "c13948b9f49e56463748ce79125ede8d2fa1b237f88711b9efea515aa820362a"
+    },
+    {
+      "id": "run-s4s-b5a476e0-tc0003",
+      "tool": "service_context",
+      "template": "Q-CTX-1",
+      "ms": 1.19,
+      "rows": 1,
+      "at": 1791988505591,
+      "evidence_id": "ev_ea0ca5e481",
+      "kind": "context",
+      "summary": "context of checkout",
+      "params": {
+        "id": "checkout",
+        "now": 1792065600000
+      },
+      "digest": "bfc00eb07ae85ce297f14b0482f66d3747116c23ad3b18cbfb558d0fa58efd60"
+    },
+    {
+      "id": "run-s4s-b5a476e0-tc0004",
+      "tool": "upstream_scope",
+      "template": "Q-LIN-1",
+      "ms": 1.09,
+      "rows": 12,
+      "at": 1791988505596,
+      "evidence_id": "ev_53feac831e",
+      "kind": "lineage",
+      "summary": "12 upstream nodes",
+      "params": {
+        "symptom": "checkout"
+      },
+      "digest": "0294de7c2ebc8881f15990486879598ca5e80cdda68fbcb5e15ab6a38149f050"
+    },
+    {
+      "id": "run-s4s-b5a476e0-tc0005",
+      "tool": "blast_radius",
+      "template": "Q-BLAST-1",
+      "ms": 1.44,
+      "rows": 5,
+      "at": 1791988505605,
+      "evidence_id": "ev_42ca9b7ff2",
+      "kind": "blast",
+      "summary": "5 impacted nodes",
+      "params": {
+        "id": "checkout"
+      },
+      "digest": "3de9a3d411bbc45477fdcf734d321b53be43ff68dc45d519c46ce76e2a398f9f"
+    },
+    {
+      "id": "run-s4s-b5a476e0-tc0006",
+      "tool": "chokepoints",
+      "template": "Q-CHOKE-1",
+      "ms": 1.35,
+      "rows": 10,
+      "at": 1791988505611,
+      "evidence_id": "ev_2c9a86d8e7",
+      "kind": "centrality",
+      "summary": "top chokepoints",
+      "params": {},
+      "digest": "43f129377bd342896a12f190339d1a5f8bb511f765fa525e23d31cc988039c96"
+    },
+    {
+      "id": "run-s4s-b5a476e0-tc0007",
+      "tool": "upstream_suspects",
+      "template": "Q-SUS-1",
+      "ms": 1.51,
+      "rows": 0,
+      "at": 1791988505623,
+      "evidence_id": "ev_552e8e27de",
+      "kind": "change",
+      "summary": "0 upstream changes",
+      "params": {
+        "onset": 1792065600000,
+        "symptom": "checkout",
+        "window_ms": 1800000
+      },
+      "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "run-s4s-b5a476e0-tc0008",
+      "tool": "window_changes",
+      "template": "Q-SUS-2",
+      "ms": 1.13,
+      "rows": 1,
+      "at": 1791988505628,
+      "evidence_id": "ev_759a353a7a",
+      "kind": "change",
+      "summary": "1 changes in window",
+      "params": {
+        "onset": 1792065600000,
+        "window_ms": 1800000
+      },
+      "digest": "30fa148c0be1e0af244478320aa40288c0d4abadfa56e781fdec9e59821f3ec8"
+    },
+    {
+      "id": "run-s4s-b5a476e0-tc0009",
+      "tool": "rank_causes",
+      "template": "Q-RANK-1",
+      "ms": 1.43,
+      "rows": 13,
+      "at": 1791988505640,
+      "evidence_id": "ev_cc396fde5d",
+      "kind": "rank",
+      "summary": "pageRank over 13 nodes, 13 edges",
+      "params": {},
+      "digest": "2e8fa7849469c415e84d450b3718ae39ba92ae7cf4e60b1df7d398d305087d4b"
+    },
+    {
+      "id": "run-s4s-b5a476e0-tc0010",
+      "tool": "metric_window",
+      "template": null,
+      "ms": 1.62,
+      "rows": 1,
+      "at": 1791988505660,
+      "evidence_id": "ev_ce987ccf87",
+      "kind": "error_rate",
+      "summary": "checkout error rate 0.61% vs baseline 0.69% (\u00d70.9, band 1.5745)",
+      "params": {
+        "onset_ms": 1792065600000,
+        "target_id": "checkout"
+      },
+      "digest": "b2899403ecac6eaceba74ded2cad22e158dc8a4ebf3ef1077d99500e62379984"
+    },
+    {
+      "id": "run-s4s-b5a476e0-tc0011",
+      "tool": "reachable_from_changes",
+      "template": "Q-NEG-1",
+      "ms": 1.13,
+      "rows": 0,
+      "at": 1791988505689,
+      "evidence_id": "ev_f1f9cc47d0",
+      "kind": "path",
+      "summary": "negative proof: none_reachable",
+      "params": {
+        "anomalous_ids": [],
+        "now": 1792065600000,
+        "window_ms": 1800000
+      },
+      "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    }
+  ],
+  "hypotheses": [],
+  "gate_runs": [
+    {
+      "id": "gr-inc-s4s-b5a476e0-309093ee",
+      "cause": "NO_INCIDENT",
+      "passed": true,
+      "confident": true,
+      "checks": [
+        {
+          "attach_only": false,
+          "detail": "cited evidence produced by this run",
+          "downgrade_only": false,
+          "evidence_ids": [],
+          "name": "G1 grounded",
+          "params": {
+            "evidence": [
+              "ev_ce987ccf87"
+            ],
+            "ids": [],
+            "run": "run-s4s-b5a476e0"
+          },
+          "passed": true,
+          "template": "Q-GATE-G1"
+        },
+        {
+          "attach_only": false,
+          "detail": "all 1 symptom(s) measured",
+          "downgrade_only": false,
+          "evidence_ids": [
+            "ev_ce987ccf87"
+          ],
+          "name": "N0 every symptom measured",
+          "params": {
+            "chain": [
+              "accounting",
+              "astronomy-db",
+              "cache",
+              "cart",
+              "checkout",
+              "currency",
+              "email",
+              "fraud-detection",
+              "payment",
+              "product-catalog",
+              "queue",
+              "quote",
+              "shipping"
+            ],
+            "evidence": [
+              "ev_ce987ccf87"
+            ],
+            "run": "run-s4s-b5a476e0"
+          },
+          "passed": true,
+          "template": "Q-GATE-4"
+        },
+        {
+          "attach_only": false,
+          "detail": "1 measurements in band",
+          "downgrade_only": false,
+          "evidence_ids": [
+            "ev_ce987ccf87"
+          ],
+          "name": "N1 measurements normal",
+          "params": {
+            "chain": [
+              "accounting",
+              "astronomy-db",
+              "cache",
+              "cart",
+              "checkout",
+              "currency",
+              "email",
+              "fraud-detection",
+              "payment",
+              "product-catalog",
+              "queue",
+              "quote",
+              "shipping"
+            ],
+            "evidence": [
+              "ev_ce987ccf87"
+            ],
+            "run": "run-s4s-b5a476e0"
+          },
+          "passed": true,
+          "template": "Q-GATE-4"
+        },
+        {
+          "attach_only": false,
+          "detail": "no anomalous node reachable from any change in the window (none_reachable)",
+          "downgrade_only": false,
+          "evidence_ids": [
+            "ev_f1f9cc47d0"
+          ],
+          "name": "N2 negative path proof",
+          "params": {
+            "anomalous_ids": [],
+            "now": 1792065600000,
+            "window_ms": 1800000
+          },
+          "passed": true,
+          "template": "Q-NEG-1"
+        }
+      ],
+      "attempt": 1,
+      "origin": "no_incident",
+      "at": 1791988505690
+    }
+  ],
+  "crew": {
+    "roster": [
+      {
+        "key": "triage",
+        "id": "crew-triage",
+        "name": "Triage",
+        "job": "groups the alert storm into independent incidents (algo.WCC)",
+        "stages": [
+          "INTAKE"
+        ],
+        "tools": [
+          "context_pack",
+          "find_entities",
+          "finish",
+          "group_alerts",
+          "service_context"
+        ],
+        "writes": "opens incidents and attaches alerts (intake writes)",
+        "model": "none"
+      },
+      {
+        "key": "historian",
+        "id": "crew-historian",
+        "name": "Historian",
+        "job": "recalls past incidents and runbooks that share the symptoms",
+        "stages": [
+          "RECALL"
+        ],
+        "tools": [
+          "finish",
+          "incident_families",
+          "runbook_for",
+          "session_history",
+          "similar_incidents"
+        ],
+        "writes": "records what was recalled (W-RECALL)",
+        "model": "none"
+      },
+      {
+        "key": "cartographer",
+        "id": "crew-cartographer",
+        "name": "Cartographer",
+        "job": "maps the symptoms' upstream scope, context and blast radius",
+        "stages": [
+          "LOCALIZE",
+          "BLAST"
+        ],
+        "tools": [
+          "blast_radius",
+          "chokepoints",
+          "column_lineage",
+          "find_entities",
+          "finish",
+          "service_context",
+          "upstream_scope"
+        ],
+        "writes": "none (read-only)",
+        "model": "none"
+      },
+      {
+        "key": "profiler",
+        "id": "crew-profiler",
+        "name": "Profiler",
+        "job": "lists the changes upstream of the symptoms in the window and ranks them in code",
+        "stages": [
+          "HYPOTHESIZE"
+        ],
+        "tools": [
+          "finish",
+          "rank_causes",
+          "record_hypothesis",
+          "upstream_suspects",
+          "window_changes"
+        ],
+        "writes": "open hypotheses (W-HYP)",
+        "model": "none"
+      },
+      {
+        "key": "lead",
+        "id": "crew-lead",
+        "name": "Lead investigator",
+        "job": "dispatches the five specialists and proposes a cause to the gate",
+        "stages": [
+          "INVESTIGATE"
+        ],
+        "tools": [
+          "anomalous_row_share",
+          "baseline_columns",
+          "causal_paths",
+          "change_details",
+          "compare_to_baseline",
+          "confirm_root_cause",
+          "decision_check",
+          "declare_no_incident",
+          "diff_summary",
+          "finish",
+          "get_metric_history",
+          "graph_schema",
+          "impact_bound",
+          "list_transforms",
+          "metric_window",
+          "profile_column",
+          "propose_repair",
+          "reachable_from_changes",
+          "read_transform",
+          "record_hypothesis",
+          "run_cypher_readonly",
+          "run_invariants",
+          "run_sql",
+          "update_hypothesis",
+          "upstream_scope"
+        ],
+        "writes": "hypothesis status, through the gate only",
+        "model": "optional"
+      },
+      {
+        "key": "gatekeeper",
+        "id": "crew-gatekeeper",
+        "name": "Gatekeeper",
+        "job": "decides: path, flow, time, origin, rivals, agreement, contradictions (G1\u2013G8)",
+        "stages": [
+          "GATE",
+          "CONTRADICTION"
+        ],
+        "tools": [
+          "alert_coverage",
+          "confirm_root_cause",
+          "decision_check",
+          "declare_no_incident",
+          "finish",
+          "reachable_from_changes",
+          "residue_check",
+          "trace_decision"
+        ],
+        "writes": "gate runs (W-GATE)",
+        "model": "none"
+      },
+      {
+        "key": "containment",
+        "id": "crew-containment",
+        "name": "Containment",
+        "job": "finds the smallest cut (algo.maxFlow) and tries each option on a GRAPH.COPY",
+        "stages": [
+          "CONTAIN"
+        ],
+        "tools": [
+          "blast_radius",
+          "connectivity_check",
+          "containment_cut",
+          "finish",
+          "futures",
+          "whatif"
+        ],
+        "writes": "none (clean rooms are scratch graphs)",
+        "model": "none"
+      },
+      {
+        "key": "dispatcher",
+        "id": "crew-dispatcher",
+        "name": "Dispatcher",
+        "job": "finds who fixes it, the escalation path, obligations and who to notify",
+        "stages": [
+          "ROUTE"
+        ],
+        "tools": [
+          "bus_factor",
+          "escalation_tree",
+          "finish",
+          "notify_set",
+          "obligation_clock",
+          "owner_at",
+          "owners_of",
+          "who_fixes"
+        ],
+        "writes": "none (read-only)",
+        "model": "none"
+      },
+      {
+        "key": "planner",
+        "id": "crew-planner",
+        "name": "Planner",
+        "job": "turns the cut into options from the fixed action enum, each with a plan hash",
+        "stages": [
+          "PLAN"
+        ],
+        "tools": [
+          "finish",
+          "propose_plan",
+          "remedy_stats"
+        ],
+        "writes": "plan and options (W-PLAN)",
+        "model": "none"
+      },
+      {
+        "key": "operator",
+        "id": "crew-operator",
+        "name": "Operator",
+        "job": "executes the one approved action, intent first (the only holder of execute_action)",
+        "stages": [
+          "EXECUTE"
+        ],
+        "tools": [
+          "execute_action",
+          "finish"
+        ],
+        "writes": "intent and action (W-INTENT, the single write tool)",
+        "model": "none"
+      },
+      {
+        "key": "auditor",
+        "id": "crew-auditor",
+        "name": "Auditor",
+        "job": "verifies the action through a second channel and re-reads the write-back",
+        "stages": [
+          "VERIFY",
+          "WRITEBACK"
+        ],
+        "tools": [
+          "finish",
+          "verify_action",
+          "write_back"
+        ],
+        "writes": "verdict and write-back (W-WB), re-read on a separate RO connection",
+        "model": "none"
+      },
+      {
+        "key": "librarian",
+        "id": "crew-librarian",
+        "name": "Librarian",
+        "job": "files the incident into memory so the next one starts warm",
+        "stages": [
+          "LEARN"
+        ],
+        "tools": [
+          "consolidate",
+          "finish"
+        ],
+        "writes": "family and consolidation (W-LEARN)",
+        "model": "none"
+      }
+    ],
+    "steps": [
+      {
+        "task": "crew-run-s4s-b5a476e0-triage-intake",
+        "kind": "crew",
+        "role": "triage",
+        "stage": "INTAKE",
+        "agent": "crew-triage",
+        "state": "done",
+        "status": "done",
+        "claimed_at": 1791988505476,
+        "done_at": 1791988505478,
+        "summary": "opened inc-s4s-b5a476e0 from 1 alert(s) on checkout",
+        "after": [],
+        "names": [],
+        "cites": 0,
+        "calls": [
+          {
+            "id": "run-s4s-b5a476e0-intake-tc0001",
+            "tool": "group_alerts",
+            "template": "Q-ALERT-1+Q-STORM-EDGES+Q-STORM-ORIGINS+Q-STORM-WCC+Q-STORM-ATTACH",
+            "ms": 6.03,
+            "rows": 1,
+            "at": 1791988505460
+          }
+        ],
+        "unknowns": null,
+        "limits": null,
+        "reaps": 0
+      },
+      {
+        "task": "crew-run-s4s-b5a476e0-historian-recall",
+        "kind": "crew",
+        "role": "historian",
+        "stage": "RECALL",
+        "agent": "crew-historian",
+        "state": "done",
+        "status": "done",
+        "claimed_at": 1791988505547,
+        "done_at": 1791988505587,
+        "summary": "5 precedent(s), 3 runbook(s) recalled; prior on payment",
+        "after": [
+          "crew-run-s4s-b5a476e0-triage-intake"
+        ],
+        "names": [],
+        "cites": 0,
+        "calls": [
+          {
+            "id": "run-s4s-b5a476e0-tc0001",
+            "tool": "similar_incidents",
+            "template": "Q-MEM-1",
+            "ms": 2.87,
+            "rows": 5,
+            "at": 1791988505552
+          },
+          {
+            "id": "run-s4s-b5a476e0-tc0002",
+            "tool": "runbook_for",
+            "template": "Q-MEM-3",
+            "ms": 1.04,
+            "rows": 3,
+            "at": 1791988505583
+          }
+        ],
+        "unknowns": null,
+        "limits": null,
+        "reaps": 0
+      },
+      {
+        "task": "crew-run-s4s-b5a476e0-cartographer-localize",
+        "kind": "crew",
+        "role": "cartographer",
+        "stage": "LOCALIZE",
+        "agent": "crew-cartographer",
+        "state": "done",
+        "status": "done",
+        "claimed_at": 1791988505588,
+        "done_at": 1791988505616,
+        "summary": "12 upstream node(s) in scope; blast radius of 1 symptom(s): 5 node(s); top chokepoint frontend",
+        "after": [
+          "crew-run-s4s-b5a476e0-historian-recall"
+        ],
+        "names": [],
+        "cites": 0,
+        "calls": [
+          {
+            "id": "run-s4s-b5a476e0-tc0003",
+            "tool": "service_context",
+            "template": "Q-CTX-1",
+            "ms": 1.19,
+            "rows": 1,
+            "at": 1791988505591
+          },
+          {
+            "id": "run-s4s-b5a476e0-tc0004",
+            "tool": "upstream_scope",
+            "template": "Q-LIN-1",
+            "ms": 1.09,
+            "rows": 12,
+            "at": 1791988505596
+          },
+          {
+            "id": "run-s4s-b5a476e0-tc0005",
+            "tool": "blast_radius",
+            "template": "Q-BLAST-1",
+            "ms": 1.44,
+            "rows": 5,
+            "at": 1791988505605
+          },
+          {
+            "id": "run-s4s-b5a476e0-tc0006",
+            "tool": "chokepoints",
+            "template": "Q-CHOKE-1",
+            "ms": 1.35,
+            "rows": 10,
+            "at": 1791988505611
+          }
+        ],
+        "unknowns": null,
+        "limits": null,
+        "reaps": 0
+      },
+      {
+        "task": "crew-run-s4s-b5a476e0-profiler-hypothesize",
+        "kind": "crew",
+        "role": "profiler",
+        "stage": "HYPOTHESIZE",
+        "agent": "crew-profiler",
+        "state": "done",
+        "status": "done",
+        "claimed_at": 1791988505619,
+        "done_at": 1791988505646,
+        "summary": "no change upstream of the symptoms in the window",
+        "after": [
+          "crew-run-s4s-b5a476e0-cartographer-localize"
+        ],
+        "names": [],
+        "cites": 0,
+        "calls": [
+          {
+            "id": "run-s4s-b5a476e0-tc0007",
+            "tool": "upstream_suspects",
+            "template": "Q-SUS-1",
+            "ms": 1.51,
+            "rows": 0,
+            "at": 1791988505623
+          },
+          {
+            "id": "run-s4s-b5a476e0-tc0008",
+            "tool": "window_changes",
+            "template": "Q-SUS-2",
+            "ms": 1.13,
+            "rows": 1,
+            "at": 1791988505628
+          },
+          {
+            "id": "run-s4s-b5a476e0-tc0009",
+            "tool": "rank_causes",
+            "template": "Q-RANK-1",
+            "ms": 1.43,
+            "rows": 13,
+            "at": 1791988505640
+          }
+        ],
+        "unknowns": null,
+        "limits": null,
+        "reaps": 0
+      },
+      {
+        "task": "crew-run-s4s-b5a476e0-lead-investigate",
+        "kind": "crew",
+        "role": "lead",
+        "stage": "INVESTIGATE",
+        "agent": "crew-lead",
+        "state": "done",
+        "status": "done",
+        "claimed_at": 1791988505649,
+        "done_at": 1791988505693,
+        "summary": "baseline-policy (deterministic, no LLM): 5 specialist(s) dispatched, 1 complete; 0 cause(s) put to the gate",
+        "after": [
+          "crew-run-s4s-b5a476e0-profiler-hypothesize"
+        ],
+        "names": [],
+        "cites": 0,
+        "calls": [],
+        "unknowns": null,
+        "limits": null,
+        "reaps": 0
+      },
+      {
+        "task": "spec-run-s4s-b5a476e0-topology-87a760a9",
+        "kind": "specialist",
+        "role": "topology",
+        "stage": null,
+        "agent": "topology-specialist-be888ddb",
+        "state": "done",
+        "status": "insufficient",
+        "claimed_at": 1791988505650,
+        "done_at": 1791988505654,
+        "summary": null,
+        "after": [],
+        "names": [],
+        "cites": 0,
+        "calls": [],
+        "unknowns": [
+          "no upstream change in the window to trace"
+        ],
+        "limits": [
+          "reachability only: a path is necessary for a claim, never sufficient (flow and timing are gate checks)"
+        ],
+        "reaps": 0
+      },
+      {
+        "task": "spec-run-s4s-b5a476e0-telemetry-87a760a9",
+        "kind": "specialist",
+        "role": "telemetry",
+        "stage": null,
+        "agent": "telemetry-specialist-be888ddb",
+        "state": "done",
+        "status": "complete",
+        "claimed_at": 1791988505656,
+        "done_at": 1791988505665,
+        "summary": null,
+        "after": [],
+        "names": [],
+        "cites": 1,
+        "calls": [
+          {
+            "id": "run-s4s-b5a476e0-tc0010",
+            "tool": "metric_window",
+            "template": null,
+            "ms": 1.62,
+            "rows": 1,
+            "at": 1791988505660
+          }
+        ],
+        "unknowns": [],
+        "limits": [
+          "error rate only (no latency, saturation or traces); telemetry is simulated per scenario"
+        ],
+        "reaps": 0
+      },
+      {
+        "task": "spec-run-s4s-b5a476e0-data-87a760a9",
+        "kind": "specialist",
+        "role": "data",
+        "stage": null,
+        "agent": "data-specialist-be888ddb",
+        "state": "done",
+        "status": "insufficient",
+        "claimed_at": 1791988505666,
+        "done_at": 1791988505669,
+        "summary": null,
+        "after": [],
+        "names": [],
+        "cites": 0,
+        "calls": [],
+        "unknowns": [
+          "no KPI symptom: the data channel has nothing to measure for this incident"
+        ],
+        "limits": [
+          "warehouse measurements only: daily KPI and per-column baseline ranges; no row-level lineage of a change"
+        ],
+        "reaps": 0
+      },
+      {
+        "task": "spec-run-s4s-b5a476e0-change-87a760a9",
+        "kind": "specialist",
+        "role": "change",
+        "stage": null,
+        "agent": "change-specialist-be888ddb",
+        "state": "done",
+        "status": "insufficient",
+        "claimed_at": 1791988505671,
+        "done_at": 1791988505675,
+        "summary": null,
+        "after": [],
+        "names": [],
+        "cites": 0,
+        "calls": [],
+        "unknowns": [
+          "no upstream change in the window"
+        ],
+        "limits": [
+          "change records only (kind, time, actor, title, CHANGED target, asserted facts); no rollout progress or canary data"
+        ],
+        "reaps": 0
+      },
+      {
+        "task": "spec-run-s4s-b5a476e0-code-87a760a9",
+        "kind": "specialist",
+        "role": "code",
+        "stage": null,
+        "agent": "code-specialist-be888ddb",
+        "state": "done",
+        "status": "insufficient",
+        "claimed_at": 1791988505676,
+        "done_at": 1791988505679,
+        "summary": null,
+        "after": [],
+        "names": [],
+        "cites": 0,
+        "calls": [],
+        "unknowns": [
+          "no upstream change in the window"
+        ],
+        "limits": [
+          "no function-level code graph: a file path is the finest grain, and the paths are synthetic",
+          "no diff text: only the commits a change CONTAINS, the files they TOUCH (PART_OF a component), PRs, authors and the typed facts it ASSERTS",
+          "a change with no commits or facts in the graph (most injected and config changes) cannot be inspected"
+        ],
+        "reaps": 0
+      },
+      {
+        "task": "crew-run-s4s-b5a476e0-gatekeeper-gate",
+        "kind": "crew",
+        "role": "gatekeeper",
+        "stage": "GATE",
+        "agent": "crew-gatekeeper",
+        "state": "done",
+        "status": "done",
+        "claimed_at": 1791988505695,
+        "done_at": 1791988505698,
+        "summary": "negative proof accepted: no incident",
+        "after": [
+          "crew-run-s4s-b5a476e0-lead-investigate"
+        ],
+        "names": [],
+        "cites": 0,
+        "calls": [],
+        "unknowns": null,
+        "limits": null,
+        "reaps": 0
+      }
+    ],
+    "template": "Q-CREW-1"
+  },
+  "report": {
+    "incident_id": "inc-s4s-b5a476e0",
+    "outcome": "NO_INCIDENT",
+    "confident": true,
+    "cause_id": null,
+    "mechanism": [],
+    "proven": [
+      {
+        "claim": "G1 grounded: cited evidence produced by this run",
+        "evidence_ids": [],
+        "check": "G1 grounded"
+      },
+      {
+        "claim": "N0 every symptom measured: all 1 symptom(s) measured",
+        "evidence_ids": [
+          "ev_ce987ccf87"
+        ],
+        "check": "N0 every symptom measured"
+      },
+      {
+        "claim": "N1 measurements normal: 1 measurements in band",
+        "evidence_ids": [
+          "ev_ce987ccf87"
+        ],
+        "check": "N1 measurements normal"
+      },
+      {
+        "claim": "N2 negative path proof: no anomalous node reachable from any change in the window (none_reachable)",
+        "evidence_ids": [
+          "ev_f1f9cc47d0"
+        ],
+        "check": "N2 negative path proof"
+      }
+    ],
+    "inferred": [],
+    "contradictions": [],
+    "why_alerts_missed_it": {},
+    "ownership": {},
+    "residue": {},
+    "remedy": {},
+    "futures": [],
+    "obligations": {},
+    "rejected": [],
+    "evidence": [
+      {
+        "id": "ev_ce987ccf87",
+        "kind": "error_rate",
+        "source": "simulator",
+        "tool": "metric_window",
+        "template": null,
+        "cypher": null,
+        "summary": "checkout error rate 0.61% vs baseline 0.69% (\u00d70.9, band 1.5745)",
+        "digest": "b2899403ecac6eaceba74ded2cad22e158dc8a4ebf3ef1077d99500e62379984",
+        "value": 0.00608,
+        "baseline": 0.00689,
+        "anomalous": false,
+        "about": [
+          "checkout"
+        ]
+      },
+      {
+        "id": "ev_f1f9cc47d0",
+        "kind": "path",
+        "source": "falkordb",
+        "tool": "reachable_from_changes",
+        "template": "Q-NEG-1",
+        "cypher": "MATCH (d:Deploy) WHERE d.at >= $now - $window_ms AND d.at <= $now\nCALL algo.SSpaths({sourceNode: d, relTypes: ['CHANGED', 'GATES', 'PROPAGATES_TO'], weightProp: 'w', relDirection: 'outgoing', maxLen: 8, pathCount: 1000}) YIELD path\nWITH d, last(nodes(path)) AS reached\nWHERE reached.id IN $anomalous_ids\nWITH d, collect(DISTINCT reached.id) AS anomalous_reached, count(*) AS paths\nRETURN d.id AS change, anomalous_reached, paths\nORDER BY change\nLIMIT 50",
+        "summary": "negative proof: none_reachable",
+        "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "value": 0.0,
+        "baseline": null,
+        "anomalous": null,
+        "about": []
+      }
+    ]
+  }
+}

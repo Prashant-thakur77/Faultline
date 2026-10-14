@@ -1,0 +1,334 @@
+[
+  {
+    "id": "gr-inc-s1-b0472ed3-d2668e95",
+    "cause": "D-email-88",
+    "passed": false,
+    "confident": false,
+    "checks": [
+      {
+        "attach_only": false,
+        "detail": "D-email-88 \u2192 email \u2192 checkout",
+        "downgrade_only": false,
+        "evidence_ids": [
+          "ev_1a986a73de",
+          "ev_03b4535c58",
+          "ev_d3ce0adb65"
+        ],
+        "name": "G2 path",
+        "params": {
+          "cause": "D-email-88",
+          "symptom": "checkout"
+        },
+        "passed": true,
+        "template": "Q-GATE-1"
+      },
+      {
+        "attach_only": false,
+        "detail": "G5: max flow 0.0200 < needed 0.2433 (observed 0.3041 \u00d7 0.8); another suspect alone can carry 1.0000",
+        "downgrade_only": false,
+        "evidence_ids": [],
+        "name": "G5 sufficiency",
+        "params": {
+          "sources": [
+            "email"
+          ],
+          "symptom": "checkout"
+        },
+        "passed": false,
+        "template": "Q-GATE-3"
+      }
+    ],
+    "attempt": 0,
+    "origin": "sweep",
+    "at": 1791988506434
+  },
+  {
+    "id": "gr-inc-s1-b0472ed3-36e94c9c",
+    "cause": "D-pay-417",
+    "passed": true,
+    "confident": false,
+    "checks": [
+      {
+        "attach_only": false,
+        "detail": "D-pay-417 \u2192 payment \u2192 checkout",
+        "downgrade_only": false,
+        "evidence_ids": [
+          "ev_d9c05ffae8",
+          "ev_edbfd9c531",
+          "ev_d3ce0adb65"
+        ],
+        "name": "G2 path",
+        "params": {
+          "cause": "D-pay-417",
+          "symptom": "checkout"
+        },
+        "passed": true,
+        "template": "Q-GATE-1"
+      },
+      {
+        "attach_only": false,
+        "detail": "G5: max flow 1.0000 \u2265 needed 0.2433 (observed 0.3041 \u00d7 0.8)",
+        "downgrade_only": false,
+        "evidence_ids": [],
+        "name": "G5 sufficiency",
+        "params": {
+          "sources": [
+            "payment"
+          ],
+          "symptom": "checkout"
+        },
+        "passed": true,
+        "template": "Q-GATE-3"
+      }
+    ],
+    "attempt": 0,
+    "origin": "sweep",
+    "at": 1791988506437
+  },
+  {
+    "id": "gr-inc-s1-b0472ed3-0db43d36",
+    "cause": "D-rec-12",
+    "passed": false,
+    "confident": false,
+    "checks": [
+      {
+        "attach_only": false,
+        "detail": "G2: no path to any primary symptom (no path, no claim)",
+        "downgrade_only": false,
+        "evidence_ids": [
+          "ev_5b8e92d948"
+        ],
+        "name": "G2 path",
+        "params": {
+          "cause": "D-rec-12",
+          "symptom": "checkout"
+        },
+        "passed": false,
+        "template": "Q-GATE-1"
+      }
+    ],
+    "attempt": 0,
+    "origin": "sweep",
+    "at": 1791988506441
+  },
+  {
+    "id": "gr-inc-s1-b0472ed3-8f34f4f0",
+    "cause": "D-pay-417",
+    "passed": true,
+    "confident": true,
+    "checks": [
+      {
+        "attach_only": false,
+        "detail": "cause seen in a graph result this run; all cited evidence produced by this run",
+        "downgrade_only": false,
+        "evidence_ids": [],
+        "name": "G1 grounded",
+        "params": {
+          "evidence": [
+            "ev_9dc2e8c800",
+            "ev_fec5a56292",
+            "ev_d3ce0adb65",
+            "ev_41cc30c06d",
+            "ev_45d09e4d6a"
+          ],
+          "ids": [
+            "D-pay-417"
+          ],
+          "run": "run-s1-b0472ed3"
+        },
+        "passed": true,
+        "template": "Q-GATE-G1"
+      },
+      {
+        "attach_only": false,
+        "detail": "D-pay-417 \u2192 payment \u2192 checkout",
+        "downgrade_only": false,
+        "evidence_ids": [],
+        "name": "G2 path",
+        "params": {
+          "cause": "D-pay-417",
+          "symptom": "checkout"
+        },
+        "passed": true,
+        "template": "Q-GATE-1"
+      },
+      {
+        "attach_only": false,
+        "detail": "change 3.0 min before onset (window 30 min)",
+        "downgrade_only": false,
+        "evidence_ids": [],
+        "name": "G3 time",
+        "params": {
+          "cause": "D-pay-417",
+          "onset": 1792033200000,
+          "window_ms": 1800000
+        },
+        "passed": true,
+        "template": "Q-GATE-2"
+      },
+      {
+        "attach_only": false,
+        "detail": "ev_9dc2e8c800 on checkout; ev_d3ce0adb65 on payment",
+        "downgrade_only": false,
+        "evidence_ids": [
+          "ev_9dc2e8c800",
+          "ev_d3ce0adb65"
+        ],
+        "name": "G4 quantitative",
+        "params": {
+          "chain": [
+            "D-pay-417",
+            "payment",
+            "checkout"
+          ],
+          "evidence": [
+            "ev_9dc2e8c800",
+            "ev_fec5a56292",
+            "ev_d3ce0adb65",
+            "ev_41cc30c06d",
+            "ev_45d09e4d6a"
+          ],
+          "run": "run-s1-b0472ed3"
+        },
+        "passed": true,
+        "template": "Q-GATE-4"
+      },
+      {
+        "attach_only": false,
+        "detail": "ev_d3ce0adb65 on payment",
+        "downgrade_only": true,
+        "evidence_ids": [
+          "ev_d3ce0adb65"
+        ],
+        "name": "G4 origin",
+        "params": {
+          "chain": [
+            "D-pay-417",
+            "payment",
+            "checkout"
+          ],
+          "evidence": [
+            "ev_9dc2e8c800",
+            "ev_fec5a56292",
+            "ev_d3ce0adb65",
+            "ev_41cc30c06d",
+            "ev_45d09e4d6a"
+          ],
+          "run": "run-s1-b0472ed3"
+        },
+        "passed": true,
+        "template": "Q-GATE-4"
+      },
+      {
+        "attach_only": false,
+        "detail": "no anomalous component upstream can carry the changed component's excess",
+        "downgrade_only": true,
+        "evidence_ids": [
+          "ev_0d9b87053a"
+        ],
+        "name": "G4 upstream",
+        "params": {
+          "ids": [
+            "payment"
+          ]
+        },
+        "passed": true,
+        "template": "Q-GATE-UPSTREAM-UB"
+      },
+      {
+        "attach_only": false,
+        "detail": "checkout: max flow 1.0000 \u2265 needed 0.2433",
+        "downgrade_only": false,
+        "evidence_ids": [
+          "ev_d3ce0adb65",
+          "ev_edbfd9c531"
+        ],
+        "name": "G5 sufficiency",
+        "params": {
+          "sources": [
+            "payment"
+          ],
+          "symptom": "checkout"
+        },
+        "passed": true,
+        "template": "Q-GATE-3"
+      },
+      {
+        "attach_only": false,
+        "detail": "every competitor eliminated with evidence",
+        "downgrade_only": false,
+        "evidence_ids": [],
+        "name": "G6 competitors",
+        "params": {
+          "inc": "inc-s1-b0472ed3"
+        },
+        "passed": true,
+        "template": "Q-HYP-1"
+      },
+      {
+        "attach_only": false,
+        "detail": "independent channels on the chain: ['falkordb', 'simulator']",
+        "downgrade_only": true,
+        "evidence_ids": [],
+        "name": "G7 agreement",
+        "params": {
+          "chain": [
+            "D-pay-417",
+            "payment",
+            "checkout"
+          ],
+          "evidence": [
+            "ev_9dc2e8c800",
+            "ev_fec5a56292",
+            "ev_d3ce0adb65",
+            "ev_41cc30c06d",
+            "ev_45d09e4d6a",
+            "ev_d3ce0adb65",
+            "ev_edbfd9c531"
+          ],
+          "run": "run-s1-b0472ed3"
+        },
+        "passed": true,
+        "template": "Q-GATE-7"
+      },
+      {
+        "attach_only": false,
+        "detail": "change and code specialists both name D-pay-417 (CHANGED \u2192 payment)",
+        "downgrade_only": true,
+        "evidence_ids": [],
+        "name": "G7 correlation",
+        "params": {
+          "cause": "D-pay-417",
+          "chain": [
+            "D-pay-417",
+            "payment",
+            "checkout"
+          ],
+          "roles": [
+            "change",
+            "code",
+            "data"
+          ],
+          "run": "run-s1-b0472ed3"
+        },
+        "passed": true,
+        "template": "Q-GATE-CORR"
+      },
+      {
+        "attach_only": true,
+        "detail": "violates ADR-012: payment.client.timeout_ms <= 2000 (actual 5000); violates ADR-013: payment.client.retries >= 2 (actual 0)",
+        "downgrade_only": true,
+        "evidence_ids": [],
+        "name": "G8 contradiction",
+        "params": {
+          "change": "D-pay-417"
+        },
+        "passed": false,
+        "template": "Q-DEC-1"
+      }
+    ],
+    "attempt": 1,
+    "origin": "confirm",
+    "at": 1791988506490
+  }
+]

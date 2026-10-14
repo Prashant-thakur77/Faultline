@@ -1,0 +1,656 @@
+{
+  "stage": "AWAITING_APPROVAL",
+  "containment_cut": {
+    "id": "run-s2-fe1681b0-tc0040",
+    "evidence_id": "ev_44da9f7262",
+    "summary": "cut [('payment', 'checkout'), ('payment', 'raw.raw_orders')] total 1.04",
+    "payload": {
+      "max_flow": 1.04,
+      "rows": [
+        {
+          "cut_cost": 0.04,
+          "domain": "service",
+          "u": "payment",
+          "v": "checkout"
+        },
+        {
+          "cut_cost": 1.0,
+          "domain": "cross",
+          "u": "payment",
+          "v": "raw.raw_orders"
+        }
+      ],
+      "source_side": [
+        "payment"
+      ]
+    },
+    "template": "Q-CUT-1",
+    "params": {
+      "failing": "payment",
+      "protect": [
+        "frontend-proxy",
+        "kpi.exec_revenue"
+      ]
+    },
+    "at": 1791988503489
+  },
+  "whatif": {
+    "id": "run-s2-fe1681b0-tc0041",
+    "evidence_id": "ev_36ccc99d18",
+    "summary": "contains: protected still reached []; connected {'cart': True, 'checkout': True, 'currency': True, 'frontend': True, 'product-catalog': True, 'shipping': True, 'quote': True}",
+    "payload": {
+      "branch": "whatif_acme_run_s2_fe1681b0_97932359_550d4229",
+      "rows": [
+        {
+          "no_longer_reached": [
+            "agent",
+            "chatbot",
+            "checkout",
+            "dash.exec_morning",
+            "frontend",
+            "frontend-proxy",
+            "kpi.exec_revenue",
+            "marts.exec_revenue_metric",
+            "marts.fct_revenue",
+            "mcp",
+            "raw.raw_orders",
+            "staging.stg_orders"
+          ],
+          "protected_still_reached": [],
+          "reach_after": [],
+          "reach_before": [
+            "agent",
+            "chatbot",
+            "checkout",
+            "dash.exec_morning",
+            "frontend",
+            "frontend-proxy",
+            "kpi.exec_revenue",
+            "marts.exec_revenue_metric",
+            "marts.fct_revenue",
+            "mcp",
+            "raw.raw_orders",
+            "staging.stg_orders"
+          ],
+          "removed_edges": 2,
+          "still_connected": {
+            "cart": true,
+            "checkout": true,
+            "currency": true,
+            "frontend": true,
+            "product-catalog": true,
+            "quote": true,
+            "shipping": true
+          }
+        }
+      ],
+      "verdict": "contains"
+    },
+    "template": "Q-WHATIF-1",
+    "params": {
+      "failing": "payment"
+    },
+    "at": 1791988503599
+  },
+  "who_fixes": {
+    "id": "run-s2-fe1681b0-tc0043",
+    "evidence_id": "ev_24595c1226",
+    "summary": "p-017 (authored 8 recent commit(s) on payment, resolved inc-h008, inc-h011, inc-h015 on payment); p-030 (authored 5 recent commit(s) on payment, resolved inc-h018 on payment); p-036 (authored 5 recent commit(s) on payment, resolved inc-h037, inc-h039 on payment)",
+    "payload": {
+      "rows": [
+        {
+          "name": "Quinn Lindqvane",
+          "person": "p-017",
+          "reasons": [
+            "authored 8 recent commit(s) on payment",
+            "resolved inc-h008, inc-h011, inc-h015 on payment",
+            "member of owner team team-payments"
+          ],
+          "score": 17.5046,
+          "teams": [
+            "team-payments"
+          ]
+        },
+        {
+          "name": "Desmond Brackwater",
+          "person": "p-030",
+          "reasons": [
+            "authored 5 recent commit(s) on payment",
+            "resolved inc-h018 on payment",
+            "on call for team-payments now"
+          ],
+          "score": 16.1548,
+          "teams": [
+            "team-payments"
+          ]
+        },
+        {
+          "name": "Juno Pellucid",
+          "person": "p-036",
+          "reasons": [
+            "authored 5 recent commit(s) on payment",
+            "resolved inc-h037, inc-h039 on payment",
+            "member of owner team team-payments"
+          ],
+          "score": 14.8037,
+          "teams": [
+            "team-payments"
+          ]
+        },
+        {
+          "name": "Dorian Marrowby",
+          "person": "p-004",
+          "reasons": [
+            "authored 2 recent commit(s) on payment",
+            "resolved inc-h028 on payment",
+            "member of owner team team-payments"
+          ],
+          "score": 13.7948,
+          "teams": [
+            "team-payments"
+          ]
+        },
+        {
+          "name": "Hester Hawksmere",
+          "person": "p-034",
+          "reasons": [
+            "member of owner team team-payments"
+          ],
+          "score": 12.2852,
+          "teams": [
+            "team-payments"
+          ]
+        },
+        {
+          "name": "Lior Sablewood",
+          "person": "p-038",
+          "reasons": [
+            "authored 1 recent commit(s) on payment",
+            "resolved inc-h005 on payment"
+          ],
+          "score": 9.5874,
+          "teams": [
+            "team-storefront"
+          ]
+        }
+      ]
+    },
+    "template": "Q-ORG-WHO+Q-ORG-KNOWS+Q-ORG-HARM",
+    "params": {
+      "Q-ORG-HARM": {},
+      "Q-ORG-KNOWS": {
+        "after_a": "",
+        "after_b": "",
+        "min_collab": 0.5,
+        "now": 1792029600000,
+        "since": 1789437600000,
+        "target": "payment"
+      },
+      "Q-ORG-WHO": {
+        "now": 1792029600000,
+        "since": 1789437600000,
+        "target": "payment"
+      }
+    },
+    "at": 1791988503946
+  },
+  "bus_factor": {
+    "id": "run-s2-fe1681b0-tc0044",
+    "evidence_id": "ev_2c21d8019a",
+    "summary": "bus factor 2",
+    "payload": {
+      "bus_factor": 2,
+      "rows": [
+        {
+          "bus_factor": 2,
+          "committers": 6,
+          "top_contributor_inactive": false,
+          "top_person": "p-017",
+          "total": 90.0
+        }
+      ],
+      "top_contributor_inactive": false,
+      "total_commits": 90
+    },
+    "template": "Q-ORG-BUS",
+    "params": {
+      "target": "payment"
+    },
+    "at": 1791988503953
+  },
+  "escalation_tree": {
+    "id": "run-s2-fe1681b0-tc0045",
+    "evidence_id": "ev_8e150d984c",
+    "summary": "5 escalation edges over 6 people",
+    "payload": {
+      "managers": [
+        {
+          "manager": "p-001",
+          "person": "p-017"
+        },
+        {
+          "manager": "p-002",
+          "person": "p-017"
+        },
+        {
+          "manager": "p-004",
+          "person": "p-017"
+        },
+        {
+          "manager": "p-001",
+          "person": "p-030"
+        },
+        {
+          "manager": "p-002",
+          "person": "p-030"
+        },
+        {
+          "manager": "p-004",
+          "person": "p-030"
+        },
+        {
+          "manager": "p-001",
+          "person": "p-036"
+        },
+        {
+          "manager": "p-002",
+          "person": "p-036"
+        },
+        {
+          "manager": "p-004",
+          "person": "p-036"
+        }
+      ],
+      "people": [
+        "p-001",
+        "p-002",
+        "p-004",
+        "p-017",
+        "p-030",
+        "p-036"
+      ],
+      "rows": [
+        {
+          "from": "p-004",
+          "to": "p-036",
+          "w": 1.0
+        },
+        {
+          "from": "p-030",
+          "to": "p-036",
+          "w": 0.9
+        },
+        {
+          "from": "p-004",
+          "to": "p-017",
+          "w": 0.88
+        },
+        {
+          "from": "p-001",
+          "to": "p-002",
+          "w": 0.84
+        },
+        {
+          "from": "p-002",
+          "to": "p-004",
+          "w": 0.68
+        }
+      ]
+    },
+    "template": "Q-ORG-MGR+Q-ORG-COLLAB-W+Q-ORG-MSF",
+    "params": {
+      "Q-ORG-COLLAB-W": {
+        "ids": [
+          "p-001",
+          "p-002",
+          "p-004",
+          "p-017",
+          "p-030",
+          "p-036"
+        ]
+      },
+      "Q-ORG-MGR": {
+        "ids": [
+          "p-017",
+          "p-030",
+          "p-036"
+        ]
+      },
+      "Q-ORG-MSF": {}
+    },
+    "at": 1791988503966
+  },
+  "notify_set": {
+    "id": "run-s2-fe1681b0-tc0047",
+    "evidence_id": "ev_7aba192059",
+    "summary": "4 teams to notify: team-storefront, team-checkout, team-data, team-assistant",
+    "payload": {
+      "rows": [
+        {
+          "impact": 0.5833,
+          "name": "Storefront",
+          "nearest_hops": 2,
+          "oncall": [
+            "p-028"
+          ],
+          "owns_impacted": [
+            "frontend-proxy",
+            "frontend"
+          ],
+          "team": "team-storefront"
+        },
+        {
+          "impact": 0.5,
+          "name": "Checkout",
+          "nearest_hops": 1,
+          "oncall": [
+            "p-005"
+          ],
+          "owns_impacted": [
+            "checkout"
+          ],
+          "team": "team-checkout"
+        },
+        {
+          "impact": 0.1667,
+          "name": "Data",
+          "nearest_hops": 5,
+          "oncall": [
+            "p-015"
+          ],
+          "owns_impacted": [
+            "kpi.exec_revenue"
+          ],
+          "team": "team-data"
+        },
+        {
+          "impact": 0.14,
+          "name": "Assistant",
+          "nearest_hops": 3,
+          "oncall": [
+            "p-023"
+          ],
+          "owns_impacted": [
+            "chatbot",
+            "agent",
+            "mcp"
+          ],
+          "team": "team-assistant"
+        }
+      ]
+    },
+    "template": "Q-NOTIFY-1",
+    "params": {
+      "ids": [
+        "agent",
+        "chatbot",
+        "checkout",
+        "dash.exec_morning",
+        "frontend",
+        "frontend-proxy",
+        "kpi.exec_revenue",
+        "marts.exec_revenue_metric",
+        "marts.fct_revenue",
+        "mcp",
+        "raw.raw_orders",
+        "staging.stg_orders"
+      ],
+      "now": 1792029600000
+    },
+    "at": 1791988503984
+  },
+  "owner_at": {
+    "id": "run-s2-fe1681b0-tc0048",
+    "evidence_id": "ev_c41d468cc4",
+    "summary": "payment was owned by team-payments then, and still is",
+    "payload": {
+      "at": 1792027200000,
+      "changed_hands": false,
+      "knew_it_then": [],
+      "owner_now": "team-payments",
+      "owner_then": "team-payments",
+      "rows": [
+        {
+          "covers_at": true,
+          "current": true,
+          "name": "Payments",
+          "since": 1757462400000,
+          "team": "team-payments",
+          "until": null
+        }
+      ]
+    },
+    "template": "Q-OWN-AT",
+    "params": {
+      "at": 1792027200000,
+      "id": "payment"
+    },
+    "at": 1791988503990
+  },
+  "options": [
+    {
+      "id": "act-inc-s2-fe1681b0-1",
+      "kind": "open_issue",
+      "option": "open an issue for D-cutover-1",
+      "enabled": true,
+      "reason": "hand the cause to the owner team (no change to production; does not resolve the incident); future: unknown: kpi.exec_revenue (no baseline windows)",
+      "target": "D-cutover-1",
+      "status": "option",
+      "preview": {
+        "repo": "Prashant-thakur77/faultline-demo-infra",
+        "reviewers": [
+          "p-017",
+          "p-030",
+          "p-036"
+        ],
+        "title": "Incident inc-s2-fe1681b0: D-cutover-1"
+      },
+      "spec": null,
+      "plan_hash": null,
+      "idem": null,
+      "external_ref": null,
+      "verdict": null,
+      "explanation": null,
+      "channels": null,
+      "approval_id": null,
+      "rejected_by": null,
+      "reject_reason": null,
+      "rejected_at": null,
+      "future": "{\"assumed\": false, \"evidence_id\": \"ev_984714dc7c\", \"exposed\": [], \"key\": \"no_change\", \"line\": \"unknown: kpi.exec_revenue (no baseline windows)\", \"predicted\": \"unknown\"}"
+    },
+    {
+      "id": "act-inc-s2-fe1681b0-2",
+      "kind": "flip_flag",
+      "option": "flag paymentGate \u2192 off",
+      "enabled": false,
+      "reason": "cuts payment \u2192 checkout, which no failure path from payment to this incident's symptoms (kpi.exec_revenue) crosses: it would not change them (Q-LEVER-PATH); future: unknown: kpi.exec_revenue (no baseline windows)",
+      "target": "paymentGate",
+      "status": "option",
+      "preview": {
+        "flag": "paymentGate",
+        "path": "flags.json",
+        "repo": "Prashant-thakur77/faultline-demo-infra",
+        "reviewers": [
+          "p-017",
+          "p-030",
+          "p-036"
+        ],
+        "state": "off"
+      },
+      "spec": null,
+      "plan_hash": null,
+      "idem": null,
+      "external_ref": null,
+      "verdict": null,
+      "explanation": null,
+      "channels": null,
+      "approval_id": null,
+      "rejected_by": null,
+      "reject_reason": null,
+      "rejected_at": null,
+      "future": "{\"assumed\": false, \"evidence_id\": \"ev_984714dc7c\", \"exposed\": [], \"key\": \"payment|checkout\", \"line\": \"unknown: kpi.exec_revenue (no baseline windows)\", \"predicted\": \"unknown\"}"
+    },
+    {
+      "id": "act-inc-s2-fe1681b0-3",
+      "kind": "flip_flag",
+      "option": "cut payment \u2192 raw.raw_orders",
+      "enabled": false,
+      "reason": "no flag cuts payment \u2192 raw.raw_orders (cross edge): not offered, not simulated",
+      "target": "raw.raw_orders",
+      "status": "option",
+      "preview": {},
+      "spec": null,
+      "plan_hash": null,
+      "idem": null,
+      "external_ref": null,
+      "verdict": null,
+      "explanation": null,
+      "channels": null,
+      "approval_id": null,
+      "rejected_by": null,
+      "reject_reason": null,
+      "rejected_at": null,
+      "future": null
+    },
+    {
+      "id": "act-inc-s2-fe1681b0-4",
+      "kind": "data_repair",
+      "option": "repair the transform affected by D-cutover-1",
+      "enabled": false,
+      "reason": "needs a proposed transform patch (the specialist proposes one in live mode; keyless runs cannot author SQL); call propose_data_repair to enable",
+      "target": "D-cutover-1",
+      "status": "option",
+      "preview": {},
+      "spec": null,
+      "plan_hash": null,
+      "idem": null,
+      "external_ref": null,
+      "verdict": null,
+      "explanation": null,
+      "channels": null,
+      "approval_id": null,
+      "rejected_by": null,
+      "reject_reason": null,
+      "rejected_at": null,
+      "future": null
+    }
+  ],
+  "memory": {
+    "recalled": [
+      {
+        "id": "inc-h038",
+        "title": "Implausible executive revenue KPI value",
+        "similarity": 0.862633891702358,
+        "recency": 0.824953244180973,
+        "salience": 1.0,
+        "shared": [
+          "sym-kpi_jump-kpi.exec_revenue"
+        ],
+        "actions": [
+          {
+            "kind": "data_repair",
+            "verdict": "APPLIED",
+            "target": "exec_revenue_metric.sql"
+          }
+        ],
+        "cause_targets": [
+          "exec_revenue_metric.sql"
+        ]
+      },
+      {
+        "id": "inc-h016",
+        "title": "Implausible executive revenue KPI value",
+        "similarity": 0.854568582020992,
+        "recency": 0.182740760614142,
+        "salience": 1.0,
+        "shared": [
+          "sym-kpi_jump-kpi.exec_revenue"
+        ],
+        "actions": [
+          {
+            "kind": "data_repair",
+            "verdict": "APPLIED",
+            "target": "stg_orders.sql"
+          }
+        ],
+        "cause_targets": [
+          "stg_orders.sql"
+        ]
+      },
+      {
+        "id": "inc-h012",
+        "title": "Executive revenue KPI anomaly after transform change",
+        "similarity": 0.847177127351184,
+        "recency": 0.15534434904478,
+        "salience": 1.0,
+        "shared": [
+          "sym-kpi_jump-kpi.exec_revenue"
+        ],
+        "actions": [
+          {
+            "kind": "data_repair",
+            "verdict": "APPLIED",
+            "target": "stg_orders.sql"
+          }
+        ],
+        "cause_targets": [
+          "stg_orders.sql"
+        ]
+      },
+      {
+        "id": "inc-h031",
+        "title": "Executive revenue KPI anomaly after transform change",
+        "similarity": 0.844772897096781,
+        "recency": 0.668009171147301,
+        "salience": 1.0,
+        "shared": [
+          "sym-kpi_jump-kpi.exec_revenue"
+        ],
+        "actions": [
+          {
+            "kind": "data_repair",
+            "verdict": "APPLIED",
+            "target": "exec_revenue_metric.sql"
+          }
+        ],
+        "cause_targets": [
+          "exec_revenue_metric.sql"
+        ]
+      },
+      {
+        "id": "inc-h007",
+        "title": "Revenue KPI jump after pipeline edit",
+        "similarity": 0.824388761657649,
+        "recency": 0.129246260489579,
+        "salience": 1.0,
+        "shared": [
+          "sym-kpi_jump-kpi.exec_revenue"
+        ],
+        "actions": [
+          {
+            "kind": "data_repair",
+            "verdict": "APPLIED",
+            "target": "fct_revenue.sql"
+          }
+        ],
+        "cause_targets": [
+          "fct_revenue.sql"
+        ]
+      }
+    ],
+    "fix_history": [
+      {
+        "kind": "data_repair",
+        "verdict": "APPLIED",
+        "n": 5,
+        "incidents": [
+          "inc-h007",
+          "inc-h012",
+          "inc-h016",
+          "inc-h031",
+          "inc-h038"
+        ]
+      }
+    ]
+  }
+}

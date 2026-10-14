@@ -1,0 +1,14 @@
+{
+  "investigator": "baseline-policy (deterministic, no LLM)",
+  "model_ids": [],
+  "keyless": true,
+  "tokens": {
+    "input": 0,
+    "output": 0
+  },
+  "usd": 0.0,
+  "tool_calls": 60,
+  "wall_s_to_decision": 0.909,
+  "wall_s_total": 1.171,
+  "note": "wall time from the graph's event timestamps (decision = AWAITING_APPROVAL or a terminal stage; total includes the time a human took to approve)"
+}

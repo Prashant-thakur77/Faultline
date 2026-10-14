@@ -1,0 +1,5 @@
+run run-s4s-b5a476e0 · incident inc-s4s-b5a476e0 · scenario S4S · final stage NO_INCIDENT
+
+action: none (no incident (negative proof accepted): nothing to act on)
+verdict: n/a
+write-back: none written (verified 0/0)

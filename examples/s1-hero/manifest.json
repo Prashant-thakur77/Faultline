@@ -1,0 +1,12 @@
+{
+  "scenario": "S1",
+  "incident": "inc-s1-ee6d96e6",
+  "run": "run-s1-ee6d96e6",
+  "graph": "eval_acme_api_v2_s1_9462_ee6d96e6",
+  "final_stage": "RESOLVED",
+  "github": "simulated",
+  "investigator": "baseline-policy (deterministic, no LLM)",
+  "events": 81,
+  "gate_runs": 4,
+  "tool_calls": 60
+}

@@ -1,0 +1,12 @@
+run run-s1-b0472ed3 · incident inc-s1-b0472ed3 · scenario S5 · final stage AWAITING_APPROVAL
+
+action act-inc-s1-b0472ed3-bad · rollback_deploy · roll back D-email-88 (forced bad plan) · approval ap-act-inc-s1-b0472ed3-bad-7ae21055
+  external ref: https://github.com/Prashant-thakur77/faultline-demo-infra/pull/1 (simulated)
+  verdict: NOT_APPLIED — still out of band after the change: checkout, frontend
+  channel github_main: ok (simulated GitHub (no token; keyless mode))
+  channel telemetry: NOT ok
+    checkout: NOT ok {"after": [0.4063, 0.40596, 0.40771], "band": 1.5745, "baseline": 0.00689, "collateral": false}
+    frontend: NOT ok {"after": [0.02175, 0.02192, 0.02348], "band": 1.5262, "baseline": 0.00514, "collateral": false}
+    frontend-proxy: ok {"after": [0.01892, 0.0184, 0.02014], "before_action_max": 0.0199, "collateral": true}
+    kpi.exec_revenue: n/a {"collateral": true, "note": "no error_rate telemetry; not a collateral signal"}
+write-back: success NOT written (verdict was not APPLIED); verified 0/0

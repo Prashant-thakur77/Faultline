@@ -1,0 +1,5 @@
+run run-s2-fe1681b0 · incident inc-s2-fe1681b0 · scenario S2 · final stage AWAITING_APPROVAL
+
+action: none (awaiting a human: no option was approved in this recording)
+verdict: n/a
+write-back: none written (verified 0/0)

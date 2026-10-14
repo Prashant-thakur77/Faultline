@@ -1,0 +1,808 @@
+{
+  "stage": "RESOLVED",
+  "containment_cut": {
+    "id": "run-s1-ee6d96e6-tc0050",
+    "evidence_id": "ev_44da9f7262",
+    "summary": "cut [('payment', 'checkout'), ('payment', 'raw.raw_orders')] total 1.04",
+    "payload": {
+      "max_flow": 1.04,
+      "rows": [
+        {
+          "cut_cost": 0.04,
+          "domain": "service",
+          "u": "payment",
+          "v": "checkout"
+        },
+        {
+          "cut_cost": 1.0,
+          "domain": "cross",
+          "u": "payment",
+          "v": "raw.raw_orders"
+        }
+      ],
+      "source_side": [
+        "payment"
+      ]
+    },
+    "template": "Q-CUT-1",
+    "params": {
+      "failing": "payment",
+      "protect": [
+        "frontend-proxy",
+        "kpi.exec_revenue"
+      ]
+    },
+    "at": 1791988500758
+  },
+  "whatif": {
+    "id": "run-s1-ee6d96e6-tc0051",
+    "evidence_id": "ev_36ccc99d18",
+    "summary": "contains: protected still reached []; connected {'cart': True, 'checkout': True, 'currency': True, 'frontend': True, 'product-catalog': True, 'shipping': True, 'quote': True}",
+    "payload": {
+      "branch": "whatif_acme_run_s1_ee6d96e6_97932359_ef8d218e",
+      "rows": [
+        {
+          "no_longer_reached": [
+            "agent",
+            "chatbot",
+            "checkout",
+            "dash.exec_morning",
+            "frontend",
+            "frontend-proxy",
+            "kpi.exec_revenue",
+            "marts.exec_revenue_metric",
+            "marts.fct_revenue",
+            "mcp",
+            "raw.raw_orders",
+            "staging.stg_orders"
+          ],
+          "protected_still_reached": [],
+          "reach_after": [],
+          "reach_before": [
+            "agent",
+            "chatbot",
+            "checkout",
+            "dash.exec_morning",
+            "frontend",
+            "frontend-proxy",
+            "kpi.exec_revenue",
+            "marts.exec_revenue_metric",
+            "marts.fct_revenue",
+            "mcp",
+            "raw.raw_orders",
+            "staging.stg_orders"
+          ],
+          "removed_edges": 2,
+          "still_connected": {
+            "cart": true,
+            "checkout": true,
+            "currency": true,
+            "frontend": true,
+            "product-catalog": true,
+            "quote": true,
+            "shipping": true
+          }
+        }
+      ],
+      "verdict": "contains"
+    },
+    "template": "Q-WHATIF-1",
+    "params": {
+      "failing": "payment"
+    },
+    "at": 1791988500859
+  },
+  "who_fixes": {
+    "id": "run-s1-ee6d96e6-tc0053",
+    "evidence_id": "ev_0345b9bef4",
+    "summary": "p-017 (authored 8 recent commit(s) on payment, resolved inc-h008, inc-h011, inc-h015 on payment); p-030 (authored 5 recent commit(s) on payment, resolved inc-h018 on payment); p-036 (authored 5 recent commit(s) on payment, resolved inc-h037, inc-h039 on payment)",
+    "payload": {
+      "rows": [
+        {
+          "name": "Quinn Lindqvane",
+          "person": "p-017",
+          "reasons": [
+            "authored 8 recent commit(s) on payment",
+            "resolved inc-h008, inc-h011, inc-h015 on payment",
+            "member of owner team team-payments"
+          ],
+          "score": 17.5046,
+          "teams": [
+            "team-payments"
+          ]
+        },
+        {
+          "name": "Desmond Brackwater",
+          "person": "p-030",
+          "reasons": [
+            "authored 5 recent commit(s) on payment",
+            "resolved inc-h018 on payment",
+            "on call for team-payments now"
+          ],
+          "score": 16.1548,
+          "teams": [
+            "team-payments"
+          ]
+        },
+        {
+          "name": "Juno Pellucid",
+          "person": "p-036",
+          "reasons": [
+            "authored 5 recent commit(s) on payment",
+            "resolved inc-h037, inc-h039 on payment",
+            "member of owner team team-payments"
+          ],
+          "score": 14.8037,
+          "teams": [
+            "team-payments"
+          ]
+        },
+        {
+          "name": "Dorian Marrowby",
+          "person": "p-004",
+          "reasons": [
+            "authored 2 recent commit(s) on payment",
+            "resolved inc-h028 on payment",
+            "member of owner team team-payments"
+          ],
+          "score": 13.7948,
+          "teams": [
+            "team-payments"
+          ]
+        },
+        {
+          "name": "Hester Hawksmere",
+          "person": "p-034",
+          "reasons": [
+            "member of owner team team-payments"
+          ],
+          "score": 12.2852,
+          "teams": [
+            "team-payments"
+          ]
+        },
+        {
+          "name": "Lior Sablewood",
+          "person": "p-038",
+          "reasons": [
+            "authored 1 recent commit(s) on payment",
+            "resolved inc-h005 on payment"
+          ],
+          "score": 9.5874,
+          "teams": [
+            "team-storefront"
+          ]
+        }
+      ]
+    },
+    "template": "Q-ORG-WHO+Q-ORG-KNOWS+Q-ORG-HARM",
+    "params": {
+      "Q-ORG-HARM": {},
+      "Q-ORG-KNOWS": {
+        "after_a": "",
+        "after_b": "",
+        "min_collab": 0.5,
+        "now": 1792033200000,
+        "since": 1789441200000,
+        "target": "payment"
+      },
+      "Q-ORG-WHO": {
+        "now": 1792033200000,
+        "since": 1789441200000,
+        "target": "payment"
+      }
+    },
+    "at": 1791988501190
+  },
+  "bus_factor": {
+    "id": "run-s1-ee6d96e6-tc0054",
+    "evidence_id": "ev_2c21d8019a",
+    "summary": "bus factor 2",
+    "payload": {
+      "bus_factor": 2,
+      "rows": [
+        {
+          "bus_factor": 2,
+          "committers": 6,
+          "top_contributor_inactive": false,
+          "top_person": "p-017",
+          "total": 90.0
+        }
+      ],
+      "top_contributor_inactive": false,
+      "total_commits": 90
+    },
+    "template": "Q-ORG-BUS",
+    "params": {
+      "target": "payment"
+    },
+    "at": 1791988501196
+  },
+  "escalation_tree": {
+    "id": "run-s1-ee6d96e6-tc0055",
+    "evidence_id": "ev_8e150d984c",
+    "summary": "5 escalation edges over 6 people",
+    "payload": {
+      "managers": [
+        {
+          "manager": "p-001",
+          "person": "p-017"
+        },
+        {
+          "manager": "p-002",
+          "person": "p-017"
+        },
+        {
+          "manager": "p-004",
+          "person": "p-017"
+        },
+        {
+          "manager": "p-001",
+          "person": "p-030"
+        },
+        {
+          "manager": "p-002",
+          "person": "p-030"
+        },
+        {
+          "manager": "p-004",
+          "person": "p-030"
+        },
+        {
+          "manager": "p-001",
+          "person": "p-036"
+        },
+        {
+          "manager": "p-002",
+          "person": "p-036"
+        },
+        {
+          "manager": "p-004",
+          "person": "p-036"
+        }
+      ],
+      "people": [
+        "p-001",
+        "p-002",
+        "p-004",
+        "p-017",
+        "p-030",
+        "p-036"
+      ],
+      "rows": [
+        {
+          "from": "p-004",
+          "to": "p-036",
+          "w": 1.0
+        },
+        {
+          "from": "p-030",
+          "to": "p-036",
+          "w": 0.9
+        },
+        {
+          "from": "p-004",
+          "to": "p-017",
+          "w": 0.88
+        },
+        {
+          "from": "p-001",
+          "to": "p-002",
+          "w": 0.84
+        },
+        {
+          "from": "p-002",
+          "to": "p-004",
+          "w": 0.68
+        }
+      ]
+    },
+    "template": "Q-ORG-MGR+Q-ORG-COLLAB-W+Q-ORG-MSF",
+    "params": {
+      "Q-ORG-COLLAB-W": {
+        "ids": [
+          "p-001",
+          "p-002",
+          "p-004",
+          "p-017",
+          "p-030",
+          "p-036"
+        ]
+      },
+      "Q-ORG-MGR": {
+        "ids": [
+          "p-017",
+          "p-030",
+          "p-036"
+        ]
+      },
+      "Q-ORG-MSF": {}
+    },
+    "at": 1791988501205
+  },
+  "notify_set": {
+    "id": "run-s1-ee6d96e6-tc0057",
+    "evidence_id": "ev_5e8b146a26",
+    "summary": "4 teams to notify: team-storefront, team-checkout, team-data, team-assistant (owners of obligated nodes first)",
+    "payload": {
+      "priority_ids": [
+        "checkout",
+        "frontend",
+        "frontend-proxy",
+        "kpi.exec_revenue",
+        "payment"
+      ],
+      "rows": [
+        {
+          "impact": 0.5833,
+          "name": "Storefront",
+          "nearest_hops": 2,
+          "oncall": [
+            "p-028"
+          ],
+          "owns_impacted": [
+            "frontend-proxy",
+            "frontend"
+          ],
+          "priority": [
+            "frontend-proxy",
+            "frontend"
+          ],
+          "team": "team-storefront"
+        },
+        {
+          "impact": 0.5,
+          "name": "Checkout",
+          "nearest_hops": 1,
+          "oncall": [
+            "p-005"
+          ],
+          "owns_impacted": [
+            "checkout"
+          ],
+          "priority": [
+            "checkout"
+          ],
+          "team": "team-checkout"
+        },
+        {
+          "impact": 0.1667,
+          "name": "Data",
+          "nearest_hops": 5,
+          "oncall": [
+            "p-015"
+          ],
+          "owns_impacted": [
+            "kpi.exec_revenue"
+          ],
+          "priority": [
+            "kpi.exec_revenue"
+          ],
+          "team": "team-data"
+        },
+        {
+          "impact": 0.14,
+          "name": "Assistant",
+          "nearest_hops": 3,
+          "oncall": [
+            "p-023"
+          ],
+          "owns_impacted": [
+            "chatbot",
+            "agent",
+            "mcp"
+          ],
+          "priority": [],
+          "team": "team-assistant"
+        }
+      ]
+    },
+    "template": "Q-NOTIFY-1",
+    "params": {
+      "ids": [
+        "agent",
+        "chatbot",
+        "checkout",
+        "dash.exec_morning",
+        "frontend",
+        "frontend-proxy",
+        "kpi.exec_revenue",
+        "marts.exec_revenue_metric",
+        "marts.fct_revenue",
+        "mcp",
+        "raw.raw_orders",
+        "staging.stg_orders"
+      ],
+      "now": 1792033200000
+    },
+    "at": 1791988501219
+  },
+  "owner_at": {
+    "id": "run-s1-ee6d96e6-tc0058",
+    "evidence_id": "ev_bf6daeb347",
+    "summary": "payment was owned by team-payments then, and still is",
+    "payload": {
+      "at": 1792033020000,
+      "changed_hands": false,
+      "knew_it_then": [],
+      "owner_now": "team-payments",
+      "owner_then": "team-payments",
+      "rows": [
+        {
+          "covers_at": true,
+          "current": true,
+          "name": "Payments",
+          "since": 1757462400000,
+          "team": "team-payments",
+          "until": null
+        }
+      ]
+    },
+    "template": "Q-OWN-AT",
+    "params": {
+      "at": 1792033020000,
+      "id": "payment"
+    },
+    "at": 1791988501225
+  },
+  "options": [
+    {
+      "id": "act-inc-s1-ee6d96e6-1",
+      "kind": "rollback_deploy",
+      "option": "roll back D-pay-417",
+      "enabled": true,
+      "reason": "revert payment: raise client timeout to 5000 ms, drop retries on payment (removes the cause; slower than a flag); future: contains if the confirmed cause is the cause (removing the origin's fault; assumed, not measured); history: rollback worked 6/6 times on past incidents sharing a symptom with this one (smoothed success 0.88)",
+      "target": "D-pay-417",
+      "status": "option",
+      "preview": {
+        "path": "deploys.json",
+        "repo": "Prashant-thakur77/faultline-demo-infra",
+        "revert": "D-pay-417",
+        "reviewers": [
+          "p-017",
+          "p-030",
+          "p-036"
+        ],
+        "service": "payment"
+      },
+      "spec": null,
+      "plan_hash": null,
+      "idem": null,
+      "external_ref": null,
+      "verdict": null,
+      "explanation": null,
+      "channels": null,
+      "approval_id": null,
+      "rejected_by": null,
+      "reject_reason": null,
+      "rejected_at": null,
+      "future": "{\"assumed\": true, \"evidence_id\": \"ev_cfe3b16bdb\", \"exposed\": [], \"key\": \"remove_origin\", \"line\": \"contains if the confirmed cause is the cause (removing the origin's fault; assumed, not measured)\", \"predicted\": \"contains\"}"
+    },
+    {
+      "id": "act-inc-s1-ee6d96e6-2",
+      "kind": "flip_flag",
+      "option": "flag paymentGate \u2192 off",
+      "enabled": true,
+      "reason": "cuts payment \u2192 checkout (min-cut edge, cut_cost 0.04); containment lever: when off, checkout accepts orders and defers the charge (queue), so payment failures stop failing checkout (faultline-demo-infra flags.json); what-if branch: contains the failure; future: contains: every symptom predicted back in band; leaves kpi.exec_revenue exposed; history: flag paymentGate \u2192 off worked 4/5 times on past incidents sharing a symptom with this one (smoothed success 0.71)",
+      "target": "paymentGate",
+      "status": "executed",
+      "preview": {
+        "flag": "paymentGate",
+        "path": "flags.json",
+        "repo": "Prashant-thakur77/faultline-demo-infra",
+        "reviewers": [
+          "p-017",
+          "p-030",
+          "p-036"
+        ],
+        "state": "off"
+      },
+      "spec": {
+        "after": "{\n  \"flags\": {\n    \"adFailure\": {\n      \"state\": \"off\"\n    },\n    \"cartFailure\": {\n      \"state\": \"off\"\n    },\n    \"emailMemoryLeak\": {\n      \"state\": \"off\"\n    },\n    \"imageSlowLoad\": {\n      \"state\": \"off\"\n    },\n    \"intlShippingSlowdown\": {\n      \"state\": \"off\"\n    },\n    \"kafkaQueueProblems\": {\n      \"state\": \"off\"\n    },\n    \"paymentFailure\": {\n      \"state\": \"off\"\n    },\n    \"paymentGate\": {\n      \"cuts\": [\n        \"payment\",\n        \"checkout\"\n      ],\n      \"state\": \"off\"\n    },\n    \"paymentUnreachable\": {\n      \"state\": \"off\"\n    },\n    \"productCatalogFailure\": {\n      \"state\": \"off\"\n    },\n    \"productCatalogLockContention\": {\n      \"state\": \"off\"\n    },\n    \"recommendationCacheFailure\": {\n      \"state\": \"off\"\n    },\n    \"recommendationsEnabled\": {\n      \"cuts\": [\n        \"recommendation\",\n        \"frontend\"\n      ],\n      \"state\": \"on\"\n    }\n  }\n}\n",
+        "args": {
+          "flag": "paymentGate",
+          "path": "flags.json",
+          "repo": "Prashant-thakur77/faultline-demo-infra",
+          "reviewers": [
+            "p-017",
+            "p-030",
+            "p-036"
+          ],
+          "state": "off"
+        },
+        "before": "{\n  \"flags\": {\n    \"adFailure\": {\n      \"state\": \"off\"\n    },\n    \"cartFailure\": {\n      \"state\": \"off\"\n    },\n    \"emailMemoryLeak\": {\n      \"state\": \"off\"\n    },\n    \"imageSlowLoad\": {\n      \"state\": \"off\"\n    },\n    \"intlShippingSlowdown\": {\n      \"state\": \"off\"\n    },\n    \"kafkaQueueProblems\": {\n      \"state\": \"off\"\n    },\n    \"paymentFailure\": {\n      \"state\": \"off\"\n    },\n    \"paymentGate\": {\n      \"cuts\": [\n        \"payment\",\n        \"checkout\"\n      ],\n      \"state\": \"on\"\n    },\n    \"paymentUnreachable\": {\n      \"state\": \"off\"\n    },\n    \"productCatalogFailure\": {\n      \"state\": \"off\"\n    },\n    \"productCatalogLockContention\": {\n      \"state\": \"off\"\n    },\n    \"recommendationCacheFailure\": {\n      \"state\": \"off\"\n    },\n    \"recommendationsEnabled\": {\n      \"cuts\": [\n        \"recommendation\",\n        \"frontend\"\n      ],\n      \"state\": \"on\"\n    }\n  }\n}\n",
+        "branch": "faultline/fix-28232c94",
+        "commit": "fix: turn paymentGate off (contain inc-s1-ee6d96e6)\n\nFaultline-Idem: 28232c940653a17080e89478612db6051f0e6b6ab63718c6966c5ce5d35a7687",
+        "file": "flags.json",
+        "idem": "28232c940653a17080e89478612db6051f0e6b6ab63718c6966c5ce5d35a7687",
+        "incident": "inc-s1-ee6d96e6",
+        "kind": "flip_flag",
+        "plan_hash": "90dde7c112316822e00d51bf45ddc6cd3849593dbdbfd3054fe01157ab2c07aa",
+        "pr_body": "Approved in Faultline (inc-s1-ee6d96e6).\n\nSuggested reviewers (who_fixes): p-017, p-030, p-036\n\nRollback: set flags.paymentGate.state back to 'on' in flags.json\n\nFaultline-Idem: 28232c940653a17080e89478612db6051f0e6b6ab63718c6966c5ce5d35a7687",
+        "rollback": "set flags.paymentGate.state back to 'on' in flags.json"
+      },
+      "plan_hash": "90dde7c112316822e00d51bf45ddc6cd3849593dbdbfd3054fe01157ab2c07aa",
+      "idem": "28232c940653a17080e89478612db6051f0e6b6ab63718c6966c5ce5d35a7687",
+      "external_ref": "https://github.com/Prashant-thakur77/faultline-demo-infra/pull/1 (simulated)",
+      "verdict": "APPLIED",
+      "explanation": "flags.json at main HEAD has the change; checkout, frontend back in band for 3 minutes; no collateral on frontend-proxy",
+      "channels": {
+        "github_main": {
+          "ok": true,
+          "served_by": "simulated GitHub (no token; keyless mode)"
+        },
+        "prediction": {
+          "agrees": true,
+          "assumed": false,
+          "evidence_id": "ev_cfe3b16bdb",
+          "key": "payment|checkout",
+          "observed": "contains",
+          "predicted": "contains"
+        },
+        "telemetry": {
+          "allowance": {
+            "cypher": "MATCH (me:Incident {id: $inc})-[:HYPOTHESIZES]->(:Hypothesis {status: 'confirmed'})-[:BLAMES]->(mc:Node)-[:CHANGED|GATES]->(mo:Node)\nCALL {\n  WITH mo\n  CALL algo.BFS(mo, -1, 'PROPAGATES_TO') YIELD nodes\n  RETURN [n IN nodes | n.id] AS reach\n}\nWITH collect(DISTINCT mc.id) AS my_causes, collect(DISTINCT mo.id) AS my_origins, collect(reach) AS reaches\nWITH my_causes, my_origins, reduce(acc = [], r IN reaches | acc + r) AS my_reach\nWHERE size(my_causes) > 0\nMATCH (i:Incident)-[:HYPOTHESIZES]->(:Hypothesis {status: 'confirmed'})-[:BLAMES]->(c:Node)-[:CHANGED|GATES]->(o:Node)\nWHERE i.id <> $inc AND NOT i.stage IN $terminal AND i.resolved_at IS NULL\nWITH DISTINCT i, c, o, my_causes, my_origins, my_reach\nWHERE NOT c.id IN my_causes AND NOT o.id IN my_origins AND NOT o.id IN my_reach\nWITH o.id AS oid, i.id AS iid, c.id AS cid\nORDER BY oid, iid, cid\nWITH oid, collect(DISTINCT iid) AS incidents, collect(DISTINCT cid) AS causes\nWITH collect({oid: oid, incidents: incidents, causes: causes}) AS others\nWITH others, [x IN others | x.oid] AS other_ids\nUNWIND others AS x\nMATCH (o:Node {id: x.oid})\nWITH x, o, other_ids\nMATCH (t:Node) WHERE t.id IN $symptoms\nWITH x, o, t, other_ids\nWHERE t.id <> o.id\nCALL {\n  WITH o, t, other_ids\n  MATCH p = (o)-[:PROPAGATES_TO*1..8]->(t)\n  WITH p, o, t, other_ids\n  WHERE none(r IN relationships(p) WHERE startNode(r).id + '|' + endNode(r).id IN $cuts)\n    AND none(n IN nodes(p) WHERE n.id <> o.id AND n.id <> t.id AND n.id IN other_ids)\n  WITH p LIMIT 1001\n  RETURN count(p) AS paths, min(length(p)) AS hops,\n         sum(CASE WHEN any(r IN relationships(p) WHERE r.cap IS NULL) THEN 1 ELSE 0 END) AS uncapped,\n         sum(reduce(w = 1.0, r IN relationships(p) | w * coalesce(r.cap, 1.0))) AS walk\n}\nWITH x, o, t, paths, hops, uncapped, walk\nWHERE paths > 0\nCALL {\n  WITH o\n  MATCH (w:MetricWindow {target_id: o.id, metric: 'error_rate', kind: 'live'})\n  WHERE w.at >= $base_since AND w.at <= $until\n  RETURN avg(CASE WHEN w.at <= $base_until THEN w.value END) AS base, max(CASE WHEN w.at >= $since THEN w.value END) AS peak\n}\nWITH x, o, t, paths, hops, CASE WHEN paths > 1000 OR uncapped > 0 THEN null ELSE walk END AS transfer,\n     CASE WHEN peak IS NULL OR base IS NULL THEN null WHEN peak - base > 0.0 THEN peak - base ELSE 0.0 END AS excess\nRETURN t.id AS symptom, x.incidents[0] AS incident, x.incidents AS incidents, x.causes[0] AS cause, x.causes AS causes,\n       o.id AS origin, hops, paths, transfer, excess,\n       CASE WHEN excess IS NULL OR transfer IS NULL THEN null\n            WHEN transfer * excess > 1.0 THEN 1.0 ELSE transfer * excess END AS allowance\nORDER BY symptom, origin\nLIMIT 100",
+            "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "note": "no other open incident's confirmed origin reaches these symptoms: allowance 0",
+            "params": {
+              "base_since": 1792031400000,
+              "base_until": 1792032900000,
+              "cuts": [
+                "payment|checkout"
+              ],
+              "inc": "inc-s1-ee6d96e6",
+              "since": 1792033560000,
+              "symptoms": [
+                "checkout",
+                "frontend"
+              ],
+              "terminal": [
+                "FAILED",
+                "NO_INCIDENT",
+                "RESOLVED",
+                "UNKNOWN_ESCALATED"
+              ],
+              "until": 1792033740000
+            },
+            "per_symptom": {
+              "checkout": {
+                "allowance": 0.0,
+                "from": [],
+                "unmeasured": []
+              },
+              "frontend": {
+                "allowance": 0.0,
+                "from": [],
+                "unmeasured": []
+              }
+            },
+            "rows": [],
+            "template": "Q-VERIFY-ALLOW"
+          },
+          "ok": true,
+          "targets": {
+            "checkout": {
+              "after": [
+                0.00474,
+                0.00418,
+                0.0071
+              ],
+              "band": 1.5745,
+              "baseline": 0.00689,
+              "collateral": false,
+              "ok": true
+            },
+            "frontend": {
+              "after": [
+                0.00437,
+                0.00454,
+                0.00617
+              ],
+              "band": 1.5262,
+              "baseline": 0.00514,
+              "collateral": false,
+              "ok": true
+            },
+            "frontend-proxy": {
+              "after": [
+                0.00334,
+                0.0028,
+                0.0046
+              ],
+              "before_action_max": 0.0199,
+              "collateral": true,
+              "ok": true
+            },
+            "kpi.exec_revenue": {
+              "collateral": true,
+              "note": "no error_rate telemetry; not a collateral signal",
+              "ok": null
+            }
+          }
+        }
+      },
+      "approval_id": "ap-act-inc-s1-ee6d96e6-2-90dde7c1",
+      "rejected_by": null,
+      "reject_reason": null,
+      "rejected_at": null,
+      "future": "{\"assumed\": false, \"evidence_id\": \"ev_cfe3b16bdb\", \"exposed\": [\"kpi.exec_revenue\"], \"key\": \"payment|checkout\", \"line\": \"contains: every symptom predicted back in band\", \"predicted\": \"contains\"}"
+    },
+    {
+      "id": "act-inc-s1-ee6d96e6-3",
+      "kind": "open_issue",
+      "option": "open an issue for D-pay-417",
+      "enabled": true,
+      "reason": "hand the cause to the owner team (no change to production; does not resolve the incident); future: does not contain: checkout residual 0.4029 over its band, frontend residual 0.4029 over its band; leaves frontend-proxy, kpi.exec_revenue exposed",
+      "target": "D-pay-417",
+      "status": "option",
+      "preview": {
+        "repo": "Prashant-thakur77/faultline-demo-infra",
+        "reviewers": [
+          "p-017",
+          "p-030",
+          "p-036"
+        ],
+        "title": "Incident inc-s1-ee6d96e6: D-pay-417"
+      },
+      "spec": null,
+      "plan_hash": null,
+      "idem": null,
+      "external_ref": null,
+      "verdict": null,
+      "explanation": null,
+      "channels": null,
+      "approval_id": null,
+      "rejected_by": null,
+      "reject_reason": null,
+      "rejected_at": null,
+      "future": "{\"assumed\": false, \"evidence_id\": \"ev_cfe3b16bdb\", \"exposed\": [\"frontend-proxy\", \"kpi.exec_revenue\"], \"key\": \"no_change\", \"line\": \"does not contain: checkout residual 0.4029 over its band, frontend residual 0.4029 over its band\", \"predicted\": \"does_not_contain\"}"
+    },
+    {
+      "id": "act-inc-s1-ee6d96e6-4",
+      "kind": "flip_flag",
+      "option": "cut payment \u2192 raw.raw_orders",
+      "enabled": false,
+      "reason": "no flag cuts payment \u2192 raw.raw_orders (cross edge): not offered, not simulated",
+      "target": "raw.raw_orders",
+      "status": "option",
+      "preview": {},
+      "spec": null,
+      "plan_hash": null,
+      "idem": null,
+      "external_ref": null,
+      "verdict": null,
+      "explanation": null,
+      "channels": null,
+      "approval_id": null,
+      "rejected_by": null,
+      "reject_reason": null,
+      "rejected_at": null,
+      "future": null
+    }
+  ],
+  "memory": {
+    "recalled": [
+      {
+        "id": "inc-h005",
+        "title": "Spike in failed orders from payment charge errors",
+        "similarity": 0.774986167634714,
+        "recency": 0.117908590715334,
+        "salience": 1.0,
+        "shared": [
+          "sym-error_rate-checkout"
+        ],
+        "actions": [
+          {
+            "kind": "flip_flag",
+            "verdict": "APPLIED",
+            "target": "paymentGate"
+          }
+        ],
+        "cause_targets": [
+          "payment"
+        ]
+      },
+      {
+        "id": "inc-h030",
+        "title": "Spike in failed orders from payment charge errors",
+        "similarity": 0.765756246144117,
+        "recency": 0.623154601040622,
+        "salience": 1.0,
+        "shared": [
+          "sym-error_rate-checkout"
+        ],
+        "actions": [
+          {
+            "kind": "rollback_deploy",
+            "verdict": "APPLIED",
+            "target": "dep-304"
+          }
+        ],
+        "cause_targets": [
+          "payment"
+        ]
+      },
+      {
+        "id": "inc-h018",
+        "title": "Spike in failed orders from payment charge errors",
+        "similarity": 0.751269423028146,
+        "recency": 0.196495672435646,
+        "salience": 1.0,
+        "shared": [
+          "sym-error_rate-checkout"
+        ],
+        "actions": [
+          {
+            "kind": "flip_flag",
+            "verdict": "APPLIED",
+            "target": "paymentGate"
+          }
+        ],
+        "cause_targets": [
+          "payment"
+        ]
+      },
+      {
+        "id": "inc-h008",
+        "title": "Payment charge failures surface at checkout",
+        "similarity": 0.746046954218263,
+        "recency": 0.132265126402533,
+        "salience": 1.0,
+        "shared": [
+          "sym-error_rate-checkout"
+        ],
+        "actions": [
+          {
+            "kind": "flip_flag",
+            "verdict": "APPLIED",
+            "target": "paymentGate"
+          }
+        ],
+        "cause_targets": [
+          "payment"
+        ]
+      },
+      {
+        "id": "inc-h015",
+        "title": "Spike in failed orders from payment charge errors",
+        "similarity": 0.741663646856102,
+        "recency": 0.179287551039125,
+        "salience": 1.0,
+        "shared": [
+          "sym-error_rate-checkout"
+        ],
+        "actions": [
+          {
+            "kind": "rollback_deploy",
+            "verdict": "APPLIED",
+            "target": "dep-136"
+          }
+        ],
+        "cause_targets": [
+          "payment"
+        ]
+      }
+    ],
+    "fix_history": [
+      {
+        "kind": "flip_flag",
+        "verdict": "APPLIED",
+        "n": 3,
+        "incidents": [
+          "inc-h005",
+          "inc-h008",
+          "inc-h018"
+        ]
+      },
+      {
+        "kind": "rollback_deploy",
+        "verdict": "APPLIED",
+        "n": 2,
+        "incidents": [
+          "inc-h015",
+          "inc-h030"
+        ]
+      }
+    ]
+  }
+}

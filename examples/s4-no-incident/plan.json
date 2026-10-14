@@ -1,0 +1,136 @@
+{
+  "stage": "NO_INCIDENT",
+  "containment_cut": null,
+  "whatif": null,
+  "who_fixes": null,
+  "bus_factor": null,
+  "escalation_tree": null,
+  "notify_set": null,
+  "owner_at": null,
+  "options": [],
+  "memory": {
+    "recalled": [
+      {
+        "id": "inc-h005",
+        "title": "Spike in failed orders from payment charge errors",
+        "similarity": 0.75892616724416,
+        "recency": 0.116891403615832,
+        "salience": 1.0,
+        "shared": [
+          "sym-error_rate-checkout"
+        ],
+        "actions": [
+          {
+            "kind": "flip_flag",
+            "verdict": "APPLIED",
+            "target": "paymentGate"
+          }
+        ],
+        "cause_targets": [
+          "payment"
+        ]
+      },
+      {
+        "id": "inc-h015",
+        "title": "Spike in failed orders from payment charge errors",
+        "similarity": 0.747781843439999,
+        "recency": 0.177740853017277,
+        "salience": 1.0,
+        "shared": [
+          "sym-error_rate-checkout"
+        ],
+        "actions": [
+          {
+            "kind": "rollback_deploy",
+            "verdict": "APPLIED",
+            "target": "dep-136"
+          }
+        ],
+        "cause_targets": [
+          "payment"
+        ]
+      },
+      {
+        "id": "inc-h039",
+        "title": "Payment charge failures surface at checkout",
+        "similarity": 0.736538168076742,
+        "recency": 0.936617830011168,
+        "salience": 1.0,
+        "shared": [
+          "sym-error_rate-checkout"
+        ],
+        "actions": [
+          {
+            "kind": "rollback_deploy",
+            "verdict": "APPLIED",
+            "target": "dep-355"
+          }
+        ],
+        "cause_targets": [
+          "payment"
+        ]
+      },
+      {
+        "id": "inc-h037",
+        "title": "Payment charge failures surface at checkout",
+        "similarity": 0.73556757606692,
+        "recency": 0.791945042509045,
+        "salience": 1.0,
+        "shared": [
+          "sym-error_rate-checkout"
+        ],
+        "actions": [
+          {
+            "kind": "rollback_deploy",
+            "verdict": "APPLIED",
+            "target": "dep-336"
+          }
+        ],
+        "cause_targets": [
+          "payment"
+        ]
+      },
+      {
+        "id": "inc-h030",
+        "title": "Spike in failed orders from payment charge errors",
+        "similarity": 0.731308761968424,
+        "recency": 0.617778700800205,
+        "salience": 1.0,
+        "shared": [
+          "sym-error_rate-checkout"
+        ],
+        "actions": [
+          {
+            "kind": "rollback_deploy",
+            "verdict": "APPLIED",
+            "target": "dep-304"
+          }
+        ],
+        "cause_targets": [
+          "payment"
+        ]
+      }
+    ],
+    "fix_history": [
+      {
+        "kind": "flip_flag",
+        "verdict": "APPLIED",
+        "n": 1,
+        "incidents": [
+          "inc-h005"
+        ]
+      },
+      {
+        "kind": "rollback_deploy",
+        "verdict": "APPLIED",
+        "n": 4,
+        "incidents": [
+          "inc-h015",
+          "inc-h030",
+          "inc-h037",
+          "inc-h039"
+        ]
+      }
+    ]
+  }
+}
