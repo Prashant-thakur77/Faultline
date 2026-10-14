@@ -1,0 +1,17 @@
+# Faultline UI (Next.js). The public API origin is baked in at build time.
+FROM node:20-slim@sha256:2cf067cfed83d5ea958367df9f966191a942351a2df77d6f0193e162b5febfc0 AS build
+WORKDIR /ui
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm ci --no-audit --no-fund
+COPY frontend ./
+ARG NEXT_PUBLIC_FAULTLINE_API_URL
+ENV NEXT_PUBLIC_FAULTLINE_API_URL=${NEXT_PUBLIC_FAULTLINE_API_URL} NEXT_TELEMETRY_DISABLED=1
+RUN npm run build
+
+FROM node:20-slim@sha256:2cf067cfed83d5ea958367df9f966191a942351a2df77d6f0193e162b5febfc0
+WORKDIR /ui
+ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1
+COPY --from=build /ui ./
+USER node
+EXPOSE 3000
+CMD ["npm", "run", "start", "--", "-p", "3000"]

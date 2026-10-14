@@ -1,0 +1,26 @@
+# Faultline: FalkorDB only (api/ui/caddy are added in deploy/docker-compose.prod.yml).
+# The image is pinned by digest; switch engines with FALKORDB_IMAGE (see docs/FALKORDB_COMPAT.md).
+services:
+  falkordb:
+    image: ${FALKORDB_IMAGE:-falkordb/falkordb@sha256:107455e862a824e45e8e9f5a7fbfdf5e00a08b14e13eae2577c72fd9e3f59ba6}
+    container_name: faultline-falkordb
+    restart: unless-stopped
+    mem_limit: ${FALKORDB_MEM_LIMIT:-4g}
+    memswap_limit: ${FALKORDB_MEM_LIMIT:-4g}
+    ports:
+      - "127.0.0.1:${FALKORDB_PORT:-6379}:6379"   # loopback only; never exposed publicly
+      - "127.0.0.1:${FALKORDB_BROWSER_PORT:-3300}:3000"   # FalkorDB Browser (local screenshots only; UI dev server owns 3000)
+    environment:
+      # maxmemory + noeviction: a full engine refuses writes with an OOM error (fails loudly) instead of being killed;
+      # the container limit keeps FalkorDB from starving the rest of the host (a 14 GB dev laptop)
+      REDIS_ARGS: "--appendonly yes --maxmemory ${FALKORDB_MAXMEMORY:-3500mb} --maxmemory-policy noeviction"
+      FALKORDB_ARGS: "TIMEOUT_MAX 10000 TIMEOUT_DEFAULT 2000 RESULTSET_SIZE 100000 MAX_QUEUED_QUERIES 50"
+    volumes:
+      - falkordb-data:/var/lib/falkordb/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "PING"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+volumes:
+  falkordb-data: {}

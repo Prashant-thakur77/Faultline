@@ -1,0 +1,19 @@
+# Faultline API + MCP (one image, two commands). Python deps from uv.lock; the embedding model is NOT downloaded:
+# known scenario texts use the committed vectors, and seeding uses committed vectors too.
+FROM python:3.12-slim@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1 AS base
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 UV_LINK_MODE=copy PYTHONPATH=/app/backend
+RUN pip install --no-cache-dir uv==0.10.9
+WORKDIR /app
+COPY pyproject.toml uv.lock ./
+RUN uv sync --frozen --no-dev --no-install-project
+COPY backend ./backend
+COPY data ./data
+COPY pipeline ./pipeline
+COPY scripts ./scripts
+COPY evals ./evals
+COPY deploy/udf ./deploy/udf
+RUN useradd --create-home --uid 10001 faultline && chown -R faultline /app
+USER faultline
+EXPOSE 8400 8401
+# only Caddy can reach :8400 (internal network), so its X-Forwarded-For is trusted: per-visitor rate limits stay per visitor
+CMD ["/app/.venv/bin/uvicorn", "faultline.api:app", "--host", "0.0.0.0", "--port", "8400", "--app-dir", "backend", "--proxy-headers", "--forwarded-allow-ips", "*"]

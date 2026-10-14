@@ -1,0 +1,10 @@
+# Rendered by scripts/render_acl.py from .env into deploy/users.acl (git-ignored). Never commit users.acl.
+# default user disabled; engine writes; ro_<tenant> may only run GRAPH.RO_QUERY/EXPLAIN on its own keys.
+# GRAPH.LIST is deliberately NOT granted (FalkorDB #2652: it leaks all graph names to restricted users).
+# Keys: the tenant's own graphs only: tenant, scratch/what-if/eval clean rooms (scenario runs read there), its audit
+# graph (run index, LLM ledger) and its golden copies. Never another tenant's (S7 checks NOPERM across tenants).
+# +info: the official @falkordb/mcpserver reads INFO at startup and hangs silently without it (docs/upstream/14); INFO shows server stats and key counts, never graph names.
+user default off
+user engine on >${FALKORDB_ENGINE_PASSWORD} ~* &* +@all
+user ro_acme on >${FALKORDB_RO_PASSWORD} resetchannels -@all +graph.ro_query +graph.explain +ping +hello +info +client|setname +client|setinfo ~tenant_acme ~scratch_acme_* ~whatif_acme_* ~eval_acme_* ~audit_acme ~golden_acme ~golden_acme_nomem
+user ro_globex on >${FALKORDB_RO_PASSWORD} resetchannels -@all +graph.ro_query +graph.explain +ping +hello +info +client|setname +client|setinfo ~tenant_globex ~scratch_globex_* ~whatif_globex_* ~eval_globex_* ~audit_globex ~golden_globex ~golden_globex_nomem
