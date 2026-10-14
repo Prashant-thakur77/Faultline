@@ -1,0 +1,48 @@
+[
+  {
+    "id": "exec_revenue_metric.sql",
+    "kind": "sql",
+    "path": "pipeline/transforms/exec_revenue_metric.sql",
+    "reads": [
+      "marts.fct_revenue"
+    ],
+    "writes": "marts.exec_revenue_metric"
+  },
+  {
+    "id": "fct_revenue.sql",
+    "kind": "sql",
+    "path": "pipeline/transforms/fct_revenue.sql",
+    "reads": [
+      "staging.stg_orders",
+      "staging.stg_fx_rates"
+    ],
+    "writes": "marts.fct_revenue"
+  },
+  {
+    "id": "stg_customers.sql",
+    "kind": "sql",
+    "path": "pipeline/transforms/stg_customers.sql",
+    "reads": [
+      "raw.raw_customers"
+    ],
+    "writes": "staging.stg_customers"
+  },
+  {
+    "id": "stg_fx_rates.sql",
+    "kind": "sql",
+    "path": "pipeline/transforms/stg_fx_rates.sql",
+    "reads": [
+      "raw.raw_fx_rates"
+    ],
+    "writes": "staging.stg_fx_rates"
+  },
+  {
+    "id": "stg_orders.sql",
+    "kind": "sql",
+    "path": "pipeline/transforms/stg_orders.sql",
+    "reads": [
+      "raw.raw_orders"
+    ],
+    "writes": "staging.stg_orders"
+  }
+]

@@ -1,0 +1,7 @@
+[
+  {
+    "id": "dash.exec_morning",
+    "name": "Executive morning dashboard",
+    "shows": "kpi.exec_revenue"
+  }
+]

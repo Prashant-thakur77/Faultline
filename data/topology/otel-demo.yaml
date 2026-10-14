@@ -1,0 +1,115 @@
+# acme service topology: hand-encoded from the OpenTelemetry Demo architecture
+# (https://opentelemetry.io/docs/demo/architecture/, fetched 2026-10-13; notes in docs/design/otel_demo_topology.md).
+# cap = criticality of the call for failure propagation (1.0 synchronous, errors propagate;
+# 0.02 best-effort/async). rps = fixed traffic matrix (entry frontend-proxy = 1000 rps), used for
+# impact scoring and cut_cost, never for cap. Each best-effort cap carries a one-line reason.
+tenant: acme
+entry: frontend-proxy
+services:
+  - {id: frontend-proxy, name: frontend proxy (envoy), lang: cpp, tier: 1, revenue_path: true}
+  - {id: frontend, name: frontend web storefront, lang: typescript, tier: 1, revenue_path: true}
+  - {id: checkout, name: checkout order placement, lang: go, tier: 1, revenue_path: true}
+  - {id: payment, name: payment charge processing, lang: javascript, tier: 1, revenue_path: true}
+  - {id: cart, name: cart shopping basket, lang: dotnet, tier: 1, revenue_path: true}
+  - {id: currency, name: currency conversion, lang: cpp, tier: 1, revenue_path: true}
+  - {id: shipping, name: shipping quotes and dispatch, lang: rust, tier: 1, revenue_path: true}
+  - {id: product-catalog, name: product catalog, lang: go, tier: 1, revenue_path: true}
+  - {id: quote, name: shipping quote calculator, lang: php, tier: 2, revenue_path: true}
+  - {id: email, name: email order confirmation, lang: ruby, tier: 3, revenue_path: false}
+  - {id: recommendation, name: product recommendation, lang: python, tier: 2, revenue_path: false}
+  - {id: ad, name: ad serving, lang: java, tier: 3, revenue_path: false}
+  - {id: image-provider, name: image provider (nginx), lang: cpp, tier: 2, revenue_path: false}
+  - {id: accounting, name: accounting ledger consumer, lang: dotnet, tier: 2, revenue_path: false}
+  - {id: fraud-detection, name: fraud detection consumer, lang: kotlin, tier: 2, revenue_path: false}
+  - {id: chatbot, name: shopping assistant chatbot, lang: python, tier: 3, revenue_path: false}
+  - {id: agent, name: assistant agent, lang: python, tier: 3, revenue_path: false}
+  - {id: mcp, name: assistant mcp tools, lang: python, tier: 3, revenue_path: false}
+  - {id: flagd, name: feature flag daemon, lang: go, tier: 2, revenue_path: false}
+  - {id: flagd-ui, name: feature flag ui, lang: elixir, tier: 3, revenue_path: false}
+  - {id: load-generator, name: load generator, lang: python, tier: 3, revenue_path: false}
+datastores:
+  - {id: cache, name: valkey cart cache, kind: valkey}
+  - {id: queue, name: kafka order queue, kind: kafka}
+  - {id: astronomy-db, name: postgres product database, kind: postgres}
+# client -> server; failure propagates server -> client with `cap`
+calls:
+  - {client: frontend-proxy, server: frontend, rps: 900, cap: 1.0}
+  - {client: frontend-proxy, server: image-provider, rps: 80, cap: 0.02, why: "images degrade the page, the storefront still serves"}
+  - {client: frontend-proxy, server: chatbot, rps: 10, cap: 0.02, why: "assistant panel is optional"}
+  - {client: frontend-proxy, server: flagd-ui, rps: 10, cap: 0.02, why: "admin UI only"}
+  - {client: frontend, server: product-catalog, rps: 600, cap: 1.0}
+  - {client: frontend, server: currency, rps: 400, cap: 1.0}
+  - {client: frontend, server: recommendation, rps: 300, cap: 0.02, why: "recommendation widget is best-effort on product pages"}
+  - {client: frontend, server: ad, rps: 250, cap: 0.02, why: "ads are best-effort"}
+  - {client: frontend, server: cart, rps: 200, cap: 1.0}
+  - {client: frontend, server: shipping, rps: 50, cap: 1.0}
+  - {client: frontend, server: checkout, rps: 40, cap: 1.0}
+  - {client: checkout, server: payment, rps: 40, cap: 1.0}
+  - {client: checkout, server: cart, rps: 40, cap: 1.0}
+  - {client: checkout, server: currency, rps: 40, cap: 1.0}
+  - {client: checkout, server: shipping, rps: 40, cap: 1.0}
+  - {client: checkout, server: product-catalog, rps: 120, cap: 1.0}
+  - {client: checkout, server: email, rps: 40, cap: 0.02, why: "confirmation email is sent after the charge; a failure is only logged and the order stands (opentelemetry-demo src/checkout/main.go PlaceOrder: sendOrderConfirmation error -> logger.Warn, continue; checked 2026-10-13). 0.02 is our modelled residual (a slow email call can still hold the request), not a measured number"}
+  - {client: checkout, server: queue, rps: 40, cap: 0.02, why: "order event is published asynchronously after placement"}
+  - {client: recommendation, server: product-catalog, rps: 300, cap: 1.0}
+  - {client: shipping, server: quote, rps: 90, cap: 1.0}
+  - {client: cart, server: cache, rps: 240, cap: 1.0}
+  - {client: product-catalog, server: astronomy-db, rps: 1020, cap: 1.0}
+  - {client: queue, server: accounting, rps: 40, cap: 1.0}
+  - {client: queue, server: fraud-detection, rps: 40, cap: 1.0}
+  - {client: accounting, server: astronomy-db, rps: 40, cap: 1.0}
+  - {client: chatbot, server: agent, rps: 10, cap: 1.0}
+  - {client: agent, server: frontend, rps: 10, cap: 1.0}
+  - {client: agent, server: mcp, rps: 10, cap: 1.0}
+  - {client: mcp, server: frontend, rps: 10, cap: 1.0}
+  - {client: load-generator, server: frontend-proxy, rps: 1000, cap: 0.0, why: "synthetic traffic source; failures never propagate into it"}
+endpoints:
+  - {id: checkout:PlaceOrder, service: checkout, route: /oteldemo.CheckoutService/PlaceOrder, protocol: grpc}
+  - {id: payment:Charge, service: payment, route: /oteldemo.PaymentService/Charge, protocol: grpc}
+  - {id: frontend:/api/checkout, service: frontend, route: /api/checkout, protocol: http}
+  - {id: frontend:/api/products, service: frontend, route: /api/products, protocol: http}
+  - {id: product-catalog:GetProduct, service: product-catalog, route: /oteldemo.ProductCatalogService/GetProduct, protocol: grpc}
+  - {id: recommendation:ListRecommendations, service: recommendation, route: /oteldemo.RecommendationService/ListRecommendations, protocol: grpc}
+  - {id: email:SendOrderConfirmation, service: email, route: /send_order_confirmation, protocol: http}
+# flagd flags (https://opentelemetry.io/docs/demo/feature-flags/) -> what they gate (control plane: GATES)
+flags:
+  - {id: paymentFailure, gates: payment, state: "off"}
+  - {id: paymentUnreachable, gates: checkout, state: "off"}
+  - {id: paymentGate, gates: "checkout:PlaceOrder", state: "on", cuts: [payment, checkout], note: "containment lever: when off, checkout accepts orders and defers the charge (queue), so payment failures stop failing checkout (faultline-demo-infra flags.json)"}
+  - {id: productCatalogFailure, gates: product-catalog, state: "off"}
+  - {id: productCatalogLockContention, gates: product-catalog, state: "off"}
+  - {id: recommendationCacheFailure, gates: recommendation, state: "off"}
+  - {id: recommendationsEnabled, gates: frontend, state: "on", cuts: [recommendation, frontend], note: "containment lever: when off, the storefront hides the recommendation widget"}
+  - {id: kafkaQueueProblems, gates: queue, state: "off"}
+  - {id: emailMemoryLeak, gates: email, state: "off"}
+  - {id: cartFailure, gates: cart, state: "off"}
+  - {id: adFailure, gates: ad, state: "off"}
+  - {id: imageSlowLoad, gates: frontend, state: "off"}
+  - {id: intlShippingSlowdown, gates: shipping, state: "off"}
+
+# Obligations (M12 obligation clock). SYNTHETIC: every customer name, MRR figure and budget below is invented for
+# the demo and marked as such; nothing here describes a real company.
+# slo_policy: one error-rate SLO per tier-1 and tier-2 Service (ingest/obligations.py). The objective is per tier:
+# the simulator's healthy error rate is 0.2-0.8% per minute, so a 99.9% objective would be breached by healthy
+# traffic; 99% (tier 1) and 98% (tier 2) keep a healthy burn rate below 1. `spent_prior` is the range of the share
+# of the error budget already spent earlier in the window, drawn per SLO with random.Random(f"{seed}:{slo id}").
+slo_policy:
+  metric: error_rate
+  window_days: 30
+  objective_by_tier: {1: 0.99, 2: 0.98}
+  spent_prior: [0.2, 0.6]
+# customers: who we would be failing. CONSUMES points at the entry service, API or KPI each one depends on; a
+# customer may consume several (then it can be reached by several failure paths and must be counted once).
+customers:
+  - {id: cust-orion-optics, name: "Orion Optics Ltd (synthetic)", tier: 1, mrr: 12000,
+     consumes: [{node: frontend, via: storefront web}, {node: checkout, via: "checkout API (PlaceOrder)"}]}
+  - {id: cust-lyra-labs, name: "Lyra Labs (synthetic)", tier: 1, mrr: 9000,
+     consumes: [{node: checkout, via: "checkout API (PlaceOrder)"}]}
+  - {id: cust-vega-schools, name: "Vega Schools Network (synthetic)", tier: 2, mrr: 4000,
+     consumes: [{node: frontend, via: storefront web}]}
+  - {id: cust-cygnus-club, name: "Cygnus Stargazers Club (synthetic)", tier: 3, mrr: 600,
+     consumes: [{node: frontend-proxy, via: public web}]}
+  - {id: cust-draco-rentals, name: "Draco Telescope Rentals (synthetic)", tier: 2, mrr: 2500,
+     consumes: [{node: product-catalog, via: catalog feed API}]}
+  - {id: cust-pavo-partners, name: "Pavo Partners (synthetic revenue-share partner)", tier: 2, mrr: 3000,
+     consumes: [{node: kpi.exec_revenue, via: monthly revenue-share statement}]}

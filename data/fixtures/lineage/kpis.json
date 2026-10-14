@@ -1,0 +1,9 @@
+[
+  {
+    "computed_from": "marts.exec_revenue_metric",
+    "doc": "**Executive Revenue KPI** \u2014 the single number reported on the executive dashboard every morning. `anomaly_ratio` compares the latest day to a stable trailing-28d median window.",
+    "id": "kpi.exec_revenue",
+    "name": "Executive Revenue KPI",
+    "unit": "USD/day"
+  }
+]

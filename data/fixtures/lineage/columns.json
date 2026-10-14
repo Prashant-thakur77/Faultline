@@ -1,0 +1,282 @@
+[
+  {
+    "doc": "Globally unique order identifier (hex).",
+    "dtype": "VARCHAR",
+    "id": "raw.raw_orders.order_id",
+    "name": "order_id",
+    "table_id": "raw.raw_orders"
+  },
+  {
+    "doc": "Order capture timestamp, UTC ISO-8601.",
+    "dtype": "VARCHAR",
+    "id": "raw.raw_orders.order_ts",
+    "name": "order_ts",
+    "table_id": "raw.raw_orders"
+  },
+  {
+    "doc": "FK to raw_customers.customer_id.",
+    "dtype": "VARCHAR",
+    "id": "raw.raw_orders.customer_id",
+    "name": "customer_id",
+    "table_id": "raw.raw_orders"
+  },
+  {
+    "doc": "ISO-4217 currency code of the order (USD/EUR/GBP/CAD).",
+    "dtype": "VARCHAR",
+    "id": "raw.raw_orders.currency",
+    "name": "currency",
+    "table_id": "raw.raw_orders"
+  },
+  {
+    "doc": "Order amount in MAJOR currency units as a decimal (e.g. 49.99 = $49.99). Contract v1.3: two decimal places, as reported by the capturing payment processor.",
+    "dtype": "DOUBLE",
+    "id": "raw.raw_orders.amount",
+    "name": "amount",
+    "table_id": "raw.raw_orders"
+  },
+  {
+    "doc": "Payment provider that captured the order. Known values: legacy_pos, shopgate, cloudpay_v2 (new provider being rolled out in early August 2026 per the payments-platform runbook).",
+    "dtype": "VARCHAR",
+    "id": "raw.raw_orders.payment_processor",
+    "name": "payment_processor",
+    "table_id": "raw.raw_orders"
+  },
+  {
+    "doc": "Terminal order state: completed | cancelled | refunded.",
+    "dtype": "VARCHAR",
+    "id": "raw.raw_orders.status",
+    "name": "status",
+    "table_id": "raw.raw_orders"
+  },
+  {
+    "doc": "",
+    "dtype": "VARCHAR",
+    "id": "raw.raw_customers.customer_id",
+    "name": "customer_id",
+    "table_id": "raw.raw_customers"
+  },
+  {
+    "doc": "",
+    "dtype": "VARCHAR",
+    "id": "raw.raw_customers.name",
+    "name": "name",
+    "table_id": "raw.raw_customers"
+  },
+  {
+    "doc": "",
+    "dtype": "VARCHAR",
+    "id": "raw.raw_customers.segment",
+    "name": "segment",
+    "table_id": "raw.raw_customers"
+  },
+  {
+    "doc": "",
+    "dtype": "VARCHAR",
+    "id": "raw.raw_customers.country",
+    "name": "country",
+    "table_id": "raw.raw_customers"
+  },
+  {
+    "doc": "",
+    "dtype": "VARCHAR",
+    "id": "raw.raw_customers.created_at",
+    "name": "created_at",
+    "table_id": "raw.raw_customers"
+  },
+  {
+    "doc": "Rate effective date.",
+    "dtype": "VARCHAR",
+    "id": "raw.raw_fx_rates.rate_day",
+    "name": "rate_day",
+    "table_id": "raw.raw_fx_rates"
+  },
+  {
+    "doc": "ISO-4217 code.",
+    "dtype": "VARCHAR",
+    "id": "raw.raw_fx_rates.currency",
+    "name": "currency",
+    "table_id": "raw.raw_fx_rates"
+  },
+  {
+    "doc": "Units of USD per 1 unit of currency.",
+    "dtype": "DOUBLE",
+    "id": "raw.raw_fx_rates.usd_rate",
+    "name": "usd_rate",
+    "table_id": "raw.raw_fx_rates"
+  },
+  {
+    "doc": "",
+    "dtype": "VARCHAR",
+    "id": "staging.stg_orders.order_id",
+    "name": "order_id",
+    "table_id": "staging.stg_orders"
+  },
+  {
+    "doc": "",
+    "dtype": "TIMESTAMP",
+    "id": "staging.stg_orders.order_ts",
+    "name": "order_ts",
+    "table_id": "staging.stg_orders"
+  },
+  {
+    "doc": "Order date (UTC) derived from order_ts.",
+    "dtype": "DATE",
+    "id": "staging.stg_orders.order_day",
+    "name": "order_day",
+    "table_id": "staging.stg_orders"
+  },
+  {
+    "doc": "",
+    "dtype": "VARCHAR",
+    "id": "staging.stg_orders.customer_id",
+    "name": "customer_id",
+    "table_id": "staging.stg_orders"
+  },
+  {
+    "doc": "",
+    "dtype": "VARCHAR",
+    "id": "staging.stg_orders.currency",
+    "name": "currency",
+    "table_id": "staging.stg_orders"
+  },
+  {
+    "doc": "Order amount in major currency units (passed through from raw_orders under contract v1.3).",
+    "dtype": "DOUBLE",
+    "id": "staging.stg_orders.amount",
+    "name": "amount",
+    "table_id": "staging.stg_orders"
+  },
+  {
+    "doc": "Capturing payment provider (see raw_orders.payment_processor).",
+    "dtype": "VARCHAR",
+    "id": "staging.stg_orders.payment_processor",
+    "name": "payment_processor",
+    "table_id": "staging.stg_orders"
+  },
+  {
+    "doc": "",
+    "dtype": "VARCHAR",
+    "id": "staging.stg_orders.status",
+    "name": "status",
+    "table_id": "staging.stg_orders"
+  },
+  {
+    "doc": "",
+    "dtype": "VARCHAR",
+    "id": "staging.stg_customers.customer_id",
+    "name": "customer_id",
+    "table_id": "staging.stg_customers"
+  },
+  {
+    "doc": "",
+    "dtype": "VARCHAR",
+    "id": "staging.stg_customers.name",
+    "name": "name",
+    "table_id": "staging.stg_customers"
+  },
+  {
+    "doc": "",
+    "dtype": "VARCHAR",
+    "id": "staging.stg_customers.segment",
+    "name": "segment",
+    "table_id": "staging.stg_customers"
+  },
+  {
+    "doc": "",
+    "dtype": "VARCHAR",
+    "id": "staging.stg_customers.country",
+    "name": "country",
+    "table_id": "staging.stg_customers"
+  },
+  {
+    "doc": "",
+    "dtype": "TIMESTAMP",
+    "id": "staging.stg_customers.created_at",
+    "name": "created_at",
+    "table_id": "staging.stg_customers"
+  },
+  {
+    "doc": "",
+    "dtype": "DATE",
+    "id": "staging.stg_fx_rates.rate_day",
+    "name": "rate_day",
+    "table_id": "staging.stg_fx_rates"
+  },
+  {
+    "doc": "",
+    "dtype": "VARCHAR",
+    "id": "staging.stg_fx_rates.currency",
+    "name": "currency",
+    "table_id": "staging.stg_fx_rates"
+  },
+  {
+    "doc": "",
+    "dtype": "DOUBLE",
+    "id": "staging.stg_fx_rates.usd_rate",
+    "name": "usd_rate",
+    "table_id": "staging.stg_fx_rates"
+  },
+  {
+    "doc": "Revenue date (UTC).",
+    "dtype": "DATE",
+    "id": "marts.fct_revenue.day",
+    "name": "day",
+    "table_id": "marts.fct_revenue"
+  },
+  {
+    "doc": "Completed orders that day.",
+    "dtype": "BIGINT",
+    "id": "marts.fct_revenue.order_count",
+    "name": "order_count",
+    "table_id": "marts.fct_revenue"
+  },
+  {
+    "doc": "Sum of USD-normalized order amounts. Feeds the Executive Revenue KPI.",
+    "dtype": "DOUBLE",
+    "id": "marts.fct_revenue.revenue_usd",
+    "name": "revenue_usd",
+    "table_id": "marts.fct_revenue"
+  },
+  {
+    "doc": "Mean order value (USD).",
+    "dtype": "DOUBLE",
+    "id": "marts.fct_revenue.aov_usd",
+    "name": "aov_usd",
+    "table_id": "marts.fct_revenue"
+  },
+  {
+    "doc": "Median order value (USD).",
+    "dtype": "DOUBLE",
+    "id": "marts.fct_revenue.aov_median_usd",
+    "name": "aov_median_usd",
+    "table_id": "marts.fct_revenue"
+  },
+  {
+    "doc": "The day the KPI reports on (latest complete day).",
+    "dtype": "DATE",
+    "id": "marts.exec_revenue_metric.kpi_day",
+    "name": "kpi_day",
+    "table_id": "marts.exec_revenue_metric"
+  },
+  {
+    "doc": "Executive Revenue for kpi_day (USD).",
+    "dtype": "DOUBLE",
+    "id": "marts.exec_revenue_metric.revenue",
+    "name": "revenue",
+    "table_id": "marts.exec_revenue_metric"
+  },
+  {
+    "doc": "Median daily revenue over the stable trailing window (kpi_day-35 .. kpi_day-8).",
+    "dtype": "DOUBLE",
+    "id": "marts.exec_revenue_metric.trailing_28d_median_revenue",
+    "name": "trailing_28d_median_revenue",
+    "table_id": "marts.exec_revenue_metric"
+  },
+  {
+    "doc": "revenue / trailing_28d_median_revenue. Healthy \u2248 1.0.",
+    "dtype": "DOUBLE",
+    "id": "marts.exec_revenue_metric.anomaly_ratio",
+    "name": "anomaly_ratio",
+    "table_id": "marts.exec_revenue_metric"
+  }
+]

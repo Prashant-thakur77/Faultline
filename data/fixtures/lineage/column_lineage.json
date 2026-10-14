@@ -1,0 +1,147 @@
+[
+  {
+    "dst": "staging.stg_orders.order_id",
+    "src": "raw.raw_orders.order_id",
+    "transform": "stg_orders.sql"
+  },
+  {
+    "dst": "staging.stg_orders.order_ts",
+    "src": "raw.raw_orders.order_ts",
+    "transform": "stg_orders.sql"
+  },
+  {
+    "dst": "staging.stg_orders.order_day",
+    "src": "raw.raw_orders.order_ts",
+    "transform": "stg_orders.sql"
+  },
+  {
+    "dst": "staging.stg_orders.customer_id",
+    "src": "raw.raw_orders.customer_id",
+    "transform": "stg_orders.sql"
+  },
+  {
+    "dst": "staging.stg_orders.currency",
+    "src": "raw.raw_orders.currency",
+    "transform": "stg_orders.sql"
+  },
+  {
+    "dst": "staging.stg_orders.amount",
+    "src": "raw.raw_orders.amount",
+    "transform": "stg_orders.sql"
+  },
+  {
+    "dst": "staging.stg_orders.payment_processor",
+    "src": "raw.raw_orders.payment_processor",
+    "transform": "stg_orders.sql"
+  },
+  {
+    "dst": "staging.stg_orders.status",
+    "src": "raw.raw_orders.status",
+    "transform": "stg_orders.sql"
+  },
+  {
+    "dst": "staging.stg_customers.customer_id",
+    "src": "raw.raw_customers.customer_id",
+    "transform": "stg_customers.sql"
+  },
+  {
+    "dst": "staging.stg_customers.name",
+    "src": "raw.raw_customers.name",
+    "transform": "stg_customers.sql"
+  },
+  {
+    "dst": "staging.stg_customers.segment",
+    "src": "raw.raw_customers.segment",
+    "transform": "stg_customers.sql"
+  },
+  {
+    "dst": "staging.stg_customers.country",
+    "src": "raw.raw_customers.country",
+    "transform": "stg_customers.sql"
+  },
+  {
+    "dst": "staging.stg_customers.created_at",
+    "src": "raw.raw_customers.created_at",
+    "transform": "stg_customers.sql"
+  },
+  {
+    "dst": "staging.stg_fx_rates.rate_day",
+    "src": "raw.raw_fx_rates.rate_day",
+    "transform": "stg_fx_rates.sql"
+  },
+  {
+    "dst": "staging.stg_fx_rates.currency",
+    "src": "raw.raw_fx_rates.currency",
+    "transform": "stg_fx_rates.sql"
+  },
+  {
+    "dst": "staging.stg_fx_rates.usd_rate",
+    "src": "raw.raw_fx_rates.usd_rate",
+    "transform": "stg_fx_rates.sql"
+  },
+  {
+    "dst": "marts.fct_revenue.day",
+    "src": "staging.stg_orders.order_day",
+    "transform": "fct_revenue.sql"
+  },
+  {
+    "dst": "marts.fct_revenue.order_count",
+    "src": "staging.stg_orders.order_id",
+    "transform": "fct_revenue.sql"
+  },
+  {
+    "dst": "marts.fct_revenue.revenue_usd",
+    "src": "staging.stg_orders.amount",
+    "transform": "fct_revenue.sql"
+  },
+  {
+    "dst": "marts.fct_revenue.revenue_usd",
+    "src": "staging.stg_orders.currency",
+    "transform": "fct_revenue.sql"
+  },
+  {
+    "dst": "marts.fct_revenue.aov_usd",
+    "src": "staging.stg_orders.amount",
+    "transform": "fct_revenue.sql"
+  },
+  {
+    "dst": "marts.fct_revenue.aov_median_usd",
+    "src": "staging.stg_orders.amount",
+    "transform": "fct_revenue.sql"
+  },
+  {
+    "dst": "marts.fct_revenue.revenue_usd",
+    "src": "staging.stg_fx_rates.usd_rate",
+    "transform": "fct_revenue.sql"
+  },
+  {
+    "dst": "marts.fct_revenue.aov_usd",
+    "src": "staging.stg_fx_rates.usd_rate",
+    "transform": "fct_revenue.sql"
+  },
+  {
+    "dst": "marts.fct_revenue.aov_median_usd",
+    "src": "staging.stg_fx_rates.usd_rate",
+    "transform": "fct_revenue.sql"
+  },
+  {
+    "dst": "marts.exec_revenue_metric.kpi_day",
+    "src": "marts.fct_revenue.day",
+    "transform": "exec_revenue_metric.sql"
+  },
+  {
+    "dst": "marts.exec_revenue_metric.revenue",
+    "src": "marts.fct_revenue.revenue_usd",
+    "transform": "exec_revenue_metric.sql"
+  },
+  {
+    "dst": "marts.exec_revenue_metric.trailing_28d_median_revenue",
+    "src": "marts.fct_revenue.revenue_usd",
+    "transform": "exec_revenue_metric.sql"
+  },
+  {
+    "dst": "marts.exec_revenue_metric.anomaly_ratio",
+    "src": "marts.fct_revenue.revenue_usd",
+    "transform": "exec_revenue_metric.sql"
+  }
+]
