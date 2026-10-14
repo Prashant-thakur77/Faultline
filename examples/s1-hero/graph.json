@@ -1,0 +1,429 @@
+{
+  "graph": "eval_acme_api_v2_s1_9462_ee6d96e6",
+  "focus": null,
+  "truncated": false,
+  "nodes": [
+    {
+      "id": "accounting",
+      "label": "Service",
+      "tier": 2,
+      "betweenness": 1.0
+    },
+    {
+      "id": "ad",
+      "label": "Service",
+      "tier": 3,
+      "betweenness": 0.0
+    },
+    {
+      "id": "agent",
+      "label": "Service",
+      "tier": 3,
+      "betweenness": 19.0
+    },
+    {
+      "id": "astronomy-db",
+      "label": "Datastore",
+      "tier": 1,
+      "betweenness": 0.0
+    },
+    {
+      "id": "cache",
+      "label": "Datastore",
+      "tier": 1,
+      "betweenness": 0.0
+    },
+    {
+      "id": "cart",
+      "label": "Service",
+      "tier": 1,
+      "betweenness": 7.0
+    },
+    {
+      "id": "chatbot",
+      "label": "Service",
+      "tier": 3,
+      "betweenness": 4.0
+    },
+    {
+      "id": "checkout",
+      "label": "Service",
+      "tier": 1,
+      "betweenness": 30.0
+    },
+    {
+      "id": "currency",
+      "label": "Service",
+      "tier": 1,
+      "betweenness": 0.0
+    },
+    {
+      "id": "dash.exec_morning",
+      "label": "Dashboard",
+      "tier": 3,
+      "betweenness": null
+    },
+    {
+      "id": "email",
+      "label": "Service",
+      "tier": 3,
+      "betweenness": 0.0
+    },
+    {
+      "id": "flagd-ui",
+      "label": "Service",
+      "tier": 3,
+      "betweenness": 0.0
+    },
+    {
+      "id": "fraud-detection",
+      "label": "Service",
+      "tier": 2,
+      "betweenness": 0.0
+    },
+    {
+      "id": "frontend",
+      "label": "Service",
+      "tier": 1,
+      "betweenness": 75.0
+    },
+    {
+      "id": "frontend-proxy",
+      "label": "Service",
+      "tier": 1,
+      "betweenness": 21.0
+    },
+    {
+      "id": "image-provider",
+      "label": "Service",
+      "tier": 2,
+      "betweenness": 0.0
+    },
+    {
+      "id": "kpi.exec_revenue",
+      "label": "KPI",
+      "tier": 1,
+      "betweenness": null
+    },
+    {
+      "id": "marts.exec_revenue_metric",
+      "label": "Table",
+      "tier": 1,
+      "betweenness": null
+    },
+    {
+      "id": "marts.fct_revenue",
+      "label": "Table",
+      "tier": 1,
+      "betweenness": null
+    },
+    {
+      "id": "mcp",
+      "label": "Service",
+      "tier": 3,
+      "betweenness": 0.0
+    },
+    {
+      "id": "payment",
+      "label": "Service",
+      "tier": 1,
+      "betweenness": 0.0
+    },
+    {
+      "id": "product-catalog",
+      "label": "Service",
+      "tier": 1,
+      "betweenness": 8.0
+    },
+    {
+      "id": "queue",
+      "label": "Datastore",
+      "tier": 1,
+      "betweenness": 14.0
+    },
+    {
+      "id": "quote",
+      "label": "Service",
+      "tier": 2,
+      "betweenness": 0.0
+    },
+    {
+      "id": "raw.raw_customers",
+      "label": "Table",
+      "tier": 1,
+      "betweenness": null
+    },
+    {
+      "id": "raw.raw_fx_rates",
+      "label": "Table",
+      "tier": 1,
+      "betweenness": null
+    },
+    {
+      "id": "raw.raw_orders",
+      "label": "Table",
+      "tier": 1,
+      "betweenness": null
+    },
+    {
+      "id": "recommendation",
+      "label": "Service",
+      "tier": 2,
+      "betweenness": 0.0
+    },
+    {
+      "id": "shipping",
+      "label": "Service",
+      "tier": 1,
+      "betweenness": 7.0
+    },
+    {
+      "id": "staging.stg_customers",
+      "label": "Table",
+      "tier": 1,
+      "betweenness": null
+    },
+    {
+      "id": "staging.stg_fx_rates",
+      "label": "Table",
+      "tier": 1,
+      "betweenness": null
+    },
+    {
+      "id": "staging.stg_orders",
+      "label": "Table",
+      "tier": 1,
+      "betweenness": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "accounting",
+      "target": "queue",
+      "cap": 1.0,
+      "domain": "service"
+    },
+    {
+      "source": "ad",
+      "target": "frontend",
+      "cap": 0.02,
+      "domain": "service"
+    },
+    {
+      "source": "agent",
+      "target": "chatbot",
+      "cap": 1.0,
+      "domain": "service"
+    },
+    {
+      "source": "astronomy-db",
+      "target": "accounting",
+      "cap": 1.0,
+      "domain": "service"
+    },
+    {
+      "source": "astronomy-db",
+      "target": "product-catalog",
+      "cap": 1.0,
+      "domain": "service"
+    },
+    {
+      "source": "cache",
+      "target": "cart",
+      "cap": 1.0,
+      "domain": "service"
+    },
+    {
+      "source": "cart",
+      "target": "checkout",
+      "cap": 1.0,
+      "domain": "service"
+    },
+    {
+      "source": "cart",
+      "target": "frontend",
+      "cap": 1.0,
+      "domain": "service"
+    },
+    {
+      "source": "chatbot",
+      "target": "frontend-proxy",
+      "cap": 0.02,
+      "domain": "service"
+    },
+    {
+      "source": "checkout",
+      "target": "frontend",
+      "cap": 1.0,
+      "domain": "service"
+    },
+    {
+      "source": "currency",
+      "target": "checkout",
+      "cap": 1.0,
+      "domain": "service"
+    },
+    {
+      "source": "currency",
+      "target": "frontend",
+      "cap": 1.0,
+      "domain": "service"
+    },
+    {
+      "source": "email",
+      "target": "checkout",
+      "cap": 0.02,
+      "domain": "service"
+    },
+    {
+      "source": "flagd-ui",
+      "target": "frontend-proxy",
+      "cap": 0.02,
+      "domain": "service"
+    },
+    {
+      "source": "fraud-detection",
+      "target": "queue",
+      "cap": 1.0,
+      "domain": "service"
+    },
+    {
+      "source": "frontend",
+      "target": "agent",
+      "cap": 1.0,
+      "domain": "service"
+    },
+    {
+      "source": "frontend",
+      "target": "frontend-proxy",
+      "cap": 1.0,
+      "domain": "service"
+    },
+    {
+      "source": "frontend",
+      "target": "mcp",
+      "cap": 1.0,
+      "domain": "service"
+    },
+    {
+      "source": "image-provider",
+      "target": "frontend-proxy",
+      "cap": 0.02,
+      "domain": "service"
+    },
+    {
+      "source": "kpi.exec_revenue",
+      "target": "dash.exec_morning",
+      "cap": 1.0,
+      "domain": "data"
+    },
+    {
+      "source": "marts.exec_revenue_metric",
+      "target": "kpi.exec_revenue",
+      "cap": 1.0,
+      "domain": "data"
+    },
+    {
+      "source": "marts.fct_revenue",
+      "target": "marts.exec_revenue_metric",
+      "cap": 1.0,
+      "domain": "data"
+    },
+    {
+      "source": "mcp",
+      "target": "agent",
+      "cap": 1.0,
+      "domain": "service"
+    },
+    {
+      "source": "payment",
+      "target": "checkout",
+      "cap": 1.0,
+      "domain": "service"
+    },
+    {
+      "source": "payment",
+      "target": "raw.raw_orders",
+      "cap": 1.0,
+      "domain": "cross"
+    },
+    {
+      "source": "product-catalog",
+      "target": "checkout",
+      "cap": 1.0,
+      "domain": "service"
+    },
+    {
+      "source": "product-catalog",
+      "target": "frontend",
+      "cap": 1.0,
+      "domain": "service"
+    },
+    {
+      "source": "product-catalog",
+      "target": "recommendation",
+      "cap": 1.0,
+      "domain": "service"
+    },
+    {
+      "source": "queue",
+      "target": "checkout",
+      "cap": 0.02,
+      "domain": "service"
+    },
+    {
+      "source": "quote",
+      "target": "shipping",
+      "cap": 1.0,
+      "domain": "service"
+    },
+    {
+      "source": "raw.raw_customers",
+      "target": "staging.stg_customers",
+      "cap": 1.0,
+      "domain": "data"
+    },
+    {
+      "source": "raw.raw_fx_rates",
+      "target": "staging.stg_fx_rates",
+      "cap": 1.0,
+      "domain": "data"
+    },
+    {
+      "source": "raw.raw_orders",
+      "target": "staging.stg_orders",
+      "cap": 1.0,
+      "domain": "data"
+    },
+    {
+      "source": "recommendation",
+      "target": "frontend",
+      "cap": 0.02,
+      "domain": "service"
+    },
+    {
+      "source": "shipping",
+      "target": "checkout",
+      "cap": 1.0,
+      "domain": "service"
+    },
+    {
+      "source": "shipping",
+      "target": "frontend",
+      "cap": 1.0,
+      "domain": "service"
+    },
+    {
+      "source": "staging.stg_fx_rates",
+      "target": "marts.fct_revenue",
+      "cap": 0.0692,
+      "domain": "data"
+    },
+    {
+      "source": "staging.stg_orders",
+      "target": "marts.fct_revenue",
+      "cap": 1.0,
+      "domain": "data"
+    }
+  ]
+}

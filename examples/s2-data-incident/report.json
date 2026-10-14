@@ -1,0 +1,526 @@
+{
+  "incident_id": "inc-s2-fe1681b0",
+  "outcome": "CONFIRMED",
+  "confident": true,
+  "cause_id": "D-cutover-1",
+  "mechanism": [
+    "D-cutover-1",
+    "payment",
+    "raw.raw_orders",
+    "staging.stg_orders",
+    "marts.fct_revenue",
+    "marts.exec_revenue_metric",
+    "kpi.exec_revenue"
+  ],
+  "proven": [
+    {
+      "claim": "G1 grounded: cause seen in a graph result this run; all cited evidence produced by this run",
+      "evidence_ids": [],
+      "check": "G1 grounded"
+    },
+    {
+      "claim": "G2 path: D-cutover-1 → payment → raw.raw_orders → staging.stg_orders → marts.fct_revenue → marts.exec_revenue_metric → kpi.exec_revenue",
+      "evidence_ids": [],
+      "check": "G2 path"
+    },
+    {
+      "claim": "G3 time: change 40.0 min before onset (window 60 min)",
+      "evidence_ids": [],
+      "check": "G3 time"
+    },
+    {
+      "claim": "G4 quantitative: ev_201daec0f6 on marts.fct_revenue; ev_41900686e1 on staging.stg_orders; ev_7cf2442039 on kpi.exec_revenue; ev_7cf2442039 on marts.exec_revenue_metric",
+      "evidence_ids": [
+        "ev_201daec0f6",
+        "ev_41900686e1",
+        "ev_7cf2442039",
+        "ev_7cf2442039"
+      ],
+      "check": "G4 quantitative"
+    },
+    {
+      "claim": "G4 origin: ev_201daec0f6 on marts.fct_revenue; ev_41900686e1 on staging.stg_orders; ev_7cf2442039 on marts.exec_revenue_metric",
+      "evidence_ids": [
+        "ev_201daec0f6",
+        "ev_41900686e1",
+        "ev_7cf2442039"
+      ],
+      "check": "G4 origin"
+    },
+    {
+      "claim": "G4 upstream: no anomalous component upstream can carry the changed component's excess",
+      "evidence_ids": [
+        "ev_a558c98853"
+      ],
+      "check": "G4 upstream"
+    },
+    {
+      "claim": "G5 sufficiency: kpi.exec_revenue: max flow 1.0000 ≥ needed 0.8000",
+      "evidence_ids": [
+        "ev_41900686e1",
+        "ev_f7f81dcffd"
+      ],
+      "check": "G5 sufficiency"
+    },
+    {
+      "claim": "G6 competitors: every competitor eliminated with evidence",
+      "evidence_ids": [],
+      "check": "G6 competitors"
+    },
+    {
+      "claim": "G7 agreement: independent channels on the chain: ['falkordb', 'warehouse']",
+      "evidence_ids": [],
+      "check": "G7 agreement"
+    },
+    {
+      "claim": "G7 correlation: change and data specialists both name D-cutover-1 (CHANGED → payment)",
+      "evidence_ids": [],
+      "check": "G7 correlation"
+    }
+  ],
+  "inferred": [],
+  "contradictions": [],
+  "why_alerts_missed_it": {
+    "hops": [
+      {
+        "hop": 0,
+        "id": "D-cutover-1",
+        "label": "Deploy",
+        "alerted": false,
+        "first_alert_lag_s": null,
+        "has_telemetry": false
+      },
+      {
+        "hop": 1,
+        "id": "payment",
+        "label": "Service",
+        "alerted": false,
+        "first_alert_lag_s": null,
+        "has_telemetry": false
+      },
+      {
+        "hop": 2,
+        "id": "raw.raw_orders",
+        "label": "Table",
+        "alerted": false,
+        "first_alert_lag_s": null,
+        "has_telemetry": false
+      },
+      {
+        "hop": 3,
+        "id": "staging.stg_orders",
+        "label": "Table",
+        "alerted": false,
+        "first_alert_lag_s": null,
+        "has_telemetry": false
+      },
+      {
+        "hop": 4,
+        "id": "marts.fct_revenue",
+        "label": "Table",
+        "alerted": false,
+        "first_alert_lag_s": null,
+        "has_telemetry": true
+      },
+      {
+        "hop": 5,
+        "id": "marts.exec_revenue_metric",
+        "label": "Table",
+        "alerted": false,
+        "first_alert_lag_s": null,
+        "has_telemetry": false
+      },
+      {
+        "hop": 6,
+        "id": "kpi.exec_revenue",
+        "label": "KPI",
+        "alerted": true,
+        "first_alert_lag_s": 0,
+        "has_telemetry": false
+      }
+    ],
+    "summary": "first alert at hop 7 of 7 (kpi.exec_revenue); hops before it were silent: D-cutover-1, payment, raw.raw_orders, staging.stg_orders, marts.fct_revenue, marts.exec_revenue_metric"
+  },
+  "ownership": {
+    "component": "payment",
+    "at": 1792027200000,
+    "owner_then": "team-payments",
+    "owner_now": "team-payments",
+    "changed_hands": false,
+    "summary": "payment was owned by team-payments when D-cutover-1 shipped and still is"
+  },
+  "residue": {
+    "advisory": true,
+    "k": 4,
+    "n": 4,
+    "explained": [
+      "kpi.exec_revenue",
+      "marts.exec_revenue_metric",
+      "marts.fct_revenue",
+      "staging.stg_orders"
+    ],
+    "unexplained": [],
+    "summary": "the confirmed cause explains 4 of 4 anomalous components"
+  },
+  "remedy": {
+    "applied": false,
+    "lines": [],
+    "note": "no usable history for the offered fixes: static order kept (no-op)"
+  },
+  "futures": [
+    {
+      "option": "open an issue for D-cutover-1",
+      "predicted": "unknown",
+      "line": "unknown: kpi.exec_revenue (no baseline windows)",
+      "exposed": [],
+      "evidence_id": "ev_984714dc7c",
+      "verdict": null,
+      "agrees": null
+    },
+    {
+      "option": "flag paymentGate → off",
+      "predicted": "unknown",
+      "line": "unknown: kpi.exec_revenue (no baseline windows)",
+      "exposed": [],
+      "evidence_id": "ev_984714dc7c",
+      "verdict": null,
+      "agrees": null
+    }
+  ],
+  "obligations": {
+    "urgent": null,
+    "reason": "unmeasured: none of the 4 SLOs in the blast radius has current telemetry, so the time to breach is unknown; 5 customers reached, 28,600 MRR at risk",
+    "page_within_min": 1440.0,
+    "breach": null,
+    "revenue_at_risk": 28600.0,
+    "customers_reached": 5,
+    "slos": [
+      {
+        "breach_in_min": null,
+        "budget": 0.01,
+        "budget_remaining": 0.433,
+        "burn": null,
+        "current_windows": 0,
+        "error_rate": null,
+        "label": "Service",
+        "objective": 0.99,
+        "service": "checkout",
+        "slo": "slo-checkout",
+        "spent_prior": 0.567,
+        "status": "unmeasured",
+        "tier": 1,
+        "window_days": 30,
+        "windows": 0
+      },
+      {
+        "breach_in_min": null,
+        "budget": 0.01,
+        "budget_remaining": 0.516,
+        "burn": null,
+        "current_windows": 0,
+        "error_rate": null,
+        "label": "Service",
+        "objective": 0.99,
+        "service": "frontend",
+        "slo": "slo-frontend",
+        "spent_prior": 0.484,
+        "status": "unmeasured",
+        "tier": 1,
+        "window_days": 30,
+        "windows": 0
+      },
+      {
+        "breach_in_min": null,
+        "budget": 0.01,
+        "budget_remaining": 0.635,
+        "burn": null,
+        "current_windows": 0,
+        "error_rate": null,
+        "label": "Service",
+        "objective": 0.99,
+        "service": "frontend-proxy",
+        "slo": "slo-frontend-proxy",
+        "spent_prior": 0.365,
+        "status": "unmeasured",
+        "tier": 1,
+        "window_days": 30,
+        "windows": 0
+      },
+      {
+        "breach_in_min": null,
+        "budget": 0.01,
+        "budget_remaining": 0.75,
+        "burn": null,
+        "current_windows": 0,
+        "error_rate": null,
+        "label": "Service",
+        "objective": 0.99,
+        "service": "payment",
+        "slo": "slo-payment",
+        "spent_prior": 0.25,
+        "status": "unmeasured",
+        "tier": 1,
+        "window_days": 30,
+        "windows": 0
+      }
+    ],
+    "customers": [
+      {
+        "customer": "cust-orion-optics",
+        "customers_reached": 5,
+        "hops": 1,
+        "mrr": 12000.0,
+        "name": "Orion Optics Ltd (synthetic)",
+        "path": [
+          "payment",
+          "checkout"
+        ],
+        "paths": 2,
+        "revenue_at_risk": 28600.0,
+        "through": [
+          "checkout",
+          "frontend"
+        ],
+        "tier": 1,
+        "via": [
+          "checkout API (PlaceOrder)",
+          "storefront web"
+        ]
+      },
+      {
+        "customer": "cust-lyra-labs",
+        "customers_reached": 5,
+        "hops": 1,
+        "mrr": 9000.0,
+        "name": "Lyra Labs (synthetic)",
+        "path": [
+          "payment",
+          "checkout"
+        ],
+        "paths": 1,
+        "revenue_at_risk": 28600.0,
+        "through": [
+          "checkout"
+        ],
+        "tier": 1,
+        "via": [
+          "checkout API (PlaceOrder)"
+        ]
+      },
+      {
+        "customer": "cust-vega-schools",
+        "customers_reached": 5,
+        "hops": 2,
+        "mrr": 4000.0,
+        "name": "Vega Schools Network (synthetic)",
+        "path": [
+          "payment",
+          "checkout",
+          "frontend"
+        ],
+        "paths": 1,
+        "revenue_at_risk": 28600.0,
+        "through": [
+          "frontend"
+        ],
+        "tier": 2,
+        "via": [
+          "storefront web"
+        ]
+      },
+      {
+        "customer": "cust-pavo-partners",
+        "customers_reached": 5,
+        "hops": 5,
+        "mrr": 3000.0,
+        "name": "Pavo Partners (synthetic revenue-share partner)",
+        "path": [
+          "payment",
+          "raw.raw_orders",
+          "staging.stg_orders",
+          "marts.fct_revenue",
+          "marts.exec_revenue_metric",
+          "kpi.exec_revenue"
+        ],
+        "paths": 1,
+        "revenue_at_risk": 28600.0,
+        "through": [
+          "kpi.exec_revenue"
+        ],
+        "tier": 2,
+        "via": [
+          "monthly revenue-share statement"
+        ]
+      },
+      {
+        "customer": "cust-cygnus-club",
+        "customers_reached": 5,
+        "hops": 3,
+        "mrr": 600.0,
+        "name": "Cygnus Stargazers Club (synthetic)",
+        "path": [
+          "payment",
+          "checkout",
+          "frontend",
+          "frontend-proxy"
+        ],
+        "paths": 1,
+        "revenue_at_risk": 28600.0,
+        "through": [
+          "frontend-proxy"
+        ],
+        "tier": 3,
+        "via": [
+          "public web"
+        ]
+      }
+    ],
+    "evidence_id": "ev_03e17dace3"
+  },
+  "rejected": [
+    {
+      "cause": "D-fx-pause-7",
+      "origin": "sweep",
+      "gate_run": "gr-inc-s2-fe1681b0-3327d78e",
+      "failed": [
+        "G5 sufficiency: G5: max flow 0.0692 < needed 0.8000 (observed 1.0000 × 0.8); another suspect alone can carry 1.0000"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev_201daec0f6",
+      "kind": "baseline_comparison",
+      "source": "warehouse",
+      "tool": "compare_to_baseline",
+      "template": null,
+      "cypher": null,
+      "summary": "worst day ratio ×100.0 (band 1.377); anomalous days: ['2026-08-09', '2026-08-08', '2026-08-07']",
+      "digest": "91a4878d43d25ef4253779626e6c370347275d9ede7c8b6893320ed98aa7b100",
+      "value": null,
+      "baseline": null,
+      "anomalous": true,
+      "about": [
+        "marts.fct_revenue"
+      ]
+    },
+    {
+      "id": "ev_299133ee43",
+      "kind": "path",
+      "source": "falkordb",
+      "tool": "causal_paths",
+      "template": "Q-GATE-1",
+      "cypher": "MATCH (c:Node {id:$cause}), (s:Node {id:$symptom})\nCALL algo.SPpaths({sourceNode: c, targetNode: s, relTypes: ['CHANGED', 'GATES', 'PROPAGATES_TO'], weightProp: 'w', relDirection: 'outgoing', maxLen: 8, pathCount: 3}) YIELD path, pathWeight\nRETURN [n IN nodes(path) | n.id] AS chain, [r IN relationships(path) | type(r)] AS rels, pathWeight AS weight, length(path) AS hops,\n       [r IN relationships(path) | coalesce(r.from_incident, '')] AS learned_from\nORDER BY weight, hops\nLIMIT 3",
+      "summary": "D-cutover-1 → payment → raw.raw_orders → staging.stg_orders → marts.fct_revenue → marts.exec_revenue_metric → kpi.exec_revenue",
+      "digest": "7728be32bd70c255486c788abe311fd937fc1a1d9a128c16bb5663af9b297e34",
+      "value": 1.0,
+      "baseline": null,
+      "anomalous": null,
+      "about": [
+        "kpi.exec_revenue",
+        "D-cutover-1"
+      ]
+    },
+    {
+      "id": "ev_41900686e1",
+      "kind": "row_share",
+      "source": "warehouse",
+      "tool": "anomalous_row_share",
+      "template": null,
+      "cypher": null,
+      "summary": "327/327 rows of staging.stg_orders.amount on 2026-08-09 outside baseline range [5.0, 1114.51] → share 1.0",
+      "digest": "293553e53d665b3898b94aedbac8b2da1039e6b7db01728135c49bc43db1a55a",
+      "value": 1.0,
+      "baseline": null,
+      "anomalous": true,
+      "about": [
+        "staging.stg_orders.amount",
+        "staging.stg_orders"
+      ]
+    },
+    {
+      "id": "ev_7cf2442039",
+      "kind": "metric",
+      "source": "warehouse",
+      "tool": "get_metric_history",
+      "template": null,
+      "cypher": null,
+      "summary": "KPI 2026-08-09: 2,737,324 vs expected 29,349 (×93.27, band 1.377)",
+      "digest": "fe99940e41241820b472432a814ec0dca867dc113d2aeb24ee0ece95fdd9d736",
+      "value": 2737323.5,
+      "baseline": 29349.39,
+      "anomalous": true,
+      "about": [
+        "kpi.exec_revenue",
+        "marts.exec_revenue_metric"
+      ]
+    },
+    {
+      "id": "ev_99167a4ab6",
+      "kind": "flow",
+      "source": "falkordb",
+      "tool": "impact_bound",
+      "template": "Q-GATE-3+Q-GATE-MULT",
+      "cypher": "// Q-GATE-3\nMATCH (s:Node) WHERE s.id IN $sources\nWITH collect(s) AS srcs\nWHERE size(srcs) > 0\nMATCH (t:Node {id:$symptom})\nCALL algo.maxFlow({sourceNodes: srcs, targetNodes: [t], relationshipTypes: ['PROPAGATES_TO'], capacityProperty: 'cap'}) YIELD maxFlow\nRETURN maxFlow AS max_flow, size(srcs) AS sources\nLIMIT 1\n;\n// Q-GATE-MULT\nMATCH (t:Node {id: $symptom})\nUNWIND $sources AS sid\nMATCH (s:Node {id: sid})\nCALL algo.SPpaths({sourceNode: s, targetNode: t, relTypes: ['PROPAGATES_TO'], weightProp: 'w', relDirection: 'outgoing', maxLen: 8, pathCount: 100}) YIELD path\nRETURN s.id AS source, count(path) AS paths\nORDER BY source\nLIMIT 100",
+      "summary": "bound 0.0692 (max flow 0.0692, up to 1 path(s)) vs needed 0.8000 (insufficient)",
+      "digest": "48695a3b650751b356a7d79fe8f3cef76292db26820f66d52e5a4cee1cc23269",
+      "value": 0.0692,
+      "baseline": 0.8,
+      "anomalous": null,
+      "about": [
+        "kpi.exec_revenue",
+        "raw.raw_fx_rates"
+      ]
+    },
+    {
+      "id": "ev_a558c98853",
+      "kind": "upstream",
+      "source": "falkordb",
+      "tool": "upstream_explained",
+      "template": "Q-GATE-UPSTREAM-UB",
+      "cypher": "MATCH (s:Node) WHERE s.id IN $ids\nMATCH (u:Node)-[:PROPAGATES_TO*1..8]->(s)\nWITH DISTINCT u, s\nCALL {\n  WITH s\n  MATCH (w:MetricWindow {target_id: s.id, metric: 'error_rate', kind: 'live'})\n  WHERE w.at >= $base_since AND w.at <= $until\n  RETURN avg(CASE WHEN w.at <= $base_until THEN w.value END) AS sbase, max(CASE WHEN w.at >= $since THEN w.value END) AS speak\n}\nCALL {\n  WITH u\n  MATCH (w:MetricWindow {target_id: u.id, metric: 'error_rate', kind: 'live'})\n  WHERE w.at >= $base_since AND w.at <= $until\n  RETURN avg(CASE WHEN w.at <= $base_until THEN w.value END) AS ubase, max(CASE WHEN w.at >= $since THEN w.value END) AS upeak\n}\nCALL {\n  WITH u, s\n  MATCH p = (u)-[:PROPAGATES_TO*1..8]->(s)\n  WITH p LIMIT 1001\n  RETURN count(p) AS paths, min(length(p)) AS hops,\n         sum(CASE WHEN any(r IN relationships(p) WHERE r.cap IS NULL) THEN 1 ELSE 0 END) AS uncapped,\n         sum(reduce(acc = 1.0, r IN relationships(p) | acc * coalesce(r.cap, 1.0))) AS walk\n}\nCALL {\n  WITH u, s\n  OPTIONAL MATCH back = (s)-[:PROPAGATES_TO*1..8]->(u)\n  WITH back LIMIT 1\n  RETURN count(back) AS backpaths\n}\nWITH u, s, hops, backpaths,\n     CASE WHEN speak IS NULL OR sbase IS NULL THEN null WHEN speak - sbase > 0.0 THEN speak - sbase ELSE 0.0 END AS sex,\n     CASE WHEN upeak IS NULL OR ubase IS NULL THEN null WHEN upeak - ubase > 0.0 THEN upeak - ubase ELSE 0.0 END AS uex,\n     CASE WHEN paths > 1000 OR uncapped > 0 THEN null ELSE walk END AS transfer\nWITH u, s, hops, backpaths, sex, uex, transfer,\n     CASE WHEN transfer IS NULL OR uex IS NULL THEN null WHEN transfer * uex > 1.0 THEN 1.0 ELSE transfer * uex END AS carried\nWHERE sex IS NOT NULL AND sex > 0.0 AND uex IS NOT NULL AND uex >= $min_excess AND backpaths = 0\n  AND carried IS NOT NULL AND sex <= carried * $slack\nRETURN s.id AS s, u.id AS u, hops, transfer, uex AS u_excess, sex AS s_excess, carried\nORDER BY s, hops, u\nLIMIT 100",
+      "summary": "bound: no anomalous component upstream accounts for payment",
+      "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "value": 0.0,
+      "baseline": null,
+      "anomalous": null,
+      "about": [
+        "payment"
+      ]
+    },
+    {
+      "id": "ev_eae6fb8db2",
+      "kind": "path",
+      "source": "falkordb",
+      "tool": "causal_paths",
+      "template": "Q-GATE-1",
+      "cypher": "MATCH (c:Node {id:$cause}), (s:Node {id:$symptom})\nCALL algo.SPpaths({sourceNode: c, targetNode: s, relTypes: ['CHANGED', 'GATES', 'PROPAGATES_TO'], weightProp: 'w', relDirection: 'outgoing', maxLen: 8, pathCount: 3}) YIELD path, pathWeight\nRETURN [n IN nodes(path) | n.id] AS chain, [r IN relationships(path) | type(r)] AS rels, pathWeight AS weight, length(path) AS hops,\n       [r IN relationships(path) | coalesce(r.from_incident, '')] AS learned_from\nORDER BY weight, hops\nLIMIT 3",
+      "summary": "D-fx-pause-7 → raw.raw_fx_rates → staging.stg_fx_rates → marts.fct_revenue → marts.exec_revenue_metric → kpi.exec_revenue",
+      "digest": "0f2cc1055e6e40ef937ae680c3ae9d5684098e9f41b16262c91069da95675c12",
+      "value": 1.0,
+      "baseline": null,
+      "anomalous": null,
+      "about": [
+        "kpi.exec_revenue",
+        "D-fx-pause-7"
+      ]
+    },
+    {
+      "id": "ev_f7f81dcffd",
+      "kind": "flow",
+      "source": "falkordb",
+      "tool": "impact_bound",
+      "template": "Q-GATE-3+Q-GATE-MULT",
+      "cypher": "// Q-GATE-3\nMATCH (s:Node) WHERE s.id IN $sources\nWITH collect(s) AS srcs\nWHERE size(srcs) > 0\nMATCH (t:Node {id:$symptom})\nCALL algo.maxFlow({sourceNodes: srcs, targetNodes: [t], relationshipTypes: ['PROPAGATES_TO'], capacityProperty: 'cap'}) YIELD maxFlow\nRETURN maxFlow AS max_flow, size(srcs) AS sources\nLIMIT 1\n;\n// Q-GATE-MULT\nMATCH (t:Node {id: $symptom})\nUNWIND $sources AS sid\nMATCH (s:Node {id: sid})\nCALL algo.SPpaths({sourceNode: s, targetNode: t, relTypes: ['PROPAGATES_TO'], weightProp: 'w', relDirection: 'outgoing', maxLen: 8, pathCount: 100}) YIELD path\nRETURN s.id AS source, count(path) AS paths\nORDER BY source\nLIMIT 100",
+      "summary": "bound 1.0000 (max flow 1.0000, up to 1 path(s)) vs needed 0.8000 (sufficient)",
+      "digest": "629b4c6bcbac016abab3682d423fe2e4f7faccda91ebc571a165de3e0b98aa6c",
+      "value": 1.0,
+      "baseline": 0.8,
+      "anomalous": null,
+      "about": [
+        "kpi.exec_revenue",
+        "payment"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "kind": "preflight",
+  "scenario": "S6",
+  "pr": "pr:Prashant-thakur77/faultline-demo-app#9900",
+  "run": "pre-920d3a4dd7",
+  "graph": "eval_acme_preflight_ef6833a5",
+  "verdict": "block",
+  "risk": 0.8,
+  "decisions": [
+    "ADR-012",
+    "ADR-013"
+  ],
+  "investigator": "preflight (deterministic scoring, weights.yaml)",
+  "final_stage": "PREFLIGHT_BLOCK",
+  "tool_calls": 1,
+  "wall_s": 0.013
+}

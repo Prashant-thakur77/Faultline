@@ -1,0 +1,320 @@
+[
+  {
+    "id": "gr-inc-s2-fe1681b0-4bca2416",
+    "cause": "D-cutover-1",
+    "passed": true,
+    "confident": false,
+    "checks": [
+      {
+        "attach_only": false,
+        "detail": "D-cutover-1 \u2192 payment \u2192 raw.raw_orders \u2192 staging.stg_orders \u2192 marts.fct_revenue \u2192 marts.exec_revenue_metric \u2192 kpi.exec_revenue",
+        "downgrade_only": false,
+        "evidence_ids": [
+          "ev_299133ee43",
+          "ev_f7f81dcffd",
+          "ev_41900686e1"
+        ],
+        "name": "G2 path",
+        "params": {
+          "cause": "D-cutover-1",
+          "symptom": "kpi.exec_revenue"
+        },
+        "passed": true,
+        "template": "Q-GATE-1"
+      },
+      {
+        "attach_only": false,
+        "detail": "G5: max flow 1.0000 \u2265 needed 0.8000 (observed 1.0000 \u00d7 0.8)",
+        "downgrade_only": false,
+        "evidence_ids": [],
+        "name": "G5 sufficiency",
+        "params": {
+          "sources": [
+            "payment"
+          ],
+          "symptom": "kpi.exec_revenue"
+        },
+        "passed": true,
+        "template": "Q-GATE-3"
+      }
+    ],
+    "attempt": 0,
+    "origin": "sweep",
+    "at": 1791988503384
+  },
+  {
+    "id": "gr-inc-s2-fe1681b0-3327d78e",
+    "cause": "D-fx-pause-7",
+    "passed": false,
+    "confident": false,
+    "checks": [
+      {
+        "attach_only": false,
+        "detail": "D-fx-pause-7 \u2192 raw.raw_fx_rates \u2192 staging.stg_fx_rates \u2192 marts.fct_revenue \u2192 marts.exec_revenue_metric \u2192 kpi.exec_revenue",
+        "downgrade_only": false,
+        "evidence_ids": [
+          "ev_eae6fb8db2",
+          "ev_99167a4ab6",
+          "ev_41900686e1"
+        ],
+        "name": "G2 path",
+        "params": {
+          "cause": "D-fx-pause-7",
+          "symptom": "kpi.exec_revenue"
+        },
+        "passed": true,
+        "template": "Q-GATE-1"
+      },
+      {
+        "attach_only": false,
+        "detail": "G5: max flow 0.0692 < needed 0.8000 (observed 1.0000 \u00d7 0.8); another suspect alone can carry 1.0000",
+        "downgrade_only": false,
+        "evidence_ids": [],
+        "name": "G5 sufficiency",
+        "params": {
+          "sources": [
+            "raw.raw_fx_rates"
+          ],
+          "symptom": "kpi.exec_revenue"
+        },
+        "passed": false,
+        "template": "Q-GATE-3"
+      }
+    ],
+    "attempt": 0,
+    "origin": "sweep",
+    "at": 1791988503387
+  },
+  {
+    "id": "gr-inc-s2-fe1681b0-bc2c0e6f",
+    "cause": "D-cutover-1",
+    "passed": true,
+    "confident": true,
+    "checks": [
+      {
+        "attach_only": false,
+        "detail": "cause seen in a graph result this run; all cited evidence produced by this run",
+        "downgrade_only": false,
+        "evidence_ids": [],
+        "name": "G1 grounded",
+        "params": {
+          "evidence": [
+            "ev_7cf2442039",
+            "ev_201daec0f6",
+            "ev_41900686e1"
+          ],
+          "ids": [
+            "D-cutover-1"
+          ],
+          "run": "run-s2-fe1681b0"
+        },
+        "passed": true,
+        "template": "Q-GATE-G1"
+      },
+      {
+        "attach_only": false,
+        "detail": "D-cutover-1 \u2192 payment \u2192 raw.raw_orders \u2192 staging.stg_orders \u2192 marts.fct_revenue \u2192 marts.exec_revenue_metric \u2192 kpi.exec_revenue",
+        "downgrade_only": false,
+        "evidence_ids": [],
+        "name": "G2 path",
+        "params": {
+          "cause": "D-cutover-1",
+          "symptom": "kpi.exec_revenue"
+        },
+        "passed": true,
+        "template": "Q-GATE-1"
+      },
+      {
+        "attach_only": false,
+        "detail": "change 40.0 min before onset (window 60 min)",
+        "downgrade_only": false,
+        "evidence_ids": [],
+        "name": "G3 time",
+        "params": {
+          "cause": "D-cutover-1",
+          "onset": 1792029600000,
+          "window_ms": 3600000
+        },
+        "passed": true,
+        "template": "Q-GATE-2"
+      },
+      {
+        "attach_only": false,
+        "detail": "ev_201daec0f6 on marts.fct_revenue; ev_41900686e1 on staging.stg_orders; ev_7cf2442039 on kpi.exec_revenue; ev_7cf2442039 on marts.exec_revenue_metric",
+        "downgrade_only": false,
+        "evidence_ids": [
+          "ev_201daec0f6",
+          "ev_41900686e1",
+          "ev_7cf2442039",
+          "ev_7cf2442039"
+        ],
+        "name": "G4 quantitative",
+        "params": {
+          "chain": [
+            "D-cutover-1",
+            "payment",
+            "raw.raw_orders",
+            "staging.stg_orders",
+            "marts.fct_revenue",
+            "marts.exec_revenue_metric",
+            "kpi.exec_revenue"
+          ],
+          "evidence": [
+            "ev_7cf2442039",
+            "ev_201daec0f6",
+            "ev_41900686e1"
+          ],
+          "run": "run-s2-fe1681b0"
+        },
+        "passed": true,
+        "template": "Q-GATE-4"
+      },
+      {
+        "attach_only": false,
+        "detail": "ev_201daec0f6 on marts.fct_revenue; ev_41900686e1 on staging.stg_orders; ev_7cf2442039 on marts.exec_revenue_metric",
+        "downgrade_only": true,
+        "evidence_ids": [
+          "ev_201daec0f6",
+          "ev_41900686e1",
+          "ev_7cf2442039"
+        ],
+        "name": "G4 origin",
+        "params": {
+          "chain": [
+            "D-cutover-1",
+            "payment",
+            "raw.raw_orders",
+            "staging.stg_orders",
+            "marts.fct_revenue",
+            "marts.exec_revenue_metric",
+            "kpi.exec_revenue"
+          ],
+          "evidence": [
+            "ev_7cf2442039",
+            "ev_201daec0f6",
+            "ev_41900686e1"
+          ],
+          "run": "run-s2-fe1681b0"
+        },
+        "passed": true,
+        "template": "Q-GATE-4"
+      },
+      {
+        "attach_only": false,
+        "detail": "no anomalous component upstream can carry the changed component's excess",
+        "downgrade_only": true,
+        "evidence_ids": [
+          "ev_a558c98853"
+        ],
+        "name": "G4 upstream",
+        "params": {
+          "ids": [
+            "payment"
+          ]
+        },
+        "passed": true,
+        "template": "Q-GATE-UPSTREAM-UB"
+      },
+      {
+        "attach_only": false,
+        "detail": "kpi.exec_revenue: max flow 1.0000 \u2265 needed 0.8000",
+        "downgrade_only": false,
+        "evidence_ids": [
+          "ev_41900686e1",
+          "ev_f7f81dcffd"
+        ],
+        "name": "G5 sufficiency",
+        "params": {
+          "sources": [
+            "payment"
+          ],
+          "symptom": "kpi.exec_revenue"
+        },
+        "passed": true,
+        "template": "Q-GATE-3"
+      },
+      {
+        "attach_only": false,
+        "detail": "every competitor eliminated with evidence",
+        "downgrade_only": false,
+        "evidence_ids": [],
+        "name": "G6 competitors",
+        "params": {
+          "inc": "inc-s2-fe1681b0"
+        },
+        "passed": true,
+        "template": "Q-HYP-1"
+      },
+      {
+        "attach_only": false,
+        "detail": "independent channels on the chain: ['falkordb', 'warehouse']",
+        "downgrade_only": true,
+        "evidence_ids": [],
+        "name": "G7 agreement",
+        "params": {
+          "chain": [
+            "D-cutover-1",
+            "payment",
+            "raw.raw_orders",
+            "staging.stg_orders",
+            "marts.fct_revenue",
+            "marts.exec_revenue_metric",
+            "kpi.exec_revenue"
+          ],
+          "evidence": [
+            "ev_7cf2442039",
+            "ev_201daec0f6",
+            "ev_41900686e1",
+            "ev_41900686e1",
+            "ev_f7f81dcffd"
+          ],
+          "run": "run-s2-fe1681b0"
+        },
+        "passed": true,
+        "template": "Q-GATE-7"
+      },
+      {
+        "attach_only": false,
+        "detail": "change and data specialists both name D-cutover-1 (CHANGED \u2192 payment)",
+        "downgrade_only": true,
+        "evidence_ids": [],
+        "name": "G7 correlation",
+        "params": {
+          "cause": "D-cutover-1",
+          "chain": [
+            "D-cutover-1",
+            "payment",
+            "raw.raw_orders",
+            "staging.stg_orders",
+            "marts.fct_revenue",
+            "marts.exec_revenue_metric",
+            "kpi.exec_revenue"
+          ],
+          "roles": [
+            "change",
+            "code",
+            "data"
+          ],
+          "run": "run-s2-fe1681b0"
+        },
+        "passed": true,
+        "template": "Q-GATE-CORR"
+      },
+      {
+        "attach_only": true,
+        "detail": "no active decision violated",
+        "downgrade_only": true,
+        "evidence_ids": [],
+        "name": "G8 contradiction",
+        "params": {
+          "change": "D-cutover-1"
+        },
+        "passed": null,
+        "template": "Q-DEC-1"
+      }
+    ],
+    "attempt": 1,
+    "origin": "confirm",
+    "at": 1791988503436
+  }
+]

@@ -1,0 +1,17 @@
+{
+  "scenario": "S5",
+  "base_scenario": "S1",
+  "incident": "inc-s1-b0472ed3",
+  "run": "run-s1-b0472ed3",
+  "graph": "eval_acme_api_v2_s1_5059_b0472ed3",
+  "final_stage": "AWAITING_APPROVAL",
+  "github": "simulated",
+  "investigator": "baseline-policy (deterministic, no LLM)",
+  "variants": {
+    "service": "remediation_rejected.json",
+    "data": "data_bad_fix_rejected.json"
+  },
+  "events": 79,
+  "gate_runs": 4,
+  "tool_calls": 59
+}

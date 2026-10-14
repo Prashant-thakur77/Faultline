@@ -1,0 +1,20 @@
+{
+  "graph": "eval_acme_api_v2_s2_7856_fe1681b0",
+  "blast": {
+    "kpi.exec_revenue": {
+      "rows": [
+        {
+          "id": "dash.exec_morning",
+          "label": "Dashboard",
+          "tier": null,
+          "revenue": null,
+          "hops": 1,
+          "max_cap": 1.0,
+          "impact": 0.4625
+        }
+      ],
+      "template": "Q-BLAST-1",
+      "via": "algo.BFS((kpi.exec_revenue), 8, 'PROPAGATES_TO')"
+    }
+  }
+}

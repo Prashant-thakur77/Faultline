@@ -1,0 +1,12 @@
+{
+  "scenario": "S4S",
+  "incident": "inc-s4s-b5a476e0",
+  "run": "run-s4s-b5a476e0",
+  "graph": "eval_acme_api_v2_s4s_4432_b5a476e0",
+  "final_stage": "NO_INCIDENT",
+  "github": "simulated",
+  "investigator": "baseline-policy (deterministic, no LLM)",
+  "events": 19,
+  "gate_runs": 1,
+  "tool_calls": 11
+}

@@ -1,0 +1,109 @@
+[
+  {
+    "id": "gr-inc-s4s-b5a476e0-309093ee",
+    "cause": "NO_INCIDENT",
+    "passed": true,
+    "confident": true,
+    "checks": [
+      {
+        "attach_only": false,
+        "detail": "cited evidence produced by this run",
+        "downgrade_only": false,
+        "evidence_ids": [],
+        "name": "G1 grounded",
+        "params": {
+          "evidence": [
+            "ev_ce987ccf87"
+          ],
+          "ids": [],
+          "run": "run-s4s-b5a476e0"
+        },
+        "passed": true,
+        "template": "Q-GATE-G1"
+      },
+      {
+        "attach_only": false,
+        "detail": "all 1 symptom(s) measured",
+        "downgrade_only": false,
+        "evidence_ids": [
+          "ev_ce987ccf87"
+        ],
+        "name": "N0 every symptom measured",
+        "params": {
+          "chain": [
+            "accounting",
+            "astronomy-db",
+            "cache",
+            "cart",
+            "checkout",
+            "currency",
+            "email",
+            "fraud-detection",
+            "payment",
+            "product-catalog",
+            "queue",
+            "quote",
+            "shipping"
+          ],
+          "evidence": [
+            "ev_ce987ccf87"
+          ],
+          "run": "run-s4s-b5a476e0"
+        },
+        "passed": true,
+        "template": "Q-GATE-4"
+      },
+      {
+        "attach_only": false,
+        "detail": "1 measurements in band",
+        "downgrade_only": false,
+        "evidence_ids": [
+          "ev_ce987ccf87"
+        ],
+        "name": "N1 measurements normal",
+        "params": {
+          "chain": [
+            "accounting",
+            "astronomy-db",
+            "cache",
+            "cart",
+            "checkout",
+            "currency",
+            "email",
+            "fraud-detection",
+            "payment",
+            "product-catalog",
+            "queue",
+            "quote",
+            "shipping"
+          ],
+          "evidence": [
+            "ev_ce987ccf87"
+          ],
+          "run": "run-s4s-b5a476e0"
+        },
+        "passed": true,
+        "template": "Q-GATE-4"
+      },
+      {
+        "attach_only": false,
+        "detail": "no anomalous node reachable from any change in the window (none_reachable)",
+        "downgrade_only": false,
+        "evidence_ids": [
+          "ev_f1f9cc47d0"
+        ],
+        "name": "N2 negative path proof",
+        "params": {
+          "anomalous_ids": [],
+          "now": 1792065600000,
+          "window_ms": 1800000
+        },
+        "passed": true,
+        "template": "Q-NEG-1"
+      }
+    ],
+    "attempt": 1,
+    "origin": "no_incident",
+    "at": 1791988505690
+  }
+]

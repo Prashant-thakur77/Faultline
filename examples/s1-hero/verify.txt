@@ -1,0 +1,13 @@
+run run-s1-ee6d96e6 · incident inc-s1-ee6d96e6 · scenario S1 · final stage RESOLVED
+
+action act-inc-s1-ee6d96e6-2 · flip_flag · flag paymentGate → off · approval ap-act-inc-s1-ee6d96e6-2-90dde7c1
+  external ref: https://github.com/Prashant-thakur77/faultline-demo-infra/pull/1 (simulated)
+  verdict: APPLIED — flags.json at main HEAD has the change; checkout, frontend back in band for 3 minutes; no collateral on frontend-proxy
+  channel github_main: ok (simulated GitHub (no token; keyless mode))
+  channel prediction: unreadable
+  channel telemetry: ok
+    checkout: ok {"after": [0.00474, 0.00418, 0.0071], "band": 1.5745, "baseline": 0.00689, "collateral": false}
+    frontend: ok {"after": [0.00437, 0.00454, 0.00617], "band": 1.5262, "baseline": 0.00514, "collateral": false}
+    frontend-proxy: ok {"after": [0.00334, 0.0028, 0.0046], "before_action_max": 0.0199, "collateral": true}
+    kpi.exec_revenue: n/a {"collateral": true, "note": "no error_rate telemetry; not a collateral signal"}
+write-back: verified 7/7 (re-read through a separate read-only connection)

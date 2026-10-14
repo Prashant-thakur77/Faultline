@@ -1,0 +1,76 @@
+{
+  "incident_id": "inc-s4s-b5a476e0",
+  "outcome": "NO_INCIDENT",
+  "confident": true,
+  "cause_id": null,
+  "mechanism": [],
+  "proven": [
+    {
+      "claim": "G1 grounded: cited evidence produced by this run",
+      "evidence_ids": [],
+      "check": "G1 grounded"
+    },
+    {
+      "claim": "N0 every symptom measured: all 1 symptom(s) measured",
+      "evidence_ids": [
+        "ev_ce987ccf87"
+      ],
+      "check": "N0 every symptom measured"
+    },
+    {
+      "claim": "N1 measurements normal: 1 measurements in band",
+      "evidence_ids": [
+        "ev_ce987ccf87"
+      ],
+      "check": "N1 measurements normal"
+    },
+    {
+      "claim": "N2 negative path proof: no anomalous node reachable from any change in the window (none_reachable)",
+      "evidence_ids": [
+        "ev_f1f9cc47d0"
+      ],
+      "check": "N2 negative path proof"
+    }
+  ],
+  "inferred": [],
+  "contradictions": [],
+  "why_alerts_missed_it": {},
+  "ownership": {},
+  "residue": {},
+  "remedy": {},
+  "futures": [],
+  "obligations": {},
+  "rejected": [],
+  "evidence": [
+    {
+      "id": "ev_ce987ccf87",
+      "kind": "error_rate",
+      "source": "simulator",
+      "tool": "metric_window",
+      "template": null,
+      "cypher": null,
+      "summary": "checkout error rate 0.61% vs baseline 0.69% (×0.9, band 1.5745)",
+      "digest": "b2899403ecac6eaceba74ded2cad22e158dc8a4ebf3ef1077d99500e62379984",
+      "value": 0.00608,
+      "baseline": 0.00689,
+      "anomalous": false,
+      "about": [
+        "checkout"
+      ]
+    },
+    {
+      "id": "ev_f1f9cc47d0",
+      "kind": "path",
+      "source": "falkordb",
+      "tool": "reachable_from_changes",
+      "template": "Q-NEG-1",
+      "cypher": "MATCH (d:Deploy) WHERE d.at >= $now - $window_ms AND d.at <= $now\nCALL algo.SSpaths({sourceNode: d, relTypes: ['CHANGED', 'GATES', 'PROPAGATES_TO'], weightProp: 'w', relDirection: 'outgoing', maxLen: 8, pathCount: 1000}) YIELD path\nWITH d, last(nodes(path)) AS reached\nWHERE reached.id IN $anomalous_ids\nWITH d, collect(DISTINCT reached.id) AS anomalous_reached, count(*) AS paths\nRETURN d.id AS change, anomalous_reached, paths\nORDER BY change\nLIMIT 50",
+      "summary": "negative proof: none_reachable",
+      "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "value": 0.0,
+      "baseline": null,
+      "anomalous": null,
+      "about": []
+    }
+  ]
+}

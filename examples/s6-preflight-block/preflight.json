@@ -1,0 +1,382 @@
+{
+  "input": {
+    "repo": "Prashant-thakur77/faultline-demo-app",
+    "number": 9900,
+    "title": "payment: raise client timeout to 5000 ms, drop retries",
+    "author": "eval",
+    "head_sha": "",
+    "files": [
+      {
+        "path": "src/payment/config.json",
+        "before": "{\n  \"client\": {\n    \"timeout_ms\": 1500,\n    \"retries\": 2\n  }\n}",
+        "after": "{\n  \"client\": {\n    \"timeout_ms\": 5000,\n    \"retries\": 0\n  }\n}"
+      }
+    ]
+  },
+  "result": {
+    "pr": "pr:Prashant-thakur77/faultline-demo-app#9900",
+    "run_id": "pre-920d3a4dd7",
+    "verdict": "block",
+    "risk": 0.8,
+    "thresholds": {
+      "require_review": 0.35,
+      "block": 0.65
+    },
+    "terms": {
+      "blast": {
+        "value": 1.0,
+        "weighted": 0.25,
+        "why": "a failure reaches 12 components: agent, chatbot, checkout, dash.exec_morning, frontend, frontend-proxy"
+      },
+      "revenue": {
+        "value": 1.0,
+        "weighted": 0.2,
+        "why": "reaches revenue path: checkout, frontend, frontend-proxy"
+      },
+      "betweenness": {
+        "value": 0.0,
+        "weighted": 0.0,
+        "why": "chokepoint score 0.0 (top 75.0)"
+      },
+      "past_incidents": {
+        "value": 1.0,
+        "weighted": 0.15,
+        "why": "changes here caused 10 incidents (payment)"
+      },
+      "decision": {
+        "value": 1.0,
+        "weighted": 0.2,
+        "why": "violates ADR-012 (payment.client.timeout_ms <= 2000, PR sets 5000); violates ADR-013 (payment.client.retries >= 2, PR sets 0)"
+      },
+      "bus_factor": {
+        "value": 0.0,
+        "weighted": 0.0,
+        "why": "bus factor payment=2"
+      },
+      "uncertainty": {
+        "value": 0.0,
+        "weighted": 0.0,
+        "why": "owners and runbooks present"
+      }
+    },
+    "would_change_if": [
+      {
+        "term": "blast",
+        "verdict": "require_review",
+        "if": "blast were not a factor (a failure reaches 12 components: agent, chatbot, checkout, dash.exec_morning, frontend, frontend-proxy)"
+      },
+      {
+        "term": "revenue",
+        "verdict": "require_review",
+        "if": "revenue were not a factor (reaches revenue path: checkout, frontend, frontend-proxy)"
+      },
+      {
+        "term": "decision",
+        "verdict": "require_review",
+        "if": "decision were not a factor (violates ADR-012 (payment.client.timeout_ms <= 2000, PR sets 5000); violates ADR-013 (payment.client.retries >= 2, PR sets 0))"
+      }
+    ],
+    "reviewers": [
+      "p-004",
+      "p-017",
+      "p-030",
+      "p-034",
+      "p-036"
+    ],
+    "decision_links": [
+      {
+        "id": "ADR-012",
+        "title": "Payment client timeout must stay \u2264 2000 ms",
+        "url": "data/gen/docs/adr-012.md"
+      },
+      {
+        "id": "ADR-013",
+        "title": "Payment client keeps \u2265 2 retries",
+        "url": "data/gen/docs/adr-013.md"
+      }
+    ],
+    "reversals": [],
+    "assessment": {
+      "changed": [
+        "payment"
+      ],
+      "impacted": [
+        "agent",
+        "chatbot",
+        "checkout",
+        "dash.exec_morning",
+        "frontend",
+        "frontend-proxy",
+        "kpi.exec_revenue",
+        "marts.exec_revenue_metric",
+        "marts.fct_revenue",
+        "mcp",
+        "raw.raw_orders",
+        "staging.stg_orders"
+      ],
+      "revenue_tier1": [
+        "checkout",
+        "frontend",
+        "frontend-proxy"
+      ],
+      "decisions": [
+        {
+          "decision": "ADR-012",
+          "title": "Payment client timeout must stay \u2264 2000 ms",
+          "rule_key": "payment.client.timeout_ms",
+          "op": "<=",
+          "expected": 2000,
+          "actual": 5000,
+          "actual_text": "5000",
+          "url": "data/gen/docs/adr-012.md",
+          "about": "payment",
+          "override": null,
+          "violated": true,
+          "violated_raw": true,
+          "overridden": false
+        },
+        {
+          "decision": "ADR-013",
+          "title": "Payment client keeps \u2265 2 retries",
+          "rule_key": "payment.client.retries",
+          "op": ">=",
+          "expected": 2,
+          "actual": 0,
+          "actual_text": "0",
+          "url": "data/gen/docs/adr-013.md",
+          "about": "payment",
+          "override": null,
+          "violated": true,
+          "violated_raw": true,
+          "overridden": false
+        }
+      ],
+      "past_incidents": {
+        "payment": [
+          "inc-h005",
+          "inc-h008",
+          "inc-h011",
+          "inc-h015",
+          "inc-h018",
+          "inc-h027",
+          "inc-h028",
+          "inc-h030",
+          "inc-h037",
+          "inc-h039"
+        ]
+      },
+      "bus_factor": {
+        "payment": 2
+      },
+      "gaps": [],
+      "reviewers": [
+        "p-004",
+        "p-017",
+        "p-030",
+        "p-034",
+        "p-036"
+      ]
+    },
+    "facts": [
+      {
+        "key": "payment.client.retries",
+        "value": 0,
+        "about": "payment",
+        "file": "file:src/payment/config.json"
+      },
+      {
+        "key": "payment.client.timeout_ms",
+        "value": 5000,
+        "about": "payment",
+        "file": "file:src/payment/config.json"
+      }
+    ],
+    "notes": [],
+    "unknown_files": [],
+    "known_files": 1,
+    "evidence": {
+      "evidence_id": "ev_a960834a70",
+      "template": "Q-PRE-1",
+      "cypher": "MATCH (pr:PR {id:$pr})-[:TOUCHES]->(:File)-[:PART_OF]->(s)\nWITH DISTINCT s\nCALL algo.BFS(s, 6, 'PROPAGATES_TO') YIELD nodes\nUNWIND nodes AS n\nRETURN s.id AS changed, n.id AS impacted, n.tier AS tier, coalesce(n.revenue_path, false) AS revenue\nORDER BY revenue DESC, coalesce(tier, 9), changed, impacted\nLIMIT 100",
+      "params": {
+        "pr": "pr:Prashant-thakur77/faultline-demo-app#9900"
+      },
+      "served_by": "FalkorDB 6.0.2 \u00b7 eval_acme_preflight_ef6833a5 \u00b7 GRAPH.RO_QUERY as default-user",
+      "digest": "6fafdc5e23696da4ec92ede0b163a243584d4bf255fea69f529df0a1274be954",
+      "ms": 1.14
+    },
+    "ms": 13.5
+  },
+  "recorded": {
+    "run": "pre-920d3a4dd7",
+    "evidence_id": "ev_a960834a70",
+    "payload": {
+      "decision_links": [
+        {
+          "id": "ADR-012",
+          "title": "Payment client timeout must stay \u2264 2000 ms",
+          "url": "data/gen/docs/adr-012.md"
+        },
+        {
+          "id": "ADR-013",
+          "title": "Payment client keeps \u2265 2 retries",
+          "url": "data/gen/docs/adr-013.md"
+        }
+      ],
+      "reversals": [],
+      "reviewers": [
+        "p-004",
+        "p-017",
+        "p-030",
+        "p-034",
+        "p-036"
+      ],
+      "risk": 0.8,
+      "rows": [
+        {
+          "bus_factor": {
+            "payment": 2
+          },
+          "changed": [
+            "payment"
+          ],
+          "decisions": [
+            {
+              "about": "payment",
+              "actual": 5000,
+              "actual_text": "5000",
+              "decision": "ADR-012",
+              "expected": 2000,
+              "op": "<=",
+              "overridden": false,
+              "override": null,
+              "rule_key": "payment.client.timeout_ms",
+              "title": "Payment client timeout must stay \u2264 2000 ms",
+              "url": "data/gen/docs/adr-012.md",
+              "violated": true,
+              "violated_raw": true
+            },
+            {
+              "about": "payment",
+              "actual": 0,
+              "actual_text": "0",
+              "decision": "ADR-013",
+              "expected": 2,
+              "op": ">=",
+              "overridden": false,
+              "override": null,
+              "rule_key": "payment.client.retries",
+              "title": "Payment client keeps \u2265 2 retries",
+              "url": "data/gen/docs/adr-013.md",
+              "violated": true,
+              "violated_raw": true
+            }
+          ],
+          "gaps": [],
+          "impacted": [
+            "agent",
+            "chatbot",
+            "checkout",
+            "dash.exec_morning",
+            "frontend",
+            "frontend-proxy",
+            "kpi.exec_revenue",
+            "marts.exec_revenue_metric",
+            "marts.fct_revenue",
+            "mcp",
+            "raw.raw_orders",
+            "staging.stg_orders"
+          ],
+          "past_incidents": {
+            "payment": [
+              "inc-h005",
+              "inc-h008",
+              "inc-h011",
+              "inc-h015",
+              "inc-h018",
+              "inc-h027",
+              "inc-h028",
+              "inc-h030",
+              "inc-h037",
+              "inc-h039"
+            ]
+          },
+          "revenue_tier1": [
+            "checkout",
+            "frontend",
+            "frontend-proxy"
+          ],
+          "reviewers": [
+            "p-004",
+            "p-017",
+            "p-030",
+            "p-034",
+            "p-036"
+          ]
+        }
+      ],
+      "terms": {
+        "betweenness": {
+          "value": 0.0,
+          "weighted": 0.0,
+          "why": "chokepoint score 0.0 (top 75.0)"
+        },
+        "blast": {
+          "value": 1.0,
+          "weighted": 0.25,
+          "why": "a failure reaches 12 components: agent, chatbot, checkout, dash.exec_morning, frontend, frontend-proxy"
+        },
+        "bus_factor": {
+          "value": 0.0,
+          "weighted": 0.0,
+          "why": "bus factor payment=2"
+        },
+        "decision": {
+          "value": 1.0,
+          "weighted": 0.2,
+          "why": "violates ADR-012 (payment.client.timeout_ms <= 2000, PR sets 5000); violates ADR-013 (payment.client.retries >= 2, PR sets 0)"
+        },
+        "past_incidents": {
+          "value": 1.0,
+          "weighted": 0.15,
+          "why": "changes here caused 10 incidents (payment)"
+        },
+        "revenue": {
+          "value": 1.0,
+          "weighted": 0.2,
+          "why": "reaches revenue path: checkout, frontend, frontend-proxy"
+        },
+        "uncertainty": {
+          "value": 0.0,
+          "weighted": 0.0,
+          "why": "owners and runbooks present"
+        }
+      },
+      "thresholds": {
+        "block": 0.65,
+        "require_review": 0.35
+      },
+      "verdict": "block",
+      "would_change_if": [
+        {
+          "if": "blast were not a factor (a failure reaches 12 components: agent, chatbot, checkout, dash.exec_morning, frontend, frontend-proxy)",
+          "term": "blast",
+          "verdict": "require_review"
+        },
+        {
+          "if": "revenue were not a factor (reaches revenue path: checkout, frontend, frontend-proxy)",
+          "term": "revenue",
+          "verdict": "require_review"
+        },
+        {
+          "if": "decision were not a factor (violates ADR-012 (payment.client.timeout_ms <= 2000, PR sets 5000); violates ADR-013 (payment.client.retries >= 2, PR sets 0))",
+          "term": "decision",
+          "verdict": "require_review"
+        }
+      ]
+    },
+    "params": "{\"pr\": \"pr:Prashant-thakur77/faultline-demo-app#9900\"}",
+    "cypher": "MATCH (pr:PR {id:$pr})-[:TOUCHES]->(:File)-[:PART_OF]->(s)\nWITH DISTINCT s\nCALL algo.BFS(s, 6, 'PROPAGATES_TO') YIELD nodes\nUNWIND nodes AS n\nRETURN s.id AS changed, n.id AS impacted, n.tier AS tier, coalesce(n.revenue_path, false) AS revenue\nORDER BY revenue DESC, coalesce(tier, 9), changed, impacted\nLIMIT 100",
+    "at": 1791988512550
+  }
+}
