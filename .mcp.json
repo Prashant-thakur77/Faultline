@@ -1,0 +1,35 @@
+{
+  "mcpServers": {
+    "falkordb-readonly": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@falkordb/mcpserver@1.3.0"
+      ],
+      "env": {
+        "FALKORDB_HOST": "${FALKORDB_HOST:-localhost}",
+        "FALKORDB_PORT": "${FALKORDB_PORT:-6379}",
+        "FALKORDB_USERNAME": "${FALKORDB_RO_USER:-}",
+        "FALKORDB_PASSWORD": "${FALKORDB_RO_PASSWORD:-}",
+        "FALKORDB_DEFAULT_READONLY": "true",
+        "FALKORDB_STRICT_READONLY": "true"
+      }
+    },
+    "faultline": {
+      "type": "stdio",
+      "command": "uv",
+      "args": [
+        "run",
+        "python",
+        "-m",
+        "faultline.mcp_server.server",
+        "--stdio"
+      ],
+      "env": {
+        "PYTHONPATH": "backend",
+        "FAULTLINE_TENANT": "acme"
+      }
+    }
+  }
+}
