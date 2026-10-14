@@ -1,0 +1,8 @@
+# path[::symbol] | reason | removed by
+graph/algo/maxflow.py | sanctioned: min-cut by residual reachability over engine-computed flows (DECISIONS) | permanent
+graph/writes.py::fstring-cypher | labels/rel types formatted from schema_model whitelists (check_label/check_rel); values are parameters | permanent
+graph/templates/__init__.py::fstring-cypher | rewrites the literal final LIMIT n to n+1 (no input involved) | permanent
+agent/weights.py::import-yaml | loads weights.yaml (config, allowed outside FalkorDB) | permanent
+memory/embed.py | loads committed, generated model INPUTS (precomputed text→vector for known scenario intake texts, so the keyless path needs no model download); never state, never read for similarity, which runs only in db.idx.vector.queryNodes | permanent
+preflight/facts.py::import-yaml | parses the PR's changed config files (the system under observation, an input), never runtime state | permanent
+actions/github.py | FileSimGitHub only: the SIMULATED GitHub (a system under observation, not agent state) persisted to a file so it survives kill -9 in the SIGKILL chaos test (FAULTLINE_SIM_GITHUB_DIR, unset in the product); nothing the agent decides is read from it | permanent
