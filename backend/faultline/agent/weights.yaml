@@ -1,0 +1,75 @@
+# Every coefficient must be defensible in one sentence, out loud (Paracelsus discipline).
+# Changing a value requires a commit message that states why, and re-running evals.
+gate:
+  max_len: 8            # The longest seeded propagation chain (deploy→service→raw→staging→mart→metric→KPI→dashboard) is 7 hops; 8 leaves one hop of margin.
+  window_min: 30        # Change-induced incidents in the seeded history surface within 30 minutes of the change.
+  flow_slack: 0.8       # Allows 20% measurement noise before declaring that a suspect cannot carry the observed impact.
+  band_k: 3.0           # Three standard deviations of baseline variation counts as anomalous.
+  band_floor: 1.2       # Even very stable metrics need a 20% move to be called anomalous, to avoid flagging noise.
+  max_attempts: 3       # Three gate attempts bound cost while still allowing the reject-then-investigate loop.
+  err_abs_min: 0.01      # An error-rate rise below one percentage point is within normal service noise, whatever the ratio.
+  upstream_slack: 1.25   # G4 upstream DOWNGRADE check only: an anomalous component upstream that could carry a confirmed change's excess within 25% (noise on peak readings, Q-FUTURE-1's upper-bound model) makes the claim not confident. It never eliminates: elimination uses the strict lower bound with no slack (adversarial review 2026-10-14).
+  row_share_min: 0.05    # Healthy days have zero rows outside the baseline range; 5% outside is far beyond noise.
+  sspaths_path_count: 1000  # SSpaths returns a global top-k; 1000 bounds the negative proof, and a full result means "possibly truncated" → UNKNOWN.
+score:
+  w_path: 0.30          # Topological closeness is the strongest single signal that a change can reach the symptom.
+  w_time: 0.20          # Changes closer in time to onset are more likely causes.
+  w_anom: 0.20          # A change whose own target is anomalous is more likely the origin than one whose target is healthy.
+  w_rank: 0.10          # PageRank on the anomalous subgraph favours components many anomalies depend on.
+  w_flow: 0.15          # A suspect that can carry more of the impact can explain more of the symptom.
+  w_prior: 0.05         # Past families inform but never dominate, so memory cannot override fresh evidence.
+  tau_min: 10           # Time decay constant: a change 10 minutes before onset keeps ~37% of the time score.
+impact:
+  tier_weight: {1: 1.0, 2: 0.5, 3: 0.2}   # Tier-1 (revenue) components matter five times more than tier-3 internals.
+  data_tier_weight: 1.0  # The executive revenue KPI is tier-1 by definition.
+  entry_rps: 1000        # Fixed traffic matrix entry (frontend-proxy) used to turn rps into traffic share.
+preflight:
+  w_blast: 0.25         # Wider blast radius means more ways a change can hurt.
+  w_revenue: 0.20       # Reaching a revenue-path component is the costliest outcome.
+  w_betweenness: 0.10   # Changing a chokepoint affects many paths at once.
+  w_past_incidents: 0.15  # Components that caused incidents before are more likely to again.
+  w_decision: 0.20      # Violating an active decision is a strong, explicit risk signal.
+  w_bus_factor: 0.05    # A single knowledgeable reviewer increases review risk.
+  w_uncertainty: 0.05   # Missing owner, runbook or alert raises risk: an unconfirmed safeguard is not a safeguard.
+  thresholds: {require_review: 0.35, block: 0.65}   # Calibrated on the seeded PR set; reported with the eval.
+memory:
+  half_life_days: 30    # A month-old incident keeps half its salience unless it led to an applied fix.
+  consolidate_min: 2    # Two applied fixes in one family is the smallest evidence of a repeatable procedure.
+  find_min_similarity: 0.65  # On seeded text, unrelated queries top out near 0.58 cosine and real matches start near 0.69.
+remedy:
+  min_n: 2              # A fix kind needs two recorded outcomes on similar incidents before its history may reorder the plan (same bar as consolidate_min).
+knowledge:
+  stale_days: 90        # A runbook nobody has reviewed for a quarter has outlived at least one rota cycle and is treated as unconfirmed.
+  coupling_min: 3       # Co-failure in three separate incidents is unlikely to be coincidence for one component pair.
+obligation:
+  current_min: 3          # The "current" error rate is the mean over the last 3 minutes, the same window metric_window calls "now", so the clock and the gate's evidence read the same minutes.
+  sustainable_burn: 1.0   # A burn rate of 1 spends exactly the error budget over the SLO window, so at or below it no breach is projected.
+  page_within_min: 1440   # A budget that runs out within a day at the current burn breaks the promise before the next business-hours handoff, so it pages now (the SRE-workbook fast-burn page, 14.4x, empties a whole 30-day budget in ~50 h; a part-spent budget gets less).
+  fast_burn: 14.4          # The simulator raises an slo_burn alert when the trailing burn crosses 14.4x: at that rate 2% of a 30-day budget goes in one hour (SRE workbook fast-burn page).
+  burn_window_min: 5        # The trailing window the simulator's burn alert averages over (the workbook's short window for a fast-burn page).
+brain:
+  fuzzy_min: 0.92       # FLEX Jaro-Winkler floor for resolving a misspelt component: real misspellings of seeded ids score ≥ 0.94, unrelated words ≤ 0.90.
+  fuzzy_min_len: 5      # Shorter tokens are too ambiguous to resolve by spelling alone ("cart", "ad").
+  fuzzy_len_ratio: 0.8  # A fuzzy match needs the shorter of word and id to be ≥ 80% of the longer: "audit" (5) is a prefix of audit-log (8), not a misspelling of it; "pyment" (6) vs payment (7) passes.
+  scratch_ttl_min: 30   # Public-mode brain runs record in a per-tenant scratch copy of the tenant graph; a copy older than 30 minutes is replaced (and the old one collected), so what a visitor's question records never lives long and the copy never drifts far from the tenant graph.
+  scratch_max_runs: 500 # ...or once it holds 500 brain runs: each run records about 5-15 tool calls and evidence nodes, so this keeps a copy within a few thousand recorded nodes.
+intake:
+  alert_lead_min: 5     # Pages that fired up to 5 minutes before onset belong to it: monitors lead the first human report by a few minutes.
+  alert_lag_min: 1      # Pages up to 1 minute after onset still belong to the first intake; later ones arrive in a later intake round (attach or open).
+  baseline_min: 30      # A node's excess is its peak in the alert window minus its mean over the 30 minutes before, the same baseline span metric_window uses.
+  baseline_gap_min: 5   # The baseline stops 5 minutes before the alert window, so a fault's first minutes cannot inflate it (metric_window's gap).
+  # An edge carries a failure between alerts when criticality × the source's excess ≥ gate.err_abs_min: below one percentage point it cannot raise an alert-worthy rise downstream.
+engine:
+  max_waiting: 10       # Queries already queued in FalkorDB (GRAPH.INFO) above which new scenario runs are refused (429): MAX_QUEUED_QUERIES is 50, so this sheds load well before the engine itself refuses.
+  slow_template_ms: 500 # A product template slower than this in GRAPH.SLOWLOG fails judge-check: the gate's hot path runs in single-digit ms, so 500 ms means a regression, not noise.
+  max_memory_fraction: 0.85  # Above 85% of maxmemory (INFO memory) new graph copies (runs, clean rooms) are refused (429): a scenario run copies a whole tenant graph, and noeviction turns a full engine into write errors for everyone.
+  keep_recent_runs: 20  # The API's eval-graph collector always keeps the graphs of the 20 most recent indexed runs; beyond those it also keeps any graph a running job, an execute job or a reconciler is using, any graph with a PENDING intent or a live lease, and any graph touched recently or holding an open incident (the two TTLs below), so approvals and the incident list of live runs keep working.
+  gc_touched_ttl_min: 30  # A run graph with anything recorded in the last 30 minutes (stage events, engine clock) is never collected: a visitor reading or approving it is still there.
+  gc_open_max_idle_h: 24  # A run graph whose incident is in a non-terminal stage (awaiting approval, executing…) is kept until it has been idle for 24 hours: long enough for a human to come back to it, short enough that abandoned demo runs do not fill the engine.
+  gc_every_runs: 5      # The API collects old run graphs at startup and before every 5th scenario run it starts (a list of graph names: cheap next to the copy a run makes).
+actions:
+  intent_lease_s: 300   # An execute job leases its intent for 5 minutes and renews it before every step (and while it waits for the warehouse); the reconciler skips a leased intent while the lease runs and its holder's process is alive. Longer than any one step (each GitHub call times out after 20 s, the verification simulation takes seconds).
+  boot_heartbeat_s: 10  # Every process that can hold an intent lease records a heartbeat of its boot in the audit graph this often (the API from a background thread, a reconciler before each pass).
+  boot_stale_s: 30      # A boot without a heartbeat for 30 s (three missed beats) is dead: its intent leases are taken over at once instead of after intent_lease_s. A cleanly stopped API ends its boot and is taken over immediately.
+  reconcile_every_s: 60 # The API reconciles every graph with PENDING intents this often (and at startup), so a crashed execute job's intent is settled about a minute after its process died, not only at the next approval. The first periodic pass runs boot_stale_s + boot_heartbeat_s after startup, when a killed predecessor's heartbeat is stale.
+  reconcile_grace_s: 120  # An intent that was never leased (a direct caller outside the API) is left to its caller for 2 minutes before a reconciler may take it.
