@@ -1,0 +1,50 @@
+{
+  "engine": "6.0.2",
+  "digest": "sha256:107455e862a824e45e8e9f5a7fbfdf5e00a08b14e13eae2577c72fd9e3f59ba6",
+  "module_ver": 60002,
+  "procedures": {
+    "bfs": {
+      "name": "algo.BFS",
+      "form": "positional(node, depth, relType)"
+    },
+    "sppaths": {
+      "name": "algo.SPpaths",
+      "form": "map"
+    },
+    "sspaths": {
+      "name": "algo.SSpaths",
+      "form": "map",
+      "pathCount": 1000,
+      "note": "pathCount is a global top-k over all targets; 0 = min-weight ties only; full result \u21d2 possibly truncated \u21d2 UNKNOWN"
+    },
+    "pagerank": {
+      "name": "algo.pageRank",
+      "form": "positional(label, relType)"
+    },
+    "betweenness": {
+      "name": "algo.betweenness",
+      "form": "map",
+      "samplingSeed": 42
+    },
+    "harmonic": {
+      "name": "algo.HarmonicCentrality",
+      "form": "map"
+    },
+    "wcc": {
+      "name": "algo.WCC",
+      "form": "map"
+    },
+    "cdlp": {
+      "name": "algo.labelPropagation",
+      "form": "map"
+    },
+    "maxflow": {
+      "name": "algo.maxFlow",
+      "form": "map_nodes"
+    },
+    "msf": {
+      "name": "algo.MSF",
+      "form": "map"
+    }
+  }
+}
