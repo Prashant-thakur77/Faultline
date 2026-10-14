@@ -1,0 +1,88 @@
+1
+00:00:00,000 --> 00:00:06,148
+Faultline: an on-call agent whose brain is a FalkorDB graph. The model suggests; a read-only query decides.
+
+2
+00:00:06,148 --> 00:00:11,003
+Re-arm: restore the tenant graph from its golden copy and reset the simulated GitHub world.
+
+3
+00:00:11,003 --> 00:00:20,006
+Run S1, “Checkout errors are spiking”, with the keyless baseline investigator: the stage rail moves INTAKE → RECALL → …
+
+4
+00:00:20,006 --> 00:00:28,002
+First it remembers: past payment incidents found in FalkorDB's vector index and confirmed through a shared symptom node, never similarity alone.
+
+5
+00:00:28,002 --> 00:00:36,001
+algo.BFS shows what breaks: payment red, the blast radius yellow, hop by hop.
+
+6
+00:00:36,001 --> 00:00:48,412
+Three changes in the window. The recommendation deploy has no causal path to checkout: Q-GATE-1 returns 0 rows. No path, no claim.
+
+7
+00:00:48,412 --> 00:00:58,000
+The email deploy shipped in the same minute and has a path. But algo.maxFlow says it carries at most 0.0200; 0.2433 is needed. Rejected, with proof.
+
+8
+00:00:58,000 --> 00:01:11,305
+algo.SPpaths: D-pay-417 → payment → checkout, lit edge by edge. Every claim carries its Cypher, with PROFILE engine time.
+
+9
+00:01:11,305 --> 00:01:16,819
+Same graph, data incident (recorded replay): a payment provider cutover, traced into the revenue lineage.
+
+10
+00:01:16,819 --> 00:01:22,048
+Same graph, data incident (recorded replay): the path crosses into the revenue lineage; the stale FX feed is ruled out by flow (0.0692 < 0.8000).
+
+11
+00:01:22,048 --> 00:01:26,530
+Better still: the same graph scores the risky pull request before it ships: verdict, the ADRs it contradicts, the path to checkout, reviewers.
+
+12
+00:01:26,530 --> 00:01:36,057
+Preflight verdict: block. The same graph that explained the outage gates the next change before it merges.
+
+13
+00:01:36,057 --> 00:01:45,000
+Back to the incident. algo.maxFlow finds the smallest cut; a what-if on a GRAPH.COPY branch checks that it contains the failure first.
+
+14
+00:01:45,000 --> 00:01:53,001
+Who fixes it: the people who wrote this code and fixed the last outages here, ranked by harmonic centrality; bus factor and escalation tree.
+
+15
+00:01:53,001 --> 00:02:03,000
+Choosing isn't approving: the server renders the exact diff, the PR body with reviewers, and the plan hash first.
+
+16
+00:02:03,000 --> 00:02:07,058
+Approve this exact change: one PR (simulated GitHub, labelled), verified through a second channel, then written back.
+
+17
+00:02:07,058 --> 00:02:17,799
+APPLIED: GitHub main re-read and telemetry back in band, no collateral. Write-back verified 7/7; the incident becomes memory.
+
+18
+00:02:17,799 --> 00:02:27,051
+And when verification can't confirm the change (S9, an eval run): verdict UNKNOWN, success written = False. Never a silent success: a later reconciler pass → at_main, APPLIED 7/7. (evals/RESULTS.md)
+
+19
+00:02:27,051 --> 00:02:38,816
+And it's the team's memory: every node an answer cites was read by that question's own queries, or the answer is withheld.
+
+20
+00:02:38,816 --> 00:02:47,049
+FalkorDB off (A4): 0 confirmed causes. Max-flow check off (A3-noG5): top-1 0.8. S2 can no longer be decided (0.0); S1 still is (1.0): the sweep's origin test rejects the healthy email service.
+
+21
+00:02:47,049 --> 00:02:55,032
+Vector similarity only (V): top-1 0.4; it picks the wrong change on S2, S3 and S3b. Naive recency: 0.1. The graph (A3): 1.0. (evals/RESULTS.md)
+
+22
+00:02:55,032 --> 00:02:59,001
+Faultline: no path, no claim. Verify it yourself: make judge-check.
+
