@@ -1,0 +1,3214 @@
+{
+  "incident": {
+    "id": "inc-s1-ee6d96e6",
+    "title": "hero_bad_payment_deploy_with_same_minute_distractor",
+    "stage": "RESOLVED",
+    "onset_at": 1792033200000,
+    "opened_at": 1791988500332,
+    "confident": true,
+    "targets": [
+      "checkout",
+      "frontend"
+    ],
+    "kinds": [
+      "error_rate"
+    ]
+  },
+  "run": {
+    "run": "run-s1-ee6d96e6",
+    "graph": "eval_acme_api_v2_s1_9462_ee6d96e6",
+    "scenario": "S1",
+    "outcome": "CONFIRMED",
+    "cause": "D-pay-417",
+    "investigator": "baseline-policy (deterministic, no LLM)"
+  },
+  "stages": [
+    {
+      "id": "run-s1-ee6d96e6-se-INTAKE-1-8ddf7f",
+      "stage": "INTAKE",
+      "ord": 1,
+      "at": 1791988500340,
+      "note": "alerts: ['al-s1-checkout', 'al-s1-frontend']"
+    },
+    {
+      "id": "run-s1-ee6d96e6-se-RECALL-2-bee54b",
+      "stage": "RECALL",
+      "ord": 2,
+      "at": 1791988500412,
+      "note": ""
+    },
+    {
+      "id": "run-s1-ee6d96e6-se-LOCALIZE-3-afabb2",
+      "stage": "LOCALIZE",
+      "ord": 3,
+      "at": 1791988500451,
+      "note": ""
+    },
+    {
+      "id": "run-s1-ee6d96e6-se-BLAST-4-6d9f7c",
+      "stage": "BLAST",
+      "ord": 4,
+      "at": 1791988500466,
+      "note": ""
+    },
+    {
+      "id": "run-s1-ee6d96e6-se-HYPOTHESIZE-5-341839",
+      "stage": "HYPOTHESIZE",
+      "ord": 5,
+      "at": 1791988500476,
+      "note": ""
+    },
+    {
+      "id": "run-s1-ee6d96e6-se-INVESTIGATE-6-09b6cf",
+      "stage": "INVESTIGATE",
+      "ord": 6,
+      "at": 1791988500510,
+      "note": ""
+    },
+    {
+      "id": "run-s1-ee6d96e6-se-GATE-7-c28a84",
+      "stage": "GATE",
+      "ord": 7,
+      "at": 1791988500714,
+      "note": "cause D-pay-417 accepted (confident=True)"
+    },
+    {
+      "id": "run-s1-ee6d96e6-se-CONTRADICTION-8-fa26d7",
+      "stage": "CONTRADICTION",
+      "ord": 8,
+      "at": 1791988500726,
+      "note": "ADR-012; ADR-013"
+    },
+    {
+      "id": "run-s1-ee6d96e6-se-CONTAIN-9-d4c2fd",
+      "stage": "CONTAIN",
+      "ord": 9,
+      "at": 1791988500743,
+      "note": ""
+    },
+    {
+      "id": "run-s1-ee6d96e6-se-ROUTE-10-00447b",
+      "stage": "ROUTE",
+      "ord": 10,
+      "at": 1791988501165,
+      "note": ""
+    },
+    {
+      "id": "run-s1-ee6d96e6-se-PLAN-11-a3c3f5",
+      "stage": "PLAN",
+      "ord": 11,
+      "at": 1791988501228,
+      "note": ""
+    },
+    {
+      "id": "run-s1-ee6d96e6-se-AWAITING_APPROVAL-12-2abe20",
+      "stage": "AWAITING_APPROVAL",
+      "ord": 12,
+      "at": 1791988501249,
+      "note": "two-step approval required: choose an option, then approve its plan hash"
+    },
+    {
+      "id": "run-s1-ee6d96e6-se-EXECUTE-13-e423c7",
+      "stage": "EXECUTE",
+      "ord": 13,
+      "at": 1791988501434,
+      "note": "executing act-inc-s1-ee6d96e6-2"
+    },
+    {
+      "id": "run-s1-ee6d96e6-se-VERIFY-14-0a7789",
+      "stage": "VERIFY",
+      "ord": 14,
+      "at": 1791988501464,
+      "note": ""
+    },
+    {
+      "id": "run-s1-ee6d96e6-se-WRITEBACK-15-eace7b",
+      "stage": "WRITEBACK",
+      "ord": 15,
+      "at": 1791988501480,
+      "note": "verdict APPLIED: flags.json at main HEAD has the change; checkout, frontend back in band for 3 minutes; no collateral on frontend-proxy"
+    },
+    {
+      "id": "run-s1-ee6d96e6-se-LEARN-16-4e4785",
+      "stage": "LEARN",
+      "ord": 16,
+      "at": 1791988501509,
+      "note": "family of 11 incidents; runbook rb-derived-0b6bb0db12 now supported by 5"
+    },
+    {
+      "id": "run-s1-ee6d96e6-se-RESOLVED-17-d91291",
+      "stage": "RESOLVED",
+      "ord": 17,
+      "at": 1791988501511,
+      "note": "write-back verified 7/7"
+    }
+  ],
+  "tool_calls": [
+    {
+      "id": "run-s1-ee6d96e6-tc0001",
+      "tool": "similar_incidents",
+      "template": "Q-MEM-1",
+      "ms": 3.11,
+      "rows": 5,
+      "at": 1791988500421,
+      "evidence_id": "ev_0b07914cc5",
+      "kind": "recall",
+      "summary": "5 structurally confirmed precedents: inc-h005, inc-h030, inc-h018",
+      "params": {
+        "current": "inc-s1-ee6d96e6",
+        "half_life_ms": 2592000000.0,
+        "now": 1792033200000
+      },
+      "digest": "3cdb81ab6372e57d2d379b2a1958cda57d991690e9abeaaaf04dbf89bc8d0dbf"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0002",
+      "tool": "runbook_for",
+      "template": "Q-MEM-3",
+      "ms": 1.16,
+      "rows": 3,
+      "at": 1791988500448,
+      "evidence_id": "ev_6c60fe7f89",
+      "kind": "recall",
+      "summary": "3 runbooks",
+      "params": {
+        "ids": [
+          "checkout",
+          "frontend",
+          "sym-error_rate-checkout"
+        ]
+      },
+      "digest": "c13948b9f49e56463748ce79125ede8d2fa1b237f88711b9efea515aa820362a"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0003",
+      "tool": "service_context",
+      "template": "Q-CTX-1",
+      "ms": 0.91,
+      "rows": 1,
+      "at": 1791988500456,
+      "evidence_id": "ev_5695026299",
+      "kind": "context",
+      "summary": "context of checkout",
+      "params": {
+        "id": "checkout",
+        "now": 1792033200000
+      },
+      "digest": "bfc00eb07ae85ce297f14b0482f66d3747116c23ad3b18cbfb558d0fa58efd60"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0004",
+      "tool": "upstream_scope",
+      "template": "Q-LIN-1",
+      "ms": 0.76,
+      "rows": 12,
+      "at": 1791988500459,
+      "evidence_id": "ev_53feac831e",
+      "kind": "lineage",
+      "summary": "12 upstream nodes",
+      "params": {
+        "symptom": "checkout"
+      },
+      "digest": "0294de7c2ebc8881f15990486879598ca5e80cdda68fbcb5e15ab6a38149f050"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0005",
+      "tool": "service_context",
+      "template": "Q-CTX-1",
+      "ms": 0.54,
+      "rows": 1,
+      "at": 1791988500462,
+      "evidence_id": "ev_46ddeb6bcf",
+      "kind": "context",
+      "summary": "context of frontend",
+      "params": {
+        "id": "frontend",
+        "now": 1792033200000
+      },
+      "digest": "018a371f2451acea32965134356b435ee1176e85a35977c653a636fa80602ed9"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0006",
+      "tool": "upstream_scope",
+      "template": "Q-LIN-1",
+      "ms": 0.57,
+      "rows": 15,
+      "at": 1791988500465,
+      "evidence_id": "ev_28d1e8413d",
+      "kind": "lineage",
+      "summary": "15 upstream nodes",
+      "params": {
+        "symptom": "frontend"
+      },
+      "digest": "5f3baa0e8a21abc81e205e0f9f929e61db0507795ee03e7325fd92f7e215d139"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0007",
+      "tool": "blast_radius",
+      "template": "Q-BLAST-1",
+      "ms": 0.37,
+      "rows": 5,
+      "at": 1791988500468,
+      "evidence_id": "ev_42ca9b7ff2",
+      "kind": "blast",
+      "summary": "5 impacted nodes",
+      "params": {
+        "id": "checkout"
+      },
+      "digest": "3de9a3d411bbc45477fdcf734d321b53be43ff68dc45d519c46ce76e2a398f9f"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0008",
+      "tool": "blast_radius",
+      "template": "Q-BLAST-1",
+      "ms": 0.34,
+      "rows": 4,
+      "at": 1791988500471,
+      "evidence_id": "ev_efb78d4a81",
+      "kind": "blast",
+      "summary": "4 impacted nodes",
+      "params": {
+        "id": "frontend"
+      },
+      "digest": "8d6b37937b7632057b5c0c190a216b98edacff4f546291ef6f3e232dbb616eda"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0009",
+      "tool": "chokepoints",
+      "template": "Q-CHOKE-1",
+      "ms": 0.88,
+      "rows": 10,
+      "at": 1791988500474,
+      "evidence_id": "ev_2c9a86d8e7",
+      "kind": "centrality",
+      "summary": "top chokepoints",
+      "params": {},
+      "digest": "43f129377bd342896a12f190339d1a5f8bb511f765fa525e23d31cc988039c96"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0010",
+      "tool": "upstream_suspects",
+      "template": "Q-SUS-1",
+      "ms": 1.01,
+      "rows": 2,
+      "at": 1791988500481,
+      "evidence_id": "ev_bb9e06525d",
+      "kind": "change",
+      "summary": "2 upstream changes",
+      "params": {
+        "onset": 1792033200000,
+        "symptom": "checkout",
+        "window_ms": 1800000
+      },
+      "digest": "1c2004e485345cb78aa5ca4f2064b728ce14e8a65b89f2c95a8b73dd194eaa04"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0011",
+      "tool": "upstream_suspects",
+      "template": "Q-SUS-1",
+      "ms": 1.09,
+      "rows": 3,
+      "at": 1791988500486,
+      "evidence_id": "ev_e8e4da4df3",
+      "kind": "change",
+      "summary": "3 upstream changes",
+      "params": {
+        "onset": 1792033200000,
+        "symptom": "frontend",
+        "window_ms": 1800000
+      },
+      "digest": "41f18f21c18f8d676858a44077ee9f57df71fa4907477155a8b97539b7440e6b"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0012",
+      "tool": "window_changes",
+      "template": "Q-SUS-2",
+      "ms": 0.97,
+      "rows": 3,
+      "at": 1791988500490,
+      "evidence_id": "ev_9261921983",
+      "kind": "change",
+      "summary": "3 changes in window",
+      "params": {
+        "onset": 1792033200000,
+        "window_ms": 1800000
+      },
+      "digest": "24c1a92e96caaff064dfa42401b1483987f32ba40ca81200d6190e758d9563f8"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0013",
+      "tool": "rank_causes",
+      "template": "Q-RANK-1",
+      "ms": 1.06,
+      "rows": 16,
+      "at": 1791988500500,
+      "evidence_id": "ev_028f946650",
+      "kind": "rank",
+      "summary": "pageRank over 16 nodes, 21 edges",
+      "params": {},
+      "digest": "a34f768b41bb757419236b8b9097d6c36f2c431b237aa2744be1dc4d7d62fcb4"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0014",
+      "tool": "metric_window",
+      "template": null,
+      "ms": 1.86,
+      "rows": 1,
+      "at": 1791988500525,
+      "evidence_id": "ev_9dc2e8c800",
+      "kind": "error_rate",
+      "summary": "checkout error rate 30.69% vs baseline 0.69% (\u00d744.5, band 1.5745)",
+      "params": {
+        "onset_ms": 1792033200000,
+        "target_id": "checkout"
+      },
+      "digest": "82f122b158836c5aad2aeff0cde84945719feae57b6dd9a04b10712f2acceb4c"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0015",
+      "tool": "metric_window",
+      "template": null,
+      "ms": 1.55,
+      "rows": 1,
+      "at": 1791988500529,
+      "evidence_id": "ev_fec5a56292",
+      "kind": "error_rate",
+      "summary": "frontend error rate 1.75% vs baseline 0.51% (\u00d73.4, band 1.5262)",
+      "params": {
+        "onset_ms": 1792033200000,
+        "target_id": "frontend"
+      },
+      "digest": "3c377940e06aea24a1a8a3bfa28f4486e27e7e7a239757d262f5a055cd9c1db8"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0016",
+      "tool": "metric_window",
+      "template": null,
+      "ms": 1.55,
+      "rows": 1,
+      "at": 1791988500534,
+      "evidence_id": "ev_d3ce0adb65",
+      "kind": "error_rate",
+      "summary": "payment error rate 30.91% vs baseline 0.71% (\u00d743.6, band 1.4575)",
+      "params": {
+        "onset_ms": 1792033200000,
+        "target_id": "payment"
+      },
+      "digest": "b07c05195a403505fdefbface33de1adb12c843e6c47c472f009e7c21cba4c62"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0017",
+      "tool": "metric_window",
+      "template": null,
+      "ms": 1.22,
+      "rows": 1,
+      "at": 1791988500539,
+      "evidence_id": "ev_41cc30c06d",
+      "kind": "error_rate",
+      "summary": "email error rate 0.42% vs baseline 0.44% (\u00d70.9, band 1.526)",
+      "params": {
+        "onset_ms": 1792033200000,
+        "target_id": "email"
+      },
+      "digest": "ec768951a09b66db2bacedfbe3371b2289caf43f0861de567174b54f9aa46c27"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0018",
+      "tool": "metric_window",
+      "template": null,
+      "ms": 1.34,
+      "rows": 1,
+      "at": 1791988500543,
+      "evidence_id": "ev_45d09e4d6a",
+      "kind": "error_rate",
+      "summary": "recommendation error rate 3.00% vs baseline 0.76% (\u00d74.0, band 1.4313)",
+      "params": {
+        "onset_ms": 1792033200000,
+        "target_id": "recommendation"
+      },
+      "digest": "886c76031572192eafb1fbe61d0cccff23a046a8180b13837e43f8b1138d7662"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0019",
+      "tool": "causal_paths",
+      "template": "Q-GATE-1",
+      "ms": 1.35,
+      "rows": 1,
+      "at": 1791988500566,
+      "evidence_id": "ev_d9c05ffae8",
+      "kind": "path",
+      "summary": "D-pay-417 \u2192 payment \u2192 checkout",
+      "params": {
+        "cause": "D-pay-417",
+        "symptom": "checkout"
+      },
+      "digest": "057ca961bbe6c66f7c833458131f31f7d543fbfc484106a079d28670e83c7703"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0020",
+      "tool": "change_details",
+      "template": "Q-CHANGE-2",
+      "ms": 2.91,
+      "rows": 1,
+      "at": 1791988500567,
+      "evidence_id": "ev_99486bf330",
+      "kind": "change",
+      "summary": "D-pay-417: deploy of payment, 2 asserted facts",
+      "params": {
+        "id": "D-pay-417"
+      },
+      "digest": "60ed93d01c141c76451f35fad2e2e81752bdf9ac5466597ea9d4a7dc7d0f29f0"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0021",
+      "tool": "causal_paths",
+      "template": "Q-GATE-1",
+      "ms": 1.89,
+      "rows": 1,
+      "at": 1791988500575,
+      "evidence_id": "ev_a2d962890c",
+      "kind": "path",
+      "summary": "D-pay-417 \u2192 payment \u2192 checkout \u2192 frontend",
+      "params": {
+        "cause": "D-pay-417",
+        "symptom": "frontend"
+      },
+      "digest": "dd1b88bbeb6d2d9d78c62754ca886da014d418bc03cb7818ae2dae518caff0e7"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0022",
+      "tool": "diff_summary",
+      "template": "Q-CODE-1",
+      "ms": 13.12,
+      "rows": 1,
+      "at": 1791988500577,
+      "evidence_id": "ev_a89cdcba4f",
+      "kind": "code",
+      "summary": "D-pay-417: 0 commits, 0 files, 2 facts; code on payment: True",
+      "params": {
+        "id": "D-pay-417"
+      },
+      "digest": "5571b9f925c87b36d58e59e551b5ea8a22f4ed933cdd42a6186db6e92b4424c8"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0023",
+      "tool": "causal_paths",
+      "template": "Q-GATE-1",
+      "ms": 2.19,
+      "rows": 1,
+      "at": 1791988500583,
+      "evidence_id": "ev_1a986a73de",
+      "kind": "path",
+      "summary": "D-email-88 \u2192 email \u2192 checkout",
+      "params": {
+        "cause": "D-email-88",
+        "symptom": "checkout"
+      },
+      "digest": "de3fa0e0f369dfedc2f0c2c6a165c26df2401e7e93a27e9dec9766dfc83f8491"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0024",
+      "tool": "decision_check",
+      "template": "Q-DEC-1",
+      "ms": 2.02,
+      "rows": 2,
+      "at": 1791988500589,
+      "evidence_id": "ev_b0b75fec52",
+      "kind": "decision",
+      "summary": "2 violations",
+      "params": {
+        "change": "D-pay-417"
+      },
+      "digest": "8884e21641246a490f67786ab9d388030de7fd4fcc8bb8271d25d198e97485dd"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0025",
+      "tool": "diff_summary",
+      "template": "Q-CODE-1",
+      "ms": 4.87,
+      "rows": 1,
+      "at": 1791988500591,
+      "evidence_id": "ev_950486c174",
+      "kind": "code",
+      "summary": "D-email-88: no commits or diff facts in the graph (code not inspectable)",
+      "params": {
+        "id": "D-email-88"
+      },
+      "digest": "64fbfe4ab14cf69b0e3da147986710d8164242e29cf5c2d930ad68fef20d83ce"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0026",
+      "tool": "causal_paths",
+      "template": "Q-GATE-1",
+      "ms": 1.09,
+      "rows": 1,
+      "at": 1791988500592,
+      "evidence_id": "ev_37d4a955d4",
+      "kind": "path",
+      "summary": "D-email-88 \u2192 email \u2192 checkout \u2192 frontend",
+      "params": {
+        "cause": "D-email-88",
+        "symptom": "frontend"
+      },
+      "digest": "e145f12dea94d9fc65a308eb46d36f4fd6a8822d957bb799108257c2f9c885b0"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0027",
+      "tool": "change_details",
+      "template": "Q-CHANGE-2",
+      "ms": 1.77,
+      "rows": 1,
+      "at": 1791988500598,
+      "evidence_id": "ev_69faca899a",
+      "kind": "change",
+      "summary": "D-email-88: deploy of email, 0 asserted facts",
+      "params": {
+        "id": "D-email-88"
+      },
+      "digest": "519ab14644bcbc41940053fc198bfcced17b8226d252738f12858913b6bb6cde"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0028",
+      "tool": "causal_paths",
+      "template": "Q-GATE-1",
+      "ms": 1.85,
+      "rows": 0,
+      "at": 1791988500604,
+      "evidence_id": "ev_5b8e92d948",
+      "kind": "path",
+      "summary": "no path D-rec-12 \u2192 checkout (\u2264 8 hops)",
+      "params": {
+        "cause": "D-rec-12",
+        "symptom": "checkout"
+      },
+      "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0029",
+      "tool": "diff_summary",
+      "template": "Q-CODE-1",
+      "ms": 5.62,
+      "rows": 1,
+      "at": 1791988500606,
+      "evidence_id": "ev_5e6c0befbf",
+      "kind": "code",
+      "summary": "D-rec-12: no commits or diff facts in the graph (code not inspectable)",
+      "params": {
+        "id": "D-rec-12"
+      },
+      "digest": "b4b2d4dc99a329253e9a8b8fc70f006e6c480a72166fff7e8d85bd58f41979d5"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0030",
+      "tool": "decision_check",
+      "template": "Q-DEC-1",
+      "ms": 1.78,
+      "rows": 0,
+      "at": 1791988500611,
+      "evidence_id": "ev_0a52693738",
+      "kind": "decision",
+      "summary": "0 violations",
+      "params": {
+        "change": "D-email-88"
+      },
+      "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0031",
+      "tool": "causal_paths",
+      "template": "Q-GATE-1",
+      "ms": 1.02,
+      "rows": 1,
+      "at": 1791988500612,
+      "evidence_id": "ev_428ec34cd1",
+      "kind": "path",
+      "summary": "D-rec-12 \u2192 recommendation \u2192 frontend",
+      "params": {
+        "cause": "D-rec-12",
+        "symptom": "frontend"
+      },
+      "digest": "c142dcb61c8c84e5dab5b99d1407b53b77494b40cdba1d4501a5f7c5c1454a4b"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0032",
+      "tool": "change_details",
+      "template": "Q-CHANGE-2",
+      "ms": 0.92,
+      "rows": 1,
+      "at": 1791988500626,
+      "evidence_id": "ev_1c8f6f2c80",
+      "kind": "change",
+      "summary": "D-rec-12: deploy of recommendation, 0 asserted facts",
+      "params": {
+        "id": "D-rec-12"
+      },
+      "digest": "485a6efeeda0a67bf3542159da62b1fbe4f2e2c500ed4eaa3d6d7deaf4dd06b5"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0033",
+      "tool": "decision_check",
+      "template": "Q-DEC-1",
+      "ms": 0.94,
+      "rows": 0,
+      "at": 1791988500632,
+      "evidence_id": "ev_8200ea578f",
+      "kind": "decision",
+      "summary": "0 violations",
+      "params": {
+        "change": "D-rec-12"
+      },
+      "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0034",
+      "tool": "window_changes",
+      "template": "Q-SUS-2",
+      "ms": 0.43,
+      "rows": 3,
+      "at": 1791988500638,
+      "evidence_id": "ev_9261921983",
+      "kind": "change",
+      "summary": "3 changes in window",
+      "params": {
+        "onset": 1792033200000,
+        "window_ms": 1800000
+      },
+      "digest": "24c1a92e96caaff064dfa42401b1483987f32ba40ca81200d6190e758d9563f8"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0035",
+      "tool": "causal_paths",
+      "template": "Q-GATE-1",
+      "ms": 0.59,
+      "rows": 1,
+      "at": 1791988500645,
+      "evidence_id": "ev_1a986a73de",
+      "kind": "path",
+      "summary": "D-email-88 \u2192 email \u2192 checkout",
+      "params": {
+        "cause": "D-email-88",
+        "symptom": "checkout"
+      },
+      "digest": "de3fa0e0f369dfedc2f0c2c6a165c26df2401e7e93a27e9dec9766dfc83f8491"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0036",
+      "tool": "causal_paths",
+      "template": "Q-GATE-1",
+      "ms": 0.34,
+      "rows": 1,
+      "at": 1791988500647,
+      "evidence_id": "ev_d9c05ffae8",
+      "kind": "path",
+      "summary": "D-pay-417 \u2192 payment \u2192 checkout",
+      "params": {
+        "cause": "D-pay-417",
+        "symptom": "checkout"
+      },
+      "digest": "057ca961bbe6c66f7c833458131f31f7d543fbfc484106a079d28670e83c7703"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0037",
+      "tool": "causal_paths",
+      "template": "Q-GATE-1",
+      "ms": 0.32,
+      "rows": 0,
+      "at": 1791988500649,
+      "evidence_id": "ev_5b8e92d948",
+      "kind": "path",
+      "summary": "no path D-rec-12 \u2192 checkout (\u2264 8 hops)",
+      "params": {
+        "cause": "D-rec-12",
+        "symptom": "checkout"
+      },
+      "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0038",
+      "tool": "upstream_explained",
+      "template": "Q-GATE-UPSTREAM",
+      "ms": 1.26,
+      "rows": 0,
+      "at": 1791988500652,
+      "evidence_id": "ev_7dc7bdb5ef",
+      "kind": "upstream",
+      "summary": "strict: no anomalous component upstream accounts for email, payment",
+      "params": {
+        "base_since": 1792031100000,
+        "base_until": 1792032600000,
+        "ids": [
+          "email",
+          "payment"
+        ],
+        "min_excess": 0.01,
+        "since": 1792032900000,
+        "until": 1792033260000
+      },
+      "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0039",
+      "tool": "impact_bound",
+      "template": "Q-GATE-3+Q-GATE-MULT",
+      "ms": 1.6,
+      "rows": 1,
+      "at": 1791988500657,
+      "evidence_id": "ev_03b4535c58",
+      "kind": "flow",
+      "summary": "bound 0.0200 (max flow 0.0200, up to 1 path(s)) vs needed 0.2433 (insufficient)",
+      "params": {
+        "Q-GATE-3": {
+          "sources": [
+            "email"
+          ],
+          "symptom": "checkout"
+        },
+        "Q-GATE-MULT": {
+          "sources": [
+            "email"
+          ],
+          "symptom": "checkout"
+        }
+      },
+      "digest": "fcfcca2381407c6c97e1c76e5eb034dcd6467ad728e7d9ce1ced7bd96e62e83a"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0040",
+      "tool": "impact_bound",
+      "template": "Q-GATE-3+Q-GATE-MULT",
+      "ms": 1.04,
+      "rows": 1,
+      "at": 1791988500660,
+      "evidence_id": "ev_edbfd9c531",
+      "kind": "flow",
+      "summary": "bound 1.0000 (max flow 1.0000, up to 1 path(s)) vs needed 0.2433 (sufficient)",
+      "params": {
+        "Q-GATE-3": {
+          "sources": [
+            "payment"
+          ],
+          "symptom": "checkout"
+        },
+        "Q-GATE-MULT": {
+          "sources": [
+            "payment"
+          ],
+          "symptom": "checkout"
+        }
+      },
+      "digest": "629b4c6bcbac016abab3682d423fe2e4f7faccda91ebc571a165de3e0b98aa6c"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0041",
+      "tool": "causal_paths",
+      "template": "Q-GATE-1",
+      "ms": 0.69,
+      "rows": 1,
+      "at": 1791988500674,
+      "evidence_id": "ev_d9c05ffae8",
+      "kind": "path",
+      "summary": "D-pay-417 \u2192 payment \u2192 checkout",
+      "params": {
+        "cause": "D-pay-417",
+        "symptom": "checkout"
+      },
+      "digest": "057ca961bbe6c66f7c833458131f31f7d543fbfc484106a079d28670e83c7703"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0042",
+      "tool": "upstream_explained",
+      "template": "Q-GATE-UPSTREAM-UB",
+      "ms": 1.34,
+      "rows": 0,
+      "at": 1791988500681,
+      "evidence_id": "ev_0d9b87053a",
+      "kind": "upstream",
+      "summary": "bound: no anomalous component upstream accounts for payment",
+      "params": {
+        "base_since": 1792031100000,
+        "base_until": 1792032600000,
+        "ids": [
+          "payment"
+        ],
+        "min_excess": 0.01,
+        "since": 1792032900000,
+        "slack": 1.25,
+        "until": 1792033260000
+      },
+      "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0043",
+      "tool": "impact_bound",
+      "template": "Q-GATE-3+Q-GATE-MULT",
+      "ms": 1.7,
+      "rows": 1,
+      "at": 1791988500690,
+      "evidence_id": "ev_edbfd9c531",
+      "kind": "flow",
+      "summary": "bound 1.0000 (max flow 1.0000, up to 1 path(s)) vs needed 0.2433 (sufficient)",
+      "params": {
+        "Q-GATE-3": {
+          "sources": [
+            "payment"
+          ],
+          "symptom": "checkout"
+        },
+        "Q-GATE-MULT": {
+          "sources": [
+            "payment"
+          ],
+          "symptom": "checkout"
+        }
+      },
+      "digest": "629b4c6bcbac016abab3682d423fe2e4f7faccda91ebc571a165de3e0b98aa6c"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0044",
+      "tool": "window_changes",
+      "template": "Q-SUS-2",
+      "ms": 0.8,
+      "rows": 3,
+      "at": 1791988500693,
+      "evidence_id": "ev_9261921983",
+      "kind": "change",
+      "summary": "3 changes in window",
+      "params": {
+        "onset": 1792033200000,
+        "window_ms": 1800000
+      },
+      "digest": "24c1a92e96caaff064dfa42401b1483987f32ba40ca81200d6190e758d9563f8"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0045",
+      "tool": "decision_check",
+      "template": "Q-DEC-1",
+      "ms": 1.31,
+      "rows": 2,
+      "at": 1791988500703,
+      "evidence_id": "ev_b0b75fec52",
+      "kind": "decision",
+      "summary": "2 violations",
+      "params": {
+        "change": "D-pay-417"
+      },
+      "digest": "8884e21641246a490f67786ab9d388030de7fd4fcc8bb8271d25d198e97485dd"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0046",
+      "tool": "alert_coverage",
+      "template": "Q-CHAIN-MON",
+      "ms": 0.94,
+      "rows": 3,
+      "at": 1791988500717,
+      "evidence_id": "ev_1a63c5a9d4",
+      "kind": "coverage",
+      "summary": "2/3 hops alerted; silent: D-pay-417",
+      "params": {
+        "chain": [
+          "D-pay-417",
+          "payment",
+          "checkout"
+        ],
+        "since": 1792031400000,
+        "until": 1792033800000
+      },
+      "digest": "45601640c39e84ab39c453c1d7271a9c8117b07e3bf180078f9b2c8901dafe58"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0047",
+      "tool": "residue_check",
+      "template": "Q-RESIDUE-1",
+      "ms": 2.0,
+      "rows": 4,
+      "at": 1791988500723,
+      "evidence_id": "ev_ac719239dd",
+      "kind": "residue",
+      "summary": "the confirmed cause D-pay-417 explains 3 of 4 anomalous components; another fault may be active: recommendation",
+      "params": {
+        "cause": "D-pay-417",
+        "inc": "inc-s1-ee6d96e6"
+      },
+      "digest": "87f9a20b1c4263dc1330ae709550fc5fb37ddc90f0bccef5aa8d981aaf34be51"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0048",
+      "tool": "blast_radius",
+      "template": "Q-BLAST-1",
+      "ms": 1.02,
+      "rows": 12,
+      "at": 1791988500736,
+      "evidence_id": "ev_22fd6ddea3",
+      "kind": "blast",
+      "summary": "12 impacted nodes",
+      "params": {
+        "id": "payment"
+      },
+      "digest": "f67ba07f99a2e236d8ffe333e346766d4ad1b7f0773af6c13c16d2e91f2cbc1e"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0049",
+      "tool": "connectivity_check",
+      "template": "Q-CONN-2",
+      "ms": 1.03,
+      "rows": 1,
+      "at": 1791988500751,
+      "evidence_id": "ev_7804e63ea8",
+      "kind": "topology",
+      "summary": "payment is connected to a protected node",
+      "params": {
+        "protect": [
+          "frontend-proxy",
+          "kpi.exec_revenue"
+        ],
+        "target": "payment"
+      },
+      "digest": "b34cdf355338d793c31e9a0a04a203f8027d28e87495c394191aa696625bc855"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0050",
+      "tool": "containment_cut",
+      "template": "Q-CUT-1",
+      "ms": 2.37,
+      "rows": 2,
+      "at": 1791988500758,
+      "evidence_id": "ev_44da9f7262",
+      "kind": "flow",
+      "summary": "cut [('payment', 'checkout'), ('payment', 'raw.raw_orders')] total 1.04",
+      "params": {
+        "failing": "payment",
+        "protect": [
+          "frontend-proxy",
+          "kpi.exec_revenue"
+        ]
+      },
+      "digest": "e6eda91090b0ca9250b177ab5a9587452ca5b7a55227585ff635b455c2db768a"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0051",
+      "tool": "whatif",
+      "template": "Q-WHATIF-1",
+      "ms": 0.44,
+      "rows": 1,
+      "at": 1791988500859,
+      "evidence_id": "ev_36ccc99d18",
+      "kind": "whatif",
+      "summary": "contains: protected still reached []; connected {'cart': True, 'checkout': True, 'currency': True, 'frontend': True, 'product-catalog': True, 'shipping': True, 'quote': True}",
+      "params": {
+        "failing": "payment"
+      },
+      "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0052",
+      "tool": "futures",
+      "template": "Q-WHATIF-2+Q-FUTURE-1+Q-FUTURE-1+Q-FUTURE-1+Q-WHATIF-2+Q-FUTURE-1+Q-WHATIF-2+Q-FUTURE-1",
+      "ms": 11.11,
+      "rows": 5,
+      "at": 1791988501161,
+      "evidence_id": "ev_cfe3b16bdb",
+      "kind": "whatif",
+      "summary": "min_cut: contains; remove_origin: contains; no_change: does_not_contain; payment|checkout: contains; payment|raw.raw_orders: does_not_contain",
+      "params": {
+        "Q-FUTURE-1": {
+          "base_since": 1792031400000,
+          "base_until": 1792032900000,
+          "origin": "payment",
+          "removes_origin": false,
+          "since": 1792033200000,
+          "targets": [
+            "checkout",
+            "frontend",
+            "frontend-proxy",
+            "kpi.exec_revenue"
+          ],
+          "until": 1792033800000
+        },
+        "Q-FUTURE-1#2": {
+          "base_since": 1792031400000,
+          "base_until": 1792032900000,
+          "origin": "payment",
+          "removes_origin": true,
+          "since": 1792033200000,
+          "targets": [
+            "checkout",
+            "frontend",
+            "frontend-proxy",
+            "kpi.exec_revenue"
+          ],
+          "until": 1792033800000
+        },
+        "Q-FUTURE-1#3": {
+          "base_since": 1792031400000,
+          "base_until": 1792032900000,
+          "origin": "payment",
+          "removes_origin": false,
+          "since": 1792033200000,
+          "targets": [
+            "checkout",
+            "frontend",
+            "frontend-proxy",
+            "kpi.exec_revenue"
+          ],
+          "until": 1792033800000
+        },
+        "Q-FUTURE-1#4": {
+          "base_since": 1792031400000,
+          "base_until": 1792032900000,
+          "origin": "payment",
+          "removes_origin": false,
+          "since": 1792033200000,
+          "targets": [
+            "checkout",
+            "frontend",
+            "frontend-proxy",
+            "kpi.exec_revenue"
+          ],
+          "until": 1792033800000
+        },
+        "Q-FUTURE-1#5": {
+          "base_since": 1792031400000,
+          "base_until": 1792032900000,
+          "origin": "payment",
+          "removes_origin": false,
+          "since": 1792033200000,
+          "targets": [
+            "checkout",
+            "frontend",
+            "frontend-proxy",
+            "kpi.exec_revenue"
+          ],
+          "until": 1792033800000
+        },
+        "Q-WHATIF-2": {
+          "ids": [
+            "frontend-proxy",
+            "cart",
+            "checkout",
+            "currency",
+            "frontend",
+            "product-catalog",
+            "shipping",
+            "quote"
+          ]
+        },
+        "Q-WHATIF-2#2": {
+          "ids": [
+            "frontend-proxy",
+            "cart",
+            "checkout",
+            "currency",
+            "frontend",
+            "product-catalog",
+            "shipping",
+            "quote"
+          ]
+        },
+        "Q-WHATIF-2#3": {
+          "ids": [
+            "frontend-proxy",
+            "cart",
+            "checkout",
+            "currency",
+            "frontend",
+            "product-catalog",
+            "shipping",
+            "quote"
+          ]
+        }
+      },
+      "digest": "0cd0fd879416de752d7fcf570f6b865cc28a1913b099b7f4de01ba5ab0b4e533"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0053",
+      "tool": "who_fixes",
+      "template": "Q-ORG-WHO+Q-ORG-KNOWS+Q-ORG-HARM",
+      "ms": 8.81,
+      "rows": 6,
+      "at": 1791988501190,
+      "evidence_id": "ev_0345b9bef4",
+      "kind": "people",
+      "summary": "p-017 (authored 8 recent commit(s) on payment, resolved inc-h008, inc-h011, inc-h015 on payment); p-030 (authored 5 recent commit(s) on payment, resolved inc-h018 on payment); p-036 (authored 5 recent commit(s) on payment, resolved inc-h037, inc-h039 on payment)",
+      "params": {
+        "Q-ORG-HARM": {},
+        "Q-ORG-KNOWS": {
+          "after_a": "",
+          "after_b": "",
+          "min_collab": 0.5,
+          "now": 1792033200000,
+          "since": 1789441200000,
+          "target": "payment"
+        },
+        "Q-ORG-WHO": {
+          "now": 1792033200000,
+          "since": 1789441200000,
+          "target": "payment"
+        }
+      },
+      "digest": "50938d6c4e33589eaf713b01cb4a475f624b2b690dc75e1b2ff876eb89a62652"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0054",
+      "tool": "bus_factor",
+      "template": "Q-ORG-BUS",
+      "ms": 1.36,
+      "rows": 1,
+      "at": 1791988501196,
+      "evidence_id": "ev_2c21d8019a",
+      "kind": "people",
+      "summary": "bus factor 2",
+      "params": {
+        "target": "payment"
+      },
+      "digest": "9700dd8b9c5565a2586bb5f966810d7b39f6916dc78b6222104d8b2c6e589ca3"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0055",
+      "tool": "escalation_tree",
+      "template": "Q-ORG-MGR+Q-ORG-COLLAB-W+Q-ORG-MSF",
+      "ms": 3.06,
+      "rows": 5,
+      "at": 1791988501205,
+      "evidence_id": "ev_8e150d984c",
+      "kind": "people",
+      "summary": "5 escalation edges over 6 people",
+      "params": {
+        "Q-ORG-COLLAB-W": {
+          "ids": [
+            "p-001",
+            "p-002",
+            "p-004",
+            "p-017",
+            "p-030",
+            "p-036"
+          ]
+        },
+        "Q-ORG-MGR": {
+          "ids": [
+            "p-017",
+            "p-030",
+            "p-036"
+          ]
+        },
+        "Q-ORG-MSF": {}
+      },
+      "digest": "e90cda1172c5f5376c8c020e21da9d7550200ec4cb3cc2c3ec829b0008fb408d"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0056",
+      "tool": "obligation_clock",
+      "template": "Q-OBL-SLO+Q-OBL-CUST",
+      "ms": 3.52,
+      "rows": 4,
+      "at": 1791988501213,
+      "evidence_id": "ev_881a6ca427",
+      "kind": "obligation",
+      "summary": "slo-checkout (checkout) runs out of error budget in ~605 min at 30.7x burn (43% of budget left); under the 1440-min paging line; 5 customers reached, 28,600 MRR at risk (URGENT: page now)",
+      "params": {
+        "Q-OBL-CUST": {
+          "id": "payment"
+        },
+        "Q-OBL-SLO": {
+          "current_since": 1792033020000,
+          "id": "payment",
+          "now": 1792033200000
+        }
+      },
+      "digest": "616fc614dce9a489a591db2312af41cbe4e1878502354517635b1766a590fcc0"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0057",
+      "tool": "notify_set",
+      "template": "Q-NOTIFY-1",
+      "ms": 1.15,
+      "rows": 4,
+      "at": 1791988501219,
+      "evidence_id": "ev_5e8b146a26",
+      "kind": "people",
+      "summary": "4 teams to notify: team-storefront, team-checkout, team-data, team-assistant (owners of obligated nodes first)",
+      "params": {
+        "ids": [
+          "agent",
+          "chatbot",
+          "checkout",
+          "dash.exec_morning",
+          "frontend",
+          "frontend-proxy",
+          "kpi.exec_revenue",
+          "marts.exec_revenue_metric",
+          "marts.fct_revenue",
+          "mcp",
+          "raw.raw_orders",
+          "staging.stg_orders"
+        ],
+        "now": 1792033200000
+      },
+      "digest": "c876ba826abec2c557b389db71c6d5804c146943faec15618f370251f1290533"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0058",
+      "tool": "owner_at",
+      "template": "Q-OWN-AT",
+      "ms": 0.82,
+      "rows": 1,
+      "at": 1791988501225,
+      "evidence_id": "ev_bf6daeb347",
+      "kind": "people",
+      "summary": "payment was owned by team-payments then, and still is",
+      "params": {
+        "at": 1792033020000,
+        "id": "payment"
+      },
+      "digest": "025338c97a00afdf61d393471d1daa08d80af144ca4c4520f1071c63377fddd1"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0059",
+      "tool": "remedy_stats",
+      "template": "Q-REM-1",
+      "ms": 3.3,
+      "rows": 3,
+      "at": 1791988501239,
+      "evidence_id": "ev_8271fbdc0e",
+      "kind": "remedy",
+      "summary": "3 fix-kind outcomes on past incidents sharing a symptom with this one; best rollback_deploy 6/6",
+      "params": {
+        "inc": "inc-s1-ee6d96e6",
+        "incidents": [],
+        "symptoms": [
+          "sym-error_rate-checkout",
+          "sym-error_rate-frontend"
+        ]
+      },
+      "digest": "7ae9946dde3fd7f902c6110c69dc8a48220f5330a90d8d63c51cf1e9f6f19dac"
+    },
+    {
+      "id": "run-s1-ee6d96e6-tc0060",
+      "tool": "incident_families",
+      "template": "Q-MEM-6",
+      "ms": 4.04,
+      "rows": 6,
+      "at": 1791988501502,
+      "evidence_id": "ev_8d169e5e3e",
+      "kind": "recall",
+      "summary": "6 families; inc-s1-ee6d96e6 is in one of 11",
+      "params": {
+        "inc": "inc-s1-ee6d96e6"
+      },
+      "digest": "175e84fc2ccef86da468b941d623bfa42ad70ea563aaf1065b57aec31e78b3c5"
+    }
+  ],
+  "hypotheses": [
+    {
+      "id": "hyp-inc-s1-ee6d96e6-D-email-88",
+      "cause": "D-email-88",
+      "status": "eliminated",
+      "score": 0.3256,
+      "reason": "G5: max flow 0.0200 < needed 0.2433 (observed 0.3041 \u00d7 0.8); another suspect alone can carry 1.0000",
+      "origin": "code",
+      "supports": [],
+      "refutes": [
+        "ev_d3ce0adb65",
+        "ev_1a986a73de",
+        "ev_03b4535c58"
+      ]
+    },
+    {
+      "id": "hyp-inc-s1-ee6d96e6-D-pay-417",
+      "cause": "D-pay-417",
+      "status": "confirmed",
+      "score": 0.3495,
+      "reason": "gate passed",
+      "origin": "code",
+      "supports": [
+        "ev_9dc2e8c800",
+        "ev_d3ce0adb65",
+        "ev_edbfd9c531",
+        "ev_0d9b87053a"
+      ],
+      "refutes": []
+    },
+    {
+      "id": "hyp-inc-s1-ee6d96e6-D-rec-12",
+      "cause": "D-rec-12",
+      "status": "eliminated",
+      "score": 0.3112,
+      "reason": "G2: no path to any primary symptom (no path, no claim)",
+      "origin": "code",
+      "supports": [],
+      "refutes": [
+        "ev_5b8e92d948"
+      ]
+    }
+  ],
+  "gate_runs": [
+    {
+      "id": "gr-inc-s1-ee6d96e6-fd66562c",
+      "cause": "D-email-88",
+      "passed": false,
+      "confident": false,
+      "checks": [
+        {
+          "attach_only": false,
+          "detail": "D-email-88 \u2192 email \u2192 checkout",
+          "downgrade_only": false,
+          "evidence_ids": [
+            "ev_1a986a73de",
+            "ev_03b4535c58",
+            "ev_d3ce0adb65"
+          ],
+          "name": "G2 path",
+          "params": {
+            "cause": "D-email-88",
+            "symptom": "checkout"
+          },
+          "passed": true,
+          "template": "Q-GATE-1"
+        },
+        {
+          "attach_only": false,
+          "detail": "G5: max flow 0.0200 < needed 0.2433 (observed 0.3041 \u00d7 0.8); another suspect alone can carry 1.0000",
+          "downgrade_only": false,
+          "evidence_ids": [],
+          "name": "G5 sufficiency",
+          "params": {
+            "sources": [
+              "email"
+            ],
+            "symptom": "checkout"
+          },
+          "passed": false,
+          "template": "Q-GATE-3"
+        }
+      ],
+      "attempt": 0,
+      "origin": "sweep",
+      "at": 1791988500665
+    },
+    {
+      "id": "gr-inc-s1-ee6d96e6-8813ba56",
+      "cause": "D-pay-417",
+      "passed": true,
+      "confident": false,
+      "checks": [
+        {
+          "attach_only": false,
+          "detail": "D-pay-417 \u2192 payment \u2192 checkout",
+          "downgrade_only": false,
+          "evidence_ids": [
+            "ev_d9c05ffae8",
+            "ev_edbfd9c531",
+            "ev_d3ce0adb65"
+          ],
+          "name": "G2 path",
+          "params": {
+            "cause": "D-pay-417",
+            "symptom": "checkout"
+          },
+          "passed": true,
+          "template": "Q-GATE-1"
+        },
+        {
+          "attach_only": false,
+          "detail": "G5: max flow 1.0000 \u2265 needed 0.2433 (observed 0.3041 \u00d7 0.8)",
+          "downgrade_only": false,
+          "evidence_ids": [],
+          "name": "G5 sufficiency",
+          "params": {
+            "sources": [
+              "payment"
+            ],
+            "symptom": "checkout"
+          },
+          "passed": true,
+          "template": "Q-GATE-3"
+        }
+      ],
+      "attempt": 0,
+      "origin": "sweep",
+      "at": 1791988500667
+    },
+    {
+      "id": "gr-inc-s1-ee6d96e6-3c169941",
+      "cause": "D-rec-12",
+      "passed": false,
+      "confident": false,
+      "checks": [
+        {
+          "attach_only": false,
+          "detail": "G2: no path to any primary symptom (no path, no claim)",
+          "downgrade_only": false,
+          "evidence_ids": [
+            "ev_5b8e92d948"
+          ],
+          "name": "G2 path",
+          "params": {
+            "cause": "D-rec-12",
+            "symptom": "checkout"
+          },
+          "passed": false,
+          "template": "Q-GATE-1"
+        }
+      ],
+      "attempt": 0,
+      "origin": "sweep",
+      "at": 1791988500669
+    },
+    {
+      "id": "gr-inc-s1-ee6d96e6-539c7ad4",
+      "cause": "D-pay-417",
+      "passed": true,
+      "confident": true,
+      "checks": [
+        {
+          "attach_only": false,
+          "detail": "cause seen in a graph result this run; all cited evidence produced by this run",
+          "downgrade_only": false,
+          "evidence_ids": [],
+          "name": "G1 grounded",
+          "params": {
+            "evidence": [
+              "ev_9dc2e8c800",
+              "ev_fec5a56292",
+              "ev_d3ce0adb65",
+              "ev_41cc30c06d",
+              "ev_45d09e4d6a"
+            ],
+            "ids": [
+              "D-pay-417"
+            ],
+            "run": "run-s1-ee6d96e6"
+          },
+          "passed": true,
+          "template": "Q-GATE-G1"
+        },
+        {
+          "attach_only": false,
+          "detail": "D-pay-417 \u2192 payment \u2192 checkout",
+          "downgrade_only": false,
+          "evidence_ids": [],
+          "name": "G2 path",
+          "params": {
+            "cause": "D-pay-417",
+            "symptom": "checkout"
+          },
+          "passed": true,
+          "template": "Q-GATE-1"
+        },
+        {
+          "attach_only": false,
+          "detail": "change 3.0 min before onset (window 30 min)",
+          "downgrade_only": false,
+          "evidence_ids": [],
+          "name": "G3 time",
+          "params": {
+            "cause": "D-pay-417",
+            "onset": 1792033200000,
+            "window_ms": 1800000
+          },
+          "passed": true,
+          "template": "Q-GATE-2"
+        },
+        {
+          "attach_only": false,
+          "detail": "ev_9dc2e8c800 on checkout; ev_d3ce0adb65 on payment",
+          "downgrade_only": false,
+          "evidence_ids": [
+            "ev_9dc2e8c800",
+            "ev_d3ce0adb65"
+          ],
+          "name": "G4 quantitative",
+          "params": {
+            "chain": [
+              "D-pay-417",
+              "payment",
+              "checkout"
+            ],
+            "evidence": [
+              "ev_9dc2e8c800",
+              "ev_fec5a56292",
+              "ev_d3ce0adb65",
+              "ev_41cc30c06d",
+              "ev_45d09e4d6a"
+            ],
+            "run": "run-s1-ee6d96e6"
+          },
+          "passed": true,
+          "template": "Q-GATE-4"
+        },
+        {
+          "attach_only": false,
+          "detail": "ev_d3ce0adb65 on payment",
+          "downgrade_only": true,
+          "evidence_ids": [
+            "ev_d3ce0adb65"
+          ],
+          "name": "G4 origin",
+          "params": {
+            "chain": [
+              "D-pay-417",
+              "payment",
+              "checkout"
+            ],
+            "evidence": [
+              "ev_9dc2e8c800",
+              "ev_fec5a56292",
+              "ev_d3ce0adb65",
+              "ev_41cc30c06d",
+              "ev_45d09e4d6a"
+            ],
+            "run": "run-s1-ee6d96e6"
+          },
+          "passed": true,
+          "template": "Q-GATE-4"
+        },
+        {
+          "attach_only": false,
+          "detail": "no anomalous component upstream can carry the changed component's excess",
+          "downgrade_only": true,
+          "evidence_ids": [
+            "ev_0d9b87053a"
+          ],
+          "name": "G4 upstream",
+          "params": {
+            "ids": [
+              "payment"
+            ]
+          },
+          "passed": true,
+          "template": "Q-GATE-UPSTREAM-UB"
+        },
+        {
+          "attach_only": false,
+          "detail": "checkout: max flow 1.0000 \u2265 needed 0.2433",
+          "downgrade_only": false,
+          "evidence_ids": [
+            "ev_d3ce0adb65",
+            "ev_edbfd9c531"
+          ],
+          "name": "G5 sufficiency",
+          "params": {
+            "sources": [
+              "payment"
+            ],
+            "symptom": "checkout"
+          },
+          "passed": true,
+          "template": "Q-GATE-3"
+        },
+        {
+          "attach_only": false,
+          "detail": "every competitor eliminated with evidence",
+          "downgrade_only": false,
+          "evidence_ids": [],
+          "name": "G6 competitors",
+          "params": {
+            "inc": "inc-s1-ee6d96e6"
+          },
+          "passed": true,
+          "template": "Q-HYP-1"
+        },
+        {
+          "attach_only": false,
+          "detail": "independent channels on the chain: ['falkordb', 'simulator']",
+          "downgrade_only": true,
+          "evidence_ids": [],
+          "name": "G7 agreement",
+          "params": {
+            "chain": [
+              "D-pay-417",
+              "payment",
+              "checkout"
+            ],
+            "evidence": [
+              "ev_9dc2e8c800",
+              "ev_fec5a56292",
+              "ev_d3ce0adb65",
+              "ev_41cc30c06d",
+              "ev_45d09e4d6a",
+              "ev_d3ce0adb65",
+              "ev_edbfd9c531"
+            ],
+            "run": "run-s1-ee6d96e6"
+          },
+          "passed": true,
+          "template": "Q-GATE-7"
+        },
+        {
+          "attach_only": false,
+          "detail": "change and code specialists both name D-pay-417 (CHANGED \u2192 payment)",
+          "downgrade_only": true,
+          "evidence_ids": [],
+          "name": "G7 correlation",
+          "params": {
+            "cause": "D-pay-417",
+            "chain": [
+              "D-pay-417",
+              "payment",
+              "checkout"
+            ],
+            "roles": [
+              "change",
+              "code",
+              "data"
+            ],
+            "run": "run-s1-ee6d96e6"
+          },
+          "passed": true,
+          "template": "Q-GATE-CORR"
+        },
+        {
+          "attach_only": true,
+          "detail": "violates ADR-012: payment.client.timeout_ms <= 2000 (actual 5000); violates ADR-013: payment.client.retries >= 2 (actual 0)",
+          "downgrade_only": true,
+          "evidence_ids": [],
+          "name": "G8 contradiction",
+          "params": {
+            "change": "D-pay-417"
+          },
+          "passed": false,
+          "template": "Q-DEC-1"
+        }
+      ],
+      "attempt": 1,
+      "origin": "confirm",
+      "at": 1791988500707
+    }
+  ],
+  "crew": {
+    "roster": [
+      {
+        "key": "triage",
+        "id": "crew-triage",
+        "name": "Triage",
+        "job": "groups the alert storm into independent incidents (algo.WCC)",
+        "stages": [
+          "INTAKE"
+        ],
+        "tools": [
+          "context_pack",
+          "find_entities",
+          "finish",
+          "group_alerts",
+          "service_context"
+        ],
+        "writes": "opens incidents and attaches alerts (intake writes)",
+        "model": "none"
+      },
+      {
+        "key": "historian",
+        "id": "crew-historian",
+        "name": "Historian",
+        "job": "recalls past incidents and runbooks that share the symptoms",
+        "stages": [
+          "RECALL"
+        ],
+        "tools": [
+          "finish",
+          "incident_families",
+          "runbook_for",
+          "session_history",
+          "similar_incidents"
+        ],
+        "writes": "records what was recalled (W-RECALL)",
+        "model": "none"
+      },
+      {
+        "key": "cartographer",
+        "id": "crew-cartographer",
+        "name": "Cartographer",
+        "job": "maps the symptoms' upstream scope, context and blast radius",
+        "stages": [
+          "LOCALIZE",
+          "BLAST"
+        ],
+        "tools": [
+          "blast_radius",
+          "chokepoints",
+          "column_lineage",
+          "find_entities",
+          "finish",
+          "service_context",
+          "upstream_scope"
+        ],
+        "writes": "none (read-only)",
+        "model": "none"
+      },
+      {
+        "key": "profiler",
+        "id": "crew-profiler",
+        "name": "Profiler",
+        "job": "lists the changes upstream of the symptoms in the window and ranks them in code",
+        "stages": [
+          "HYPOTHESIZE"
+        ],
+        "tools": [
+          "finish",
+          "rank_causes",
+          "record_hypothesis",
+          "upstream_suspects",
+          "window_changes"
+        ],
+        "writes": "open hypotheses (W-HYP)",
+        "model": "none"
+      },
+      {
+        "key": "lead",
+        "id": "crew-lead",
+        "name": "Lead investigator",
+        "job": "dispatches the five specialists and proposes a cause to the gate",
+        "stages": [
+          "INVESTIGATE"
+        ],
+        "tools": [
+          "anomalous_row_share",
+          "baseline_columns",
+          "causal_paths",
+          "change_details",
+          "compare_to_baseline",
+          "confirm_root_cause",
+          "decision_check",
+          "declare_no_incident",
+          "diff_summary",
+          "finish",
+          "get_metric_history",
+          "graph_schema",
+          "impact_bound",
+          "list_transforms",
+          "metric_window",
+          "profile_column",
+          "propose_repair",
+          "reachable_from_changes",
+          "read_transform",
+          "record_hypothesis",
+          "run_cypher_readonly",
+          "run_invariants",
+          "run_sql",
+          "update_hypothesis",
+          "upstream_scope"
+        ],
+        "writes": "hypothesis status, through the gate only",
+        "model": "optional"
+      },
+      {
+        "key": "gatekeeper",
+        "id": "crew-gatekeeper",
+        "name": "Gatekeeper",
+        "job": "decides: path, flow, time, origin, rivals, agreement, contradictions (G1\u2013G8)",
+        "stages": [
+          "GATE",
+          "CONTRADICTION"
+        ],
+        "tools": [
+          "alert_coverage",
+          "confirm_root_cause",
+          "decision_check",
+          "declare_no_incident",
+          "finish",
+          "reachable_from_changes",
+          "residue_check",
+          "trace_decision"
+        ],
+        "writes": "gate runs (W-GATE)",
+        "model": "none"
+      },
+      {
+        "key": "containment",
+        "id": "crew-containment",
+        "name": "Containment",
+        "job": "finds the smallest cut (algo.maxFlow) and tries each option on a GRAPH.COPY",
+        "stages": [
+          "CONTAIN"
+        ],
+        "tools": [
+          "blast_radius",
+          "connectivity_check",
+          "containment_cut",
+          "finish",
+          "futures",
+          "whatif"
+        ],
+        "writes": "none (clean rooms are scratch graphs)",
+        "model": "none"
+      },
+      {
+        "key": "dispatcher",
+        "id": "crew-dispatcher",
+        "name": "Dispatcher",
+        "job": "finds who fixes it, the escalation path, obligations and who to notify",
+        "stages": [
+          "ROUTE"
+        ],
+        "tools": [
+          "bus_factor",
+          "escalation_tree",
+          "finish",
+          "notify_set",
+          "obligation_clock",
+          "owner_at",
+          "owners_of",
+          "who_fixes"
+        ],
+        "writes": "none (read-only)",
+        "model": "none"
+      },
+      {
+        "key": "planner",
+        "id": "crew-planner",
+        "name": "Planner",
+        "job": "turns the cut into options from the fixed action enum, each with a plan hash",
+        "stages": [
+          "PLAN"
+        ],
+        "tools": [
+          "finish",
+          "propose_plan",
+          "remedy_stats"
+        ],
+        "writes": "plan and options (W-PLAN)",
+        "model": "none"
+      },
+      {
+        "key": "operator",
+        "id": "crew-operator",
+        "name": "Operator",
+        "job": "executes the one approved action, intent first (the only holder of execute_action)",
+        "stages": [
+          "EXECUTE"
+        ],
+        "tools": [
+          "execute_action",
+          "finish"
+        ],
+        "writes": "intent and action (W-INTENT, the single write tool)",
+        "model": "none"
+      },
+      {
+        "key": "auditor",
+        "id": "crew-auditor",
+        "name": "Auditor",
+        "job": "verifies the action through a second channel and re-reads the write-back",
+        "stages": [
+          "VERIFY",
+          "WRITEBACK"
+        ],
+        "tools": [
+          "finish",
+          "verify_action",
+          "write_back"
+        ],
+        "writes": "verdict and write-back (W-WB), re-read on a separate RO connection",
+        "model": "none"
+      },
+      {
+        "key": "librarian",
+        "id": "crew-librarian",
+        "name": "Librarian",
+        "job": "files the incident into memory so the next one starts warm",
+        "stages": [
+          "LEARN"
+        ],
+        "tools": [
+          "consolidate",
+          "finish"
+        ],
+        "writes": "family and consolidation (W-LEARN)",
+        "model": "none"
+      }
+    ],
+    "steps": [
+      {
+        "task": "crew-run-s1-ee6d96e6-triage-intake",
+        "kind": "crew",
+        "role": "triage",
+        "stage": "INTAKE",
+        "agent": "crew-triage",
+        "state": "done",
+        "status": "done",
+        "claimed_at": 1791988500344,
+        "done_at": 1791988500348,
+        "summary": "opened inc-s1-ee6d96e6 from 2 alert(s) on checkout, frontend",
+        "after": [],
+        "names": [],
+        "cites": 0,
+        "calls": [
+          {
+            "id": "run-s1-ee6d96e6-intake-tc0001",
+            "tool": "group_alerts",
+            "template": "Q-ALERT-1+Q-STORM-EDGES+Q-STORM-ORIGINS+Q-STORM-WCC+Q-STORM-ATTACH",
+            "ms": 8.19,
+            "rows": 1,
+            "at": 1791988500329
+          }
+        ],
+        "unknowns": null,
+        "limits": null,
+        "reaps": 0
+      },
+      {
+        "task": "crew-run-s1-ee6d96e6-historian-recall",
+        "kind": "crew",
+        "role": "historian",
+        "stage": "RECALL",
+        "agent": "crew-historian",
+        "state": "done",
+        "status": "done",
+        "claimed_at": 1791988500415,
+        "done_at": 1791988500452,
+        "summary": "5 precedent(s), 3 runbook(s) recalled; prior on payment",
+        "after": [
+          "crew-run-s1-ee6d96e6-triage-intake"
+        ],
+        "names": [],
+        "cites": 0,
+        "calls": [
+          {
+            "id": "run-s1-ee6d96e6-tc0001",
+            "tool": "similar_incidents",
+            "template": "Q-MEM-1",
+            "ms": 3.11,
+            "rows": 5,
+            "at": 1791988500421
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0002",
+            "tool": "runbook_for",
+            "template": "Q-MEM-3",
+            "ms": 1.16,
+            "rows": 3,
+            "at": 1791988500448
+          }
+        ],
+        "unknowns": null,
+        "limits": null,
+        "reaps": 0
+      },
+      {
+        "task": "crew-run-s1-ee6d96e6-cartographer-localize",
+        "kind": "crew",
+        "role": "cartographer",
+        "stage": "LOCALIZE",
+        "agent": "crew-cartographer",
+        "state": "done",
+        "status": "done",
+        "claimed_at": 1791988500454,
+        "done_at": 1791988500477,
+        "summary": "27 upstream node(s) in scope; blast radius of 2 symptom(s): 9 node(s); top chokepoint frontend",
+        "after": [
+          "crew-run-s1-ee6d96e6-historian-recall"
+        ],
+        "names": [],
+        "cites": 0,
+        "calls": [
+          {
+            "id": "run-s1-ee6d96e6-tc0003",
+            "tool": "service_context",
+            "template": "Q-CTX-1",
+            "ms": 0.91,
+            "rows": 1,
+            "at": 1791988500456
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0004",
+            "tool": "upstream_scope",
+            "template": "Q-LIN-1",
+            "ms": 0.76,
+            "rows": 12,
+            "at": 1791988500459
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0005",
+            "tool": "service_context",
+            "template": "Q-CTX-1",
+            "ms": 0.54,
+            "rows": 1,
+            "at": 1791988500462
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0006",
+            "tool": "upstream_scope",
+            "template": "Q-LIN-1",
+            "ms": 0.57,
+            "rows": 15,
+            "at": 1791988500465
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0007",
+            "tool": "blast_radius",
+            "template": "Q-BLAST-1",
+            "ms": 0.37,
+            "rows": 5,
+            "at": 1791988500468
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0008",
+            "tool": "blast_radius",
+            "template": "Q-BLAST-1",
+            "ms": 0.34,
+            "rows": 4,
+            "at": 1791988500471
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0009",
+            "tool": "chokepoints",
+            "template": "Q-CHOKE-1",
+            "ms": 0.88,
+            "rows": 10,
+            "at": 1791988500474
+          }
+        ],
+        "unknowns": null,
+        "limits": null,
+        "reaps": 0
+      },
+      {
+        "task": "crew-run-s1-ee6d96e6-profiler-hypothesize",
+        "kind": "crew",
+        "role": "profiler",
+        "stage": "HYPOTHESIZE",
+        "agent": "crew-profiler",
+        "state": "done",
+        "status": "done",
+        "claimed_at": 1791988500478,
+        "done_at": 1791988500511,
+        "summary": "3 suspect change(s) ranked in code: D-pay-417, D-email-88, D-rec-12",
+        "after": [
+          "crew-run-s1-ee6d96e6-cartographer-localize"
+        ],
+        "names": [],
+        "cites": 0,
+        "calls": [
+          {
+            "id": "run-s1-ee6d96e6-tc0010",
+            "tool": "upstream_suspects",
+            "template": "Q-SUS-1",
+            "ms": 1.01,
+            "rows": 2,
+            "at": 1791988500481
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0011",
+            "tool": "upstream_suspects",
+            "template": "Q-SUS-1",
+            "ms": 1.09,
+            "rows": 3,
+            "at": 1791988500486
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0012",
+            "tool": "window_changes",
+            "template": "Q-SUS-2",
+            "ms": 0.97,
+            "rows": 3,
+            "at": 1791988500490
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0013",
+            "tool": "rank_causes",
+            "template": "Q-RANK-1",
+            "ms": 1.06,
+            "rows": 16,
+            "at": 1791988500500
+          }
+        ],
+        "unknowns": null,
+        "limits": null,
+        "reaps": 0
+      },
+      {
+        "task": "crew-run-s1-ee6d96e6-lead-investigate",
+        "kind": "crew",
+        "role": "lead",
+        "stage": "INVESTIGATE",
+        "agent": "crew-lead",
+        "state": "done",
+        "status": "done",
+        "claimed_at": 1791988500514,
+        "done_at": 1791988500711,
+        "summary": "baseline-policy (deterministic, no LLM): 5 specialist(s) dispatched, 4 complete; 1 cause(s) put to the gate",
+        "after": [
+          "crew-run-s1-ee6d96e6-profiler-hypothesize"
+        ],
+        "names": [],
+        "cites": 0,
+        "calls": [],
+        "unknowns": null,
+        "limits": null,
+        "reaps": 0
+      },
+      {
+        "task": "spec-run-s1-ee6d96e6-topology-267e3600",
+        "kind": "specialist",
+        "role": "topology",
+        "stage": null,
+        "agent": "topology-specialist-80c7482e",
+        "state": "done",
+        "status": "complete",
+        "claimed_at": 1791988500516,
+        "done_at": 1791988500622,
+        "summary": null,
+        "after": [],
+        "names": [
+          "D-pay-417",
+          "D-email-88",
+          "D-rec-12"
+        ],
+        "cites": 6,
+        "calls": [
+          {
+            "id": "run-s1-ee6d96e6-tc0019",
+            "tool": "causal_paths",
+            "template": "Q-GATE-1",
+            "ms": 1.35,
+            "rows": 1,
+            "at": 1791988500566
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0021",
+            "tool": "causal_paths",
+            "template": "Q-GATE-1",
+            "ms": 1.89,
+            "rows": 1,
+            "at": 1791988500575
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0023",
+            "tool": "causal_paths",
+            "template": "Q-GATE-1",
+            "ms": 2.19,
+            "rows": 1,
+            "at": 1791988500583
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0026",
+            "tool": "causal_paths",
+            "template": "Q-GATE-1",
+            "ms": 1.09,
+            "rows": 1,
+            "at": 1791988500592
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0028",
+            "tool": "causal_paths",
+            "template": "Q-GATE-1",
+            "ms": 1.85,
+            "rows": 0,
+            "at": 1791988500604
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0031",
+            "tool": "causal_paths",
+            "template": "Q-GATE-1",
+            "ms": 1.02,
+            "rows": 1,
+            "at": 1791988500612
+          }
+        ],
+        "unknowns": [
+          "no path D-rec-12 \u2192 checkout"
+        ],
+        "limits": [
+          "reachability only: a path is necessary for a claim, never sufficient (flow and timing are gate checks)"
+        ],
+        "reaps": 0
+      },
+      {
+        "task": "spec-run-s1-ee6d96e6-telemetry-267e3600",
+        "kind": "specialist",
+        "role": "telemetry",
+        "stage": null,
+        "agent": "telemetry-specialist-80c7482e",
+        "state": "done",
+        "status": "complete",
+        "claimed_at": 1791988500519,
+        "done_at": 1791988500549,
+        "summary": null,
+        "after": [],
+        "names": [
+          "D-pay-417",
+          "D-rec-12"
+        ],
+        "cites": 5,
+        "calls": [
+          {
+            "id": "run-s1-ee6d96e6-tc0014",
+            "tool": "metric_window",
+            "template": null,
+            "ms": 1.86,
+            "rows": 1,
+            "at": 1791988500525
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0015",
+            "tool": "metric_window",
+            "template": null,
+            "ms": 1.55,
+            "rows": 1,
+            "at": 1791988500529
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0016",
+            "tool": "metric_window",
+            "template": null,
+            "ms": 1.55,
+            "rows": 1,
+            "at": 1791988500534
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0017",
+            "tool": "metric_window",
+            "template": null,
+            "ms": 1.22,
+            "rows": 1,
+            "at": 1791988500539
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0018",
+            "tool": "metric_window",
+            "template": null,
+            "ms": 1.34,
+            "rows": 1,
+            "at": 1791988500543
+          }
+        ],
+        "unknowns": [],
+        "limits": [
+          "error rate only (no latency, saturation or traces); telemetry is simulated per scenario"
+        ],
+        "reaps": 0
+      },
+      {
+        "task": "spec-run-s1-ee6d96e6-data-267e3600",
+        "kind": "specialist",
+        "role": "data",
+        "stage": null,
+        "agent": "data-specialist-80c7482e",
+        "state": "done",
+        "status": "insufficient",
+        "claimed_at": 1791988500551,
+        "done_at": 1791988500554,
+        "summary": null,
+        "after": [],
+        "names": [],
+        "cites": 0,
+        "calls": [],
+        "unknowns": [
+          "no KPI symptom: the data channel has nothing to measure for this incident"
+        ],
+        "limits": [
+          "warehouse measurements only: daily KPI and per-column baseline ranges; no row-level lineage of a change"
+        ],
+        "reaps": 0
+      },
+      {
+        "task": "spec-run-s1-ee6d96e6-change-267e3600",
+        "kind": "specialist",
+        "role": "change",
+        "stage": null,
+        "agent": "change-specialist-80c7482e",
+        "state": "done",
+        "status": "complete",
+        "claimed_at": 1791988500556,
+        "done_at": 1791988500635,
+        "summary": null,
+        "after": [],
+        "names": [
+          "D-pay-417",
+          "D-email-88",
+          "D-rec-12"
+        ],
+        "cites": 6,
+        "calls": [
+          {
+            "id": "run-s1-ee6d96e6-tc0020",
+            "tool": "change_details",
+            "template": "Q-CHANGE-2",
+            "ms": 2.91,
+            "rows": 1,
+            "at": 1791988500567
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0024",
+            "tool": "decision_check",
+            "template": "Q-DEC-1",
+            "ms": 2.02,
+            "rows": 2,
+            "at": 1791988500589
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0027",
+            "tool": "change_details",
+            "template": "Q-CHANGE-2",
+            "ms": 1.77,
+            "rows": 1,
+            "at": 1791988500598
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0030",
+            "tool": "decision_check",
+            "template": "Q-DEC-1",
+            "ms": 1.78,
+            "rows": 0,
+            "at": 1791988500611
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0032",
+            "tool": "change_details",
+            "template": "Q-CHANGE-2",
+            "ms": 0.92,
+            "rows": 1,
+            "at": 1791988500626
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0033",
+            "tool": "decision_check",
+            "template": "Q-DEC-1",
+            "ms": 0.94,
+            "rows": 0,
+            "at": 1791988500632
+          }
+        ],
+        "unknowns": [],
+        "limits": [
+          "change records only (kind, time, actor, title, CHANGED target, asserted facts); no rollout progress or canary data"
+        ],
+        "reaps": 0
+      },
+      {
+        "task": "spec-run-s1-ee6d96e6-code-267e3600",
+        "kind": "specialist",
+        "role": "code",
+        "stage": null,
+        "agent": "code-specialist-80c7482e",
+        "state": "done",
+        "status": "complete",
+        "claimed_at": 1791988500559,
+        "done_at": 1791988500614,
+        "summary": null,
+        "after": [],
+        "names": [
+          "D-pay-417"
+        ],
+        "cites": 3,
+        "calls": [
+          {
+            "id": "run-s1-ee6d96e6-tc0022",
+            "tool": "diff_summary",
+            "template": "Q-CODE-1",
+            "ms": 13.12,
+            "rows": 1,
+            "at": 1791988500577
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0025",
+            "tool": "diff_summary",
+            "template": "Q-CODE-1",
+            "ms": 4.87,
+            "rows": 1,
+            "at": 1791988500591
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0029",
+            "tool": "diff_summary",
+            "template": "Q-CODE-1",
+            "ms": 5.62,
+            "rows": 1,
+            "at": 1791988500606
+          }
+        ],
+        "unknowns": [
+          "D-email-88: no commits, PR or diff facts in the graph; its code cannot be inspected",
+          "D-rec-12: no commits, PR or diff facts in the graph; its code cannot be inspected"
+        ],
+        "limits": [
+          "no function-level code graph: a file path is the finest grain, and the paths are synthetic",
+          "no diff text: only the commits a change CONTAINS, the files they TOUCH (PART_OF a component), PRs, authors and the typed facts it ASSERTS",
+          "a change with no commits or facts in the graph (most injected and config changes) cannot be inspected"
+        ],
+        "reaps": 0
+      },
+      {
+        "task": "crew-run-s1-ee6d96e6-gatekeeper-gate",
+        "kind": "crew",
+        "role": "gatekeeper",
+        "stage": "GATE",
+        "agent": "crew-gatekeeper",
+        "state": "done",
+        "status": "done",
+        "claimed_at": 1791988500713,
+        "done_at": 1791988500745,
+        "summary": "accepted D-pay-417 (confident)",
+        "after": [
+          "crew-run-s1-ee6d96e6-lead-investigate"
+        ],
+        "names": [],
+        "cites": 0,
+        "calls": [
+          {
+            "id": "run-s1-ee6d96e6-tc0046",
+            "tool": "alert_coverage",
+            "template": "Q-CHAIN-MON",
+            "ms": 0.94,
+            "rows": 3,
+            "at": 1791988500717
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0047",
+            "tool": "residue_check",
+            "template": "Q-RESIDUE-1",
+            "ms": 2.0,
+            "rows": 4,
+            "at": 1791988500723
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0048",
+            "tool": "blast_radius",
+            "template": "Q-BLAST-1",
+            "ms": 1.02,
+            "rows": 12,
+            "at": 1791988500736
+          }
+        ],
+        "unknowns": null,
+        "limits": null,
+        "reaps": 0
+      },
+      {
+        "task": "crew-run-s1-ee6d96e6-containment-contain",
+        "kind": "crew",
+        "role": "containment",
+        "stage": "CONTAIN",
+        "agent": "crew-containment",
+        "state": "done",
+        "status": "done",
+        "claimed_at": 1791988500748,
+        "done_at": 1791988501167,
+        "summary": "min-cut of 2 edge(s) between payment and 2 protected node(s); 5 option(s) tried on clean rooms",
+        "after": [
+          "crew-run-s1-ee6d96e6-gatekeeper-gate"
+        ],
+        "names": [],
+        "cites": 0,
+        "calls": [
+          {
+            "id": "run-s1-ee6d96e6-tc0049",
+            "tool": "connectivity_check",
+            "template": "Q-CONN-2",
+            "ms": 1.03,
+            "rows": 1,
+            "at": 1791988500751
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0050",
+            "tool": "containment_cut",
+            "template": "Q-CUT-1",
+            "ms": 2.37,
+            "rows": 2,
+            "at": 1791988500758
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0051",
+            "tool": "whatif",
+            "template": "Q-WHATIF-1",
+            "ms": 0.44,
+            "rows": 1,
+            "at": 1791988500859
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0052",
+            "tool": "futures",
+            "template": "Q-WHATIF-2+Q-FUTURE-1+Q-FUTURE-1+Q-FUTURE-1+Q-WHATIF-2+Q-FUTURE-1+Q-WHATIF-2+Q-FUTURE-1",
+            "ms": 11.11,
+            "rows": 5,
+            "at": 1791988501161
+          }
+        ],
+        "unknowns": null,
+        "limits": null,
+        "reaps": 0
+      },
+      {
+        "task": "crew-run-s1-ee6d96e6-dispatcher-route",
+        "kind": "crew",
+        "role": "dispatcher",
+        "stage": "ROUTE",
+        "agent": "crew-dispatcher",
+        "state": "done",
+        "status": "done",
+        "claimed_at": 1791988501171,
+        "done_at": 1791988501229,
+        "summary": "fixer p-017; bus factor 2; 4 to notify; urgent (obligations at risk)",
+        "after": [
+          "crew-run-s1-ee6d96e6-containment-contain"
+        ],
+        "names": [],
+        "cites": 0,
+        "calls": [
+          {
+            "id": "run-s1-ee6d96e6-tc0053",
+            "tool": "who_fixes",
+            "template": "Q-ORG-WHO+Q-ORG-KNOWS+Q-ORG-HARM",
+            "ms": 8.81,
+            "rows": 6,
+            "at": 1791988501190
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0054",
+            "tool": "bus_factor",
+            "template": "Q-ORG-BUS",
+            "ms": 1.36,
+            "rows": 1,
+            "at": 1791988501196
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0055",
+            "tool": "escalation_tree",
+            "template": "Q-ORG-MGR+Q-ORG-COLLAB-W+Q-ORG-MSF",
+            "ms": 3.06,
+            "rows": 5,
+            "at": 1791988501205
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0056",
+            "tool": "obligation_clock",
+            "template": "Q-OBL-SLO+Q-OBL-CUST",
+            "ms": 3.52,
+            "rows": 4,
+            "at": 1791988501213
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0057",
+            "tool": "notify_set",
+            "template": "Q-NOTIFY-1",
+            "ms": 1.15,
+            "rows": 4,
+            "at": 1791988501219
+          },
+          {
+            "id": "run-s1-ee6d96e6-tc0058",
+            "tool": "owner_at",
+            "template": "Q-OWN-AT",
+            "ms": 0.82,
+            "rows": 1,
+            "at": 1791988501225
+          }
+        ],
+        "unknowns": null,
+        "limits": null,
+        "reaps": 0
+      },
+      {
+        "task": "crew-run-s1-ee6d96e6-planner-plan",
+        "kind": "crew",
+        "role": "planner",
+        "stage": "PLAN",
+        "agent": "crew-planner",
+        "state": "done",
+        "status": "done",
+        "claimed_at": 1791988501232,
+        "done_at": 1791988501248,
+        "summary": "4 option(s), 3 enabled; awaiting two-step approval",
+        "after": [
+          "crew-run-s1-ee6d96e6-dispatcher-route"
+        ],
+        "names": [],
+        "cites": 0,
+        "calls": [
+          {
+            "id": "run-s1-ee6d96e6-tc0059",
+            "tool": "remedy_stats",
+            "template": "Q-REM-1",
+            "ms": 3.3,
+            "rows": 3,
+            "at": 1791988501239
+          }
+        ],
+        "unknowns": null,
+        "limits": null,
+        "reaps": 0
+      },
+      {
+        "task": "crew-run-s1-ee6d96e6-operator-execute-act-inc-s1-ee6d96e6-2",
+        "kind": "crew",
+        "role": "operator",
+        "stage": "EXECUTE",
+        "agent": "crew-operator",
+        "state": "done",
+        "status": "done",
+        "claimed_at": 1791988501436,
+        "done_at": 1791988501465,
+        "summary": "executed flip_flag act-inc-s1-ee6d96e6-2: intent recorded first, idempotency key, the single write tool",
+        "after": [
+          "crew-run-s1-ee6d96e6-planner-plan"
+        ],
+        "names": [],
+        "cites": 0,
+        "calls": [],
+        "unknowns": null,
+        "limits": null,
+        "reaps": 0
+      },
+      {
+        "task": "crew-run-s1-ee6d96e6-auditor-verify-act-inc-s1-ee6d96e6-2",
+        "kind": "crew",
+        "role": "auditor",
+        "stage": "VERIFY",
+        "agent": "crew-auditor",
+        "state": "done",
+        "status": "done",
+        "claimed_at": 1791988501466,
+        "done_at": 1791988501493,
+        "summary": "second channel: APPLIED; write-back re-read on a separate RO connection: 7/7",
+        "after": [
+          "crew-run-s1-ee6d96e6-operator-execute-act-inc-s1-ee6d96e6-2"
+        ],
+        "names": [],
+        "cites": 0,
+        "calls": [],
+        "unknowns": null,
+        "limits": null,
+        "reaps": 0
+      },
+      {
+        "task": "crew-run-s1-ee6d96e6-librarian-learn-act-inc-s1-ee6d96e6-2",
+        "kind": "crew",
+        "role": "librarian",
+        "stage": "LEARN",
+        "agent": "crew-librarian",
+        "state": "done",
+        "status": "done",
+        "claimed_at": 1791988501495,
+        "done_at": 1791988501512,
+        "summary": "family of 11 incident(s); runbook rb-derived-0b6bb0db12 support 5",
+        "after": [
+          "crew-run-s1-ee6d96e6-auditor-verify-act-inc-s1-ee6d96e6-2"
+        ],
+        "names": [],
+        "cites": 0,
+        "calls": [],
+        "unknowns": null,
+        "limits": null,
+        "reaps": 0
+      }
+    ],
+    "template": "Q-CREW-1"
+  },
+  "report": {
+    "incident_id": "inc-s1-ee6d96e6",
+    "outcome": "CONFIRMED",
+    "confident": true,
+    "cause_id": "D-pay-417",
+    "mechanism": [
+      "D-pay-417",
+      "payment",
+      "checkout"
+    ],
+    "proven": [
+      {
+        "claim": "G1 grounded: cause seen in a graph result this run; all cited evidence produced by this run",
+        "evidence_ids": [],
+        "check": "G1 grounded"
+      },
+      {
+        "claim": "G2 path: D-pay-417 \u2192 payment \u2192 checkout",
+        "evidence_ids": [],
+        "check": "G2 path"
+      },
+      {
+        "claim": "G3 time: change 3.0 min before onset (window 30 min)",
+        "evidence_ids": [],
+        "check": "G3 time"
+      },
+      {
+        "claim": "G4 quantitative: ev_9dc2e8c800 on checkout; ev_d3ce0adb65 on payment",
+        "evidence_ids": [
+          "ev_9dc2e8c800",
+          "ev_d3ce0adb65"
+        ],
+        "check": "G4 quantitative"
+      },
+      {
+        "claim": "G4 origin: ev_d3ce0adb65 on payment",
+        "evidence_ids": [
+          "ev_d3ce0adb65"
+        ],
+        "check": "G4 origin"
+      },
+      {
+        "claim": "G4 upstream: no anomalous component upstream can carry the changed component's excess",
+        "evidence_ids": [
+          "ev_0d9b87053a"
+        ],
+        "check": "G4 upstream"
+      },
+      {
+        "claim": "G5 sufficiency: checkout: max flow 1.0000 \u2265 needed 0.2433",
+        "evidence_ids": [
+          "ev_d3ce0adb65",
+          "ev_edbfd9c531"
+        ],
+        "check": "G5 sufficiency"
+      },
+      {
+        "claim": "G6 competitors: every competitor eliminated with evidence",
+        "evidence_ids": [],
+        "check": "G6 competitors"
+      },
+      {
+        "claim": "G7 agreement: independent channels on the chain: ['falkordb', 'simulator']",
+        "evidence_ids": [],
+        "check": "G7 agreement"
+      },
+      {
+        "claim": "G7 correlation: change and code specialists both name D-pay-417 (CHANGED \u2192 payment)",
+        "evidence_ids": [],
+        "check": "G7 correlation"
+      }
+    ],
+    "inferred": [],
+    "contradictions": [
+      "violates ADR-012: payment.client.timeout_ms <= 2000 (actual 5000); violates ADR-013: payment.client.retries >= 2 (actual 0)"
+    ],
+    "why_alerts_missed_it": {
+      "hops": [
+        {
+          "hop": 0,
+          "id": "D-pay-417",
+          "label": "Deploy",
+          "alerted": false,
+          "first_alert_lag_s": null,
+          "has_telemetry": false
+        },
+        {
+          "hop": 1,
+          "id": "payment",
+          "label": "Service",
+          "alerted": true,
+          "first_alert_lag_s": -60,
+          "has_telemetry": true
+        },
+        {
+          "hop": 2,
+          "id": "checkout",
+          "label": "Service",
+          "alerted": true,
+          "first_alert_lag_s": -60,
+          "has_telemetry": true
+        }
+      ],
+      "summary": "first alert at hop 2 of 3 (payment); hops before it were silent: D-pay-417"
+    },
+    "ownership": {
+      "component": "payment",
+      "at": 1792033020000,
+      "owner_then": "team-payments",
+      "owner_now": "team-payments",
+      "changed_hands": false,
+      "summary": "payment was owned by team-payments when D-pay-417 shipped and still is"
+    },
+    "residue": {
+      "advisory": true,
+      "k": 3,
+      "n": 4,
+      "explained": [
+        "checkout",
+        "frontend",
+        "payment"
+      ],
+      "unexplained": [
+        "recommendation"
+      ],
+      "summary": "the confirmed cause explains 3 of 4 anomalous components; another fault may be active: recommendation"
+    },
+    "remedy": {
+      "applied": true,
+      "lines": [
+        "history: rollback worked 6/6 times on past incidents sharing a symptom with this one (smoothed success 0.88)",
+        "history: flag paymentGate \u2192 off worked 4/5 times on past incidents sharing a symptom with this one (smoothed success 0.71)"
+      ],
+      "note": "options ordered by past outcomes on incidents sharing a symptom"
+    },
+    "futures": [
+      {
+        "option": "roll back D-pay-417",
+        "predicted": "contains",
+        "line": "contains if the confirmed cause is the cause (removing the origin's fault; assumed, not measured)",
+        "exposed": [],
+        "evidence_id": "ev_cfe3b16bdb",
+        "verdict": null,
+        "agrees": null
+      },
+      {
+        "option": "flag paymentGate \u2192 off",
+        "predicted": "contains",
+        "line": "contains: every symptom predicted back in band",
+        "exposed": [
+          "kpi.exec_revenue"
+        ],
+        "evidence_id": "ev_cfe3b16bdb",
+        "verdict": "APPLIED",
+        "agrees": true
+      },
+      {
+        "option": "open an issue for D-pay-417",
+        "predicted": "does_not_contain",
+        "line": "does not contain: checkout residual 0.4029 over its band, frontend residual 0.4029 over its band",
+        "exposed": [
+          "frontend-proxy",
+          "kpi.exec_revenue"
+        ],
+        "evidence_id": "ev_cfe3b16bdb",
+        "verdict": null,
+        "agrees": null
+      }
+    ],
+    "obligations": {
+      "urgent": true,
+      "reason": "slo-checkout (checkout) runs out of error budget in ~605 min at 30.7x burn (43% of budget left); under the 1440-min paging line; 5 customers reached, 28,600 MRR at risk",
+      "page_within_min": 1440.0,
+      "breach": {
+        "slo": "slo-checkout",
+        "service": "checkout",
+        "breach_in_min": 604.9,
+        "burn": 30.69075,
+        "budget_remaining": 0.429728194444444
+      },
+      "revenue_at_risk": 28600.0,
+      "customers_reached": 5,
+      "slos": [
+        {
+          "breach_in_min": 1043.7,
+          "budget": 0.01,
+          "budget_remaining": 0.746696759259259,
+          "burn": 30.90575,
+          "current_windows": 4,
+          "error_rate": 0.3090575,
+          "label": "Service",
+          "objective": 0.99,
+          "service": "payment",
+          "slo": "slo-payment",
+          "spent_prior": 0.25,
+          "status": "burning",
+          "tier": 1,
+          "window_days": 30,
+          "windows": 31
+        },
+        {
+          "breach_in_min": 604.9,
+          "budget": 0.01,
+          "budget_remaining": 0.429728194444444,
+          "burn": 30.69075,
+          "current_windows": 4,
+          "error_rate": 0.3069075,
+          "label": "Service",
+          "objective": 0.99,
+          "service": "checkout",
+          "slo": "slo-checkout",
+          "spent_prior": 0.567,
+          "status": "burning",
+          "tier": 1,
+          "window_days": 30,
+          "windows": 31
+        },
+        {
+          "breach_in_min": 12709.5,
+          "budget": 0.01,
+          "budget_remaining": 0.515515717592593,
+          "burn": 1.75225,
+          "current_windows": 4,
+          "error_rate": 0.0175225,
+          "label": "Service",
+          "objective": 0.99,
+          "service": "frontend",
+          "slo": "slo-frontend",
+          "spent_prior": 0.484,
+          "status": "burning",
+          "tier": 1,
+          "window_days": 30,
+          "windows": 31
+        },
+        {
+          "breach_in_min": 18765.7,
+          "budget": 0.01,
+          "budget_remaining": 0.634645347222222,
+          "burn": 1.461,
+          "current_windows": 4,
+          "error_rate": 0.01461,
+          "label": "Service",
+          "objective": 0.99,
+          "service": "frontend-proxy",
+          "slo": "slo-frontend-proxy",
+          "spent_prior": 0.365,
+          "status": "burning",
+          "tier": 1,
+          "window_days": 30,
+          "windows": 31
+        }
+      ],
+      "customers": [
+        {
+          "customer": "cust-orion-optics",
+          "customers_reached": 5,
+          "hops": 1,
+          "mrr": 12000.0,
+          "name": "Orion Optics Ltd (synthetic)",
+          "path": [
+            "payment",
+            "checkout"
+          ],
+          "paths": 2,
+          "revenue_at_risk": 28600.0,
+          "through": [
+            "checkout",
+            "frontend"
+          ],
+          "tier": 1,
+          "via": [
+            "checkout API (PlaceOrder)",
+            "storefront web"
+          ]
+        },
+        {
+          "customer": "cust-lyra-labs",
+          "customers_reached": 5,
+          "hops": 1,
+          "mrr": 9000.0,
+          "name": "Lyra Labs (synthetic)",
+          "path": [
+            "payment",
+            "checkout"
+          ],
+          "paths": 1,
+          "revenue_at_risk": 28600.0,
+          "through": [
+            "checkout"
+          ],
+          "tier": 1,
+          "via": [
+            "checkout API (PlaceOrder)"
+          ]
+        },
+        {
+          "customer": "cust-vega-schools",
+          "customers_reached": 5,
+          "hops": 2,
+          "mrr": 4000.0,
+          "name": "Vega Schools Network (synthetic)",
+          "path": [
+            "payment",
+            "checkout",
+            "frontend"
+          ],
+          "paths": 1,
+          "revenue_at_risk": 28600.0,
+          "through": [
+            "frontend"
+          ],
+          "tier": 2,
+          "via": [
+            "storefront web"
+          ]
+        },
+        {
+          "customer": "cust-pavo-partners",
+          "customers_reached": 5,
+          "hops": 5,
+          "mrr": 3000.0,
+          "name": "Pavo Partners (synthetic revenue-share partner)",
+          "path": [
+            "payment",
+            "raw.raw_orders",
+            "staging.stg_orders",
+            "marts.fct_revenue",
+            "marts.exec_revenue_metric",
+            "kpi.exec_revenue"
+          ],
+          "paths": 1,
+          "revenue_at_risk": 28600.0,
+          "through": [
+            "kpi.exec_revenue"
+          ],
+          "tier": 2,
+          "via": [
+            "monthly revenue-share statement"
+          ]
+        },
+        {
+          "customer": "cust-cygnus-club",
+          "customers_reached": 5,
+          "hops": 3,
+          "mrr": 600.0,
+          "name": "Cygnus Stargazers Club (synthetic)",
+          "path": [
+            "payment",
+            "checkout",
+            "frontend",
+            "frontend-proxy"
+          ],
+          "paths": 1,
+          "revenue_at_risk": 28600.0,
+          "through": [
+            "frontend-proxy"
+          ],
+          "tier": 3,
+          "via": [
+            "public web"
+          ]
+        }
+      ],
+      "evidence_id": "ev_881a6ca427"
+    },
+    "rejected": [
+      {
+        "cause": "D-email-88",
+        "origin": "sweep",
+        "gate_run": "gr-inc-s1-ee6d96e6-fd66562c",
+        "failed": [
+          "G5 sufficiency: G5: max flow 0.0200 < needed 0.2433 (observed 0.3041 \u00d7 0.8); another suspect alone can carry 1.0000"
+        ]
+      },
+      {
+        "cause": "D-rec-12",
+        "origin": "sweep",
+        "gate_run": "gr-inc-s1-ee6d96e6-3c169941",
+        "failed": [
+          "G2 path: G2: no path to any primary symptom (no path, no claim)"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "ev_03b4535c58",
+        "kind": "flow",
+        "source": "falkordb",
+        "tool": "impact_bound",
+        "template": "Q-GATE-3+Q-GATE-MULT",
+        "cypher": "// Q-GATE-3\nMATCH (s:Node) WHERE s.id IN $sources\nWITH collect(s) AS srcs\nWHERE size(srcs) > 0\nMATCH (t:Node {id:$symptom})\nCALL algo.maxFlow({sourceNodes: srcs, targetNodes: [t], relationshipTypes: ['PROPAGATES_TO'], capacityProperty: 'cap'}) YIELD maxFlow\nRETURN maxFlow AS max_flow, size(srcs) AS sources\nLIMIT 1\n;\n// Q-GATE-MULT\nMATCH (t:Node {id: $symptom})\nUNWIND $sources AS sid\nMATCH (s:Node {id: sid})\nCALL algo.SPpaths({sourceNode: s, targetNode: t, relTypes: ['PROPAGATES_TO'], weightProp: 'w', relDirection: 'outgoing', maxLen: 8, pathCount: 100}) YIELD path\nRETURN s.id AS source, count(path) AS paths\nORDER BY source\nLIMIT 100",
+        "summary": "bound 0.0200 (max flow 0.0200, up to 1 path(s)) vs needed 0.2433 (insufficient)",
+        "digest": "fcfcca2381407c6c97e1c76e5eb034dcd6467ad728e7d9ce1ced7bd96e62e83a",
+        "value": 0.02,
+        "baseline": 0.243301004119205,
+        "anomalous": null,
+        "about": [
+          "checkout",
+          "email"
+        ]
+      },
+      {
+        "id": "ev_0d9b87053a",
+        "kind": "upstream",
+        "source": "falkordb",
+        "tool": "upstream_explained",
+        "template": "Q-GATE-UPSTREAM-UB",
+        "cypher": "MATCH (s:Node) WHERE s.id IN $ids\nMATCH (u:Node)-[:PROPAGATES_TO*1..8]->(s)\nWITH DISTINCT u, s\nCALL {\n  WITH s\n  MATCH (w:MetricWindow {target_id: s.id, metric: 'error_rate', kind: 'live'})\n  WHERE w.at >= $base_since AND w.at <= $until\n  RETURN avg(CASE WHEN w.at <= $base_until THEN w.value END) AS sbase, max(CASE WHEN w.at >= $since THEN w.value END) AS speak\n}\nCALL {\n  WITH u\n  MATCH (w:MetricWindow {target_id: u.id, metric: 'error_rate', kind: 'live'})\n  WHERE w.at >= $base_since AND w.at <= $until\n  RETURN avg(CASE WHEN w.at <= $base_until THEN w.value END) AS ubase, max(CASE WHEN w.at >= $since THEN w.value END) AS upeak\n}\nCALL {\n  WITH u, s\n  MATCH p = (u)-[:PROPAGATES_TO*1..8]->(s)\n  WITH p LIMIT 1001\n  RETURN count(p) AS paths, min(length(p)) AS hops,\n         sum(CASE WHEN any(r IN relationships(p) WHERE r.cap IS NULL) THEN 1 ELSE 0 END) AS uncapped,\n         sum(reduce(acc = 1.0, r IN relationships(p) | acc * coalesce(r.cap, 1.0))) AS walk\n}\nCALL {\n  WITH u, s\n  OPTIONAL MATCH back = (s)-[:PROPAGATES_TO*1..8]->(u)\n  WITH back LIMIT 1\n  RETURN count(back) AS backpaths\n}\nWITH u, s, hops, backpaths,\n     CASE WHEN speak IS NULL OR sbase IS NULL THEN null WHEN speak - sbase > 0.0 THEN speak - sbase ELSE 0.0 END AS sex,\n     CASE WHEN upeak IS NULL OR ubase IS NULL THEN null WHEN upeak - ubase > 0.0 THEN upeak - ubase ELSE 0.0 END AS uex,\n     CASE WHEN paths > 1000 OR uncapped > 0 THEN null ELSE walk END AS transfer\nWITH u, s, hops, backpaths, sex, uex, transfer,\n     CASE WHEN transfer IS NULL OR uex IS NULL THEN null WHEN transfer * uex > 1.0 THEN 1.0 ELSE transfer * uex END AS carried\nWHERE sex IS NOT NULL AND sex > 0.0 AND uex IS NOT NULL AND uex >= $min_excess AND backpaths = 0\n  AND carried IS NOT NULL AND sex <= carried * $slack\nRETURN s.id AS s, u.id AS u, hops, transfer, uex AS u_excess, sex AS s_excess, carried\nORDER BY s, hops, u\nLIMIT 100",
+        "summary": "bound: no anomalous component upstream accounts for payment",
+        "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "value": 0.0,
+        "baseline": null,
+        "anomalous": null,
+        "about": [
+          "payment"
+        ]
+      },
+      {
+        "id": "ev_1a986a73de",
+        "kind": "path",
+        "source": "falkordb",
+        "tool": "causal_paths",
+        "template": "Q-GATE-1",
+        "cypher": "MATCH (c:Node {id:$cause}), (s:Node {id:$symptom})\nCALL algo.SPpaths({sourceNode: c, targetNode: s, relTypes: ['CHANGED', 'GATES', 'PROPAGATES_TO'], weightProp: 'w', relDirection: 'outgoing', maxLen: 8, pathCount: 3}) YIELD path, pathWeight\nRETURN [n IN nodes(path) | n.id] AS chain, [r IN relationships(path) | type(r)] AS rels, pathWeight AS weight, length(path) AS hops,\n       [r IN relationships(path) | coalesce(r.from_incident, '')] AS learned_from\nORDER BY weight, hops\nLIMIT 3",
+        "summary": "D-email-88 \u2192 email \u2192 checkout",
+        "digest": "de3fa0e0f369dfedc2f0c2c6a165c26df2401e7e93a27e9dec9766dfc83f8491",
+        "value": 1.0,
+        "baseline": null,
+        "anomalous": null,
+        "about": [
+          "checkout",
+          "D-email-88"
+        ]
+      },
+      {
+        "id": "ev_5b8e92d948",
+        "kind": "path",
+        "source": "falkordb",
+        "tool": "causal_paths",
+        "template": "Q-GATE-1",
+        "cypher": "MATCH (c:Node {id:$cause}), (s:Node {id:$symptom})\nCALL algo.SPpaths({sourceNode: c, targetNode: s, relTypes: ['CHANGED', 'GATES', 'PROPAGATES_TO'], weightProp: 'w', relDirection: 'outgoing', maxLen: 8, pathCount: 3}) YIELD path, pathWeight\nRETURN [n IN nodes(path) | n.id] AS chain, [r IN relationships(path) | type(r)] AS rels, pathWeight AS weight, length(path) AS hops,\n       [r IN relationships(path) | coalesce(r.from_incident, '')] AS learned_from\nORDER BY weight, hops\nLIMIT 3",
+        "summary": "no path D-rec-12 \u2192 checkout (\u2264 8 hops)",
+        "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "value": 0.0,
+        "baseline": null,
+        "anomalous": null,
+        "about": [
+          "checkout",
+          "D-rec-12"
+        ]
+      },
+      {
+        "id": "ev_9dc2e8c800",
+        "kind": "error_rate",
+        "source": "simulator",
+        "tool": "metric_window",
+        "template": null,
+        "cypher": null,
+        "summary": "checkout error rate 30.69% vs baseline 0.69% (\u00d744.5, band 1.5745)",
+        "digest": "82f122b158836c5aad2aeff0cde84945719feae57b6dd9a04b10712f2acceb4c",
+        "value": 0.30691,
+        "baseline": 0.00689,
+        "anomalous": true,
+        "about": [
+          "checkout"
+        ]
+      },
+      {
+        "id": "ev_d3ce0adb65",
+        "kind": "error_rate",
+        "source": "simulator",
+        "tool": "metric_window",
+        "template": null,
+        "cypher": null,
+        "summary": "payment error rate 30.91% vs baseline 0.71% (\u00d743.6, band 1.4575)",
+        "digest": "b07c05195a403505fdefbface33de1adb12c843e6c47c472f009e7c21cba4c62",
+        "value": 0.30906,
+        "baseline": 0.00709,
+        "anomalous": true,
+        "about": [
+          "payment"
+        ]
+      },
+      {
+        "id": "ev_d9c05ffae8",
+        "kind": "path",
+        "source": "falkordb",
+        "tool": "causal_paths",
+        "template": "Q-GATE-1",
+        "cypher": "MATCH (c:Node {id:$cause}), (s:Node {id:$symptom})\nCALL algo.SPpaths({sourceNode: c, targetNode: s, relTypes: ['CHANGED', 'GATES', 'PROPAGATES_TO'], weightProp: 'w', relDirection: 'outgoing', maxLen: 8, pathCount: 3}) YIELD path, pathWeight\nRETURN [n IN nodes(path) | n.id] AS chain, [r IN relationships(path) | type(r)] AS rels, pathWeight AS weight, length(path) AS hops,\n       [r IN relationships(path) | coalesce(r.from_incident, '')] AS learned_from\nORDER BY weight, hops\nLIMIT 3",
+        "summary": "D-pay-417 \u2192 payment \u2192 checkout",
+        "digest": "057ca961bbe6c66f7c833458131f31f7d543fbfc484106a079d28670e83c7703",
+        "value": 1.0,
+        "baseline": null,
+        "anomalous": null,
+        "about": [
+          "checkout",
+          "D-pay-417"
+        ]
+      },
+      {
+        "id": "ev_edbfd9c531",
+        "kind": "flow",
+        "source": "falkordb",
+        "tool": "impact_bound",
+        "template": "Q-GATE-3+Q-GATE-MULT",
+        "cypher": "// Q-GATE-3\nMATCH (s:Node) WHERE s.id IN $sources\nWITH collect(s) AS srcs\nWHERE size(srcs) > 0\nMATCH (t:Node {id:$symptom})\nCALL algo.maxFlow({sourceNodes: srcs, targetNodes: [t], relationshipTypes: ['PROPAGATES_TO'], capacityProperty: 'cap'}) YIELD maxFlow\nRETURN maxFlow AS max_flow, size(srcs) AS sources\nLIMIT 1\n;\n// Q-GATE-MULT\nMATCH (t:Node {id: $symptom})\nUNWIND $sources AS sid\nMATCH (s:Node {id: sid})\nCALL algo.SPpaths({sourceNode: s, targetNode: t, relTypes: ['PROPAGATES_TO'], weightProp: 'w', relDirection: 'outgoing', maxLen: 8, pathCount: 100}) YIELD path\nRETURN s.id AS source, count(path) AS paths\nORDER BY source\nLIMIT 100",
+        "summary": "bound 1.0000 (max flow 1.0000, up to 1 path(s)) vs needed 0.2433 (sufficient)",
+        "digest": "629b4c6bcbac016abab3682d423fe2e4f7faccda91ebc571a165de3e0b98aa6c",
+        "value": 1.0,
+        "baseline": 0.243301004119205,
+        "anomalous": null,
+        "about": [
+          "checkout",
+          "payment"
+        ]
+      }
+    ]
+  }
+}
