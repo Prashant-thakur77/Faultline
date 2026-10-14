@@ -1,0 +1,449 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-sans);
+  --font-display: var(--font-instrument);
+  --color-ember: var(--fl-ember);
+  --color-iris: var(--fl-iris);
+  --color-proof: var(--fl-proof);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+/* Faultline is dark-only: align shadcn semantic tokens to the zinc scale. */
+.dark {
+  --background: oklch(0.141 0.005 285.823); /* zinc-950 */
+  --foreground: oklch(0.967 0.001 286.375); /* zinc-100 */
+  --card: oklch(0.21 0.006 285.885); /* zinc-900 */
+  --card-foreground: oklch(0.967 0.001 286.375);
+  --popover: oklch(0.21 0.006 285.885);
+  --popover-foreground: oklch(0.967 0.001 286.375);
+  --secondary: oklch(0.274 0.006 286.033); /* zinc-800 */
+  --secondary-foreground: oklch(0.967 0.001 286.375);
+  --muted: oklch(0.274 0.006 286.033);
+  --muted-foreground: oklch(0.705 0.015 286.067); /* zinc-400 */
+  --accent: oklch(0.274 0.006 286.033);
+  --accent-foreground: oklch(0.967 0.001 286.375);
+  --border: oklch(0.274 0.006 286.033); /* zinc-800 */
+  --input: oklch(0.274 0.006 286.033);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+/* React Flow dark-theme adjustments */
+.react-flow {
+  background: transparent;
+}
+
+.react-flow__attribution {
+  background: transparent;
+  color: oklch(0.442 0.017 285.786); /* zinc-600 */
+}
+/* React Flow: visible keyboard focus on graph nodes (WCAG 2.4.7). The `.react-flow` ancestor
+   out-ranks @xyflow/react's own `.react-flow__node.selectable:focus-visible { outline: none }`,
+   which is imported after this file. */
+.react-flow .react-flow__node:focus-visible,
+.react-flow .react-flow__node.selectable:focus-visible {
+  outline: 2px solid oklch(0.828 0.111 230.318); /* sky-300 */
+  outline-offset: 3px;
+  border-radius: 0.5rem;
+}
+
+.react-flow__controls-button {
+  background: oklch(0.21 0.006 285.885);
+  border-color: oklch(0.37 0.013 285.805);
+  color: oklch(0.92 0.004 286.32);
+}
+
+.react-flow__controls-button:hover {
+  background: oklch(0.274 0.006 286.033);
+}
+
+.react-flow__controls-button:focus-visible {
+  outline: 2px solid oklch(0.828 0.111 230.318);
+  outline-offset: 1px;
+}
+
+/* ---------------------------------------------------------------------------------------------
+   Faultline brand layer (2026-10 redesign): warm near-black canvas, an ember → iris "fault" accent,
+   aurora light, film grain, glass surfaces. Motion is opt-out via prefers-reduced-motion.
+   --------------------------------------------------------------------------------------------- */
+:root {
+  /* a neutral near-black and grey scale; colour is kept for motion and meaning */
+  --fl-bg: #08090a;
+  --fl-surface: #0f1011;
+  --fl-text: #f7f8f8;
+  --fl-muted: #8a8f98;
+  --fl-subtle: #7a7f87;   /* lifted to 4.9:1 on the page for small text (axe) */
+  --fl-ember: oklch(0.72 0.19 45);      /* the fault: a warm ember orange */
+  --fl-iris: oklch(0.66 0.19 290);      /* the graph: iris violet */
+  --fl-proof: oklch(0.82 0.15 165);     /* a proven path: mint */
+  --fl-line: rgb(255 255 255 / 0.08);
+  --fl-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --fl-ease-quick: cubic-bezier(0.25, 0.46, 0.45, 0.94);   /* micro-interactions, 100–160 ms */
+  --fl-ease-slide: cubic-bezier(0.65, 0.05, 0, 1);         /* slides and reveals, 750 ms */
+}
+
+.fl-body {
+  background: var(--fl-bg);
+  letter-spacing: -0.011em;
+  font-feature-settings: "cv01", "ss03";
+}
+
+/* the page scrolls without a native bar: the gradient rail (ScrollRail) shows position and can be dragged */
+html, #main { scrollbar-width: none; }
+html::-webkit-scrollbar, #main::-webkit-scrollbar { display: none; }
+
+/* hero headline: heavy, slightly wide, tight (Mona Sans' weight and width axes) */
+.font-hero {
+  font-family: var(--font-mona), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 800;
+  font-stretch: 112%;
+  letter-spacing: -0.045em;
+}
+
+.font-display {
+  font-family: var(--font-instrument), ui-serif, Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+/* top light behind a hero or page intro: a cold white glow with a hint of the brand colours */
+.fl-aurora {
+  position: absolute;
+  inset: -30% -10% auto -10%;
+  height: 120%;
+  pointer-events: none;
+  background:
+    radial-gradient(55% 48% at 50% 0%, rgb(255 255 255 / 0.085), rgb(255 255 255 / 0.03) 45%, transparent 78%),
+    radial-gradient(38% 42% at 22% 5%, color-mix(in oklch, var(--fl-iris) 24%, transparent), transparent 78%),
+    radial-gradient(34% 36% at 80% 8%, color-mix(in oklch, var(--fl-ember) 17%, transparent), transparent 78%);
+  /* soft by construction (wide gradient stops): a live blur filter was recomputed on every composite (measured) */
+  opacity: 0.6;
+  animation: fl-drift 18s var(--fl-ease) infinite alternate;
+}
+
+@keyframes fl-drift {
+  from { transform: translate3d(-2%, -1%, 0) scale(1); }
+  to   { transform: translate3d(2%, 2%, 0) scale(1.06); }
+}
+
+/* film grain: an inline SVG turbulence, very low opacity */
+.fl-grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.06;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* glass surface: translucent, hairline border, inner highlight */
+.fl-glass {
+  background: color-mix(in srgb, #141516 72%, transparent);
+  border: 1px solid var(--fl-line);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.04), 0 20px 40px -24px rgb(0 0 0 / 0.6);
+  backdrop-filter: blur(14px) saturate(140%);
+}
+
+/* content card: a light that follows the pointer (PointerFX sets --mx/--my), hairline border */
+.fl-card, [data-spot] {
+  background-image:
+    radial-gradient(420px circle at var(--mx, -999px) var(--my, -999px), rgb(255 255 255 / 0.06), transparent 45%),
+    linear-gradient(rgb(255 255 255 / 0.025), rgb(255 255 255 / 0.01));
+}
+.fl-card {
+  background-color: var(--fl-surface);
+  border: 1px solid var(--fl-line);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.03);
+  transition: border-color 0.16s var(--fl-ease-quick);
+}
+.fl-card:hover, [data-spot]:hover { border-color: rgb(255 255 255 / 0.14); }
+
+/* headline gradient: white fading to half white towards the bottom right */
+.fl-gradient-text {
+  /* longhands only: a `background` shorthand is expanded at build time with a clip reset that wins */
+  background-image: linear-gradient(to right bottom, #fff 30%, rgb(255 255 255 / 0.5));
+  background-repeat: no-repeat;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* the brand colours as text, for the rare accent */
+.fl-accent-text {
+  background-image: linear-gradient(100deg, var(--fl-ember), oklch(0.78 0.16 20) 45%, var(--fl-iris));
+  background-repeat: no-repeat;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* a hairline that glows along its length (section dividers) */
+.fl-hairline {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, color-mix(in oklch, var(--fl-ember) 60%, transparent), color-mix(in oklch, var(--fl-iris) 60%, transparent), transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fl-aurora { animation: none; }
+  *, *::before, *::after { scroll-behavior: auto !important; }
+}
+
+/* First-visit intro (IntroLoader). A head script marks <html data-fl-seen> for a repeat visit in the session
+   or reduced motion, so the overlay never flashes; without JS it fades itself out after 2.6 s. */
+.fl-loader { animation: fl-loader-fallback 0.4s 2.6s forwards; }
+[data-fl-seen] .fl-loader { display: none; }
+@keyframes fl-loader-fallback { to { opacity: 0; visibility: hidden; } }
+.fl-odo { display: inline-block; height: 1em; overflow: hidden; line-height: 1; }
+.fl-odo > span { display: flex; flex-direction: column; transition: transform 1.1s cubic-bezier(0.35, 0, 0, 1); }
+@keyframes fl-scroll-cue { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; }
+  50.1% { transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
+.fl-scroll-cue { animation: fl-scroll-cue 2.2s var(--fl-ease) infinite; }
+@media (prefers-reduced-motion: reduce) { .fl-scroll-cue { animation: none; } .fl-odo > span { transition: none; } }
+
+/* ---------------------------------------------------------------------------------------------
+   Motion. All off under reduced motion.
+   --------------------------------------------------------------------------------------------- */
+
+/* a highlighter that sweeps across a phrase when it scrolls into view (Mark) */
+.fl-mark {
+  background-image: linear-gradient(90deg, var(--fl-ember), oklch(0.74 0.17 20) 55%, var(--fl-iris));
+  background-repeat: no-repeat;
+  background-size: 0% 100%;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  padding: 0 0.12em;
+  border-radius: 0.12em;
+  transition: background-size 0.9s var(--fl-ease-slide), color 0.4s 0.3s;
+}
+.fl-mark[data-in] { background-size: 100% 100%; color: #0b0b0c; }
+
+/* the product frame tilts back and flattens as it scrolls into view (CSS scroll-driven; static where unsupported) */
+@supports (animation-timeline: view()) {
+  .fl-tilt {
+    transform-origin: 50% 0;
+    animation: fl-untilt linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 38%;
+  }
+}
+@keyframes fl-untilt {
+  from { transform: perspective(1800px) rotateX(16deg) scale(0.92); opacity: 0.55; }
+  to { transform: none; opacity: 1; }
+}
+
+/* an endless row (a ticker): two copies of the row slide by half their width */
+.fl-marquee { display: flex; width: max-content; animation: fl-marquee 70s linear infinite; }
+.fl-marquee:hover { animation-play-state: paused; }
+@keyframes fl-marquee { to { transform: translateX(-50%); } }
+
+/* a chip whose border is a slowly turning brand gradient */
+@property --fl-turn { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+.fl-ring {
+  background: conic-gradient(from var(--fl-turn), var(--fl-ember), var(--fl-iris), var(--fl-proof), var(--fl-ember));
+  animation: fl-turn 6s linear infinite;
+}
+@keyframes fl-turn { to { --fl-turn: 360deg; } }
+
+/* pressing a control gives a little (160 ms ease) */
+.fl-press { transition: transform 0.16s var(--fl-ease-quick), background-color 0.16s var(--fl-ease-quick), color 0.16s; }
+.fl-press:active { transform: scale(0.96); }
+
+/* pointer ring (fine pointers) and tap ripple (PointerFX) */
+.fl-cursor {
+  position: fixed; left: 0; top: 0; z-index: 90; pointer-events: none;
+  width: 28px; height: 28px; margin: -14px 0 0 -14px; border-radius: 9999px;
+  border: 1.5px solid rgb(255 255 255 / 0.55);
+  mix-blend-mode: difference;
+  transition: width 0.25s var(--fl-ease), height 0.25s var(--fl-ease), margin 0.25s var(--fl-ease), background-color 0.25s, border-color 0.25s, opacity 0.2s;
+}
+.fl-cursor[data-hover] { width: 54px; height: 54px; margin: -27px 0 0 -27px; background: rgb(255 255 255 / 0.9); border-color: transparent; }
+.fl-cursor[data-down] { width: 20px; height: 20px; margin: -10px 0 0 -10px; }
+.fl-ripple {
+  position: fixed; z-index: 91; pointer-events: none; border-radius: 9999px;
+  width: 12px; height: 12px; margin: -6px 0 0 -6px;
+  background: radial-gradient(circle, color-mix(in oklch, var(--fl-ember) 70%, transparent), color-mix(in oklch, var(--fl-iris) 45%, transparent) 60%, transparent 72%);
+  animation: fl-ripple 0.6s var(--fl-ease) forwards;
+}
+@keyframes fl-ripple { from { transform: scale(1); opacity: 0.9; } to { transform: scale(9); opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .fl-mark { transition: none; }
+  .fl-tilt { animation: none; }
+  .fl-marquee { animation: none; }
+  .fl-ring { animation: none; }
+  .fl-press:active { transform: none; }
+}
+
+/* a soft diagonal streak of light across the hero */
+.fl-beam {
+  position: absolute; left: -20%; right: -20%; top: 38%; height: 220px; pointer-events: none;
+  background:
+    radial-gradient(60% 50% at 50% 50%, rgb(255 255 255 / 0.075), rgb(255 255 255 / 0.025) 55%, transparent 80%);
+  transform: rotate(-9deg); opacity: 0.8;   /* a soft streak from the gradient alone, no blur filter */
+  animation: fl-beam 14s var(--fl-ease) infinite alternate;
+}
+@keyframes fl-beam { from { translate: -4% 0; } to { translate: 4% -18px; } }
+@media (prefers-reduced-motion: reduce) { .fl-beam { animation: none; } }
+
+/* inner scroll areas (tables, lists, code): a slim dark scrollbar, not the browser's white one */
+* { scrollbar-width: thin; scrollbar-color: rgb(255 255 255 / 0.16) transparent; }
+*:hover { scrollbar-color: rgb(255 255 255 / 0.3) transparent; }
+
+/* text selection in the brand's violet; black on the white panel */
+::selection { background: color-mix(in oklch, var(--fl-iris) 62%, transparent); color: #fff; }
+.fl-light ::selection { background: #0b0b0c; color: #f4f4f2; }
+
+/* a panel that rises into place as it scrolls in (scroll-driven; static where unsupported or reduced motion) */
+@supports (animation-timeline: view()) {
+  .fl-rise { animation: fl-rise linear both; animation-timeline: view(); animation-range: entry 0% entry 70%; }
+}
+@keyframes fl-rise { from { transform: translateY(14%) scale(0.96); border-radius: 64px 64px 0 0; } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .fl-rise { animation: none; } }
+
+/* the contour map drifts very slowly, like a survey map under a moving lamp */
+.fl-contours { animation: fl-contours 48s ease-in-out infinite alternate; }
+@keyframes fl-contours { from { transform: translate3d(-1.5%, -1%, 0) scale(1.02); } to { transform: translate3d(1.5%, 1.2%, 0) scale(1.06); } }
+@media (prefers-reduced-motion: reduce) { .fl-contours { animation: none; } }
+
+/* desktop: <main> is the scroll column, the document itself never scrolls (absolutely positioned screen-reader text
+   inside scroll panes resolves against <body> and would otherwise stretch the document far below the layout) */
+@media (min-width: 1024px) {
+  html, body { overflow: hidden; height: 100%; }
+}
+
+/* smoothness: the animated decorative layers are composited once and moved by the GPU, never repainted per frame */
+.fl-aurora, .fl-beam, .fl-contours { will-change: transform; transform: translateZ(0); contain: paint; }
+.fl-marquee { will-change: transform; }
+
+/* smoothness (measured): infinite drifts on large blurred background layers kept the compositor busy every frame on
+   weaker GPUs (≈15 fps where everything else ran at 60). The background is still; motion lives in the content. */
+.fl-aurora, .fl-beam, .fl-contours { animation: none !important; }
+/* while the page scrolls, the remaining decorative loops wait (NavFlow/ScrollRail set html[data-scrolling]) */
+html[data-scrolling] .fl-marquee, html[data-scrolling] .fl-ring, html[data-scrolling] .fl-scroll-cue,
+html[data-scrolling] .fl-scroll-cue { animation-play-state: paused; }
