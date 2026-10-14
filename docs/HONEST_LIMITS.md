@@ -1,0 +1,129 @@
+# Honest limits and what didn't work
+
+This page collects in one place every known limit, every negative result and every deferred item. Each one links to its source. If a limit is fixed, it is removed here and in its source.
+
+Sources:
+- the README "Honest limits" and "What's real vs synthetic" sections ([README.md](../README.md));
+- "What didn't work / limits" and the backtest notes in [evals/RESULTS.md](../evals/RESULTS.md), generated per run;
+- the deferred and dropped items below;
+- the known issues in [ACCESSIBILITY.md](ACCESSIBILITY.md) and "What is NOT protected" in [SECURITY.md](../SECURITY.md).
+
+Every measured number on this page is tagged and checked against `evals/results/latest.json` (`make claims`).
+
+## 1. What is real and what is not
+
+| Part | Status | Where it is said |
+|---|---|---|
+| FalkorDB, every query and algorithm, the agent loop, the gate | Real | README "What's real vs synthetic" |
+| The existing data pipeline (DuckDB warehouse + invariant suite) used to verify data repairs | Real (the pre-existing system, kept as the system under observation) | README "Existing system and what was built here" |
+| Org, people, history, ADRs, runbooks, postmortems, chats, issues, SLOs, customers | Synthetic, seeded and deterministic (`ingest/org_gen.py`, `ingest/history.py`, `ingest/obligations.py`, `data/gen/docs/`, `ingest/globex/`) | README "What's real vs synthetic" |
+| Service topology | Shaped on the OpenTelemetry Demo (`data/topology/otel-demo.yaml`); globex is generated (`data/topology/globex.yaml`). Its history is synthetic: a quarter of the calls are dated to a past PR that introduced them (`ingest/topology_history.py`) | same |
+| Service telemetry | Simulated: `sim/telemetry.py` writes `MetricWindow` nodes from the topology and the scenario's effects | same |
+| GitHub | Simulated in every recorded run (`actions/github.py::SimGitHub`). The real path (`RealGitHub`, `FAULTLINE_GITHUB=real`) is implemented but **not exercised** against GitHub. | README "What's real vs synthetic" |
+| Scenarios and brain questions | Self-authored (`data/scenarios/scenarios.yaml`, `data/brain/`) | RESULTS "What didn't work" |
+| The investigator in every eval number | The deterministic `BaselineInvestigator`, not an LLM (`agent/loop.py`) | README "Honest limits" |
+
+## 2. Evaluation limits
+
+- **The LLM arms have not been run.** A0 (LLM-only), A1 (vector-RAG) and LLM-driven A3 need an API key and an approved budget (`evals/llm_arms.py`). Until they run, there is **no LLM-vs-graph claim** anywhere. The `LLMInvestigator` exists; the gate decides the same way whichever investigator proposes.
+- **Trials are deterministic.** N = 3 shows reproducibility, not statistical variance. Arm N runs once. ([RESULTS.md](../evals/RESULTS.md))
+- **Scale is measured at two sizes, one 10× step.** The recorded eval (`evals/results/scale.json`) measured <!-- claim:scale.sizes_run -->2<!-- /claim --> sizes, up to <!-- claim:scale.largest_services -->10000<!-- /claim --> services, so it shows no growth curve. 25k and 50k are unmeasured: 25k was seeded once before a host crash and never timed, and a 50k graph does not fit under the engine's memory cap. Two templates scan history linearly and are expected to cross the 500 ms slow-template budget around 30k services: `Q-CODE-1` (code specialist) and `Q-REM-1` (remediation ordering). They are not changed. <!-- noclaim: unmeasured sizes, the configured slow-template budget and an extrapolation from the earlier run -->
+- **Self-authored.** Every scenario and every brain question was written by us. The brain set scores <!-- claim:brain.correct -->33<!-- /claim --> of <!-- claim:brain.questions -->33<!-- /claim --> on questions we wrote; it is not an external benchmark.
+- **The naive baseline is not useless.** Naive recency scores top-1 <!-- claim:arm.N.top1 -->0.1<!-- /claim --> (ties scored 1/k). Its failure is that it cannot abstain: abstention on the controls is <!-- claim:arm.N.abstention_correct_rate -->0.0<!-- /claim -->.
+- **Memory off and memory on reach the same root causes** on these scenarios (A2 vs A3). This is by design, because the gate decides from fresh evidence, but it means memory's measured effect is ordering, runbooks and the plan, not accuracy.
+- **Warm memory did not reduce work** for the deterministic investigator: <!-- claim:memory.cold_tool_calls -->17<!-- /claim --> tool calls cold, <!-- claim:memory.warm_tool_calls -->17<!-- /claim --> warm. It measures every suspect anyway.
+- **The "never confidently wrong" numbers are bounded by what our benches generate.** Until the deep bench, no bench put a deploy downstream of what broke; on that pattern the shipped gate confidently blamed an innocent deploy in 16 of 20 worlds, and our first fix produced 35 confident wrong blames in 80 adversarial worlds a reviewer designed. The redesigned G4-upstream rule: <!-- claim:deep.fresh.all.wrong_confident -->0<!-- /claim --> in <!-- claim:deep.fresh.all.cases -->140<!-- /claim --> fresh worlds, but it abstains on <!-- claim:deep.fresh.deep_onpath.abstained -->9<!-- /claim --> of the <!-- claim:deep.fresh.deep_onpath.cases -->20<!-- /claim --> look-alike-on-path worlds, where telemetry alone often names the cause. Data-plane incidents (tables, KPIs) have no call share, so the strict rule never eliminates there. A pattern no bench generates is still untested. <!-- noclaim: pre-fix numbers -->
+- **The ablation is fail-closed, not degraded.** With FalkorDB off (A4) the run cannot start and confirms <!-- claim:arm.A4.confirmed_causes -->0<!-- /claim --> causes. This shows the graph is load-bearing; it is not a measurement of a graph-free agent.
+- **Missing telemetry breaks it.** `evals/robustness.py`: with error-rate windows deleted for 20% of components, held-out correct drops to <!-- claim:robustness.missing.0.2.correct -->83<!-- /claim --> (from <!-- claim:robustness.baseline.correct -->100<!-- /claim -->), and to <!-- claim:robustness.missing.0.8.correct -->28<!-- /claim --> at 80%; every lost case is an abstention (after the N0 fix: before it, three ended "no incident"). Latency-only faults are not modelled by the simulator and were not tested. <!-- noclaim: 20%/80% are knob settings -->
+- **Depth is tested only in our generator.** The gate bench's causes are 0–1 hops from the symptom; the deep bench (`evals/deep_bench.py`) adds 1–4 hops with look-alike deploys, on the same simulator and topology. Real multi-hop incidents are untested.
+- **FalkorDB vs SQL shows equality, not speed.** At 1k services both stores answer the gate's lookups in milliseconds; max flow was not compared (no SQL equivalent) and 10k was not run against SQL.
+- **The context pack's ranking is only as good as the telemetry.** It ranks changes by the error-rate excess measured on the changed component; a component without error-rate windows (tables, KPIs) falls back to graph distance, which alone was no better than vector similarity. In very busy windows (100 unrelated deploys) its suspects query is cut at its LIMIT and reported as truncated, and MRR falls to <!-- claim:ctx.busy100.b1000.GA.mrr -->0.2967<!-- /claim -->. Its decision and responder results rest on one and five scenario worlds. Two pre-registered expectations failed (docs/EVALS.md).
+- **CI is configured but has never run:** nothing is pushed yet (the owner's call), so `ci.yml` is unexercised outside `make judge-check` locally.
+- **Concurrency numbers are one machine.** The S13 claim results are measurements on the pinned engine, not an engine guarantee. <!-- noclaim: engine version -->FalkorDB 6.0 serialises writes per graph, and we claim no MVCC. ([README.md](../README.md) "Honest limits")
+
+## 3. Preflight backtest
+
+Every historical PR was scored by the production formula as of its merge time (`evals/backtest.py`). The results are mixed. Weights and thresholds were pre-registered and are **not** re-tuned on these results. ([RESULTS.md](../evals/RESULTS.md), backtest section)
+
+- **acme is weak.** The gate flags <!-- claim:backtest.acme.full.all.flag_rate -->0.6525<!-- /claim --> of all PRs to catch <!-- claim:backtest.acme.full.all.catch_rate -->0.5455<!-- /claim --> of the incident-causing ones. Its precision is <!-- claim:backtest.acme.full.all.precision -->0.0603<!-- /claim -->, while <!-- claim:backtest.acme.causing_prs -->22<!-- /claim --> of <!-- claim:backtest.acme.full.all.prs -->305<!-- /claim --> PRs caused incidents, so at its threshold flagging is no better than random. AUROC is <!-- claim:backtest.acme.full.all.auroc -->0.5179<!-- /claim -->: chance. It was higher before the topology was versioned, because today's calls leaked into the past PRs' blast radius.
+- **Structure alone barely ranks.** With the past-incidents term weighted 0, the AUROC is <!-- claim:backtest.acme.no_past_incidents.all.auroc -->0.4255<!-- /claim --> on acme and <!-- claim:backtest.globex.no_past_incidents.all.auroc -->0.6335<!-- /claim --> on globex (against <!-- claim:backtest.globex.full.all.auroc -->0.8075<!-- /claim --> with it). Most of the separation comes from incident memory.
+- **That memory term is partly self-fulfilling.** Synthetic incident causes are drawn from per-archetype component lists, so a component that caused incidents before is likely to cause the next one by construction.
+- **Alert fatigue on globex.** It flags <!-- claim:backtest.globex.full.all.flag_rate -->0.4804<!-- /claim --> of all PRs to catch <!-- claim:backtest.globex.full.all.catch_rate -->0.875<!-- /claim --> of the causing ones (precision <!-- claim:backtest.globex.full.all.precision -->0.1806<!-- /claim -->). The thresholds are too low for real PR traffic.
+- **The decision term never fired.** Historical PRs carry no ChangeFacts (<!-- claim:backtest.acme.diag.prs_with_change_facts -->0<!-- /claim --> on acme), so the contradiction term (`Q-DEC-1`) is zero, and nothing historical is blocked for contradicting a decision.
+- **Not everything is as-of.** Service calls are versioned (`PROPAGATES_TO.valid_from` and the PR that introduced them, `topology_at`), so the backtest's blast radius is as of the merge (Q-PRE-1-ASOF); but only about a quarter of the calls carry a date, and revenue paths, betweenness and data lineage are read as they are now. Executives with no membership history keep their current `active` flag in the as-of bus factor. <!-- noclaim: quarter = the topology history generator's share -->
+- **Not in the population.** Incident-causing datastore config changes shipped without a PR.
+
+## 4. The gate and the model of failure
+
+- **G5 is an upper bound under modelled capacities.** Service `cap` is criticality, set per edge in the topology file. Lineage `cap` is an end-to-end row share computed once by SQL. Neither is learned from traffic. ([EXPLAINER.md](EXPLAINER.md), `docs/design/scenario_numbers.md`)
+- **Single cause by default.** Two causes that are only jointly sufficient give "multi-cause, not confident", never a confident claim. Repeated best-effort calls per request are covered only up to the documented multiplicity bound.
+- **The verification allowance is a model bound, not a measurement of the other fault.** While another incident is open, verification leaves room on a symptom for what that incident can still cause (`Q-VERIFY-ALLOW`): its confirmed origin's measured excess × its path transfer, the sum over uncut `PROPAGATES_TO` paths of the product of the caps. That is an upper bound under the simulator's propagation model (`tests/graph/test_g5_bound_property.py::test_path_transfer_bounds_what_one_origin_adds_downstream`), computed on the network with the action's cut edges removed. Origins this incident's own fault reaches allow nothing (their excess holds our leak), a path through another open origin counts once (as that origin's), and an unmeasured excess allows nothing. Limits: the bound uses criticality, not the traffic share the simulator also applies, so it is loose where shares are small; a real system whose failures do not compose this way would need its own bound; and the excess is the peak in the verification window minus a pre-onset mean, so a noisy origin widens it. Before 2026-10-13 it used the bottleneck max flow over the full topology, which over-states multi-hop leaks and counted cut edges (a partial fix could hide its own residual inside it); the partial-fix test and mutant `M-VERIFY-MAXFLOW` pin the fix.
+- **Learned links are shortcuts, from one incident, and persist only where the incident ran.** A learned edge goes straight from the changed component to the symptom (the fix proved the reach, not which hop was missing), with the share measured in that one incident; it is never revised downwards yet. It is written into the incident's graph: live incidents run on the tenant graph, so it persists there; demo scenario rooms are copies of the golden graph, so a link learned in one demo room is not seen by the next (the learning eval carries it over explicitly to stand in for the tenant graph). A human must name the suspect; the product never proposes one when the gate abstains.
+- **Robustness to a wrong graph is measured, but only in our simulator.** `evals/mismatch_eval.py` makes the graph wrong about the world that produced the telemetry: caps off by up to ±50%, one hidden edge, one stale edge. The perturbations are moderate and random, not adversarial, and the world is still the same simulator family. A telemetry-only arm (T) finds most causes in these worlds too; the gate's measured advantage there is that it never blames a change where none should be blamed. <!-- noclaim: the pre-registered perturbation size (evals/PREREGISTRATION.md), not a result -->
+- **Futures are the same upper-bound model, with known blind spots.** Each containment candidate's prediction (`Q-FUTURE-1`, one `GRAPH.COPY` branch per candidate) is the origin's measured excess × its path transfer over the edges the candidate leaves: criticality caps, not traffic shares, so it errs towards "does not contain". It predicts this incident's own fault only; another open incident's share is left to verification's allowance. A symptom without error-rate telemetry (a KPI) makes the prediction "unknown", so data incidents (S2, S4D) get no prediction. A rollback or data repair is predicted on the assumption that the gate's cause is the cause: its "contains" is labelled assumed, is true by construction in the eval (reported separately from the measured cut predictions), and never outranks a measured prediction (exposure is said, not ranked). Caps (8 candidates, 10 cut edges per branch, 30 symptoms, 20 protected nodes) turn into an "unknown" with the reason, never a silent cut. A data repair's prediction is not yet compared at verification (its verification is the warehouse's own channel). The futures eval checks predictions against the same simulator family that produced the telemetry, so agreement there shows the model is a sound bound for that world, not for a real one.
+- **A later intake round's incident starts at its own first page.** Fixed 2026-10-13: late rounds reused the first round's onset, so a late fault whose deploy shipped after the first onset failed G3 and its `Q-PRIMARY-1` windows sat before it. Its onset is still the first page of its group, not the moment the fault began, the same rule as the first round.
+- **The second verification channel shares a source.** In the demo, channel 2 (telemetry after the change) comes from the simulator, which reads the same graph. The two channels are separate checks, not independent physical sensors. Channel 1 (the GitHub main re-read) is simulated too. ([README.md](../README.md) "Safety envelope")
+- **G8 never blocks.** It attaches contradicted decisions. A reviewer can answer one for a single change (intentional / accidental / discuss, two-step, `(:Override)-[:OVERRIDES]->(:Decision)`): an intentional answer turns it into an accepted deviation for that change in G8 and preflight from the next gate run on; it never edits the decision itself, which is what a superseding ADR is for.
+- **pageRank orders; it does not decide.** Verdicts come from the deterministic sweep, so pageRank changes the investigation order and tool use, not the outcome.
+- **Abstention infers, never confirms.** When no change explains the symptom (S12), the upstream origin is reported as inferred and unconfirmed, and only tracking is offered.
+
+## 5. Actions, memory and the brain
+
+- **Data repairs need a proposed patch.** Keyless runs cannot author SQL, so the data-repair option is shown disabled rather than faked. ([README.md](../README.md) "Honest limits")
+- **Config facts come from JSON/YAML diffs only.** Facts hidden in code diffs need the LLM extractor (`preflight/facts.py`).
+- **Learned remediation ordering is coarse** (`remedy_stats.cypher`, `actions/act.py::order_by_history`):
+  - a NOT_APPLIED rollback of the wrong change counts as a rollback failure;
+  - it is not conditioned on the kind of cause;
+  - in the seeded tenants its rates come from the synthetic history's per-family fix lists, so they show the mechanism, not real-world rates;
+  - on S1 it ranks the rollback above the min-cut's smaller flag. That is kept deliberately: both options stay offered with reasons, and the human chooses.
+- **Hidden coupling is a suggestion.** It comes from co-failure in synthetic incident history and is never evidence for the gate (`hidden_coupling.cypher`).
+- **Forget redacts only what cited it.** A forget deletes the doc and what it alone produced, and redacts session turns whose answer cited a forgotten id (`Turn.refs`). A turn that quotes the forgotten text without citing an id cannot be found that way and survives. A doc that alone produced more nodes than the dry run lists (100) is refused, not partly forgotten.
+- **Public brain history is short-lived.** On the public demo a visitor's questions are recorded in a per-tenant brain scratch copy (`brain/scratch.py`) that is replaced after `brain.scratch_ttl_min` or `brain.scratch_max_runs`, so a visitor's session history ends with that copy. The copy is a snapshot of the tenant graph, retired at once on re-arm and on an operator's forget; any other change to the tenant graph reaches the brain when the copy is replaced.
+- **Precomputed embeddings.** Seeded history and known scenario texts are embedded ahead of time so judge-check needs no model download (`data/gen/embeddings/`). Unknown texts use the local model (`memory/embed.py`).
+
+## 6. Public demo and security
+
+From [SECURITY.md](../SECURITY.md), "What is NOT protected (accepted for a demo)":
+- **The approver identity is client-asserted.** The approver must be an active person in the graph, but nothing checks that the caller is that person; this demonstrates the approval flow, not identity. Against real GitHub the operator's approver key is also required.
+- **Re-arm is open** (rate-limited) and restores the seeded data for all visitors.
+- **Brain history** is readable by anyone who knows a pseudonymous session id.
+- **No live deployment yet.** The production compose and Caddy files exist (`deploy/docker-compose.prod.yml`, `deploy/LIVE.md`), but nothing is deployed: AWS needs the owner's go-ahead.
+
+## 7. Accessibility
+
+From [ACCESSIBILITY.md](ACCESSIBILITY.md), "Known remaining issues":
+- there has been no manual screen-reader pass; axe and Playwright's accessibility tree are the only checks;
+- the Tab path to "Approve this exact action" is long;
+- the `@falkordb/canvas` Explore view cannot be read by assistive technology (a node table is its text alternative);
+- the UI is dark-only.
+
+## 8. Engine caveats (pinned `falkordb/falkordb:6.0.2`)
+
+From [FALKORDB_COMPAT.md](FALKORDB_COMPAT.md) and [docs/upstream/](upstream/):
+- **Missing algorithms:** 6.0.x has no A*, k-shortest paths, Leiden or Louvain. Incident families use `algo.labelPropagation`. <!-- noclaim: engine version -->
+- **Full-text:** the procedure form fails on 6.0.2, so only the DDL form is used.
+- **Workarounds for engine bugs:** OPTIONAL MATCH after an aggregating WITH, an `SSpaths` aggregation that crashes the server, several pattern-comprehension shapes, WITH/UNWIND followed by two MATCH clauses, and a CALL subquery after OPTIONAL MATCH that filters a node before binding it (silent empty results). Each has a workaround, a template-lint rule, and a drafted upstream report in `docs/upstream/`. Compose restarts the engine if it crashes.
+- **Atomicity is per query.** Cross-system steps use intent → execute → reconcile with an idempotency key. We claim no cross-system transactions.
+- **Crash recovery takes about a minute, not zero.** An execute job's intent lease names its process boot; the API heartbeats its boot every `actions.boot_heartbeat_s` and reconciles every `actions.reconcile_every_s`. A SIGKILLed API's intents are taken over once its heartbeat is `actions.boot_stale_s` old (a cleanly stopped one at once), so after a restart the incident sits in EXECUTE for roughly 40–100 s before the reconciler settles it. Liveness is judged on the engine clock, from heartbeats in each tenant's audit graph.
+- **The simulated GitHub lives in process memory.** In keyless mode each run's simulated repo is lost when the API restarts. An intent approved before a restart is therefore reconciled as UNKNOWN (escalated to a human), never as "absent → NOT_APPLIED": the reconciler cannot tell what happened in a world it no longer has. Real GitHub (or the chaos test's file-backed simulation) does not have this limit.
+- **A data repair lasts until the next run sets its fixture mode.** The warehouse is shared; every mode switch and every re-arm restores the transforms from hash-pinned pristine copies (`pipeline/transforms_pristine/`). A repair verified APPLIED is therefore not permanent in the demo world. A repair whose verification is UNKNOWN is left applied and marked (`<transform>.sql.unverified.json`) for the reconciler, until that next restore. Verification re-establishes the incident's own fixture (mode and sources digest recorded in the plan); if the sources cannot be reproduced, the verdict is UNKNOWN.
+- **One warehouse user process at a time.** The warehouse gate is per process; an fcntl lock next to the DuckDB file keeps `make eval`, the CLI and the API from using it together, so a second process waits (or, on the public demo, gets 429) rather than sharing a same-mode build with another process.
+- **`GRAPH.LIST` leaks graph names** to restricted users, so the per-tenant ACL user excludes it.
+- **Deleted graphs keep their memory until restart.** On the pinned 6.0.2, deleting a large graph (the 10k scale tenant) left `used_memory` near 2 GB; MEMORY PURGE did not return it. `make compact` (AOF rewrite + restart, graphs kept) does, and `make eval` refuses to start above 35% of maxmemory. <!-- noclaim: a configured threshold (evals/harness.py EVAL_MAX_START_PRESSURE), not a measured result -->
+
+## 9. Deferred, dropped or not built
+
+| Item | Status and reason |
+|---|---|
+| owner-at-the-time and knowledge health feeding the preflight formula | Deferred: changing the pre-registered formula after its backtest was seen needs a new pre-registration first |
+| SIGKILL chaos test between execute and verify | Built in M13 (`evals/chaos.py`, recorded in eval run_0011). A second kill point between the GitHub merge and the graph record is tested (`tests/live/test_chaos_sigkill.py`) but not yet in a recorded eval run |
+| SLO / obligation clock | Deferred in M12 because it changes the seed; since added (`ingest/obligations.py`, `obligation_slo.cypher`, `obligation_customers.cypher`). Eval run_0011 exercises it in every scenario's ROUTE stage; its profiler row in that run failed on the combined evidence id, fixed since. When every SLO is unmeasured, urgency is reported as unknown, not "not urgent" |
+| globex service scenarios | No service `MetricWindow` baselines on globex, and the simulator's templates cap at 100 rows against the larger flow graph; globex has no data-lineage domain. globex is used for isolation, families, owner-gone routing and the backtest. |
+| `HAS_ACTION`, `HAS_ALERT`, `HAS_HYPOTHESIS` | Declared but reserved: written as `RESOLVED_BY`/`ATTEMPTED`, `FIRED_ON` and `HYPOTHESIZES` instead |
+| Optional items: OpenLineage/dbt importer, GraphRAG-SDK extraction, function-level code graph, RCAEval, UDFs beyond FLEX | Not built; each was skipped for time, with the graph work prioritised. FLEX is the one UDF library loaded |
+| Specialist contracts, structural G7, gate benchmark, more UI views | Built in M13/M14 (recorded in eval run_0011: gate bench on the development and held-out sets) |
+| Live URL, video upload, blog, submission | Owner-blocked (money, AWS, publishing) |
+
+## 10. "What didn't work", per run
+
+[evals/RESULTS.md](../evals/RESULTS.md) regenerates its "What didn't work / limits" list from each eval run (`evals/report.py`), so that list is always current for `latest.json`. Sections 2 and 3 above summarise it.
