@@ -1,0 +1,35 @@
+# "Break the graph" playground (backend/faultline/playground.py, M15 #2): the fixed menu of graph changes a visitor can
+# apply to a GRAPH.COPY of a scenario's clean room. Scenario config, like scenarios.yaml (no scenario literal lives in
+# the package). Each entry's `apply` is passed to graph/writes.py::perturb_model on the copy only.
+scenario: S1
+perturbations:
+  cut_proof_path:
+    label: "Remove the call payment → checkout"
+    what: "deletes the PROPAGATES_TO edge (and its DEPENDS_ON twin) the proof path runs over"
+    expect: "G2: with no path from the payment deploy to checkout, the real cause can no longer be claimed"
+    algorithm: "algo.SPpaths"
+    apply: {delete: [[payment, checkout]]}
+  email_critical:
+    label: "Make the email call critical (cap 0.02 → 1.0)"
+    what: "sets PROPAGATES_TO.cap on email → checkout to 1.0, as if a failed confirmation email failed the order"
+    expect: "G5 can no longer eliminate the same-minute email deploy; G4 origin still does, because email's own telemetry stayed in band (defence in depth: one check moved, the verdict did not)"
+    algorithm: "algo.maxFlow + G4 origin"
+    apply: {caps: [[email, checkout, 1.0]]}
+  weak_payment:
+    label: "Make the payment call best-effort (cap 1.0 → 0.01)"
+    what: "sets PROPAGATES_TO.cap on payment → checkout to 0.01"
+    expect: "G5: the real cause can no longer carry the observed error share"
+    algorithm: "algo.maxFlow"
+    apply: {caps: [[payment, checkout, 0.01]]}
+  isolate_payment:
+    label: "Cut payment off from everything downstream"
+    what: "deletes every PROPAGATES_TO edge out of payment"
+    expect: "BFS/WCC/SPpaths: nothing downstream is reachable, so the gate cannot prove a path and there is nothing to contain"
+    algorithm: "algo.SPpaths / algo.BFS / algo.WCC"
+    apply: {delete_all_from: payment}
+  top_responder_leaves:
+    label: "The top responder leaves the company"
+    what: "sets active = false on the person who fixes it first"
+    expect: "HarmonicCentrality: who is paged first changes, and the escalation tree is recomputed"
+    algorithm: "algo.HarmonicCentrality / algo.MSF"
+    apply: {deactivate_top_responder: true}
