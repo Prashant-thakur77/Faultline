@@ -1,0 +1,269 @@
+name: CI
+
+# Deterministic, secret-free CI. Every job here must pass on a fork with no
+# repository secrets configured, so nothing below may touch the Anthropic API, a
+# live FalkorDB-backed LLM run, or any network service beyond the package registries.
+#
+#   backend-tests       evidence-gate + repair/PR unit tests
+#   lint                ruff check over backend/, pipeline/, evals/, tests/, scripts/
+#   pipeline-invariants the HEALTHY fixture must be 32/32 green — the determinism guarantee
+#   frontend            lint + production build of the Next.js command center
+#   secrets-scan        no tracked .env, no credential-shaped strings in the tree
+#
+#   graph-live          pinned FalkorDB service → smoke, seed, live graph/agent/action/memory/isolation/chaos tests,
+#                       replay of the committed examples' gate verdicts, write-back artefact re-read, the fast gate
+#                       bench, no-leaks lint and the claims check. Keyless: deterministic investigator, simulated GitHub.
+# LLM arms of the evals are NOT run here (they need ANTHROPIC_API_KEY and an approved budget).
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# A new push supersedes an in-flight run of the same ref.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Belt and braces: the autonomous PR step is off by default, and CI states so
+  # explicitly so a stray .env can never make a test job push to a remote.
+  FAULTLINE_CREATE_PR: "false"
+
+jobs:
+  backend-tests:
+    name: backend unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
+        with:
+          version: "0.11.28"   # must be >= the uv that wrote uv.lock (revision 3)
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Install Python 3.11
+        run: uv python install 3.11
+
+      - name: Sync dependencies (locked)
+        run: uv sync --frozen --python 3.11
+
+      # tests/test_engine.py opens the DuckDB warehouse read-only to prove the
+      # SQL tool is read-only, so the warehouse has to exist. Healthy mode keeps
+      # the job independent of the seeded incident.
+      - name: Build the healthy warehouse fixture
+        run: |
+          uv run --frozen python pipeline/generate_sources.py --mode healthy
+          uv run --frozen python pipeline/run.py
+
+      - name: Run unit tests (no engine)
+        run: PYTHONPATH=backend uv run --frozen pytest tests/ -q -m "not smoke and not live and not slow"
+
+      - name: Single-store lint (FalkorDB is the only store)
+        run: PYTHONPATH=backend uv run --frozen python scripts/lint_single_store.py
+
+  lint:
+    name: ruff check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
+        with:
+          version: "0.11.28"   # must be >= the uv that wrote uv.lock (revision 3)
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Install Python 3.11
+        run: uv python install 3.11
+
+      - name: Sync dependencies (locked)
+        run: uv sync --frozen --python 3.11
+
+      - name: ruff check
+        run: uv run --frozen ruff check .
+
+  pipeline-invariants:
+    name: pipeline invariants (healthy = 32/32)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
+        with:
+          version: "0.11.28"   # must be >= the uv that wrote uv.lock (revision 3)
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Install Python 3.11
+        run: uv python install 3.11
+
+      - name: Sync dependencies (locked)
+        run: uv sync --frozen --python 3.11
+
+      - name: Build the HEALTHY fixture
+        run: |
+          uv run --frozen python pipeline/generate_sources.py --mode healthy
+          uv run --frozen python pipeline/run.py
+
+      # The fixture is seeded and anchored to a fixed day, so this is exact: a
+      # healthy build must satisfy every invariant. Anything less means the
+      # fixture, the transforms, or the committed baselines have drifted.
+      - name: All invariants must pass
+        run: uv run --frozen pytest pipeline/invariants -q --junitxml=invariants.xml
+
+      # The count is asserted separately, so a shrunken or half-collected suite
+      # can never pass as green. (pyproject already sets `-q`, so the CLI flag
+      # above makes it `-qq` and pytest prints no "32 passed" summary to grep —
+      # the junit report is the reliable source.)
+      - name: The suite must be exactly 32/32
+        run: |
+          uv run --frozen python - <<'PY'
+          import sys, xml.etree.ElementTree as ET
+
+          root = ET.parse("invariants.xml").getroot()
+          suite = root if root.tag == "testsuite" else root.find("testsuite")
+          total = int(suite.get("tests", 0))
+          bad = int(suite.get("failures", 0)) + int(suite.get("errors", 0))
+          skipped = int(suite.get("skipped", 0))
+          print(f"{total - bad - skipped}/{total} invariants passed ({skipped} skipped)")
+          if (total, bad, skipped) != (32, 0, 0):
+              sys.exit("::error::the healthy fixture must be exactly 32/32 with nothing skipped")
+          PY
+
+  frontend:
+    name: frontend lint + build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: "20"   # next 16 requires >= 20.9
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install (locked)
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      # No secrets: the API base URL falls back to http://localhost:8400.
+      - name: Build
+        run: npm run build
+
+      # The static replay site (GitHub Pages) must keep exporting cleanly under a project base path.
+      - name: Build the static replay site
+        run: npm run build:pages
+        env:
+          NEXT_PUBLIC_BASE_PATH: /Faultline
+
+  graph-live:
+    name: FalkorDB live tests (keyless)
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    services:
+      falkordb:
+        image: falkordb/falkordb@sha256:107455e862a824e45e8e9f5a7fbfdf5e00a08b14e13eae2577c72fd9e3f59ba6
+        ports: ["6379:6379"]
+        env:
+          FALKORDB_ARGS: "TIMEOUT_MAX 10000 TIMEOUT_DEFAULT 2000 RESULTSET_SIZE 100000 MAX_QUEUED_QUERIES 50"
+        options: >-
+          --health-cmd "redis-cli PING" --health-interval 5s --health-timeout 3s --health-retries 20
+    env:
+      PYTHONPATH: backend
+      FALKORDB_HOST: localhost
+      FALKORDB_PORT: "6379"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
+        with:
+          version: "0.11.28"
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Install Python 3.11
+        run: uv python install 3.11
+
+      - name: Sync dependencies (locked)
+        run: uv sync --frozen --python 3.11
+
+      - name: Engine smoke suite (critical items must pass on the pinned digest)
+        run: uv run --frozen pytest -q -m smoke backend/faultline/graph/smoke -p no:warnings
+
+      - name: Seed tenants (acme, globex) + memory-off golden
+        run: |
+          uv run --frozen python scripts/seed.py --tenant all --summary
+          uv run --frozen python scripts/seed.py --tenant acme --no-memory --summary
+
+      - name: Build the incident fixture (S2 data scenario)
+        run: |
+          uv run --frozen python pipeline/generate_sources.py --mode incident
+          uv run --frozen python pipeline/run.py
+
+      - name: Live tests (graph, gate, agent, actions, memory, brain, preflight, isolation, concurrency)
+        run: uv run --frozen pytest tests -q -m live -p no:warnings
+
+      - name: Tenant isolation through the real ro_<tenant> ACL users (created for this run, deleted after)
+        run: uv run --frozen python scripts/acl_ephemeral.py tests/isolation
+
+      - name: Replay the gate verdicts of every committed examples/<run> (must reproduce)
+        run: uv run --frozen python evals/replay_examples.py
+
+      - name: Re-read the committed write-back artefacts (verify.txt, pr.md, rejected fixes)
+        run: uv run --frozen python scripts/run_artefacts.py --check
+
+      - name: Gate bench, fast variant (20 of 100 generated cases reproduce the recorded verdicts)
+        run: uv run --frozen python evals/gate_bench.py --fast --quiet --check-recorded
+
+      - name: No answer leakage + claims match evals/results/latest.json
+        run: |
+          uv run --frozen python scripts/lint_no_leaks.py
+          uv run --frozen python scripts/check_claims.py
+
+  secrets-scan:
+    name: secrets scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: .env must never be tracked
+        run: |
+          tracked=$(git ls-files | grep -E '(^|/)\.env($|\.)' | grep -v '\.env\.example$' || true)
+          if [ -n "$tracked" ]; then
+            echo "::error::environment files are tracked in git:"
+            echo "$tracked"
+            exit 1
+          fi
+          if ! git check-ignore -q .env; then
+            echo "::error::.env is not ignored by .gitignore"
+            exit 1
+          fi
+          echo "ok: only .env.example is tracked, and .env is ignored"
+
+      # Credential-shaped strings only. The patterns require a realistic secret
+      # body, so documented placeholders (.env.example's `sk-ant-...`, the README's
+      # `sk-ant-...`) cannot trip them — and neither can this file, since the
+      # character classes below are not themselves valid secret bodies.
+      - name: No credentials in published files (paths only, values never printed)
+        run: bash scripts/secret_scan.sh

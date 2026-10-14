@@ -1,0 +1,13 @@
+# Keep the actions the workflows run on from rotting. Every runner change so
+# far (Node 16 -> 20 -> 24) has turned a pinned-and-forgotten action version
+# into a deprecation warning and then a red build. One grouped PR a month is
+# cheaper than finding out from the failure.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns: ["*"]
