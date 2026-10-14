@@ -1,0 +1,156 @@
+# Scenario definitions (config). Ground truth lives in <id>.truth.json and is read ONLY by the grader
+# (evals/); the product package never reads truth files (scripts/lint_no_leaks.py).
+# Times: `onset` is relative to the history anchor (2026-10-15T00:00Z); `at` is relative to onset.
+- id: S2
+  name: existing_data_incident_cross_domain
+  tenant: acme
+  onset: anchor+2h
+  pipeline_mode: incident
+  inject:
+    - {change: D-cutover-1, target: payment, kind: data_cutover, at: -40m, title: "payments: move order capture to cloudpay_v2"}
+    - {change: D-fx-pause-7, target: raw.raw_fx_rates, kind: config, at: -25m, title: "treasury: pause FX reference feed connector"}
+  alerts:
+    - {id: al-s2-kpi, target: kpi.exec_revenue, metric: kpi_jump, at: 0m}
+  report: "The executive revenue KPI looks wrong since yesterday"
+  window_min: 60
+  truth: S2.truth.json
+
+- id: S4D
+  name: data_control_no_incident
+  tenant: acme
+  onset: anchor+2h
+  pipeline_mode: healthy
+  inject:
+    - {change: D-cutover-1, target: payment, kind: data_cutover, at: -40m, title: "payments: move order capture to cloudpay_v2"}
+  alerts:
+    - {id: al-s4d-kpi, target: kpi.exec_revenue, metric: kpi_dip, at: 0m}
+  report: "Revenue feels slightly off today"
+  window_min: 60
+  truth: S4D.truth.json
+
+- id: S1
+  name: hero_bad_payment_deploy_with_same_minute_distractor
+  tenant: acme
+  onset: anchor+3h
+  inject:
+    - {change: D-pay-417, target: payment, kind: deploy, at: -3m, title: "payment: raise client timeout to 5000 ms, drop retries"}
+    - {change: D-email-88, target: email, kind: deploy, at: -3m, title: "email: new order-confirmation template"}
+    - {change: D-rec-12, target: recommendation, kind: deploy, at: -4m, title: "recommendation: cache TTL tweak"}
+  facts:
+    - {change: D-pay-417, key: payment.client.timeout_ms, value: 5000, about: payment, file: "src/payment/charge.js"}
+    - {change: D-pay-417, key: payment.client.retries, value: 0, about: payment, file: "src/payment/charge.js"}
+  effects:
+    - {target: payment, error_rate: 0.41, from: -2m, change: D-pay-417}
+    - {target: recommendation, error_rate: 0.03, from: -3m, change: D-rec-12}
+  alerts:
+    - {id: al-s1-checkout, target: checkout, metric: error_rate, at: 0m}
+    - {id: al-s1-frontend, target: frontend, metric: error_rate, at: 0m}
+  report: "Checkout errors are spiking"
+  window_min: 30
+  truth: S1.truth.json
+
+- id: S1b
+  name: warm_repeat_payment_regression
+  tenant: acme
+  # Runs in the SAME graph right after S1 was resolved and written back (warm memory). Cold control: the same
+  # scenario on a fresh golden copy. Memory may only reorder the investigation; the gate decides as usual.
+  warm_after: S1
+  onset: anchor+6h
+  world_flags: {paymentGate: "on"}   # re-enabled after the S1 follow-up fix shipped (out of band)
+  inject:
+    - {change: D-pay-421, target: payment, kind: deploy, at: -4m, title: "payment: move charge client to the new card SDK"}
+    - {change: D-ad-3, target: ad, kind: deploy, at: -3m, title: "ad: new creative rotation"}
+  effects:
+    - {target: payment, error_rate: 0.33, from: -2m, change: D-pay-421}
+  alerts:
+    - {id: al-s1b-checkout, target: checkout, metric: error_rate, at: 0m}
+  report: "Checkout payments are failing again"
+  window_min: 30
+  truth: S1b.truth.json
+
+- id: S3
+  name: db_lock_contention
+  tenant: acme
+  onset: anchor+9h
+  inject:
+    - {change: D-pgcfg-3, target: astronomy-db, kind: config, at: -6m, title: "postgres: lower max_connections, raise lock_timeout"}
+    - {change: D-cart-9, target: cart, kind: deploy, at: -5m, title: "cart: new basket serializer"}
+  effects:
+    - {target: astronomy-db, error_rate: 0.22, from: -4m, change: D-pgcfg-3}
+  alerts:
+    - {id: al-s3-catalog, target: product-catalog, metric: error_rate, at: 0m}
+  report: "Product pages are slow and erroring"
+  window_min: 30
+  truth: S3.truth.json
+
+- id: S4S
+  name: service_control_no_incident
+  tenant: acme
+  onset: anchor+12h
+  inject:
+    - {change: D-ad-5, target: ad, kind: deploy, at: -5m, title: "ad: copy change"}
+  alerts:
+    - {id: al-s4s-checkout, target: checkout, metric: error_rate, at: 0m}
+  report: "Checkout alert fired, but customers are not complaining"
+  window_min: 30
+  truth: S4S.truth.json
+
+- id: S12
+  name: external_dependency_degraded_no_change
+  tenant: acme
+  onset: anchor+15h
+  # No change in the window explains it: currency conversion (an external FX provider behind it) degrades.
+  # The agent must NOT blame a change; it may infer the upstream origin (confident=false) and contain around it.
+  effects:
+    - {target: currency, error_rate: 0.3, from: -3m}
+  alerts:
+    - {id: al-s12-checkout, target: checkout, metric: error_rate, at: 0m}
+  report: "Checkout is failing for some customers"
+  window_min: 30
+  truth: S12.truth.json
+
+- id: S3b
+  name: warm_repeat_db_config_regression
+  tenant: acme
+  # Runs in the SAME graph right after S3 was resolved and written back (warm memory). Cold control: a fresh golden copy.
+  warm_after: S3
+  onset: anchor+10h
+  inject:
+    - {change: D-pgcfg-4, target: astronomy-db, kind: config, at: -5m, title: "postgres: shrink connection pool for the reporting replica"}
+    - {change: D-ad-7, target: ad, kind: deploy, at: -4m, title: "ad: tracking pixel update"}
+  effects:
+    - {target: astronomy-db, error_rate: 0.2, from: -3m, change: D-pgcfg-4}
+  alerts:
+    - {id: al-s3b-catalog, target: product-catalog, metric: error_rate, at: 0m}
+  report: "Product pages are erroring again"
+  window_min: 30
+  truth: S3b.truth.json
+
+- id: S14
+  name: alert_storm_with_concurrent_unrelated_fault
+  tenant: acme
+  onset: anchor+18h
+  # One bad payment deploy propagates into a storm of pages across the request path; at the same time an unrelated
+  # fraud-detection rollout breaks the order queue's consumer. INTAKE must group the pages into independent incidents
+  # (algo.WCC over the alerting nodes and what can carry a failure between them), each gate decides its own cause, and
+  # the late pages attach to the incident whose confirmed origin reaches them.
+  inject:
+    - {change: D-pay-430, target: payment, kind: deploy, at: -4m, title: "payment: switch card tokenisation to the v3 endpoint"}
+    - {change: D-fraud-21, target: fraud-detection, kind: deploy, at: -3m, title: "fraud-detection: roll out the new scoring model"}
+  effects:
+    - {target: payment, error_rate: 0.38, from: -2m, change: D-pay-430}
+    - {target: fraud-detection, error_rate: 0.3, from: -2m, change: D-fraud-21}
+  alerts:
+    - {id: al-s14-checkout, target: checkout, metric: error_rate, at: 0m}
+    - {id: al-s14-frontend, target: frontend, metric: error_rate, at: 0m}
+    - {id: al-s14-fraud, target: fraud-detection, metric: error_rate, at: 0m}
+    - {id: al-s14-proxy, target: frontend-proxy, metric: error_rate, at: 1m}
+    - {id: al-s14-mcp, target: mcp, metric: error_rate, at: 1m}
+    - {id: al-s14-queue, target: queue, metric: error_rate, at: 1m}
+    # late pages, after both incidents were investigated (a second INTAKE round attaches or opens)
+    - {id: al-s14-agent, target: agent, metric: error_rate, at: 4m}
+    - {id: al-s14-chatbot, target: chatbot, metric: error_rate, at: 4m}
+    - {id: al-s14-queue-lag, target: queue, metric: consumer_lag, at: 4m}
+  report: "Pages everywhere: checkout, the storefront, the proxy and the order queue are all alerting"
+  window_min: 30
+  truth: S14.truth.json
