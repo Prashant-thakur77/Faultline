@@ -1,0 +1,247 @@
+{
+  "tag": "6.0.2",
+  "digest": "sha256:107455e862a824e45e8e9f5a7fbfdf5e00a08b14e13eae2577c72fd9e3f59ba6",
+  "module": "[['name', 'vectorset', 'ver', 1, 'path', '', 'args', []], ['name', 'graph', 'ver', 60002, 'path', '/var/lib/falkordb/bin/falkordb.so', 'args', ['MAX_QUEUED_QUERIES', '25', 'TIMEOUT', '1000', 'RESULTSET_SIZE', '10000']]]",
+  "module_ver": 60002,
+  "ran_at": "2026-10-13T10:24:56+0530",
+  "seconds": 1.5,
+  "results": [
+    {
+      "id": "1a",
+      "item": "Procedure listing (dbms.procedures)",
+      "critical": false,
+      "ok": null,
+      "notes": "24 procedures; algo.*: algo.BFS, algo.HarmonicCentrality, algo.MSF, algo.SPpaths, algo.SSpaths, algo.WCC, algo.betweenness, algo.labelPropagation, algo.maxFlow, algo.pageRank",
+      "syntax": "CALL dbms.procedures() YIELD name"
+    },
+    {
+      "id": "2",
+      "item": "algo.BFS (chain a\u2192b\u2192c, a\u2192d)",
+      "critical": true,
+      "ok": true,
+      "notes": "depth1=['b', 'd'] depth2=['b', 'c', 'd']",
+      "syntax": "CALL algo.BFS(s, depth, 'REL') YIELD nodes, edges"
+    },
+    {
+      "id": "3",
+      "item": "algo.SPpaths (diamond; weightProp, maxLen, pathCount, no-path)",
+      "critical": true,
+      "ok": true,
+      "notes": "k=1 \u2192 [[['s', 'a', 't'], 2]]; k=2 \u2192 [[['s', 'a', 't'], 2], [['s', 'b', 't'], 6]]; without weightProp \u2192 [[2]]; maxLen 1 \u2192 [[0]]; reverse (no path) \u2192 [[0]]",
+      "syntax": "CALL algo.SPpaths({sourceNode, targetNode, relTypes, weightProp, relDirection, maxLen, pathCount}) YIELD path, pathWeight, pathCost"
+    },
+    {
+      "id": "4",
+      "item": "algo.SSpaths (reachability; pathCount semantics)",
+      "critical": true,
+      "ok": true,
+      "notes": "maxLen1 pc1000 \u2192 ['a', 'b']; maxLen2 pc1000 \u2192 ['a', 'b', 'c']; maxLen2 pc0 (min-weight ties only) \u2192 ['a', 'b']",
+      "syntax": "CALL algo.SSpaths({sourceNode, relTypes, weightProp, relDirection, maxLen, pathCount:1000}) YIELD path"
+    },
+    {
+      "id": "5",
+      "item": "algo.pageRank (star \u2192 hub highest)",
+      "critical": true,
+      "ok": true,
+      "notes": "top=['hub', 0.523795247077942]",
+      "syntax": "CALL algo.pageRank('Label', 'REL') YIELD node, score"
+    },
+    {
+      "id": "6",
+      "item": "algo.betweenness (path a-b-c-d-e; seeded determinism)",
+      "critical": true,
+      "ok": true,
+      "notes": "top=['c', 4.0]; deterministic=True",
+      "syntax": "CALL algo.betweenness({nodeLabels, relationshipTypes, samplingSize, samplingSeed:42}) YIELD node, score"
+    },
+    {
+      "id": "7",
+      "item": "algo.HarmonicCentrality (symmetric star \u2192 centre)",
+      "critical": true,
+      "ok": true,
+      "notes": "top=['c', 3.00734430546914, 4]",
+      "syntax": "CALL algo.HarmonicCentrality({nodeLabels, relationshipTypes}) YIELD node, score, reachable"
+    },
+    {
+      "id": "8",
+      "item": "algo.WCC (two disjoint pairs \u2192 2 components)",
+      "critical": true,
+      "ok": true,
+      "notes": "components=[['a', 'b'], ['c', 'd']]",
+      "syntax": "CALL algo.WCC({nodeLabels, relationshipTypes}) YIELD node, componentId"
+    },
+    {
+      "id": "9",
+      "item": "algo.labelPropagation (two triangles \u2192 2 communities)",
+      "critical": true,
+      "ok": true,
+      "notes": "communities=[['a', 'b', 'c'], ['x', 'y', 'z']]",
+      "syntax": "CALL algo.labelPropagation({nodeLabels, relationshipTypes, maxIterations}) YIELD node, communityId"
+    },
+    {
+      "id": "10",
+      "item": "algo.maxFlow (fixture \u2192 3; forms; edgeFlows; min-cut {a\u2192c,b\u2192c})",
+      "critical": true,
+      "ok": true,
+      "notes": "maxFlow=3.0 (float); edges=[['s', 'a'], ['s', 'b'], ['a', 'c'], ['b', 'c'], ['c', 't']]; edgeFlows=[1.0, 2.0, 1.0, 2.0, 3.0]; map_nodes: ok; map_ids: ResponseError: algo.maxFlow: 'sourceNodes' must be an array of nodes; pos_ids: ResponseError: Received 3 arguments to procedure 'algo.maxFlow', expected at most 1; multi-source [s,x] \u2192 7.0 (expect 7); multi-target [a,t] \u2192 12.0; min-cut(in code)=[('a', 'c'), ('b', 'c')]",
+      "syntax": "CALL algo.maxFlow({sourceNodes:[nodes], targetNodes:[nodes], relationshipTypes, capacityProperty}) YIELD nodes, edges, edgeFlows, maxFlow"
+    },
+    {
+      "id": "11",
+      "item": "algo.MSF (triangle 1,2,3 maximize \u2192 {2,3})",
+      "critical": true,
+      "ok": true,
+      "notes": "tree edge weights=[2, 3]",
+      "syntax": "CALL algo.MSF({nodeLabels, relationshipTypes, objective:'maximize', weightAttribute}) YIELD edges, nodes"
+    },
+    {
+      "id": "12",
+      "item": "All algo.* above executed under GRAPH.RO_QUERY",
+      "critical": true,
+      "ok": true,
+      "notes": "every algorithm probe used ro_query",
+      "syntax": "GRAPH.RO_QUERY g \"CALL algo.\u2026\""
+    },
+    {
+      "id": "13",
+      "item": "GRAPH.RO_QUERY rejects writes",
+      "critical": true,
+      "ok": true,
+      "notes": "ResponseError: graph.RO_QUERY is to be executed only on read-only queries",
+      "syntax": "GRAPH.RO_QUERY rejects CREATE"
+    },
+    {
+      "id": "14",
+      "item": "Per-query TIMEOUT on RO_QUERY cuts off a slow query",
+      "critical": true,
+      "ok": true,
+      "notes": "slow query cut off=True after 201 ms (ResponseError: Query timed out); timeout > TIMEOUT_MAX accepted",
+      "syntax": "ro_query(q, params, timeout=ms) / GRAPH.RO_QUERY g q TIMEOUT ms"
+    },
+    {
+      "id": "15",
+      "item": "Full-text DDL + queryNodes prefix (and #3248 check)",
+      "critical": true,
+      "ok": true,
+      "notes": "pay* \u2192 ['payment', 'paywall']; with range index on same attr \u2192 2 rows; multi-property \u2192 1; procedure form: ResponseError: Received 2 arguments to procedure 'db.idx.fulltext.createNod",
+      "syntax": "CREATE FULLTEXT INDEX FOR (n:L) ON (n.p); CALL db.idx.fulltext.queryNodes('L', 'pay*') YIELD node, score"
+    },
+    {
+      "id": "16",
+      "item": "Vector index (384, cosine) + vecf32 + queryNodes",
+      "critical": true,
+      "ok": true,
+      "notes": "results=[['near', 0.00496293970840022], ['far', 1.0]]; score is distance (lower = closer); bare list rejected (ResponseError: Invalid arguments for procedure 'db.idx.vector.que); OPTIONS required (ResponseError: Invalid vector index configuration)",
+      "syntax": "CREATE VECTOR INDEX \u2026 OPTIONS {dimension:384, similarityFunction:'cosine'}; db.idx.vector.queryNodes('L','p',k,vecf32($q)) YIELD node, score"
+    },
+    {
+      "id": "17",
+      "item": "GRAPH.COPY (dest must not exist; indexes carried?)",
+      "critical": true,
+      "ok": true,
+      "notes": "client Graph.copy ok; copied nodes=3; indexes=[['Incident', ['embedding'], OrderedDict({'embedding': ['VECTOR']})], ['N', ['id'], OrderedDict({'id': ['RANGE']})], ['Service', ['name'], OrderedDict({'name': ['FULLTEXT']})]]; fulltext works on copy=True; vector works on copy=True; copy onto existing dest rejected (ResponseError: destination key already exists)",
+      "syntax": "Graph.copy(dest) / GRAPH.COPY src dest"
+    },
+    {
+      "id": "18",
+      "item": "Unique constraint on Intent.idem (+ MERGE race)",
+      "critical": false,
+      "ok": true,
+      "notes": "create \u2192 PENDING; status=OPERATIONAL; duplicate CREATE rejected (ResponseError: unique constraint violation on node of type Intent); 16\u00d7 MERGE race \u2192 1 node(s), 0 errors",
+      "syntax": "GRAPH.CONSTRAINT CREATE g UNIQUE NODE Intent PROPERTIES 1 idem (async \u2192 poll db.constraints())"
+    },
+    {
+      "id": "19",
+      "item": "Cypher features (pattern predicates, pow/^, path fns, reduce, FOREACH, EXISTS, shortestPath, CALL {} subquery)",
+      "critical": false,
+      "ok": true,
+      "notes": "pattern predicate in WHERE: ['a'] | pow(): [0.25] | ^ operator: [0.25] | last(nodes(p)), relationships(p), id(r), startNode(r): ['b', 1, True, 'a'] | reduce(): [2] | FOREACH write: [True] | UNWIND of empty list + RETURN: [0] | EXISTS subquery: ERROR ResponseError: Invalid input '(': expected ':', ',' or '}', errCt | shortestPath() in WITH (bounded *0..8): [[['a', ['a']], ['c', ['a', 'b', 'c']]]] | CALL {} subquery keeps the row when algo.BFS yields none: ['c', 0]",
+      "syntax": ""
+    },
+    {
+      "id": "20",
+      "item": "GRAPH.EXPLAIN / GRAPH.PROFILE via client",
+      "critical": false,
+      "ok": true,
+      "notes": "explain \u2192 ExecutionPlan: 'Limit\\n    Project\\n        Node By Label Scan | (n:N)'; profile \u2192 'Limit\\n    Project\\n        Node By Label Scan | (n:N)'",
+      "syntax": "Graph.explain(q) / Graph.profile(q)"
+    },
+    {
+      "id": "21",
+      "item": "Runtime GRAPH.CONFIG (TIMEOUT_MAX/DEFAULT, RESULTSET_SIZE, MAX_QUEUED_QUERIES)",
+      "critical": true,
+      "ok": true,
+      "notes": "TIMEOUT_MAX=['TIMEOUT_MAX', 5000]; TIMEOUT_DEFAULT=['TIMEOUT_DEFAULT', 2000]; RESULTSET_SIZE=['RESULTSET_SIZE', 1000]; MAX_QUEUED_QUERIES=['MAX_QUEUED_QUERIES', 50]",
+      "syntax": "GRAPH.CONFIG SET <key> <value>"
+    },
+    {
+      "id": "22",
+      "item": "ACL read-only tenant user (RO allowed; QUERY and other tenant denied)",
+      "critical": true,
+      "ok": true,
+      "notes": "RO on own tenant \u2192 1; GRAPH.QUERY denied (NoPermissionError: User ro_smoke84fb has no permissions to ); other tenant denied (NoPermissionError: No permissions to access a key); GRAPH.LIST denied (NoPermissionError: User ro_smoke84fb has no permi)",
+      "syntax": "ACL SETUSER ro_<t> on >pw resetkeys -@all +GRAPH.RO_QUERY +GRAPH.EXPLAIN +PING +HELLO ~tenant_<t> ~scratch_<t>_*  (connect with falkordb.Graph(redis.Redis(...)); FalkorDB() needs INFO)"
+    },
+    {
+      "id": "23",
+      "item": "Concurrency: 16 claimers \u00d7 10 rounds \u2192 1 owner; RO reads during writes",
+      "critical": true,
+      "ok": true,
+      "notes": "10/10 rounds with exactly 1 owner; RO read p50=0.50 ms p95=1.75 ms over 126 reads",
+      "syntax": "W-CLAIM-1 conditional claim"
+    },
+    {
+      "id": "24",
+      "item": "Schema introspection under RO_QUERY (db.labels/relationshipTypes/propertyKeys/meta.stats/indexes)",
+      "critical": false,
+      "ok": true,
+      "notes": "under RO_QUERY: db.labels=['Empty', 'M', 'N']; db.relationshipTypes=['R', 'S']; db.propertyKeys=['cap', 'extra', 'id', 'w']; db.meta.stats labels={'N': 3, 'Empty': 0, 'M': 1} relTypes={'R': 2, 'S': 1} nodes=4 edges=3 (equals full scan: True; index-only label listed with 0); db.indexes labels=['Empty']; modes={'db.labels': 'READ', 'db.relationshipTypes': 'READ', 'db.propertyKeys': 'READ', 'db.meta.stats': 'READ', 'db.indexes': 'READ'}",
+      "syntax": "CALL db.meta.stats() YIELD labels, relTypes, nodeCount, relCount, propertyKeyCount; CALL db.indexes() YIELD label, properties, types, entitytype, status; db.labels() / db.relationshipTypes() / db.propertyKeys() (no counts)"
+    }
+  ],
+  "resolved": {
+    "bfs": {
+      "name": "algo.BFS",
+      "form": "positional(node, depth, relType)"
+    },
+    "sppaths": {
+      "name": "algo.SPpaths",
+      "form": "map"
+    },
+    "sspaths": {
+      "name": "algo.SSpaths",
+      "form": "map",
+      "pathCount": 1000,
+      "note": "pathCount is a global top-k over all targets; 0 = min-weight ties only; full result \u21d2 possibly truncated \u21d2 UNKNOWN"
+    },
+    "pagerank": {
+      "name": "algo.pageRank",
+      "form": "positional(label, relType)"
+    },
+    "betweenness": {
+      "name": "algo.betweenness",
+      "form": "map",
+      "samplingSeed": 42
+    },
+    "harmonic": {
+      "name": "algo.HarmonicCentrality",
+      "form": "map"
+    },
+    "wcc": {
+      "name": "algo.WCC",
+      "form": "map"
+    },
+    "cdlp": {
+      "name": "algo.labelPropagation",
+      "form": "map"
+    },
+    "maxflow": {
+      "name": "algo.maxFlow",
+      "form": "map_nodes"
+    },
+    "msf": {
+      "name": "algo.MSF",
+      "form": "map"
+    }
+  }
+}
