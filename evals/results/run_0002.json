@@ -1,0 +1,1747 @@
+{
+  "started": "2026-10-13T03:41:35",
+  "finished": "2026-10-13T03:42:04",
+  "n": 3,
+  "arms": [
+    "N",
+    "A2",
+    "A3",
+    "A4"
+  ],
+  "skipped_arms": [
+    "A0",
+    "A1"
+  ],
+  "scenarios": [
+    "S1",
+    "S2",
+    "S3",
+    "S4D",
+    "S4S",
+    "S1b"
+  ],
+  "investigator": "baseline-policy (deterministic, no LLM)",
+  "engine": "6.0.2",
+  "trials": [
+    {
+      "scenario": "S1",
+      "arm": "N",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-email-88",
+      "tied": [
+        "D-email-88",
+        "D-pay-417"
+      ],
+      "top1": 0.5,
+      "outcome_correct": false,
+      "false_blame": true,
+      "abstention_correct": null,
+      "tool_calls": 0,
+      "seconds": 0.0
+    },
+    {
+      "scenario": "S1",
+      "arm": "A2",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-417",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 21,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.56,
+      "error": null,
+      "sweep": [
+        {
+          "change": "D-pay-417",
+          "status": "candidate",
+          "reason": "G2 path exists"
+        },
+        {
+          "change": "D-email-88",
+          "status": "eliminated",
+          "reason": "G5: max flow 0.0200 < needed 0.2433 (observed 0.3041 \u00d7 0.8); the other suspects can carry 1.0000"
+        },
+        {
+          "change": "D-rec-12",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pay-417",
+        "payment",
+        "checkout"
+      ]
+    },
+    {
+      "scenario": "S1",
+      "arm": "A2",
+      "trial": 2,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-417",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 21,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.46,
+      "error": null,
+      "sweep": [
+        {
+          "change": "D-pay-417",
+          "status": "candidate",
+          "reason": "G2 path exists"
+        },
+        {
+          "change": "D-email-88",
+          "status": "eliminated",
+          "reason": "G5: max flow 0.0200 < needed 0.2433 (observed 0.3041 \u00d7 0.8); the other suspects can carry 1.0000"
+        },
+        {
+          "change": "D-rec-12",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pay-417",
+        "payment",
+        "checkout"
+      ]
+    },
+    {
+      "scenario": "S1",
+      "arm": "A2",
+      "trial": 3,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-417",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 21,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.45,
+      "error": null,
+      "sweep": [
+        {
+          "change": "D-pay-417",
+          "status": "candidate",
+          "reason": "G2 path exists"
+        },
+        {
+          "change": "D-email-88",
+          "status": "eliminated",
+          "reason": "G5: max flow 0.0200 < needed 0.2433 (observed 0.3041 \u00d7 0.8); the other suspects can carry 1.0000"
+        },
+        {
+          "change": "D-rec-12",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pay-417",
+        "payment",
+        "checkout"
+      ]
+    },
+    {
+      "scenario": "S1",
+      "arm": "A3",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-417",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 20,
+      "gate_attempts": 1,
+      "precedents": 5,
+      "seconds": 0.44,
+      "error": null,
+      "sweep": [
+        {
+          "change": "D-pay-417",
+          "status": "candidate",
+          "reason": "G2 path exists"
+        },
+        {
+          "change": "D-email-88",
+          "status": "eliminated",
+          "reason": "G5: max flow 0.0200 < needed 0.2433 (observed 0.3041 \u00d7 0.8); the other suspects can carry 1.0000"
+        },
+        {
+          "change": "D-rec-12",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pay-417",
+        "payment",
+        "checkout"
+      ]
+    },
+    {
+      "scenario": "S1",
+      "arm": "A3",
+      "trial": 2,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-417",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 20,
+      "gate_attempts": 1,
+      "precedents": 5,
+      "seconds": 0.43,
+      "error": null,
+      "sweep": [
+        {
+          "change": "D-pay-417",
+          "status": "candidate",
+          "reason": "G2 path exists"
+        },
+        {
+          "change": "D-email-88",
+          "status": "eliminated",
+          "reason": "G5: max flow 0.0200 < needed 0.2433 (observed 0.3041 \u00d7 0.8); the other suspects can carry 1.0000"
+        },
+        {
+          "change": "D-rec-12",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pay-417",
+        "payment",
+        "checkout"
+      ]
+    },
+    {
+      "scenario": "S1",
+      "arm": "A3",
+      "trial": 3,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-417",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 20,
+      "gate_attempts": 1,
+      "precedents": 5,
+      "seconds": 0.45,
+      "error": null,
+      "sweep": [
+        {
+          "change": "D-pay-417",
+          "status": "candidate",
+          "reason": "G2 path exists"
+        },
+        {
+          "change": "D-email-88",
+          "status": "eliminated",
+          "reason": "G5: max flow 0.0200 < needed 0.2433 (observed 0.3041 \u00d7 0.8); the other suspects can carry 1.0000"
+        },
+        {
+          "change": "D-rec-12",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pay-417",
+        "payment",
+        "checkout"
+      ]
+    },
+    {
+      "scenario": "S1",
+      "arm": "A4",
+      "trial": 1,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.15,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S1",
+      "arm": "A4",
+      "trial": 2,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.12,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S1",
+      "arm": "A4",
+      "trial": 3,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.12,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S2",
+      "arm": "N",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-fx-pause-7",
+      "tied": [
+        "D-fx-pause-7"
+      ],
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": true,
+      "abstention_correct": null,
+      "tool_calls": 0,
+      "seconds": 0.0
+    },
+    {
+      "scenario": "S2",
+      "arm": "A2",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-cutover-1",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 17,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 1.25,
+      "error": null,
+      "sweep": [
+        {
+          "change": "D-cutover-1",
+          "status": "candidate",
+          "reason": "G2 path exists"
+        },
+        {
+          "change": "D-fx-pause-7",
+          "status": "eliminated",
+          "reason": "G5: max flow 0.0692 < needed 0.8000 (observed 1.0000 \u00d7 0.8); the other suspects can carry 1.0000"
+        }
+      ],
+      "chain": [
+        "D-cutover-1",
+        "payment",
+        "raw.raw_orders",
+        "staging.stg_orders",
+        "marts.fct_revenue",
+        "marts.exec_revenue_metric",
+        "kpi.exec_revenue"
+      ]
+    },
+    {
+      "scenario": "S2",
+      "arm": "A2",
+      "trial": 2,
+      "outcome": "CONFIRMED",
+      "cause": "D-cutover-1",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 17,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 1.13,
+      "error": null,
+      "sweep": [
+        {
+          "change": "D-cutover-1",
+          "status": "candidate",
+          "reason": "G2 path exists"
+        },
+        {
+          "change": "D-fx-pause-7",
+          "status": "eliminated",
+          "reason": "G5: max flow 0.0692 < needed 0.8000 (observed 1.0000 \u00d7 0.8); the other suspects can carry 1.0000"
+        }
+      ],
+      "chain": [
+        "D-cutover-1",
+        "payment",
+        "raw.raw_orders",
+        "staging.stg_orders",
+        "marts.fct_revenue",
+        "marts.exec_revenue_metric",
+        "kpi.exec_revenue"
+      ]
+    },
+    {
+      "scenario": "S2",
+      "arm": "A2",
+      "trial": 3,
+      "outcome": "CONFIRMED",
+      "cause": "D-cutover-1",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 17,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 1.18,
+      "error": null,
+      "sweep": [
+        {
+          "change": "D-cutover-1",
+          "status": "candidate",
+          "reason": "G2 path exists"
+        },
+        {
+          "change": "D-fx-pause-7",
+          "status": "eliminated",
+          "reason": "G5: max flow 0.0692 < needed 0.8000 (observed 1.0000 \u00d7 0.8); the other suspects can carry 1.0000"
+        }
+      ],
+      "chain": [
+        "D-cutover-1",
+        "payment",
+        "raw.raw_orders",
+        "staging.stg_orders",
+        "marts.fct_revenue",
+        "marts.exec_revenue_metric",
+        "kpi.exec_revenue"
+      ]
+    },
+    {
+      "scenario": "S2",
+      "arm": "A3",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-cutover-1",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 17,
+      "gate_attempts": 1,
+      "precedents": 5,
+      "seconds": 1.11,
+      "error": null,
+      "sweep": [
+        {
+          "change": "D-cutover-1",
+          "status": "candidate",
+          "reason": "G2 path exists"
+        },
+        {
+          "change": "D-fx-pause-7",
+          "status": "eliminated",
+          "reason": "G5: max flow 0.0692 < needed 0.8000 (observed 1.0000 \u00d7 0.8); the other suspects can carry 1.0000"
+        }
+      ],
+      "chain": [
+        "D-cutover-1",
+        "payment",
+        "raw.raw_orders",
+        "staging.stg_orders",
+        "marts.fct_revenue",
+        "marts.exec_revenue_metric",
+        "kpi.exec_revenue"
+      ]
+    },
+    {
+      "scenario": "S2",
+      "arm": "A3",
+      "trial": 2,
+      "outcome": "CONFIRMED",
+      "cause": "D-cutover-1",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 17,
+      "gate_attempts": 1,
+      "precedents": 5,
+      "seconds": 1.11,
+      "error": null,
+      "sweep": [
+        {
+          "change": "D-cutover-1",
+          "status": "candidate",
+          "reason": "G2 path exists"
+        },
+        {
+          "change": "D-fx-pause-7",
+          "status": "eliminated",
+          "reason": "G5: max flow 0.0692 < needed 0.8000 (observed 1.0000 \u00d7 0.8); the other suspects can carry 1.0000"
+        }
+      ],
+      "chain": [
+        "D-cutover-1",
+        "payment",
+        "raw.raw_orders",
+        "staging.stg_orders",
+        "marts.fct_revenue",
+        "marts.exec_revenue_metric",
+        "kpi.exec_revenue"
+      ]
+    },
+    {
+      "scenario": "S2",
+      "arm": "A3",
+      "trial": 3,
+      "outcome": "CONFIRMED",
+      "cause": "D-cutover-1",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 17,
+      "gate_attempts": 1,
+      "precedents": 5,
+      "seconds": 1.24,
+      "error": null,
+      "sweep": [
+        {
+          "change": "D-cutover-1",
+          "status": "candidate",
+          "reason": "G2 path exists"
+        },
+        {
+          "change": "D-fx-pause-7",
+          "status": "eliminated",
+          "reason": "G5: max flow 0.0692 < needed 0.8000 (observed 1.0000 \u00d7 0.8); the other suspects can carry 1.0000"
+        }
+      ],
+      "chain": [
+        "D-cutover-1",
+        "payment",
+        "raw.raw_orders",
+        "staging.stg_orders",
+        "marts.fct_revenue",
+        "marts.exec_revenue_metric",
+        "kpi.exec_revenue"
+      ]
+    },
+    {
+      "scenario": "S2",
+      "arm": "A4",
+      "trial": 1,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.91,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S2",
+      "arm": "A4",
+      "trial": 2,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.91,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S2",
+      "arm": "A4",
+      "trial": 3,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.87,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S3",
+      "arm": "N",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-cart-9",
+      "tied": [
+        "D-cart-9"
+      ],
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": true,
+      "abstention_correct": null,
+      "tool_calls": 0,
+      "seconds": 0.0
+    },
+    {
+      "scenario": "S3",
+      "arm": "A2",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-pgcfg-3",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 13,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.27,
+      "error": null,
+      "sweep": [
+        {
+          "change": "D-pgcfg-3",
+          "status": "candidate",
+          "reason": "G2 path exists"
+        },
+        {
+          "change": "D-cart-9",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pgcfg-3",
+        "astronomy-db",
+        "product-catalog"
+      ]
+    },
+    {
+      "scenario": "S3",
+      "arm": "A2",
+      "trial": 2,
+      "outcome": "CONFIRMED",
+      "cause": "D-pgcfg-3",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 13,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.33,
+      "error": null,
+      "sweep": [
+        {
+          "change": "D-pgcfg-3",
+          "status": "candidate",
+          "reason": "G2 path exists"
+        },
+        {
+          "change": "D-cart-9",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pgcfg-3",
+        "astronomy-db",
+        "product-catalog"
+      ]
+    },
+    {
+      "scenario": "S3",
+      "arm": "A2",
+      "trial": 3,
+      "outcome": "CONFIRMED",
+      "cause": "D-pgcfg-3",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 13,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.37,
+      "error": null,
+      "sweep": [
+        {
+          "change": "D-pgcfg-3",
+          "status": "candidate",
+          "reason": "G2 path exists"
+        },
+        {
+          "change": "D-cart-9",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pgcfg-3",
+        "astronomy-db",
+        "product-catalog"
+      ]
+    },
+    {
+      "scenario": "S3",
+      "arm": "A3",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-pgcfg-3",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 13,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.33,
+      "error": null,
+      "sweep": [
+        {
+          "change": "D-pgcfg-3",
+          "status": "candidate",
+          "reason": "G2 path exists"
+        },
+        {
+          "change": "D-cart-9",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pgcfg-3",
+        "astronomy-db",
+        "product-catalog"
+      ]
+    },
+    {
+      "scenario": "S3",
+      "arm": "A3",
+      "trial": 2,
+      "outcome": "CONFIRMED",
+      "cause": "D-pgcfg-3",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 13,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.32,
+      "error": null,
+      "sweep": [
+        {
+          "change": "D-pgcfg-3",
+          "status": "candidate",
+          "reason": "G2 path exists"
+        },
+        {
+          "change": "D-cart-9",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pgcfg-3",
+        "astronomy-db",
+        "product-catalog"
+      ]
+    },
+    {
+      "scenario": "S3",
+      "arm": "A3",
+      "trial": 3,
+      "outcome": "CONFIRMED",
+      "cause": "D-pgcfg-3",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 13,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.35,
+      "error": null,
+      "sweep": [
+        {
+          "change": "D-pgcfg-3",
+          "status": "candidate",
+          "reason": "G2 path exists"
+        },
+        {
+          "change": "D-cart-9",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pgcfg-3",
+        "astronomy-db",
+        "product-catalog"
+      ]
+    },
+    {
+      "scenario": "S3",
+      "arm": "A4",
+      "trial": 1,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.14,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S3",
+      "arm": "A4",
+      "trial": 2,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.18,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S3",
+      "arm": "A4",
+      "trial": 3,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.14,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S4D",
+      "arm": "N",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-cutover-1",
+      "tied": [
+        "D-cutover-1"
+      ],
+      "top1": null,
+      "outcome_correct": false,
+      "false_blame": true,
+      "abstention_correct": false,
+      "tool_calls": 0,
+      "seconds": 0.0
+    },
+    {
+      "scenario": "S4D",
+      "arm": "A2",
+      "trial": 1,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": true,
+      "tool_calls": 17,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 1.12,
+      "error": null,
+      "sweep": [
+        {
+          "change": "D-cutover-1",
+          "status": "candidate",
+          "reason": "G2 path exists"
+        }
+      ],
+      "chain": []
+    },
+    {
+      "scenario": "S4D",
+      "arm": "A2",
+      "trial": 2,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": true,
+      "tool_calls": 17,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 1.16,
+      "error": null,
+      "sweep": [
+        {
+          "change": "D-cutover-1",
+          "status": "candidate",
+          "reason": "G2 path exists"
+        }
+      ],
+      "chain": []
+    },
+    {
+      "scenario": "S4D",
+      "arm": "A2",
+      "trial": 3,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": true,
+      "tool_calls": 17,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 1.09,
+      "error": null,
+      "sweep": [
+        {
+          "change": "D-cutover-1",
+          "status": "candidate",
+          "reason": "G2 path exists"
+        }
+      ],
+      "chain": []
+    },
+    {
+      "scenario": "S4D",
+      "arm": "A3",
+      "trial": 1,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": true,
+      "tool_calls": 17,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 1.02,
+      "error": null,
+      "sweep": [
+        {
+          "change": "D-cutover-1",
+          "status": "candidate",
+          "reason": "G2 path exists"
+        }
+      ],
+      "chain": []
+    },
+    {
+      "scenario": "S4D",
+      "arm": "A3",
+      "trial": 2,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": true,
+      "tool_calls": 17,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 1.09,
+      "error": null,
+      "sweep": [
+        {
+          "change": "D-cutover-1",
+          "status": "candidate",
+          "reason": "G2 path exists"
+        }
+      ],
+      "chain": []
+    },
+    {
+      "scenario": "S4D",
+      "arm": "A3",
+      "trial": 3,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": true,
+      "tool_calls": 17,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.98,
+      "error": null,
+      "sweep": [
+        {
+          "change": "D-cutover-1",
+          "status": "candidate",
+          "reason": "G2 path exists"
+        }
+      ],
+      "chain": []
+    },
+    {
+      "scenario": "S4D",
+      "arm": "A4",
+      "trial": 1,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": false,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.92,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S4D",
+      "arm": "A4",
+      "trial": 2,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": false,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.86,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S4D",
+      "arm": "A4",
+      "trial": 3,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": false,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.9,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S4S",
+      "arm": "N",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-ad-5",
+      "tied": [
+        "D-ad-5"
+      ],
+      "top1": null,
+      "outcome_correct": false,
+      "false_blame": true,
+      "abstention_correct": false,
+      "tool_calls": 0,
+      "seconds": 0.0
+    },
+    {
+      "scenario": "S4S",
+      "arm": "A2",
+      "trial": 1,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": true,
+      "tool_calls": 12,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.17,
+      "error": null,
+      "sweep": [],
+      "chain": []
+    },
+    {
+      "scenario": "S4S",
+      "arm": "A2",
+      "trial": 2,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": true,
+      "tool_calls": 12,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.19,
+      "error": null,
+      "sweep": [],
+      "chain": []
+    },
+    {
+      "scenario": "S4S",
+      "arm": "A2",
+      "trial": 3,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": true,
+      "tool_calls": 12,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.2,
+      "error": null,
+      "sweep": [],
+      "chain": []
+    },
+    {
+      "scenario": "S4S",
+      "arm": "A3",
+      "trial": 1,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": true,
+      "tool_calls": 12,
+      "gate_attempts": 0,
+      "precedents": 5,
+      "seconds": 0.15,
+      "error": null,
+      "sweep": [],
+      "chain": []
+    },
+    {
+      "scenario": "S4S",
+      "arm": "A3",
+      "trial": 2,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": true,
+      "tool_calls": 12,
+      "gate_attempts": 0,
+      "precedents": 5,
+      "seconds": 0.2,
+      "error": null,
+      "sweep": [],
+      "chain": []
+    },
+    {
+      "scenario": "S4S",
+      "arm": "A3",
+      "trial": 3,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": true,
+      "tool_calls": 12,
+      "gate_attempts": 0,
+      "precedents": 5,
+      "seconds": 0.16,
+      "error": null,
+      "sweep": [],
+      "chain": []
+    },
+    {
+      "scenario": "S4S",
+      "arm": "A4",
+      "trial": 1,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": false,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.17,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S4S",
+      "arm": "A4",
+      "trial": 2,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": false,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.13,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S4S",
+      "arm": "A4",
+      "trial": 3,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": false,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.17,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S1b",
+      "arm": "N",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-ad-3",
+      "tied": [
+        "D-ad-3"
+      ],
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": true,
+      "abstention_correct": null,
+      "tool_calls": 0,
+      "seconds": 0.0
+    },
+    {
+      "scenario": "S1b",
+      "arm": "A2",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-421",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 13,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.33,
+      "error": null,
+      "sweep": [
+        {
+          "change": "D-pay-421",
+          "status": "candidate",
+          "reason": "G2 path exists"
+        },
+        {
+          "change": "D-ad-3",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pay-421",
+        "payment",
+        "checkout"
+      ]
+    },
+    {
+      "scenario": "S1b",
+      "arm": "A2",
+      "trial": 2,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-421",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 13,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.37,
+      "error": null,
+      "sweep": [
+        {
+          "change": "D-pay-421",
+          "status": "candidate",
+          "reason": "G2 path exists"
+        },
+        {
+          "change": "D-ad-3",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pay-421",
+        "payment",
+        "checkout"
+      ]
+    },
+    {
+      "scenario": "S1b",
+      "arm": "A2",
+      "trial": 3,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-421",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 13,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 0.41,
+      "error": null,
+      "sweep": [
+        {
+          "change": "D-pay-421",
+          "status": "candidate",
+          "reason": "G2 path exists"
+        },
+        {
+          "change": "D-ad-3",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pay-421",
+        "payment",
+        "checkout"
+      ]
+    },
+    {
+      "scenario": "S1b",
+      "arm": "A3",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-421",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 13,
+      "gate_attempts": 1,
+      "precedents": 5,
+      "seconds": 0.36,
+      "error": null,
+      "sweep": [
+        {
+          "change": "D-pay-421",
+          "status": "candidate",
+          "reason": "G2 path exists"
+        },
+        {
+          "change": "D-ad-3",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pay-421",
+        "payment",
+        "checkout"
+      ]
+    },
+    {
+      "scenario": "S1b",
+      "arm": "A3",
+      "trial": 2,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-421",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 13,
+      "gate_attempts": 1,
+      "precedents": 5,
+      "seconds": 0.3,
+      "error": null,
+      "sweep": [
+        {
+          "change": "D-pay-421",
+          "status": "candidate",
+          "reason": "G2 path exists"
+        },
+        {
+          "change": "D-ad-3",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pay-421",
+        "payment",
+        "checkout"
+      ]
+    },
+    {
+      "scenario": "S1b",
+      "arm": "A3",
+      "trial": 3,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-421",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 13,
+      "gate_attempts": 1,
+      "precedents": 5,
+      "seconds": 0.4,
+      "error": null,
+      "sweep": [
+        {
+          "change": "D-pay-421",
+          "status": "candidate",
+          "reason": "G2 path exists"
+        },
+        {
+          "change": "D-ad-3",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pay-421",
+        "payment",
+        "checkout"
+      ]
+    },
+    {
+      "scenario": "S1b",
+      "arm": "A4",
+      "trial": 1,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.13,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S1b",
+      "arm": "A4",
+      "trial": 2,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.17,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "sweep": [],
+      "chain": null
+    },
+    {
+      "scenario": "S1b",
+      "arm": "A4",
+      "trial": 3,
+      "outcome": "FAILED",
+      "cause": null,
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": null,
+      "grounded": null,
+      "tool_calls": 0,
+      "gate_attempts": 0,
+      "precedents": 0,
+      "seconds": 0.13,
+      "error": "GraphUnavailable: graph disabled (FAULTLINE_DISABLE_GRAPH=true)",
+      "sweep": [],
+      "chain": null
+    }
+  ],
+  "checks": {
+    "S13": {
+      "scenario": "S13",
+      "tenant": "acme",
+      "workers": 16,
+      "rounds": 100,
+      "readers": 4,
+      "rounds_with_exactly_one_owner": 100,
+      "max_claim_edges_per_task": 1,
+      "counter_expected": 1600,
+      "counter_actual": 1600,
+      "lost_updates": 0,
+      "write_errors": 0,
+      "read_errors": 0,
+      "claims_per_s": 1362.2,
+      "storm_s": 1.17,
+      "ro_read_ms": {
+        "quiet": {
+          "n": 1563,
+          "p50": 2.552,
+          "p95": 3.991
+        },
+        "during_writes": {
+          "n": 790,
+          "p50": 5.714,
+          "p95": 10.522,
+          "mean": 5.954
+        }
+      },
+      "engine": "FalkorDB (pinned; see backend/faultline/graph/algo/resolved.json)",
+      "sample_errors": [],
+      "passed": true
+    },
+    "S1b_cold_vs_warm": {
+      "cold": {
+        "outcome": "CONFIRMED",
+        "tool_calls": 13,
+        "seconds": 0.29,
+        "prior_payment": 0.7681,
+        "top_precedent": "inc-h037"
+      },
+      "warm": {
+        "outcome": "CONFIRMED",
+        "tool_calls": 13,
+        "seconds": 0.31,
+        "prior_payment": 0.8423,
+        "top_precedent_is_s1": true,
+        "derived_runbook_first": true
+      },
+      "gate_verdicts_identical": true,
+      "s1_writeback": "7/7"
+    },
+    "S6": {
+      "verdict": "block",
+      "risk": 0.8,
+      "decisions": [
+        "ADR-012",
+        "ADR-013"
+      ],
+      "reviewers": 5
+    },
+    "S5": {
+      "verdict": "NOT_APPLIED",
+      "success_written": false,
+      "stage": "AWAITING_APPROVAL"
+    },
+    "S9": {
+      "verdict": "UNKNOWN",
+      "success_written": false,
+      "stage": "UNKNOWN_ESCALATED",
+      "reconciled": [
+        [
+          "at_main",
+          "APPLIED",
+          "7/7"
+        ]
+      ]
+    },
+    "S10": {
+      "before_cites_ADR-021": true,
+      "after_cites_ADR-021": false,
+      "receipt_nodes": 2,
+      "receipt_relationships": 14,
+      "vectors_still_found": 0,
+      "guard_ok_after": true
+    }
+  },
+  "repo": {
+    "templates": 94,
+    "algorithms": 10,
+    "mcp_tools": 31,
+    "mcp_tools_hosted": 28
+  }
+}
