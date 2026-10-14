@@ -1,0 +1,53 @@
+[
+  {
+    "cap": 1.0,
+    "cap_sql": null,
+    "cap_why": "every downstream row is derived from this input",
+    "dst": "staging.stg_orders",
+    "src": "raw.raw_orders",
+    "transform": "stg_orders.sql"
+  },
+  {
+    "cap": 1.0,
+    "cap_sql": null,
+    "cap_why": "every downstream row is derived from this input",
+    "dst": "staging.stg_customers",
+    "src": "raw.raw_customers",
+    "transform": "stg_customers.sql"
+  },
+  {
+    "cap": 1.0,
+    "cap_sql": null,
+    "cap_why": "every downstream row is derived from this input",
+    "dst": "staging.stg_fx_rates",
+    "src": "raw.raw_fx_rates",
+    "transform": "stg_fx_rates.sql"
+  },
+  {
+    "cap": 1.0,
+    "cap_sql": null,
+    "cap_why": "every downstream row is derived from this input",
+    "dst": "marts.fct_revenue",
+    "src": "staging.stg_orders",
+    "transform": "fct_revenue.sql"
+  },
+  {
+    "cap": 0.0692,
+    "cap_sql": {
+      "baseline": "SELECT avg(CASE WHEN currency <> 'USD' THEN 1.0 ELSE 0 END) FROM staging.stg_orders WHERE status = 'completed' AND order_day < DATE '2026-08-07'",
+      "incident_day": "SELECT avg(CASE WHEN currency <> 'USD' THEN 1.0 ELSE 0 END) FROM staging.stg_orders WHERE status = 'completed' AND order_day = DATE '2026-08-09'"
+    },
+    "cap_why": "row share of the KPI's contributing order rows that join a non-unit FX rate: max(baseline 0.0692, incident day 0.0459)",
+    "dst": "marts.fct_revenue",
+    "src": "staging.stg_fx_rates",
+    "transform": "fct_revenue.sql"
+  },
+  {
+    "cap": 1.0,
+    "cap_sql": null,
+    "cap_why": "every downstream row is derived from this input",
+    "dst": "marts.exec_revenue_metric",
+    "src": "marts.fct_revenue",
+    "transform": "exec_revenue_metric.sql"
+  }
+]

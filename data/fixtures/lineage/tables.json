@@ -1,0 +1,71 @@
+[
+  {
+    "doc": "Order events extracted nightly from the payments platform.\n\n**Contract (payments-platform, v1.3):** one row per order attempt; `amount` is a decimal in major currency units; `status` reflects the terminal state at extract time.",
+    "id": "raw.raw_orders",
+    "layer": "raw",
+    "name": "raw_orders",
+    "row_count": 34473,
+    "tags": []
+  },
+  {
+    "doc": "Customer master extract from CRM. One row per customer.",
+    "id": "raw.raw_customers",
+    "layer": "raw",
+    "name": "raw_customers",
+    "row_count": 3000,
+    "tags": []
+  },
+  {
+    "doc": "Daily FX reference rates (per currency, vs USD) from the treasury feed. Expected to update every business day.",
+    "id": "raw.raw_fx_rates",
+    "layer": "raw",
+    "name": "raw_fx_rates",
+    "row_count": 258,
+    "tags": []
+  },
+  {
+    "doc": "Cleaned order stream. Excludes cancelled and refunded orders from the revenue path. This is the canonical input for all revenue reporting.",
+    "id": "staging.stg_orders",
+    "layer": "staging",
+    "name": "stg_orders",
+    "row_count": 32777,
+    "tags": []
+  },
+  {
+    "doc": "Typed customer dimension staging table.",
+    "id": "staging.stg_customers",
+    "layer": "staging",
+    "name": "stg_customers",
+    "row_count": 3000,
+    "tags": []
+  },
+  {
+    "doc": "FX rates with a full day spine (missing days forward-filled from the last known rate).",
+    "id": "staging.stg_fx_rates",
+    "layer": "staging",
+    "name": "stg_fx_rates",
+    "row_count": 360,
+    "tags": []
+  },
+  {
+    "doc": "Daily revenue fact, USD-normalized. Grain: one row per day.",
+    "id": "marts.fct_revenue",
+    "layer": "marts",
+    "name": "fct_revenue",
+    "row_count": 90,
+    "tags": [
+      "revenue"
+    ]
+  },
+  {
+    "doc": "**Executive Revenue KPI** \u2014 the single number reported on the executive dashboard every morning. `anomaly_ratio` compares the latest day to a stable trailing-28d median window.",
+    "id": "marts.exec_revenue_metric",
+    "layer": "marts",
+    "name": "exec_revenue_metric",
+    "row_count": 1,
+    "tags": [
+      "kpi",
+      "executive-reporting"
+    ]
+  }
+]

@@ -1,0 +1,439 @@
+# globex: the SCALE tenant (M8). Synthetic, fictional company; every name here is ours.
+# backend/faultline/ingest/globex/ expands this spec deterministically (seed 42) into ~200 services in 12 domains
+# with a preferential-attachment call graph, 6 datastores, 3 external dependencies, 180 people and 150 past
+# incidents. Same schema and property conventions as acme, so every template runs unchanged.
+#
+# cap = criticality of a call for failure propagation (1.0 synchronous; 0.02 best-effort; 0.0 async, no
+# failure-flow edge); rps = fixed traffic matrix (entry edge-gateway = entry_rps). Every best-effort/async cap
+# carries a one-line reason. Calls go from a domain listed earlier to one listed later (a DAG), except the
+# event-bus deliveries listed under `calls`; every consumer sits after every publisher, so no cycle can form.
+tenant: globex
+entry: edge-gateway
+entry_rps: 1000
+services_total: 200
+host: git.globex.example
+
+# Generic service roles; each domain is filled up to its quota with `<prefix>-<stem>`.
+stems: [api, worker, scheduler, reconciler, indexer, validator, events, exporter, adapter, sync, admin, reports,
+        archiver, notifier, auditor, router, backfill, webhooks, cache-warmer, importer, rules, quota]
+# Roles that run on a timer (no inbound callers): sources of their own traffic.
+batch_stems: [scheduler, backfill, archiver, importer]
+
+# Domains = teams, in call order (a domain may call domains listed after it). `platform: true` domains are the
+# shared services everyone may depend on (preferential attachment makes hubs out of them).
+domains:
+  - key: edge
+    name: Edge
+    prefix: edge
+    langs: [go, typescript]
+    revenue: true
+    anchors:
+      - {id: edge-gateway, name: edge api gateway, tier: 1, revenue_path: true}
+      - {id: storefront-bff, name: storefront backend for frontend, tier: 1, revenue_path: true}
+      - {id: mobile-bff, name: mobile app backend for frontend, tier: 1, revenue_path: true}
+      - {id: partner-api, name: partner marketplace api, tier: 2, revenue_path: true}
+  - key: orders
+    name: Orders
+    prefix: orders
+    langs: [go, java]
+    revenue: true
+    anchors:
+      - {id: order-api, name: order placement api, tier: 1, revenue_path: true}
+      - {id: order-orchestrator, name: order orchestration saga, tier: 1, revenue_path: true}
+      - {id: basket-service, name: shopping basket service, tier: 1, revenue_path: true}
+      - {id: order-history, name: order history service, tier: 2, revenue_path: false}
+  - key: discovery
+    name: Discovery
+    prefix: discovery
+    langs: [python, java]
+    revenue: false
+    anchors:
+      - {id: search-api, name: product search api, tier: 1, revenue_path: true}
+      - {id: recommender, name: product recommender, tier: 2, revenue_path: false}
+      - {id: catalog-service, name: product catalogue service, tier: 1, revenue_path: true}
+      - {id: ranking-service, name: search ranking service, tier: 2, revenue_path: false}
+  - key: accounts
+    name: Accounts
+    prefix: accounts
+    langs: [java, kotlin]
+    revenue: false
+    anchors:
+      - {id: profile-service, name: customer profile service, tier: 2, revenue_path: false}
+      - {id: loyalty-service, name: loyalty points service, tier: 2, revenue_path: false}
+      - {id: address-book, name: customer address book, tier: 2, revenue_path: true}
+      - {id: preferences-api, name: customer preferences api, tier: 3, revenue_path: false}
+  - key: logistics
+    name: Logistics
+    prefix: logistics
+    langs: [rust, go]
+    revenue: true
+    anchors:
+      - {id: dispatch-service, name: parcel dispatch service, tier: 1, revenue_path: true}
+      - {id: tracking-api, name: parcel tracking api, tier: 2, revenue_path: false}
+      - {id: route-planner, name: delivery route planner, tier: 2, revenue_path: false}
+      - {id: carrier-adapter, name: courier carrier adapter, tier: 1, revenue_path: true}
+  - key: messaging
+    name: Messaging
+    prefix: messaging
+    langs: [elixir, ruby]
+    revenue: false
+    anchors:
+      - {id: notify-dispatcher, name: notification dispatcher, tier: 2, revenue_path: false}
+      - {id: sms-sender, name: sms sender, tier: 3, revenue_path: false}
+      - {id: mail-relay, name: transactional mail relay, tier: 3, revenue_path: false}
+      - {id: push-service, name: mobile push notifications, tier: 3, revenue_path: false}
+  - key: pricing
+    name: Pricing
+    prefix: pricing
+    langs: [kotlin, python]
+    revenue: true
+    anchors:
+      - {id: pricing, name: price calculation service, tier: 1, revenue_path: true}
+      - {id: promo-engine, name: promotions and coupon engine, tier: 2, revenue_path: true}
+      - {id: tax-calculator, name: sales tax calculator, tier: 1, revenue_path: true}
+      - {id: fx-converter, name: foreign exchange converter, tier: 1, revenue_path: true}
+      - {id: gift-card-service, name: gift card balance service, tier: 2, revenue_path: true}
+  - key: billing
+    name: Billing
+    prefix: billing
+    langs: [java, go]
+    revenue: true
+    anchors:
+      - {id: refund-service, name: refund processing service, tier: 2, revenue_path: true}
+      - {id: card-gateway, name: card payments gateway, tier: 1, revenue_path: true}
+      - {id: invoice-service, name: invoice generation service, tier: 2, revenue_path: true}
+      - {id: ledger-service, name: double entry ledger service, tier: 1, revenue_path: true}
+  - key: inventory
+    name: Inventory
+    prefix: inventory
+    langs: [go, dotnet]
+    revenue: true
+    anchors:
+      - {id: reservation-service, name: stock reservation service, tier: 1, revenue_path: true}
+      - {id: stock-api, name: stock level api, tier: 1, revenue_path: true}
+      - {id: inventory-sync, name: inventory sync consumer, tier: 2, revenue_path: false}
+      - {id: warehouse-locator, name: warehouse locator, tier: 2, revenue_path: false}
+  - key: identity
+    name: Identity
+    prefix: identity
+    langs: [go, rust]
+    revenue: true
+    platform: true
+    anchors:
+      - {id: auth-service, name: authentication service, tier: 1, revenue_path: true}
+      - {id: session-service, name: login session service, tier: 1, revenue_path: true}
+      - {id: token-issuer, name: access token issuer, tier: 1, revenue_path: false}
+      - {id: user-directory, name: user directory, tier: 2, revenue_path: false}
+  - key: insights
+    name: Insights
+    prefix: insights
+    langs: [python, typescript]
+    revenue: false
+    platform: true
+    anchors:
+      - {id: event-collector, name: clickstream event collector, tier: 3, revenue_path: false}
+      - {id: experiment-service, name: experiment assignment service, tier: 2, revenue_path: false}
+      - {id: report-builder, name: finance report builder, tier: 3, revenue_path: false}
+      - {id: metrics-api, name: business metrics api, tier: 3, revenue_path: false}
+  - key: infra
+    name: Infrastructure
+    prefix: infra
+    langs: [go, rust]
+    revenue: false
+    platform: true
+    anchors:
+      - {id: config-service, name: runtime configuration service, tier: 2, revenue_path: false}
+      - {id: flag-service, name: feature flag service, tier: 2, revenue_path: false}
+      - {id: service-registry, name: service registry, tier: 2, revenue_path: false}
+      - {id: secrets-broker, name: secrets broker, tier: 2, revenue_path: false}
+      - {id: audit-log, name: audit log sink, tier: 3, revenue_path: false}
+
+# Preferential-attachment caps by callee (anything not listed: same-domain mix below).
+callee_caps:
+  audit-log: {cap: 0.0, why: "audit events are fire-and-forget"}
+  event-collector: {cap: 0.0, why: "clickstream events are fire-and-forget"}
+  metrics-api: {cap: 0.0, why: "metrics are pushed asynchronously"}
+  config-service: {cap: 0.0, why: "config is cached locally; a failure serves the last known value"}
+  flag-service: {cap: 0.0, why: "flags are cached locally; a failure serves the last known value"}
+  service-registry: {cap: 0.0, why: "endpoints are cached; a failure keeps the last resolution"}
+  secrets-broker: {cap: 0.0, why: "secrets are fetched at start-up and cached"}
+  token-issuer: {cap: 0.02, why: "signing keys are cached; tokens are validated locally"}
+  user-directory: {cap: 0.02, why: "directory lookups are cached and optional"}
+# Datastores only the backbone may call (the bus would form cycles; legacy-cache is being retired).
+backbone_only: [event-bus, legacy-cache]
+# Who calls a non-batch service that preferential attachment left without a caller and that has no earlier
+# anchor in its own domain.
+fallback_caller: storefront-bff
+same_domain_mix: {sync: 0.65, best_effort: 0.2, async: 0.15}
+best_effort_why: "optional enrichment; the caller degrades gracefully"
+async_why: "work is handed off asynchronously; failures are retried later"
+
+datastores:
+  - {id: ledger-db, name: ledger postgres database, kind: postgres, owner: billing}
+  - {id: stock-db, name: stock postgres database, kind: postgres, owner: inventory}
+  - {id: session-store, name: session redis store, kind: redis, owner: identity}
+  - {id: legacy-cache, name: legacy memcached session cache, kind: memcached, owner: identity}
+  - {id: event-bus, name: kafka event bus, kind: kafka, owner: infra}
+  - {id: search-index, name: opensearch product index, kind: opensearch, owner: discovery}
+
+externals:
+  - {id: ext-card-network, name: card network acquirer, kind: payments}
+  - {id: ext-fx-rates, name: fx rates provider, kind: market-data}
+  - {id: ext-sms-carrier, name: sms carrier gateway, kind: telecom}
+
+# The hand-designed backbone (client -> server). Preferential attachment adds the rest.
+calls:
+  - {client: edge-gateway, server: storefront-bff, rps: 700, cap: 1.0}
+  - {client: edge-gateway, server: mobile-bff, rps: 250, cap: 1.0}
+  - {client: edge-gateway, server: partner-api, rps: 50, cap: 1.0}
+  - {client: edge-gateway, server: auth-service, rps: 300, cap: 1.0}
+  - {client: storefront-bff, server: search-api, rps: 300, cap: 1.0}
+  - {client: storefront-bff, server: catalog-service, rps: 250, cap: 1.0}
+  - {client: storefront-bff, server: recommender, rps: 200, cap: 0.02, why: "the recommendation rail is best-effort on product pages"}
+  - {client: storefront-bff, server: basket-service, rps: 120, cap: 1.0}
+  - {client: storefront-bff, server: order-api, rps: 40, cap: 1.0}
+  - {client: storefront-bff, server: profile-service, rps: 80, cap: 0.02, why: "profile panel is optional"}
+  - {client: storefront-bff, server: pricing, rps: 150, cap: 1.0}
+  - {client: storefront-bff, server: experiment-service, rps: 100, cap: 0.02, why: "experiments fall back to control"}
+  - {client: mobile-bff, server: search-api, rps: 90, cap: 1.0}
+  - {client: mobile-bff, server: order-api, rps: 20, cap: 1.0}
+  - {client: mobile-bff, server: tracking-api, rps: 40, cap: 0.02, why: "tracking widget is optional"}
+  - {client: mobile-bff, server: push-service, rps: 10, cap: 0.0, why: "push registration is queued"}
+  - {client: partner-api, server: catalog-service, rps: 30, cap: 1.0}
+  - {client: partner-api, server: order-api, rps: 10, cap: 1.0}
+  - {client: profile-service, server: address-book, rps: 40, cap: 1.0}
+  - {client: profile-service, server: preferences-api, rps: 30, cap: 0.02, why: "preferences default when unavailable"}
+  - {client: profile-service, server: loyalty-service, rps: 30, cap: 0.02, why: "loyalty balance is optional on the profile"}
+  - {client: loyalty-service, server: ledger-service, rps: 10, cap: 1.0}
+  - {client: order-api, server: order-orchestrator, rps: 70, cap: 1.0}
+  - {client: order-api, server: address-book, rps: 70, cap: 1.0}
+  - {client: order-orchestrator, server: basket-service, rps: 70, cap: 1.0}
+  - {client: order-orchestrator, server: pricing, rps: 70, cap: 1.0}
+  - {client: order-orchestrator, server: reservation-service, rps: 70, cap: 1.0}
+  - {client: order-orchestrator, server: card-gateway, rps: 70, cap: 1.0}
+  - {client: order-orchestrator, server: dispatch-service, rps: 70, cap: 0.02, why: "dispatch is requested after the charge; the order stands"}
+  - {client: order-orchestrator, server: notify-dispatcher, rps: 70, cap: 0.0, why: "confirmations are queued"}
+  - {client: order-orchestrator, server: event-bus, rps: 70, cap: 0.02, why: "order events are published asynchronously after placement"}
+  - {client: order-history, server: ledger-service, rps: 15, cap: 1.0}
+  - {client: search-api, server: ranking-service, rps: 390, cap: 0.02, why: "unranked results are served if ranking fails"}
+  - {client: search-api, server: search-index, rps: 390, cap: 1.0}
+  - {client: search-api, server: catalog-service, rps: 200, cap: 1.0}
+  - {client: recommender, server: catalog-service, rps: 200, cap: 1.0}
+  - {client: dispatch-service, server: route-planner, rps: 70, cap: 1.0}
+  - {client: dispatch-service, server: carrier-adapter, rps: 70, cap: 1.0}
+  - {client: dispatch-service, server: event-bus, rps: 70, cap: 0.02, why: "dispatch events are published asynchronously"}
+  - {client: tracking-api, server: carrier-adapter, rps: 40, cap: 1.0}
+  - {client: notify-dispatcher, server: sms-sender, rps: 20, cap: 1.0}
+  - {client: notify-dispatcher, server: mail-relay, rps: 60, cap: 1.0}
+  - {client: notify-dispatcher, server: push-service, rps: 30, cap: 1.0}
+  - {client: sms-sender, server: ext-sms-carrier, rps: 20, cap: 1.0}
+  - {client: pricing, server: promo-engine, rps: 220, cap: 0.02, why: "prices are served without promotions if the engine fails"}
+  - {client: pricing, server: tax-calculator, rps: 220, cap: 1.0}
+  - {client: pricing, server: fx-converter, rps: 220, cap: 1.0}
+  - {client: fx-converter, server: ext-fx-rates, rps: 20, cap: 1.0}
+  - {client: gift-card-service, server: ledger-service, rps: 10, cap: 1.0}
+  - {client: refund-service, server: card-gateway, rps: 5, cap: 1.0}
+  - {client: card-gateway, server: ledger-service, rps: 70, cap: 1.0}
+  - {client: card-gateway, server: ext-card-network, rps: 70, cap: 1.0}
+  - {client: invoice-service, server: ledger-service, rps: 20, cap: 1.0}
+  - {client: ledger-service, server: ledger-db, rps: 140, cap: 1.0}
+  - {client: reservation-service, server: stock-api, rps: 70, cap: 1.0}
+  - {client: stock-api, server: stock-db, rps: 150, cap: 1.0}
+  - {client: inventory-sync, server: stock-db, rps: 70, cap: 1.0}
+  - {client: auth-service, server: token-issuer, rps: 300, cap: 1.0}
+  - {client: auth-service, server: session-service, rps: 300, cap: 1.0}
+  - {client: auth-service, server: user-directory, rps: 50, cap: 1.0}
+  - {client: session-service, server: session-store, rps: 300, cap: 1.0}
+  - {client: session-service, server: legacy-cache, rps: 300, cap: 1.0}
+  - {client: report-builder, server: ledger-db, rps: 5, cap: 1.0}
+  # event-bus deliveries (the bus delivers to its consumers)
+  - {client: event-bus, server: inventory-sync, rps: 70, cap: 1.0}
+  - {client: event-bus, server: report-builder, rps: 140, cap: 1.0}
+  - {client: event-bus, server: invoice-service, rps: 70, cap: 1.0}
+
+endpoints:
+  - {id: "edge-gateway:/v1", service: edge-gateway, route: /v1/*, protocol: http}
+  - {id: "order-api:PlaceOrder", service: order-api, route: /globex.orders.OrderApi/PlaceOrder, protocol: grpc}
+  - {id: "order-orchestrator:Checkout", service: order-orchestrator, route: /globex.orders.Saga/Checkout, protocol: grpc}
+  - {id: "card-gateway:Authorize", service: card-gateway, route: /globex.billing.CardGateway/Authorize, protocol: grpc}
+  - {id: "pricing:Quote", service: pricing, route: /v2/prices/quote, protocol: http}
+  - {id: "search-api:/search", service: search-api, route: /search, protocol: http}
+  - {id: "storefront-bff:/pdp", service: storefront-bff, route: "/pdp/{sku}", protocol: http}
+  - {id: "session-service:Resume", service: session-service, route: /globex.identity.Sessions/Resume, protocol: grpc}
+  - {id: "stock-api:Level", service: stock-api, route: "/v1/stock/{sku}", protocol: http}
+
+# Obligations (M12 obligation clock), same model as acme (data/topology/otel-demo.yaml). SYNTHETIC: names, MRR and
+# budgets are invented. One error-rate SLO per tier-1 and tier-2 Service (generated services included); the
+# objectives match acme for the same reason (healthy simulated error rate 0.2-0.8%).
+slo_policy:
+  metric: error_rate
+  window_days: 30
+  objective_by_tier: {1: 0.99, 2: 0.98}
+  spent_prior: [0.2, 0.6]
+customers:
+  - {id: gx-cust-halcyon-retail, name: "Halcyon Retail Group (synthetic)", tier: 1, mrr: 15000,
+     consumes: [{node: storefront-bff, via: white-label storefront}, {node: order-api, via: "orders API (PlaceOrder)"}]}
+  - {id: gx-cust-meridian-mobile, name: "Meridian Mobile (synthetic)", tier: 1, mrr: 11000,
+     consumes: [{node: mobile-bff, via: mobile app SDK}]}
+  - {id: gx-cust-tessellate, name: "Tessellate Marketplace (synthetic)", tier: 2, mrr: 6000,
+     consumes: [{node: partner-api, via: partner marketplace API}, {node: search-api, via: search API}]}
+  - {id: gx-cust-quillon-books, name: "Quillon Books (synthetic)", tier: 2, mrr: 3500,
+     consumes: [{node: storefront-bff, via: white-label storefront}]}
+  - {id: gx-cust-northgate-logistics, name: "Northgate Logistics (synthetic)", tier: 2, mrr: 4200,
+     consumes: [{node: tracking-api, via: parcel tracking API}]}
+  - {id: gx-cust-saffron-foods, name: "Saffron Foods (synthetic)", tier: 3, mrr: 900,
+     consumes: [{node: edge-gateway, via: public API}]}
+  - {id: gx-cust-brightwell-pay, name: "Brightwell Payments (synthetic)", tier: 1, mrr: 8000,
+     consumes: [{node: pricing, via: "pricing API (Quote)"}]}
+
+# Feature flags. `cuts: [src, dst]` = the failure-flow edge the flag removes when switched (a containment lever).
+flags:
+  - {id: recommenderRail, gates: "storefront-bff:/pdp", state: "on", cuts: [recommender, storefront-bff], note: "containment lever: when off, product pages hide the recommendation rail"}
+  - {id: recommenderCacheWarmup, gates: recommender, state: "on", note: "pre-warms the recommender cache on deploy"}
+  - {id: deferredCapture, gates: "order-orchestrator:Checkout", state: "on", cuts: [card-gateway, order-orchestrator], note: "containment lever: when off, checkout accepts the order and captures the card later"}
+  - {id: legacyCacheBypass, gates: session-service, state: "on", cuts: [legacy-cache, session-service], note: "containment lever: when off, sessions resume from session-store only"}
+  - {id: fxStaticRates, gates: fx-converter, state: "on", cuts: [ext-fx-rates, fx-converter], note: "containment lever: when off, fx-converter serves the last published daily rates"}
+  - {id: promoEngineEnabled, gates: pricing, state: "on", cuts: [promo-engine, pricing], note: "containment lever: when off, prices are served without promotions"}
+  - {id: pricingRulesV2, gates: pricing, state: "on", note: "new pricing rules; off reverts to v1 rules"}
+  - {id: authTokenRotation, gates: auth-service, state: "off", note: "experimental token rotation"}
+  - {id: stockReadReplica, gates: "stock-api:Level", state: "off", note: "serve stock levels from the read replica"}
+
+# Ownership history: (component, previous team, current team, days before ANCHOR the move happened).
+ownership_changes:
+  - {component: experiment-service, from: discovery, to: insights, days: 60}
+  - {component: address-book, from: orders, to: accounts, days: 85}
+# Orphans: the owning team gave the component up and nobody picked it up (Q-GAP-1 no_owner rows).
+orphans:
+  - {component: gift-card-service, from: pricing, days: 34}
+  - {component: partner-api, from: edge, days: 52}
+
+org:
+  people: 180
+  directors: [[edge, accounts, orders, discovery], [logistics, messaging, pricing, billing], [inventory, identity, insights, infra]]
+  inactive: 18
+  # The sole expert of `component` left `days` ago (bus factor: their commits dominate, they are inactive).
+  departed_expert: {team: pricing, component: pricing, days: 9}
+  # Components whose top author is an active single point of knowledge (bus factor 1).
+  dominant_active: [ledger-service, tax-calculator]
+
+history:
+  deploys_per_day: [6, 8, 9, 10, 12]
+  deploy_weight: {recommender: 9, card-gateway: 9, pricing: 9, order-orchestrator: 8, storefront-bff: 8, search-api: 7, auth-service: 7, fx-converter: 6, ledger-service: 6, session-service: 6}
+  default_weight: 2
+  max_incidents_per_day: 2
+
+# Eight incident families (150 incidents). The same Symptom node per family; causes change the same component.
+archetypes:
+  - name: recs_stampede
+    count: 22
+    causes: [recommender]
+    kind: deploy
+    symptom: {kind: latency, target: recommender}
+    impacted: [catalog-service, storefront-bff]
+    fixes: [flip_flag, flip_flag, rollback_deploy]
+    flag: recommenderRail
+    titles: ["Recommender cache stampede after deploy", "Recommender latency spike after cache key change", "Cold recommender cache overloads the catalogue"]
+    openings:
+      - "Deploy {deploy} changed cache keys in {cause}; the cache emptied at once and every request recomputed (a stampede)."
+      - "After {deploy}, {cause} started cold and its latency climbed as all requests missed the cache together."
+      - "A {cause} release ({deploy}) invalidated its cache in one go and the stampede slowed {symptom}."
+    impacts: ["The recompute load spilled onto {impacted}.", "Both {impacted} saw extra load from the misses.", ""]
+  - name: card_gateway
+    count: 20
+    causes: [card-gateway]
+    kind: deploy
+    symptom: {kind: error_rate, target: order-orchestrator}
+    impacted: [order-api, storefront-bff]
+    fixes: [rollback_deploy, rollback_deploy, flip_flag]
+    flag: deferredCapture
+    not_applied_ordinal: 2
+    titles: ["Checkout failures after card gateway deploy", "Card authorisations failing at checkout", "Order saga errors from card gateway"]
+    openings:
+      - "Deploy {deploy} shipped a new {cause} build and card authorisations began failing, which surfaced as {symptom} errors."
+      - "Shortly after {deploy} rolled out to {cause}, {symptom} started failing orders at the payment step."
+      - "A {cause} release ({deploy}) broke authorisation retries and the {symptom} error rate jumped within minutes."
+    impacts: ["Orders placed through {impacted} were rejected until mitigation.", "Shoppers on {impacted} saw failed checkouts.", ""]
+  - name: legacy_cache
+    count: 18
+    causes: [legacy-cache]
+    kind: config
+    symptom: {kind: error_rate, target: session-service}
+    impacted: [auth-service, storefront-bff]
+    fixes: [flip_flag, rollback_deploy]
+    flag: legacyCacheBypass
+    titles: ["Session resume errors from legacy cache", "Legacy cache evictions log users out", "Login sessions failing after cache config change"]
+    openings:
+      - "A config change to {cause} ({deploy}) shrank its memory and {symptom} failed to resume sessions."
+      - "After {deploy}, {cause} evicted hot keys and {symptom} returned errors for returning users."
+      - "Deploy {deploy} altered {cause} settings; connection churn pushed the {symptom} error rate up."
+    impacts: ["Users of {impacted} were logged out.", "Requests through {impacted} failed authentication for a while.", ""]
+  - name: ledger_lock
+    count: 18
+    causes: [ledger-db]
+    kind: config
+    symptom: {kind: latency, target: ledger-service}
+    impacted: [card-gateway, invoice-service]
+    fixes: [rollback_deploy, open_issue]
+    flag: null
+    titles: ["Ledger latency from database lock contention", "Ledger writes slow after database config change", "Lock waits on ledger-db slow down postings"]
+    openings:
+      - "A config change to {cause} ({deploy}) held long locks and {symptom} postings queued behind them."
+      - "Deploy {deploy} altered {cause} settings; lock contention pushed {symptom} latency far above its band."
+      - "Lock waits on {cause} after {deploy} made {symptom} slow to record postings."
+    impacts: ["Callers such as {impacted} inherited the slowdown.", "Both {impacted} timed out on ledger writes.", ""]
+  - name: pricing_rules
+    count: 18
+    causes: [pricing]
+    kind: deploy
+    symptom: {kind: error_rate, target: storefront-bff}
+    impacted: [mobile-bff]
+    fixes: [rollback_deploy, flip_flag]
+    flag: pricingRulesV2
+    titles: ["Price quote errors after pricing deploy", "Product pages fail to price items", "Pricing rule evaluation errors"]
+    openings:
+      - "Deploy {deploy} shipped a pricing rule change to {cause} and quotes started failing on {symptom}."
+      - "After {deploy}, {cause} rejected items with missing rule data and {symptom} showed errors."
+      - "A {cause} release ({deploy}) broke rule evaluation and the {symptom} error rate rose sharply."
+    impacts: ["Shoppers on {impacted} could not see prices.", "The {impacted} app showed blank prices.", ""]
+  - name: auth_token
+    count: 18
+    causes: [auth-service]
+    kind: deploy
+    symptom: {kind: error_rate, target: edge-gateway}
+    impacted: [storefront-bff, mobile-bff]
+    fixes: [rollback_deploy]
+    flag: null
+    titles: ["Gateway 401s after auth deploy", "Token validation failures at the edge", "Login errors after authentication release"]
+    openings:
+      - "Deploy {deploy} changed token validation in {cause} and {symptom} began returning 401s."
+      - "After {deploy}, {cause} rejected valid tokens and the {symptom} error rate climbed."
+      - "A {cause} release ({deploy}) mis-handled key rotation and requests failed at {symptom}."
+    impacts: ["Signed-in users of {impacted} were bounced to login.", "Both {impacted} saw authentication failures.", ""]
+  - name: event_bus_lag
+    count: 18
+    causes: [event-bus]
+    kind: config
+    symptom: {kind: lag, target: event-bus}
+    impacted: [inventory-sync, report-builder]
+    fixes: [rollback_deploy, open_issue]
+    flag: null
+    titles: ["Event bus consumer lag", "Kafka consumers fall behind on order events", "Order event backlog on the event bus"]
+    openings:
+      - "Deploy {deploy} reduced {cause} partition throughput and consumer lag grew steadily."
+      - "Consumers fell behind on {symptom} after a {cause} config change ({deploy})."
+      - "Following {deploy}, {cause} rebalanced consumers repeatedly and a backlog built up."
+    impacts: ["The {impacted} consumers processed events hours late.", "Downstream consumers such as {impacted} fell behind.", ""]
+  - name: fx_rates
+    count: 18
+    causes: [fx-converter]
+    kind: deploy
+    symptom: {kind: error_rate, target: pricing}
+    impacted: [order-orchestrator]
+    fixes: [flip_flag, rollback_deploy]
+    flag: fxStaticRates
+    titles: ["Pricing errors from fx conversion", "Currency conversion failures after fx deploy", "Foreign-currency quotes failing"]
+    openings:
+      - "Deploy {deploy} changed rate caching in {cause} and {symptom} failed to convert foreign-currency prices."
+      - "After {deploy}, {cause} timed out on rate lookups and {symptom} returned errors."
+      - "A {cause} release ({deploy}) broke rate refresh and the {symptom} error rate jumped."
+    impacts: ["Foreign-currency orders in {impacted} failed.", "The {impacted} saga rejected foreign-currency baskets.", ""]

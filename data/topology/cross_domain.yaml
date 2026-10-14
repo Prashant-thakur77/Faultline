@@ -1,0 +1,5 @@
+# Cross-domain links: a service writes (EMITS) a raw table of the data pipeline, so failures and
+# changes can flow from the service graph into the revenue lineage (S2's cross-domain path).
+tenant: acme
+emits:
+  - {service: payment, table: raw.raw_orders, cap: 1.0, why: "payment emits every captured order row (the payments platform extract)"}
