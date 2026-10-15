@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 282" width="760" height="282" role="img" aria-label="Take FalkorDB&#x27;s algorithms away and the answers get worse">
+<title>Take FalkorDB&#x27;s algorithms away and the answers get worse</title>
+<rect x="0.5" y="0.5" width="759" height="281" rx="12" fill="#fcfcfb" stroke="#e7e6e2"/>
+<text x="24" y="34" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#0b0b0b">Take FalkorDB&#x27;s algorithms away and the answers get worse</text>
+<text x="24" y="56" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" fill="#52514e">Correct verdicts on the 100 held-out gate-bench worlds, one capability removed at a time. Higher is better.</text>
+<line x1="250.0" y1="76" x2="250.0" y2="224" stroke="#e7e6e2"/>
+<line x1="470.0" y1="76" x2="470.0" y2="224" stroke="#e7e6e2"/>
+<line x1="690.0" y1="76" x2="690.0" y2="224" stroke="#e7e6e2"/>
+<text x="236" y="98" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">Full product (SPpaths + maxFlow)</text>
+<g><title>correct of 100</title><rect x="250" y="84" width="440.0" height="18" rx="4" fill="#2a78d6"/></g>
+<text x="698.0" y="98" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">100</text>
+<text x="236" y="136" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">algo.maxFlow removed</text>
+<g><title>correct of 100</title><rect x="250" y="122" width="352.0" height="18" rx="4" fill="#8c8a84"/></g>
+<text x="610.0" y="136" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">80</text>
+<text x="236" y="174" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">algo.SPpaths removed (connectivity only)</text>
+<g><title>correct of 100</title><rect x="250" y="160" width="334.4" height="18" rx="4" fill="#8c8a84"/></g>
+<text x="592.4" y="174" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">76</text>
+<text x="236" y="212" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Both removed</text>
+<g><title>correct of 100</title><rect x="250" y="198" width="246.4" height="18" rx="4" fill="#8c8a84"/></g>
+<text x="504.4" y="212" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">56</text>
+<text x="24" y="264" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" fill="#77756f">Every rung stays at zero confident wrong blames; what is lost is the ability to decide.</text>
+</svg>

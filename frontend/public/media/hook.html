@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Faultline: which change broke checkout?</title>
+<!-- Demo-video opening card (frontend/scripts/record_demo_video.py). Static: no number here comes from our evals; the
+     one statistic is third-party and attributed on the card itself. Mona Sans is the site's hero face. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mona+Sans:wdth,wght@75..125,200..900&display=block">
+<style>
+  :root { --bg:#08090a; --ink:#fafafa; --muted:#8a8f98; --ember:oklch(0.72 0.19 45); --iris:oklch(0.66 0.19 290); }
+  html, body { height:100%; margin:0; background:var(--bg); color:var(--ink); }
+  body {
+    display:flex; flex-direction:column; justify-content:center; gap:28px; padding:0 9vw; box-sizing:border-box;
+    font-family:"Mona Sans", Inter, ui-sans-serif, system-ui, sans-serif;
+    background:
+      radial-gradient(38% 42% at 18% 0%, color-mix(in oklch, var(--iris) 18%, transparent), transparent 78%),
+      radial-gradient(34% 36% at 85% 4%, color-mix(in oklch, var(--ember) 14%, transparent), transparent 78%),
+      var(--bg);
+  }
+  .kicker { font:500 13px/1 ui-monospace, "Geist Mono", monospace; letter-spacing:.25em; text-transform:uppercase; color:var(--muted); }
+  h1, h2 { margin:0; font-weight:800; font-stretch:112%; letter-spacing:-0.04em; line-height:1.02; }
+  h1 { font-size:clamp(2.6rem, 6.2vw, 6.4rem); max-width:16ch; }
+  h1 .n { background:linear-gradient(100deg, var(--ember), oklch(0.78 0.16 20) 45%, var(--iris)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .src { margin:0; font:400 15px/1.45 Inter, ui-sans-serif, system-ui, sans-serif; color:var(--muted); max-width:62ch; }
+  .src cite { font-style:italic; color:#c4c7cc; }
+  h2 { font-size:clamp(1.9rem, 4.2vw, 4.2rem); max-width:22ch; color:#e4e4e7; }
+  h2 .q { color:var(--ink); }
+  .rule { height:1px; width:min(640px, 60vw); background:linear-gradient(90deg, var(--ember), var(--iris), transparent); }
+  /* staged reveal, started by go(); with reduced motion everything is shown at once */
+  .step { opacity:0; transform:translateY(14px); transition:opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1); }
+  body.go .s1 { opacity:1; transform:none; transition-delay:.05s; }
+  body.go .s2 { opacity:1; transform:none; transition-delay:.55s; }
+  body.go .s3 { opacity:1; transform:none; transition-delay:3.6s; }
+  body.go .s4 { opacity:1; transform:none; transition-delay:4.1s; }
+  @media (prefers-reduced-motion: reduce) { .step { opacity:1; transform:none; transition:none; } }
+</style>
+</head>
+<body>
+  <p class="kicker step s1">Faultline</p>
+  <h1 class="step s1">Roughly <span class="n">70%</span> of outages come from changes.</h1>
+  <p class="src step s2">Source: <cite>Site Reliability Engineering</cite> (Google, O&rsquo;Reilly 2016), chapter 1:
+    &ldquo;SRE has found that roughly 70% of outages are due to changes in a live system.&rdquo;</p>
+  <div class="rule step s3" aria-hidden="true"></div>
+  <h2 class="step s4">Two deploys land in the same minute. <span class="q">Which one broke checkout?</span></h2>
+<script>
+  // The recorder starts the reveal itself (window.__go) when the card is on screen; opened directly, it starts on load.
+  window.__go = function () { document.body.classList.add("go"); };
+  if (window.top === window) window.addEventListener("load", function () { setTimeout(window.__go, 250); });
+</script>
+</body>
+</html>
