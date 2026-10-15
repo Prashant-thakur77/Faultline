@@ -17,7 +17,6 @@ import re
 import time
 from pathlib import Path
 
-import anyio
 
 ROOT = Path(__file__).resolve().parents[1]
 PRICE_PER_MTOK = {"in": 15.0, "out": 75.0}  # conservative upper bound used for the pre-run estimate (USD)
@@ -89,7 +88,9 @@ def _ask(text: str, model: str) -> tuple[dict, dict]:
     from faultline.config import settings
 
     api = Anthropic(api_key=settings.anthropic_api_key, max_retries=3)
-    resp = api.messages.create(model=model, max_tokens=400, temperature=0,
+    # current models take no sampling parameters and always think; thinking counts against max_tokens, so leave room.
+    # A one-line JSON verdict: low effort keeps the comparison cheap without changing what the model is asked.
+    resp = api.messages.create(model=model, max_tokens=16000, output_config={"effort": "low"},
                                messages=[{"role": "user", "content": ASK + "\n\n" + text}])
     raw = "".join(b.text for b in resp.content if b.type == "text")
     m = re.search(r"\{.*\}", raw, re.S)
@@ -113,20 +114,20 @@ def arm_a1(sid: str, model: str) -> dict:
 
 
 def arm_a3l(sid: str, model: str) -> dict:
-    from faultline import scenario
+    """The product with the LLM investigator: the same run, gate and grading as arm A3, only the investigator differs."""
     from faultline.agent.loop import LLMInvestigator
+    from harness import _graph_arm
 
-    t0 = time.perf_counter()
-    p, res = anyio.run(lambda: scenario.run(sid, LLMInvestigator(model=model), set_mode=True, keep=False))
-    confirmed = res.outcome in ("CONFIRMED", "NOT_CONFIDENT")
-    return {"outcome": res.outcome, "cause": res.cause_id if confirmed else None, "usage": res.usage,
-            "seconds": round(time.perf_counter() - t0, 2), "tool_calls": res.tool_calls, "error": res.error}
+    return _graph_arm(sid, nomem=False, investigator=LLMInvestigator(model=model))
 
 
 def _result(sid: str, ans: dict, usage: dict, t0: float) -> dict:
     cause = ans.get("cause")
     cause = None if cause in (None, "", "none", "None") else str(cause)
-    return {"outcome": "CONFIRMED" if cause else "NO_INCIDENT", "cause": cause, "why": ans.get("why", "")[:300],
+    outcome = "CONFIRMED" if cause else "NO_INCIDENT"
+    from harness import grade  # the same grader as every keyless arm (imported late: the harness imports this module)
+
+    return {"outcome": outcome, "cause": cause, "why": ans.get("why", "")[:300], **grade(sid, outcome, cause),
             "usage": usage, "seconds": round(time.perf_counter() - t0, 2), "tool_calls": 0}
 
 

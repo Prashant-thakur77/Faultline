@@ -282,7 +282,9 @@ class LLMInvestigator:
             offered = phases.llm_toolset(box.stage)
             tools = tool_schemas(box, offered)
             self.offered.append(list(offered))
-            resp = api.messages.create(model=self.model, max_tokens=4096, temperature=0,
+            # no sampling parameters (current models reject them); thinking is always on and counts against
+            # max_tokens, so the turn gets room; effort is explicit because its default differs by model
+            resp = api.messages.create(model=self.model, max_tokens=16000, output_config={"effort": "medium"},
                                        system=[{"type": "text", "text": SYSTEM_PROMPT, "cache_control": {"type": "ephemeral"}}],
                                        tools=tools, messages=messages)
             self.usage["input_tokens"] += resp.usage.input_tokens

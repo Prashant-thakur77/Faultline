@@ -86,7 +86,7 @@ def arm_naive(sid: str) -> dict:
     return {"outcome": "CONFIRMED", "cause": cause, "tied": tied, "ranking": ranking, **g, "tool_calls": 0, "seconds": 0.0}
 
 
-def _graph_arm(sid: str, nomem: bool, disable: bool = False, no_g5: bool = False) -> dict:
+def _graph_arm(sid: str, nomem: bool, disable: bool = False, no_g5: bool = False, investigator=None) -> dict:
     """no_g5 (arm A3-noG5, eval process only): flow_slack → 0, so every suspect with a path passes the max-flow
     sufficiency check; shows what algo.maxFlow decides. The product never runs with this."""
     t0 = time.perf_counter()
@@ -96,7 +96,7 @@ def _graph_arm(sid: str, nomem: bool, disable: bool = False, no_g5: bool = False
         saved = _w()["gate"]["flow_slack"]
         _w()["gate"]["flow_slack"] = 0.0
         try:
-            return _graph_arm(sid, nomem, disable)
+            return _graph_arm(sid, nomem, disable, investigator=investigator)
         finally:
             _w()["gate"]["flow_slack"] = saved
     p = scenario.prepare(sid, set_mode=True, nomem=nomem)
@@ -105,7 +105,7 @@ def _graph_arm(sid: str, nomem: bool, disable: bool = False, no_g5: bool = False
     settings.faultline_disable_graph = disable
     try:
         res = anyio.run(lambda: run_incident(tenant=p.tenant, incident_id=p.incident_id, onset_ms=p.onset_ms,
-                                             symptoms=p.symptoms, investigator=BaselineInvestigator(), graph=p.graph,
+                                             symptoms=p.symptoms, investigator=investigator or BaselineInvestigator(), graph=p.graph,
                                              run_id=p.run_id, window_min=p.scenario.get("window_min")))
         detail = _run_detail(p, res)
     finally:
@@ -128,6 +128,7 @@ def _graph_arm(sid: str, nomem: bool, disable: bool = False, no_g5: bool = False
             "distractors_rejected": rejected, "grounded": checks.get("G1 grounded"), "tool_calls": res.tool_calls,
             "gate_attempts": res.gate_attempts, "precedents": len((res.recall or {}).get("precedents", [])),
             "seconds": round(time.perf_counter() - t0, 2), "error": res.error, "confident": res.confident,
+            "usage": getattr(res, "usage", None),
             "sweep": [{"change": v["change"], "status": v["status"], "reason": v["reason"]} for v in res.sweep],
             "chain": (res.gate or {}).get("chain"), "detail": detail, **grade_detail(sid, detail, (res.gate or {}).get("chain"))}
 
@@ -595,6 +596,7 @@ def main() -> int:
     ap.add_argument("--no-checks", action="store_true")
     ap.add_argument("--approved-budget-usd", type=float, default=0.0)
     ap.add_argument("--model", default="claude-sonnet-5-5")
+    ap.add_argument("--side-output", default="", help="write the trials here (LLM arms) instead of a new run + latest.json")
     a = ap.parse_args()
     arms = [x for x in a.arms.split(",") if x]
     import llm_arms
@@ -627,6 +629,16 @@ def main() -> int:
            "engine": json.loads((ROOT / "backend/faultline/graph/algo/resolved.json").read_text())["engine"],
            "trials": trials, "checks": {} if a.no_checks else checks(), "repo": repo_facts()}
     RESULTS.mkdir(parents=True, exist_ok=True)
+    if a.side_output:  # a paid LLM run: merged into an existing side file, folded into latest.json by `make results`
+        side = Path(a.side_output)
+        prev = json.loads(side.read_text()) if side.exists() else {"trials": [], "arms": [], "scenarios": []}
+        prev["trials"] = [x for x in prev["trials"] if not (x["arm"] in arms and x["scenario"] in a.scenarios.split(","))] + trials
+        prev["arms"] = sorted(set(prev["arms"]) | set(arms))
+        prev["scenarios"] = sorted(set(prev["scenarios"]) | set(a.scenarios.split(",")))
+        prev.update({"model": a.model, "started": prev.get("started") or started, "finished": out["finished"]})
+        side.write_text(json.dumps(prev, indent=2, default=str) + "\n")
+        print(f"wrote {side} ({len(trials)} trials); run `make results` to fold it into latest.json")
+        return 0
     k = 1 + max((int(p.stem.split("_")[1]) for p in RESULTS.glob("run_*.json")), default=0)
     path = RESULTS / f"run_{k:04d}.json"
     path.write_text(json.dumps(out, indent=2, default=str) + "\n")

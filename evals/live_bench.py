@@ -180,7 +180,7 @@ def run(base: str, runs: int) -> dict:
                     "ms_p50": pct([b[2] for b in brain], 0.5)}
 
     code, pf, ms = http(base, "POST", f"/api/preflight?tenant={TENANT}", PREFLIGHT_BLOCK, timeout=90)
-    res["preflight"] = {"http": code, "decision": (pf or {}).get("decision") if isinstance(pf, dict) else None, "ms": round(ms, 1)}
+    res["preflight"] = {"http": code, "decision": (pf or {}).get("verdict") if isinstance(pf, dict) else None, "ms": round(ms, 1)}
 
     code, _, _ = http(base, "POST", "/mcp", {"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {}})
     res["mcp_unauthenticated_http"] = code

@@ -407,7 +407,8 @@ def _llm(s: _Session, q: str, user: str | None = None) -> tuple[str, str, list[s
             past = "\n".join(f"{t['role']}: {t['text'][:400]}" for t in reversed(hist[:6]))
             messages = [{"role": "user", "content": f"Earlier in our sessions (from the graph):\n{past}\n\nNow: {q}"}]
     for _ in range(8):
-        resp = api.messages.create(model=settings.anthropic_model, max_tokens=1500, temperature=0, system=BRAIN_PROMPT,
+        resp = api.messages.create(model=settings.anthropic_model, max_tokens=16000, output_config={"effort": "medium"},
+                                   system=BRAIN_PROMPT,
                                    tools=schemas, messages=messages)
         for k in ("input_tokens", "output_tokens"):
             s.usage[k] = s.usage.get(k, 0) + int(getattr(resp.usage, k, 0) or 0)
