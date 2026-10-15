@@ -30,10 +30,17 @@ const display = Instrument_Serif({
   style: ["normal", "italic"],
 });
 
+// absolute URLs for the social card: the live site, or the Pages site on the static build (overridable)
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ??
+  (BASE_PATH ? "https://prashant-thakur77.github.io" : "https://13-203-185-119.sslip.io");
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "Faultline: no path, no claim",
   description:
     "On-call agent whose brain is a per-tenant FalkorDB operational context graph: what breaks, why (graph path plus evidence), and who fixes it.",
+  openGraph: { title: "Faultline: no path, no claim", siteName: "Faultline", type: "website" },
+  twitter: { card: "summary_large_image", title: "Faultline: no path, no claim" },
 };
 
 // the intro plays once per tab, only when the document itself loads on the home page

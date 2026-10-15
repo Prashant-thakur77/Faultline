@@ -1,3 +1,5 @@
+<p><picture><source media="(prefers-color-scheme: dark)" srcset="frontend/public/brand/faultline-mark-light.svg"><img src="frontend/public/brand/faultline-mark.svg" width="64" height="64" alt="Faultline logo: a block split by an ember fault line"></picture></p>
+
 # Faultline: no path, no claim
 
 **An on-call agent that won't blame a change until FalkorDB returns the causal path, and won't keep a suspect the graph shows cannot carry the impact.** The model suggests; a read-only query decides.

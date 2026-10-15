@@ -24,18 +24,16 @@ const NAV: { href: string; label: string; match: (p: string) => boolean; live?: 
 ];
 
 /** The Faultline mark: a fault line cutting through a node (the claim is only made along a path). */
+/**
+ * The mark: a block split by a fault, the right plate slipped, the crack in ember. Plates take the current text colour,
+ * so it reads on the dark page and the light footer alike; no ids, so it can render any number of times.
+ */
 export function FaultlineMark({ className = "size-6" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 32 32" className={className} aria-hidden>
-      <defs>
-        <linearGradient id="fl-mark" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="var(--fl-ember)" />
-          <stop offset="1" stopColor="var(--fl-iris)" />
-        </linearGradient>
-      </defs>
-      <circle cx="16" cy="16" r="13" fill="none" stroke="url(#fl-mark)" strokeWidth="1.5" opacity="0.55" />
-      <path d="M4 18 L11 18 L14 9 L18 24 L21 14 L28 14" fill="none" stroke="url(#fl-mark)" strokeWidth="2.4"
-            strokeLinecap="round" strokeLinejoin="round" />
+    <svg viewBox="0 0 32 32" className={className} fill="currentColor" aria-hidden>
+      <path d="M10 4H18.1L11.1 28H10A6 6 0 0 1 4 22V10A6 6 0 0 1 10 4Z" />
+      <path d="M20.9 4H22A6 6 0 0 1 28 10V22A6 6 0 0 1 22 28H13.9Z" transform="translate(1 1.4)" />
+      <path d="M19.5 4L12.5 28" transform="translate(0.5 0.7)" stroke="var(--fl-ember)" strokeWidth="1.3" strokeLinecap="round" />
     </svg>
   );
 }
