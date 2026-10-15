@@ -13,7 +13,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_scenarios_v2.py::test_s1_hero_confirms_payment_rejects_email_by_flow_and_rec_by_path",
-      "s": 4.7
+      "s": 5.4
     },
     {
       "id": "M-G5",
@@ -25,7 +25,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_scenarios_v2.py::test_s2_confirms_cutover_and_rejects_fx_by_flow",
-      "s": 7.4
+      "s": 8.1
     },
     {
       "id": "M-G1",
@@ -35,8 +35,8 @@
         "tests/live/test_gate_s2.py"
       ],
       "status": "KILLED",
-      "detail": "E        +  where False = GateResult(cause_id='D-never-seen', passed=False, confident=False, checks=[Check(name='G1 grounded', passed=True, deta...vidence_ids=[], downgrade_only=True, attach_only=True)], chain=[], gate_run_id='gr-inc-684a8b-7bdcd4ad', violations=[]).passed; FAILED tests/live/test_gate_s2.py::test_confirm_rejects_distractor_and_ungrounded_cause",
-      "s": 2.3
+      "detail": "E        +  where False = GateResult(cause_id='D-never-seen', passed=False, confident=False, checks=[Check(name='G1 grounded', passed=True, deta...vidence_ids=[], downgrade_only=True, attach_only=True)], chain=[], gate_run_id='gr-inc-2c105b-2e37edd8', violations=[]).passed; FAILED tests/live/test_gate_s2.py::test_confirm_rejects_distractor_and_ungrounded_cause",
+      "s": 2.7
     },
     {
       "id": "M-HASH-APPROVE",
@@ -47,7 +47,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_actions.py::test_stale_plan_hash_is_refused_and_approval_is_idempotent",
-      "s": 3.7
+      "s": 3.9
     },
     {
       "id": "M-HASH-EXEC",
@@ -58,7 +58,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_actions.py::test_execute_refuses_an_action_tampered_with_after_approval",
-      "s": 47.2
+      "s": 54.6
     },
     {
       "id": "M-UNKNOWN",
@@ -68,8 +68,8 @@
         "tests/live/test_actions.py"
       ],
       "status": "KILLED",
-      "detail": "ERROR    faultline.errors:public_errors.py:24 request 0c1122cd2876: internal error: GitHubTimeout: GitHub API timed out (simulated); FAILED tests/live/test_actions.py::test_s9_github_timeout_is_unknown_and_escalated",
-      "s": 29.8
+      "detail": "ERROR    faultline.errors:public_errors.py:24 request 5aecdd0e7529: internal error: GitHubTimeout: GitHub API timed out (simulated); FAILED tests/live/test_actions.py::test_s9_github_timeout_is_unknown_and_escalated",
+      "s": 36.0
     },
     {
       "id": "M-UNKNOWN-WB",
@@ -79,8 +79,8 @@
         "tests/live/test_actions.py"
       ],
       "status": "KILLED",
-      "detail": "ERROR    faultline.errors:public_errors.py:24 request b50c2551189d: internal error: GitHubTimeout: GitHub API timed out (simulated); FAILED tests/live/test_actions.py::test_s9_github_timeout_is_unknown_and_escalated",
-      "s": 29.8
+      "detail": "ERROR    faultline.errors:public_errors.py:24 request 4e9fa6390f0a: internal error: GitHubTimeout: GitHub API timed out (simulated); FAILED tests/live/test_actions.py::test_s9_github_timeout_is_unknown_and_escalated",
+      "s": 34.8
     },
     {
       "id": "M-REORDER",
@@ -91,7 +91,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/test_remedy_residue.py::test_history_reorders_enabled_actions_only_with_a_reason_line",
-      "s": 0.7
+      "s": 0.8
     },
     {
       "id": "M-G4ORIGIN",
@@ -102,7 +102,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_gate_bench_regressions.py::test_previously_failing_bench_case_now_correct[gb068]",
-      "s": 12.1
+      "s": 14.8
     },
     {
       "id": "M-G5MULT",
@@ -113,7 +113,7 @@
       ],
       "status": "KILLED",
       "detail": "E         comparison failed; FAILED tests/graph/test_g5_bound_property.py::test_reconvergent_paths_break_the_plain_bound",
-      "s": 0.8
+      "s": 1.0
     },
     {
       "id": "M-G5ALONE",
@@ -135,7 +135,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_gate_bench_regressions.py::test_previously_failing_bench_case_now_correct[gb002]",
-      "s": 7.5
+      "s": 7.9
     },
     {
       "id": "M-RO",
@@ -191,7 +191,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/brain/test_citation_guard.py::test_guard_refuses_ids_not_seen_this_run",
-      "s": 1.5
+      "s": 1.4
     },
     {
       "id": "M-TENANT",
@@ -203,7 +203,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/graph/test_tenant_names.py::test_invalid_tenants_rejected[] - Fa...",
-      "s": 1.5
+      "s": 1.6
     },
     {
       "id": "M-G7CORR",
@@ -236,7 +236,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_specialists.py::test_two_dispatches_of_the_same_work_item_never_both_run_it",
-      "s": 2.4
+      "s": 2.7
     },
     {
       "id": "M-STORM-MERGE",
@@ -247,7 +247,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_alert_storm.py::test_s14_two_groups_and_each_gate_decides_its_own_cause",
-      "s": 4.6
+      "s": 6.2
     },
     {
       "id": "M-STORM-OPEN",
@@ -258,7 +258,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_alert_storm.py::test_a_resolved_incident_never_absorbs_a_new_alert",
-      "s": 5.3
+      "s": 5.6
     },
     {
       "id": "M-PRIMARY-CARRY",
@@ -269,7 +269,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_alert_storm.py::test_ungrouped_storm_is_escalated_not_blamed_on_one_change",
-      "s": 3.9
+      "s": 4.0
     },
     {
       "id": "M-VERIFY-ALLOW",
@@ -280,7 +280,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_alert_storm.py::test_the_real_fix_is_applied_once_the_other_incidents_share_is_allowed",
-      "s": 5.2
+      "s": 5.1
     },
     {
       "id": "M-VERIFY-OWN",
@@ -291,7 +291,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_alert_storm.py::test_a_failed_fix_stays_not_applied_while_another_incident_is_open",
-      "s": 5.2
+      "s": 5.6
     },
     {
       "id": "M-VERIFY-MAXFLOW",
@@ -302,7 +302,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_alert_storm.py::test_a_partial_fix_that_leaves_our_own_leak_stays_not_applied",
-      "s": 5.6
+      "s": 5.7
     },
     {
       "id": "M-VERDICT-UNCOND",
@@ -314,7 +314,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_review4_live.py::test_the_job_settles_first_and_the_reconciler_writes_nothing",
-      "s": 4.9
+      "s": 5.0
     },
     {
       "id": "M-REPAIR-FIXTURE",
@@ -326,7 +326,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_review5_live.py::test_an_unrelated_patch_never_verifies_applied_after_a_healthy_switch",
-      "s": 14.1
+      "s": 15.7
     },
     {
       "id": "M-SQL-ACCEPT",
@@ -337,7 +337,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/test_review5_units.py::test_the_validator_refuses_anything_but_one_plain_ctas[copy-to]",
-      "s": 0.7
+      "s": 0.9
     },
     {
       "id": "M-SESS-PREFIX",
@@ -348,7 +348,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_review4_live.py::test_a_session_can_never_take_a_component_id",
-      "s": 2.0
+      "s": 2.4
     },
     {
       "id": "M-FUTURE-BRANCH",
@@ -359,7 +359,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_futures.py::test_each_candidate_has_its_own_predicted_future",
-      "s": 3.5
+      "s": 4.2
     },
     {
       "id": "M-FUTURE-CLASS",
@@ -370,7 +370,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/test_futures_units.py::test_history_never_lifts_an_option_across_a_predicted_future_class",
-      "s": 0.7
+      "s": 0.8
     },
     {
       "id": "M-G4-UPSTREAM",
@@ -381,7 +381,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_gate_upstream.py::test_strict_elimination_removes_a_lookalike_on_the_alerting_service",
-      "s": 6.5
+      "s": 7.2
     },
     {
       "id": "M-G4-UPSTREAM-SLACK",
@@ -392,7 +392,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_gate_upstream.py::test_no_wrong_confident_blame_where_the_first_shipped_rule_made_one[db062]",
-      "s": 9.0
+      "s": 9.5
     },
     {
       "id": "M-N0-UNMEASURED",
@@ -403,7 +403,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_negative_proof_missing.py::test_a_real_fault_with_its_symptom_unmeasured_is_not_declared_no_incident",
-      "s": 3.6
+      "s": 3.8
     },
     {
       "id": "M-WORLD-SEED",
@@ -436,7 +436,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_decision_override.py::test_accidental_keeps_the_violation_and_names_the_answer",
-      "s": 3.8
+      "s": 3.9
     },
     {
       "id": "M-LEARN-UNVERIFIED",
@@ -447,7 +447,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_learned_edges.py::test_a_wrong_human_guess_verifies_not_applied_and_teaches_nothing",
-      "s": 2.6
+      "s": 2.7
     },
     {
       "id": "M-EDGE-APPROVE-RECHECK",

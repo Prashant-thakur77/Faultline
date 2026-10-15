@@ -1,5 +1,7 @@
 # Server panic (process exits): algo.SSpaths + aggregation grouped with a null property (6.0.2)
 
+**Known upstream as [FalkorDB#3150](https://github.com/FalkorDB/FalkorDB/issues/3150)** (fix PR #3229). We added [a smaller repro and two more triggers](https://github.com/FalkorDB/FalkorDB/issues/3150#issuecomment-6201125566) to that thread.
+
 **Severity:** a single read-only query (`GRAPH.RO_QUERY`) crashes the server: `FalkorDB panic: panicked at src/reply.rs:655:58: called Option::unwrap() on a None value` (in `falkordb::reply::reply_compact`), and the process exits.
 
 **Image:** falkordb/falkordb@sha256:107455e862a824e45e8e9f5a7fbfdf5e00a08b14e13eae2577c72fd9e3f59ba6 (6.0.2), Python client 1.7.1 (compact replies).

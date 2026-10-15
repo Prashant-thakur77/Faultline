@@ -7,22 +7,22 @@
 <line x1="470.0" y1="76" x2="470.0" y2="300" stroke="#e7e6e2"/>
 <line x1="690.0" y1="76" x2="690.0" y2="300" stroke="#e7e6e2"/>
 <text x="236" y="98" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">Shortest causal path: FalkorDB</text>
-<g><title>FalkorDB round trip p50 ms</title><rect x="250" y="84" width="59.3" height="18" rx="4" fill="#2a78d6"/></g>
-<text x="317.3" y="98" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">0.21 ms</text>
+<g><title>FalkorDB round trip p50 ms</title><rect x="250" y="84" width="55.4" height="18" rx="4" fill="#2a78d6"/></g>
+<text x="313.4" y="98" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">0.27 ms</text>
 <text x="236" y="136" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Shortest causal path: DuckDB SQL</text>
-<g><title>DuckDB recursive SQL p50 ms, in-process</title><rect x="250" y="122" width="361.0" height="18" rx="4" fill="#8c8a84"/></g>
-<text x="619.0" y="136" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">1.28 ms</text>
+<g><title>DuckDB recursive SQL p50 ms, in-process</title><rect x="250" y="122" width="254.2" height="18" rx="4" fill="#8c8a84"/></g>
+<text x="512.2" y="136" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">1.22 ms</text>
 <text x="236" y="174" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">Blast radius (reach set): FalkorDB</text>
-<g><title>FalkorDB round trip p50 ms</title><rect x="250" y="160" width="110.8" height="18" rx="4" fill="#2a78d6"/></g>
-<text x="368.8" y="174" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">0.39 ms</text>
+<g><title>FalkorDB round trip p50 ms</title><rect x="250" y="160" width="102.6" height="18" rx="4" fill="#2a78d6"/></g>
+<text x="360.6" y="174" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">0.49 ms</text>
 <text x="236" y="212" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Blast radius (reach set): DuckDB SQL</text>
-<g><title>DuckDB recursive SQL p50 ms, in-process</title><rect x="250" y="198" width="438.3" height="18" rx="4" fill="#8c8a84"/></g>
-<text x="696.3" y="212" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">1.56 ms</text>
+<g><title>DuckDB recursive SQL p50 ms, in-process</title><rect x="250" y="198" width="373.7" height="18" rx="4" fill="#8c8a84"/></g>
+<text x="631.7" y="212" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">1.79 ms</text>
 <text x="236" y="250" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">Hop distances: FalkorDB</text>
-<g><title>FalkorDB round trip p50 ms</title><rect x="250" y="236" width="61.0" height="18" rx="4" fill="#2a78d6"/></g>
-<text x="319.0" y="250" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">0.22 ms</text>
+<g><title>FalkorDB round trip p50 ms</title><rect x="250" y="236" width="80.9" height="18" rx="4" fill="#2a78d6"/></g>
+<text x="338.9" y="250" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">0.39 ms</text>
 <text x="236" y="288" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Hop distances: DuckDB SQL</text>
 <g><title>DuckDB recursive SQL p50 ms, in-process</title><rect x="250" y="274" width="440.0" height="18" rx="4" fill="#8c8a84"/></g>
-<text x="698.0" y="288" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">1.56 ms</text>
+<text x="698.0" y="288" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">2.10 ms</text>
 <text x="24" y="340" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" fill="#77756f">Results were checked equal on every instance. Max flow has no SQL equivalent.</text>
 </svg>

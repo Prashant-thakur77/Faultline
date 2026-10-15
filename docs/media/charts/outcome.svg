@@ -2,7 +2,7 @@
 <title>Right outcome on the scenario suite</title>
 <rect x="0.5" y="0.5" width="759" height="357" rx="12" fill="#fcfcfb" stroke="#e7e6e2"/>
 <text x="24" y="34" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#0b0b0b">Right outcome on the scenario suite</text>
-<text x="24" y="56" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" fill="#52514e">Share of trials with the correct verdict (confirm the true cause, or abstain when there is none). Higher is better. Eval run_0032.</text>
+<text x="24" y="56" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" fill="#52514e">Share of trials with the correct verdict (confirm the true cause, or abstain when there is none). Higher is better. Eval run_0033.</text>
 <line x1="250.0" y1="76" x2="250.0" y2="300" stroke="#e7e6e2"/>
 <line x1="470.0" y1="76" x2="470.0" y2="300" stroke="#e7e6e2"/>
 <line x1="690.0" y1="76" x2="690.0" y2="300" stroke="#e7e6e2"/>

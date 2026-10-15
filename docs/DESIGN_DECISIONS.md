@@ -71,7 +71,7 @@ The full table of what the agent cannot do is [SAFETY.md](SAFETY.md).
 | Pre-register, keep the debug run, log every re-run | `evals/PREREGISTRATION.md` was written after one harness-debugging run, which is kept and never reported. Each later run states why it re-ran and that outcomes were unchanged. |
 | Every published number is tagged and checked | `check_claims` compares each tagged number with `latest.json` and fails untagged measured-looking numbers. `RESULTS.md` is generated, never hand-edited. |
 | Ablations that isolate the graph | A4 (FalkorDB off) fails closed. A3-noG5 switches off only the max-flow check. V is vector-only cosine in FalkorDB. N is naive recency. |
-| LLM arms wait for a budget | They are wired as skipped until an API key and an approved budget exist, so no LLM-vs-graph claim is made. |
+| LLM arms run only with an approved budget | They are skipped without an API key and a budget the owner approved; a paid run writes a side file, so it can never replace the keyless results. |
 | The preflight backtest is as-of and not re-tuned | Every historical PR is scored by the production formula as of its merge time through as-of templates, with a memory-term ablation. Negative results are reported. |
 
 ## 7. Tenancy and public-mode security
