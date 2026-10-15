@@ -1,0 +1,121 @@
+# Competitive landscape: incident root cause and remediation
+
+Reviewed on 2026-10-16 from public vendor documentation, vendor blogs and project repositories only. Where a page we read did not say something, the table says "not stated publicly"; that means we could not find it, not that the product lacks it. No accuracy figures for any product are given here. <!-- noclaim: date -->
+
+## Summary
+
+Most commercial tooling finds incident causes in one of two ways. The first is correlation: grouping alerts by time, labels and topology, then ranking recent changes by how close they are in time and how well their properties match the alerts (BigPanda, PagerDuty, New Relic Incident Intelligence, Splunk ITSI). The second, now common, is an LLM agent that forms hypotheses and tests them against telemetry, code and chat history, then posts a summary with linked evidence (Datadog Bits AI SRE, incident.io, Rootly, New Relic Autopilot, PagerDuty SRE Agent, HolmesGPT). A smaller group reasons over an explicit model of the system: Dynatrace walks its auto-discovered Smartscape topology, and Causely matches observed symptoms against a causal graph built from causal models plus topology. Several agent products now also open pull requests or run approved infrastructure actions. The gap Faultline targets is narrower: a cause should be confirmed only when a read-only graph query returns a directed causal path from the change to the symptom and a max-flow bound shows the path can carry the observed impact. Without both, it abstains. The action that follows should be bound to the exact approved plan, verified through a second channel with an explicit UNKNOWN outcome, and written back into the same graph that made the decision.
+
+## How current products approach it
+
+| Product | How it finds a cause | Actions and verification | Inspectable evidence | Abstains? | Model | Sources |
+|---|---|---|---|---|---|---|
+| **Dynatrace** (Davis AI, now documented as Dynatrace Intelligence; Smartscape) | Topology and causal analysis. RCA "highlights entities within the causal topology identified as the root cause" and combines connected anomalies into one problem. Smartscape maps vertical (runs on, part of) and horizontal (upstream, downstream) dependencies automatically. | Workflows can be triggered on problems "to notify teams or run automated remediation". Site Reliability Guardian validates a release against objectives with pass and warning thresholds. How a remediation's effect is verified is not stated publicly. | The problem view names root-cause contributors; the vendor blog describes a deterministic resolution path tied to Smartscape topology. | Not stated publicly. | Commercial; SaaS and Managed (on-premises). Grail-based features are SaaS only. | [dt-rca], [dt-ss], [dt-alert], [dt-srg], [dt-deploy], [dt-blog] |
+| **Datadog Watchdog RCA** | Maps dependencies between APM anomalies and related components. Root causes are limited to state changes: version changes, traffic increases, AWS instance failures and low disk space. Degraded performance is never classified as a root cause. | None in RCA itself. | Each analysis shows a root cause, a critical failure and its impact. | Yes, by omission: nothing is shown when the cause is not a supported type or instrumentation is missing. | Commercial SaaS; requires APM. | [dd-rca], [dd-rca-faq] |
+| **Datadog Bits AI SRE** | LLM agent: forms root-cause hypotheses and queries metrics, traces, logs, change tracking, source code and more to validate or invalidate them. | Bits Remediation: code-fix pull requests (merge is up to the user); triage actions; infrastructure actions with guardrails (Ask requires user approval; Deny allows recommendation only; preview). "Verify Resolution" checks whether the action was applied and the issue resolved. Deployment Gates (preview) can halt a rollout on monitor or APM anomalies. | "Bits captures every step it takes"; a Hypothesis Tree view shows the investigative path. | Yes: marks an investigation inconclusive when data is insufficient. | Commercial SaaS. | [dd-bits], [dd-rem], [dd-gates] |
+| **New Relic** (Incident Intelligence, Autopilot) | Correlation: issues are merged on time, alert context and relationship data, using global, ML-suggested and custom decisions. Autopilot (formerly SRE Agent) traverses traces, logs and metrics and converts questions to NRQL. | "Autopilot recommends actions but does not take them." | Decisions and recent correlations are listed in the UI. Whether Autopilot's generated queries are shown is not stated publicly. | Partly: with limited data, recommendations "may include less supporting evidence or identify additional information to collect". | Commercial SaaS. | [nr-corr], [nr-auto] |
+| **PagerDuty** (AIOps, PagerDuty AI / SRE Agent) | Probable Origin learns recurring cascades from the prior six months of incidents and ranks up to three suggested origin incidents by how often each preceded a similar incident. SRE Agent ingests event data, change events, runbooks and logs. | SRE Agent recommends diagnostic and remediation steps. Automation Actions run diagnostic or remediation jobs on demand or from Event Orchestration. Verification of an action's effect is not stated in the pages cited. | Probable Origin shows a likelihood per suggestion; the agent gives context on its reasoning and may include a sample query. | Yes for Probable Origin: no suggestions when no recurring pattern exists. Not stated for the agent. | Commercial SaaS; add-ons by plan. | [pd-po], [pd-agent], [pd-aa] |
+| **BigPanda** (Root Cause Changes) | Correlation of change feeds with incidents: each incident-change pair is scored on time proximity, the share of alerts matching change properties and weighted matching categories (NLP and vector-space matching). LLM explanations are available with Automated Incident Analysis. | Operators mark whether a change matches the incident. Automated remediation for RCC is not stated publicly. | A change table with suspects and details; an AI-generated explanation per suspect in some editions. | Partly: only highly correlated changes are suggested, so there may be none. | Commercial; hosting not stated in the pages cited. | [bp-rcc] |
+| **Splunk ITSI** | Groups notable events into episodes over a service and KPI model; the Service Analyzer and Impact tab rank affected services by health score. An AI-generated list of potential root causes is shown on the episode overview. | Linked tickets (for example ServiceNow) give context; automated remediation is not stated in the pages cited. | Impact tab, events timeline and common fields; thumbs-up/down feedback on AI suggestions. | Not stated publicly. | Commercial premium app; on Splunk Cloud Platform it is installed through Splunk Support. | [sp-itsi], [sp-cloud] |
+| **incident.io** (Investigations, AI SRE) | LLM agent: gathers context from alerts, past incidents, Slack, change events, runbooks, code, telemetry and third-party status pages, then forms and tests hypotheses. | Recommendation-first. The one change it makes to systems is opening a pull request, by default only when asked; nothing is "auto-merged or deployed". | Each finding links back to its source (Slack message, PR, dashboard, log line); reasoning and hypothesis history are kept. Raw queries are not stated. | Yes: a confidence ladder from "Speculation" up; it "says what it couldn't confirm rather than presenting a guess as a conclusion". | Commercial SaaS. | [io-over], [io-how], [io-trust] |
+| **Rootly** (AI SRE) | Correlates telemetry with recent deploys, commits and feature-flag changes through read-only, time-bounded connectors, and ranks probable causes with confidence scores. | "Investigates and recommends; humans decide and act"; it does not auto-remediate without human sign-off. | A hypothesis with linked evidence: suspect pull request, matching error signature, dashboard snapshot. | Not stated publicly; output is described as "a hypothesis with evidence, not a verdict". | Commercial SaaS; works in Slack and Teams; MCP server. | [ro-blog], [ro-guide] |
+| **Causely** | Causal model: general models of how a root cause produces symptoms are combined with an auto-built topology into a causality graph; inference picks the cause that best explains the observed symptoms, including causes never directly instrumented. | Triggers agents or workflows with the diagnosis attached; remediation guidance over MCP. Execution and verification of actions are not stated publicly. Post-deploy validation compares behaviour before and after a deployment. | "The causal model is visible and editable." | Partly: "the output is less specific, not fabricated" when no single cause can be isolated. | Commercial; hybrid SaaS or bring-your-own-cloud; runs in Kubernetes. | [ca-crs], [ca-home], [ca-docs] |
+| **HolmesGPT** (originally Robusta) | LLM agentic loop over observability toolsets (Kubernetes API, Prometheus, Grafana, Datadog, cloud APIs and custom toolsets). | Read-only by design and respects RBAC; opt-in toolsets can scale, roll back or edit resources, and operator mode can open pull requests. Verification of a fix is not stated publicly. | Not stated publicly. | Not stated publicly. | Open source (Apache-2.0), CNCF Sandbox; CLI, Helm, self-hosted. | [hg-repo], [hg-cncf] |
+| **k8sgpt** | Rule-based analyzers scan Kubernetes resources (pods, services, deployments and others); an LLM explains findings on request, with optional anonymisation. | Auto-remediation in the operator is experimental and alpha: it patches resources, tracks each as a Mutation and watches whether the issue resolves; "not ready for use in a production environment". | Analyzer findings are readable without an LLM. | Not applicable: it reports detected misconfigurations rather than ranking causes. | Open source (Apache-2.0), CNCF Sandbox; CLI and operator. | [k8-repo], [k8-rem], [k8-cncf] |
+| **Faultline** (this repo) | Graph proof: `algo.SPpaths` must return a directed causal path from the change to every symptom, and `algo.maxFlow` must show the suspect can carry the observed share, plus timing, origin, rival and agreement checks (G1–G8). | One human-approved action bound to a plan hash; second-channel verification returns APPLIED, NOT_APPLIED or UNKNOWN; UNKNOWN never writes success; write-back re-read on a separate read-only connection. | Every evidence item stores its template, Cypher, parameters and row digest; every MCP tool returns the Cypher it ran. | Yes: "not confident", inferred origin, or a proven no-incident via a negative path query. | Open source (Apache-2.0), self-hosted on FalkorDB; keyless evals. | [README](../README.md), [PROOF.md](PROOF.md) |
+
+### Patterns across the table
+
+- **Three ways to name a cause.** Correlation scores suspects by time and property overlap (BigPanda, PagerDuty Probable Origin, New Relic, Splunk ITSI). LLM agents test hypotheses against telemetry, code and chat (Datadog Bits, incident.io, Rootly, New Relic Autopilot, PagerDuty SRE Agent, HolmesGPT). Model-based systems reason over topology or an explicit causal graph (Dynatrace, Causely, and Datadog Watchdog RCA within its supported cause types).
+- **Actions are converging on human approval.** Most agents recommend and leave the change to a person. Where a product acts itself (Datadog infrastructure actions, PagerDuty Automation Actions, HolmesGPT opt-in toolsets, k8sgpt auto-remediation), the documentation describes guardrails, approval policies or an experimental status. Datadog's Verify Resolution is the clearest public description of checking afterwards whether an action worked.
+- **Evidence links are common; the query behind a conclusion is rarer.** Agent products link findings to dashboards, log lines and pull requests. Few pages we read say whether the user can see the exact query that produced a conclusion. Causely states that its causal model is visible and editable.
+- **Saying "not enough evidence" is spreading.** Datadog Bits marks investigations inconclusive, incident.io grades its confidence and names what it could not confirm, Causely returns a less specific answer instead of a fabricated one, and PagerDuty Probable Origin shows nothing when there is no recurring pattern.
+
+### Pre-deploy change risk
+
+- **Dynatrace Site Reliability Guardian** validates a release against objectives (DQL queries or SLOs with pass and warning thresholds), triggered from a pipeline or workflow. [dt-srg]
+- **Datadog Deployment Gates** (preview) evaluate monitors and APM anomalies during a rollout and can halt it automatically. [dd-gates]
+- **Causely** says it shows "what's at risk before every deploy"; the mechanics are not stated publicly. It also documents post-deploy validation that compares behaviour before and after a deployment. [ca-home], [ca-docs]
+- For the other products in the table, a pre-merge change-risk feature is not stated in the pages cited.
+
+## Where Faultline is different
+
+Each point is a difference in approach, with the place in this repository where it can be checked.
+
+- **A cause is a query result, not a ranking.** Correlation products score suspects, and agent products test hypotheses with an LLM; Faultline requires a specific read-only query to return a row before any change is blamed. Dynatrace and Causely also reason over topology or a causal graph. Faultline's difference there is that each check is a named, parameterised Cypher template that anyone can rerun against the same graph. Check: [`gate_path.cypher`](../backend/faultline/graph/templates/gate_path.cypher), [`agent/gate.py`](../backend/faultline/agent/gate.py), `tests/live/test_algo_load_bearing.py`.
+- **A capacity bound on every suspect.** A path says failure can reach the symptom; it does not say how much. Faultline runs `algo.maxFlow` over modelled edge capacities and rejects a suspect whose path cannot carry the observed share of the impact. None of the public documentation reviewed above describes an equivalent bound. Check: [`gate_flow.cypher`](../backend/faultline/graph/templates/gate_flow.cypher), the capability ladder in [PROOF.md](PROOF.md#why-falkordb-what-the-graph-engine-itself-contributes).
+- **Abstention is a fixed rule, and it is tested.** Datadog Bits, incident.io, Causely and PagerDuty Probable Origin can all decline to name a cause, which is good practice. In Faultline the decision to abstain is deterministic code: "no incident" needs every alerting symptom measured plus a negative path proof, and each such invariant is broken on purpose by mutation testing. Check: [EVALS.md](EVALS.md), [PROOF.md](PROOF.md#scorecard).
+- **The evidence behind a verdict is the query itself.** Agent products link findings to dashboards, log lines and pull requests. Faultline stores the template, Cypher, parameters and row digest of every evidence item, and one provenance query walks verdict → evidence → tool call. Check: [`run_provenance.cypher`](../backend/faultline/graph/templates/run_provenance.cypher), [docs/MCP.md](MCP.md).
+- **Approval binds to the exact action; verification has three outcomes.** Datadog's guardrails and Verify Resolution, and PagerDuty's approved actions, cover similar ground. Faultline's approval must quote the hash of the exact rendered diff and is exclusive in one write. Verification returns APPLIED, NOT_APPLIED or UNKNOWN, and UNKNOWN goes to a human without writing success. Check: [`actions/act.py`](../backend/faultline/actions/act.py), [docs/SAFETY.md](SAFETY.md).
+- **One graph for the incident, the PR gate and the company brain.** Dynatrace Site Reliability Guardian and Datadog Deployment Gates validate a release from telemetry during or after rollout. Faultline's preflight scores a pull request before merge from graph structure: reach, chokepoints, past incidents and the decisions it would contradict. Its own backtest is mixed, and we say so. Check: [`deploy/github-action/`](../deploy/github-action/faultline-preflight.yml), [EVALS.md](EVALS.md), [HONEST_LIMITS.md](HONEST_LIMITS.md#3-preflight-backtest).
+- **Open, keyless and reproducible.** HolmesGPT and k8sgpt are open source too. Faultline adds a one-command offline check, pre-registered evals, and an ablation arm with FalkorDB switched off, so anyone can see what the graph contributes. Check: [PROOF.md](PROOF.md#reproduce), [evals/PREREGISTRATION.md](../evals/PREREGISTRATION.md).
+
+### Where mature products are ahead
+
+- **Data integrations and discovery.** The commercial platforms ingest telemetry from many integrations and discover topology automatically (Smartscape, Causely's eBPF instrumentation). Faultline needs a modelled failure-flow layer, and its capacities are derived from criticality and row share rather than learned from traffic.
+- **Scale and real-world validation.** Those platforms run in production on real incidents. Faultline has been evaluated only on synthetic worlds shaped like the OpenTelemetry Demo, on benches we wrote ourselves.
+- **Breadth of reasoning.** LLM agents such as Bits, incident.io and Rootly read code, chat and documents across a whole organisation. Faultline's published numbers come from its deterministic investigator. Its LLM investigator exists but is not covered by those numbers, and the gate assumes a single cause by default.
+- **Product surface.** Incident platforms cover on-call, status pages, postmortems, analytics and chat-native workflows. Faultline does not attempt that breadth.
+
+The full list is in [HONEST_LIMITS.md](HONEST_LIMITS.md).
+
+## Why a graph database, and why FalkorDB
+
+The questions an on-call engineer asks are graph questions. Can failure flow from this change to that symptom, and in which direction? How much of it can cross? What is the smallest set of edges that contains it? Who sits closest to this code in ownership and history? Each is a path, flow, cut or centrality computation over a typed, directed graph, and Faultline asks each one as a single FalkorDB query (`algo.SPpaths`, `algo.maxFlow`, `algo.BFS`, `algo.HarmonicCentrality`, `algo.MSF`), with names and signatures kept in one registry ([`graph/algo/registry.py`](../backend/faultline/graph/algo/registry.py)).
+
+The measured case is in the repo rather than in this document:
+
+- **Remove the algorithms and decisions get worse.** The capability ladder takes `algo.SPpaths` and `algo.maxFlow` away one at a time on held-out worlds. Correct verdicts fall when either is removed, and further when both are, while the gate stays safe, and with FalkorDB off entirely (arm A4) the product confirms nothing. See [PROOF.md, "Why FalkorDB"](PROOF.md#why-falkordb-what-the-graph-engine-itself-contributes) and the ladder section of [EVALS.md](EVALS.md).
+- **Graph-ranked context beats similarity for agents.** With many unrelated deploys in the window, the graph-ranked `context_pack` places the true cause higher than vector retrieval or recency over the same data. See [PROOF.md, "Context for agents"](PROOF.md#context-for-agents).
+- **Same answers as recursive SQL, with the flow check SQL lacks.** Path and reach lookups were checked against recursive SQL over the same edges, with identical answers. Max flow has no SQL equivalent in that comparison. See [PROOF.md](PROOF.md#why-falkordb-what-the-graph-engine-itself-contributes).
+
+FalkorDB specifically gives Faultline four things in one engine: the graph algorithms above; vectors (`vecf32` with a vector index) and full-text indexes beside the topology, so memory and documents live in the graph the gate reads; `GRAPH.COPY` clean rooms, so each containment option is tried on its own branch before anyone approves; and `GRAPH.RO_QUERY` with per-tenant graphs and ACL users, so the model never holds a write connection and tenants never share a graph. The engine is pinned by digest, and its version-specific behaviour, including issues we reported upstream, is recorded in [FALKORDB_COMPAT.md](FALKORDB_COMPAT.md) and [docs/upstream/](upstream/).
+
+## Sources
+
+Each row in the table rests only on the pages below, which all resolved on the review date. Vendor documentation changes often, so a feature marked "not stated publicly" may be documented elsewhere or added later. Corrections are welcome.
+
+[dt-rca]: https://docs.dynatrace.com/docs/platform/davis-ai/root-cause-analysis
+[dt-ss]: https://docs.dynatrace.com/docs/analyze-explore-automate/smartscape/smartscape-modals/smartscape-view-topology
+[dt-alert]: https://docs.dynatrace.com/docs/analyze-explore-automate/alerting-and-notifications
+[dt-srg]: https://docs.dynatrace.com/docs/deliver/site-reliability-guardian
+[dt-deploy]: https://docs.dynatrace.com/docs/upgrade/up-information
+[dt-blog]: https://www.dynatrace.com/news/blog/build-trust-with-dynatrace-ai-driven-root-cause-and-impact-analysis/
+[dd-rca]: https://docs.datadoghq.com/watchdog/rca/
+[dd-rca-faq]: https://docs.datadoghq.com/watchdog/faq/root-cause-not-showing/
+[dd-bits]: https://docs.datadoghq.com/bits_ai/bits_ai_sre/investigate_alerts/
+[dd-rem]: https://docs.datadoghq.com/bits_ai/bits_remediation/
+[dd-gates]: https://docs.datadoghq.com/deployment_gates/
+[nr-corr]: https://docs.newrelic.com/docs/alerts-applied-intelligence/applied-intelligence/incident-intelligence/change-applied-intelligence-correlation-logic-decisions/
+[nr-auto]: https://docs.newrelic.com/docs/agentic-ai/autopilot/overview/
+[pd-po]: https://support.pagerduty.com/main/docs/probable-origin
+[pd-agent]: https://support.pagerduty.com/main/docs/sre-agent
+[pd-aa]: https://support.pagerduty.com/main/docs/automation-actions
+[bp-rcc]: https://docs.bigpanda.io/docs/root-cause-changes
+[sp-itsi]: https://help.splunk.com/en/splunk-it-service-intelligence/splunk-it-service-intelligence/detect-and-act-on-notable-events/5.0/episode-review/investigate-episodes-in-itsi
+[sp-cloud]: https://help.splunk.com/en/splunk-cloud-platform/administer/admin-manual/10.4.2604/manage-apps-and-add-ons-in-splunk-cloud-platform
+[io-over]: https://docs.incident.io/investigations/overview
+[io-how]: https://docs.incident.io/investigations/how-investigations-work
+[io-trust]: https://docs.incident.io/investigations/trust-and-safety
+[ro-blog]: https://rootly.com/blog/telemetry-deploy-correlation-ai-sre
+[ro-guide]: https://rootly.com/ai-sre-guide
+[ca-crs]: https://www.causely.ai/causal-reasoning-system
+[ca-home]: https://www.causely.ai/
+[ca-docs]: https://docs.causely.ai/
+[hg-repo]: https://github.com/HolmesGPT/holmesgpt
+[hg-cncf]: https://www.cncf.io/projects/holmesgpt/
+[k8-repo]: https://github.com/k8sgpt-ai/k8sgpt
+[k8-rem]: https://k8sgpt.ai/auto-remediation
+[k8-cncf]: https://www.cncf.io/projects/k8sgpt/
+
+- Dynatrace: [Root cause analysis][dt-rca] · [Smartscape topology view][dt-ss] · [Alerting and notifications][dt-alert] · [Site Reliability Guardian][dt-srg] · [SaaS and Managed pre-upgrade information][dt-deploy] · [Blog: AI-driven root cause and impact analysis][dt-blog]
+- Datadog: [Watchdog RCA][dd-rca] · [Root cause not showing][dd-rca-faq] · [Bits AI SRE: investigate alerts][dd-bits] · [Bits Remediation][dd-rem] · [Deployment Gates][dd-gates]
+- New Relic: [Correlation logic and decisions][nr-corr] · [Autopilot overview][nr-auto]
+- PagerDuty: [Probable Origin][pd-po] · [SRE Agent][pd-agent] · [Automation Actions][pd-aa]
+- BigPanda: [Root Cause Changes][bp-rcc]
+- Splunk: [Investigate episodes in ITSI][sp-itsi] · [Install apps on Splunk Cloud Platform][sp-cloud]
+- incident.io: [Investigations overview][io-over] · [How investigations work][io-how] · [Trust and safety][io-trust]
+- Rootly: [Telemetry and deploy correlation][ro-blog] · [AI SRE guide][ro-guide]
+- Causely: [Causal reasoning system][ca-crs] · [Product overview][ca-home] · [Documentation][ca-docs]
+- HolmesGPT: [Repository][hg-repo] · [CNCF project page][hg-cncf]
+- k8sgpt: [Repository][k8-repo] · [Auto-remediation][k8-rem] · [CNCF project page][k8-cncf]

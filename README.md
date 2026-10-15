@@ -8,7 +8,7 @@
 
 ![The gate at work: a no-path rejection (G2), a max-flow rejection (G5), then the proof path](docs/media/hero.gif)
 
-**Live demo: [13-203-185-119.sslip.io](https://13-203-185-119.sslip.io)** (keyless: deterministic investigator, simulated GitHub; press Re-arm to reset it) · **Hosted MCP:** `https://13-203-185-119.sslip.io/mcp` (bearer key per tenant, read-only; see [docs/MCP.md](docs/MCP.md)) · **Recorded replay (no backend):** [prashant-thakur77.github.io/Faultline](https://prashant-thakur77.github.io/Faultline/) · **Release:** [v1.0.0](https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.0.0) ([changelog](CHANGELOG.md))
+**Live demo: [13-203-185-119.sslip.io](https://13-203-185-119.sslip.io)** (keyless: deterministic investigator, simulated GitHub; press Re-arm to reset it) · **Hosted MCP:** `https://13-203-185-119.sslip.io/mcp` with a public read-only demo key ([try it in one command](docs/MCP.md#try-the-hosted-server-now-public-demo-key)) · **Recorded replay (no backend):** [prashant-thakur77.github.io/Faultline](https://prashant-thakur77.github.io/Faultline/) · **Release:** [v1.0.0](https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.0.0) ([changelog](CHANGELOG.md))
 
 Demo video (3 minutes): [`docs/media/demo.mp4`](docs/media/demo.mp4), captions in [`docs/video_captions.srt`](docs/video_captions.srt). It was recorded from real runs with simulated GitHub and the deterministic investigator, before the G4-upstream rule and the context pack were added; a re-record is planned.
 
@@ -37,6 +37,10 @@ Three measured results, each pre-registered and checked against [`evals/results/
 | Causes confirmed with FalkorDB switched off (arm A4: fails closed) | <!-- claim:arm.A4.confirmed_causes -->0<!-- /claim --> |
 | Rank of the true cause in an agent's context, 30 unrelated deploys in the window (MRR, 1 = first): graph `context_pack` vs vector RAG vs recency | <!-- claim:ctx.busy30.b1000.GA.mrr -->0.6598<!-- /claim --> vs <!-- claim:ctx.busy30.b1000.V.mrr -->0.4226<!-- /claim --> vs <!-- claim:ctx.busy30.b1000.R.mrr -->0.0768<!-- /claim --> |
 
+The full scorecard (baselines, adversarial and held-out benches, mutation testing, crash and contention safety, scale, speed and the live deployment) is in **[docs/PROOF.md](docs/PROOF.md)**.
+
+![Right outcome on the scenario suite: Faultline against telemetry-only, vector similarity, naive recency and FalkorDB switched off](docs/media/charts/outcome.svg)
+
 ## Contents
 
 - [Reproduce it](#reproduce-it)
@@ -48,7 +52,7 @@ Three measured results, each pre-registered and checked against [`evals/results/
 - [Graph model](#graph-model)
 - [FalkorDB feature map](#falkordb-feature-map)
 - [The graph is load-bearing](#the-graph-is-load-bearing)
-- [Results](#results)
+- [Results](#results) (scorecard: [docs/PROOF.md](docs/PROOF.md))
 - [What makes it different](#what-makes-it-different)
 - [Context for any agent](#context-for-any-agent)
 - [Memory, company brain, preflight, coordination](#memory-company-brain-preflight-coordination)
@@ -119,6 +123,8 @@ The first returns `[payment, checkout]`. With `targetNode` `kpi.exec_revenue` th
 Deeper docs: [architecture](docs/ARCHITECTURE.md) (one incident end to end, with files) · [graph model](docs/GRAPH_MODEL.md) · [design decisions](docs/DESIGN_DECISIONS.md) · [evals in detail](docs/EVALS.md) · [explainer](docs/EXPLAINER.md) (the questions a judge asks) · [honest limits](docs/HONEST_LIMITS.md).
 
 ## Why existing approaches fall short
+
+> How twelve current products approach root cause (Dynatrace, Datadog, New Relic, PagerDuty, BigPanda, Splunk ITSI, incident.io, Rootly, Causely, HolmesGPT, k8sgpt), from their public documentation, with sources, and where Faultline differs and where they are ahead: **[docs/LANDSCAPE.md](docs/LANDSCAPE.md)**.
 
 Google's SRE book says "roughly 70% of outages are due to changes in a live system" ([SRE book, Introduction](https://sre.google/sre-book/introduction/)). Uptime Institute's 2025 outage analysis puts IT and networking at 23% of impactful outages and ties the rise to change management and misconfiguration ([press release](https://uptimeinstitute.com/about-ui/press-releases/uptime-announces-annual-outage-analysis-report-2025)); 54% of respondents said their latest significant outage cost more than $100,000 (as reported by [Data Center Knowledge](https://www.datacenterknowledge.com/outages/data-center-outages-decline-for-fourth-straight-year-but-issues-persist)). So the on-call question is usually "which change?", and a wrong answer rolls back the wrong thing. <!-- noclaim: external figures, quoted with their sources -->
 
@@ -399,6 +405,12 @@ All <!-- claim:repo.algorithms -->10<!-- /claim --> procedures are resolved on t
 
 ## The graph is load-bearing
 
+![Take FalkorDB's algorithms away and the answers get worse](docs/media/charts/ladder.svg)
+
+![Same graph questions, same answers: FalkorDB against recursive SQL](docs/media/charts/vs_sql.svg)
+
+Method and numbers for both charts: [docs/PROOF.md, Why FalkorDB](docs/PROOF.md#why-falkordb-what-the-graph-engine-itself-contributes).
+
 `tests/live/test_algo_load_bearing.py` perturbs, on a clean-room `GRAPH.COPY`, exactly what each algorithm reads, and asserts that the decision changes:
 
 | Algorithm (MCP tool) | Decision it makes | Perturbation → flip |
@@ -458,7 +470,7 @@ Headline results (method for each line: [docs/EVALS.md](docs/EVALS.md)):
 | Kill -9 in the middle of an action? | settled exactly once: <!-- claim:chaos.exactly_once -->True<!-- /claim -->, write-back <!-- claim:chaos.writeback -->7/7<!-- /claim --> |
 | Many responders approve at once? | <!-- claim:contention.responders -->24<!-- /claim --> concurrent approvals: <!-- claim:contention.same.accepted -->1<!-- /claim --> accepted, <!-- claim:contention.same.refused -->23<!-- /claim --> refused, <!-- claim:contention.same.prs -->1<!-- /claim --> PR |
 | Company brain | <!-- claim:brain.correct -->33<!-- /claim -->/<!-- claim:brain.questions -->33<!-- /claim --> self-authored questions, including <!-- claim:brain.unanswerable_honest -->6<!-- /claim --> of <!-- claim:brain.unanswerable -->6<!-- /claim --> unanswerable ones declined honestly |
-| Same answers as SQL? | the gate's lookups vs DuckDB recursive SQL on the same edges at 1k services: <!-- claim:perf.1k.reach_set.equal -->10<!-- /claim -->/<!-- claim:perf.1k.reach_set.instances -->10<!-- /claim --> reach sets and <!-- claim:perf.1k.shortest_causal_path.equal -->10<!-- /claim -->/<!-- claim:perf.1k.shortest_causal_path.instances -->10<!-- /claim --> shortest causal paths agree; both are milliseconds at this size, so no speed claim |
+| Same answers as SQL? | the gate's lookups vs DuckDB recursive SQL on the same edges at 1k services: <!-- claim:perf.1k.reach_set.equal -->10<!-- /claim -->/<!-- claim:perf.1k.reach_set.instances -->10<!-- /claim --> reach sets and <!-- claim:perf.1k.shortest_causal_path.equal -->10<!-- /claim -->/<!-- claim:perf.1k.shortest_causal_path.instances -->10<!-- /claim --> shortest causal paths agree; both are milliseconds at this size, so no speed claim (times in [docs/PROOF.md](docs/PROOF.md#why-falkordb-what-the-graph-engine-itself-contributes)) |
 | How fast? | a full scenario run (deterministic investigator, clean room) p50 <!-- claim:arm.A3.seconds_p50 -->0.75<!-- /claim --> s; the G2 query p50 <!-- claim:profile.Q-GATE-1.engine_ms_p50 -->0.081<!-- /claim --> ms engine time; a brain answer p50 <!-- claim:brain.ms_p50 -->10.2<!-- /claim --> ms; an alert is visible to decisions <!-- claim:perf.fresh.alert.p50_ms -->0.602<!-- /claim --> ms after the write |
 | Scale | <!-- claim:scale.10k.services -->10000<!-- /claim --> services, <!-- claim:scale.10k.nodes -->296261<!-- /claim --> nodes, <!-- claim:scale.10k.edges -->1097675<!-- /claim --> edges: decided correctly (<!-- claim:scale.10k.correct -->True<!-- /claim -->) in <!-- claim:scale.10k.run_s -->6.35<!-- /claim --> s |
 | Would preflight have caught past bad PRs? | mixed, reported as is: AUROC <!-- claim:backtest.globex.full.all.auroc -->0.8075<!-- /claim --> on globex, <!-- claim:backtest.acme.full.all.auroc -->0.5179<!-- /claim --> (chance) on acme |
@@ -494,7 +506,7 @@ Vector search finds the entry points; FalkorDB walks from them to the changes up
 > - `[people] who can fix payment: p-030, p-004, p-017, p-036, p-038 (team team-payments)` ‹Q-ORG-1›
 > - `[decision] decision ADR-012 constrains payment: Payment client timeout must stay ≤ 2000 ms` ‹Q-DEC-ABOUT› <!-- noclaim: verbatim output of one pack on the S1 clean room -->
 
-**MCP.** `make mcp` serves every product read as a typed, tenant-bound tool over stdio, plus the schema, query and weights resources and the investigate, preflight and ask-brain prompts. `make mcp-http` serves the same tools over Streamable HTTP with a bearer key bound to one tenant (no hosted endpoint is deployed yet). Tools that build scratch or branch graphs stay internal, and the MCP service gets no engine credential. The official FalkorDB MCP server is also configured, strict read-only, in [`.mcp.json`](.mcp.json). Details: [docs/MCP.md](docs/MCP.md).
+**MCP.** `make mcp` serves every product read as a typed, tenant-bound tool over stdio, plus the schema, query and weights resources and the investigate, preflight and ask-brain prompts. `make mcp-http` serves the same tools over Streamable HTTP with a bearer key bound to one tenant; it is deployed at `https://13-203-185-119.sslip.io/mcp` (read-only, rate-limited). Tools that build scratch or branch graphs stay internal, and the MCP service gets no engine credential. The official FalkorDB MCP server is also configured, strict read-only, in [`.mcp.json`](.mcp.json). Details: [docs/MCP.md](docs/MCP.md).
 
 ## Memory, company brain, preflight, coordination
 
@@ -502,6 +514,19 @@ Vector search finds the entry points; FalkorDB walks from them to the changes up
 - **Company brain** answers who owns, knows and decided, and what was true *as of* a date or incident, citing only node ids its own queries returned (<!-- claim:brain.correct -->33<!-- /claim -->/<!-- claim:brain.questions -->33<!-- /claim --> on our question set).
 - **Preflight** blocks a risky PR from the same graph (S6 → <!-- claim:s6.verdict -->block<!-- /claim -->).
 - **Coordination** uses atomic claims in one query (<!-- claim:s13.lost_updates -->0<!-- /claim --> lost updates under contention).
+
+
+**The company brain (T3), answered by the live deployment.** Every `[id]` is a node a read-only query of that question returned; the brain cannot cite anything else.
+
+> **Who decided the payment timeout, and are they still here?**
+> [ADR-012] Payment client timeout must stay ≤ 2000 ms: active, and still current (nothing supersedes it). Decided by [p-004] Dorian Marrowby (still on the owning team), [p-022] Vesna Hollowell (still here, another team). [ADR-013] Payment client keeps ≥ 2 retries: active, and still current. Decided by the same two people.
+
+> **Which revenue-path services lack a runbook or owner?**
+> 6 revenue-path services lack a guardrail: [cart], [currency], [frontend], [frontend-proxy] and [shipping] (tier 1) and [quote] (tier 2) have no current runbook.
+
+The same answer drawn as a graph (who decided, the decisions, what they constrain):
+
+<img src="docs/screenshots/20-brain-answer-graph.png" width="760" alt="A company-brain answer drawn as a graph: the people who decided, the decisions, and the components they constrain">
 
 <details><summary><b>How memory, the brain, preflight and coordination work</b></summary>
 

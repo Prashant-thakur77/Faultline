@@ -13,6 +13,16 @@ claude                    # in the repo root; approve the project MCP servers wh
 ```
 Then ask, for example: *"Use causal_paths from payment to checkout, then impact_bound for D-pay-417."*
 
+## Try the hosted server now (public demo key)
+
+The live deployment serves the hosted tools at `https://13-203-185-119.sslip.io/mcp`. This key is public on purpose: it is bound to the synthetic `acme` tenant, reads only (`GRAPH.RO_QUERY` as `ro_acme`, no write credential on the server) and is rate-limited per key, so anyone can try it.
+
+```bash
+claude mcp add --transport http faultline-live https://13-203-185-119.sslip.io/mcp \
+  --header "Authorization: Bearer fl_demo_f5be019593a8c0424d247a5d"
+```
+Then ask, for example: *"Use causal_paths from payment to checkout, then from recommendation to checkout."* The first returns the path; the second returns no path, so nothing can be blamed through it.
+
 ## 2. Remote, over Streamable HTTP (bearer key)
 ```bash
 export FAULTLINE_MCP_KEYS="$(python -c 'import secrets;print(secrets.token_urlsafe(32))'):acme"   # or put it in .env

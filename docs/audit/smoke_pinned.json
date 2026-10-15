@@ -1,5 +1,5 @@
 {
-  "ran_at": "2026-10-14T21:31:08+0530",
+  "ran_at": "2026-10-16T00:56:22+0530",
   "results": [
     {
       "id": "1a",
@@ -174,7 +174,7 @@
       "item": "ACL read-only tenant user (RO allowed; QUERY and other tenant denied)",
       "critical": true,
       "ok": true,
-      "notes": "RO on own tenant \u2192 1; GRAPH.QUERY denied (NoPermissionError: User ro_smoke2948 has no permissions to ); other tenant denied (NoPermissionError: No permissions to access a key); GRAPH.LIST denied (NoPermissionError: User ro_smoke2948 has no permi)",
+      "notes": "RO on own tenant \u2192 1; GRAPH.QUERY denied (NoPermissionError: User ro_smokecefc has no permissions to ); other tenant denied (NoPermissionError: No permissions to access a key); GRAPH.LIST denied (NoPermissionError: User ro_smokecefc has no permi)",
       "syntax": "ACL SETUSER ro_<t> on >pw resetkeys -@all +GRAPH.RO_QUERY +GRAPH.EXPLAIN +PING +HELLO ~tenant_<t> ~scratch_<t>_*  (connect with falkordb.Graph(redis.Redis(...)); FalkorDB() needs INFO)"
     },
     {
@@ -182,7 +182,7 @@
       "item": "Concurrency: 16 claimers \u00d7 10 rounds \u2192 1 owner; RO reads during writes",
       "critical": true,
       "ok": true,
-      "notes": "10/10 rounds with exactly 1 owner; RO read p50=0.49 ms p95=1.78 ms over 133 reads",
+      "notes": "10/10 rounds with exactly 1 owner; RO read p50=0.46 ms p95=2.23 ms over 126 reads",
       "syntax": "W-CLAIM-1 conditional claim"
     },
     {

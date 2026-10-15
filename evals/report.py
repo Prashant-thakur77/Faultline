@@ -157,7 +157,60 @@ def summarize(out: dict) -> dict:
     s.update(deep_summary(c.get("deep_bench") or {}))
     s.update(context_summary(c.get("context_eval") or {}))
     s.update({f"skill.{k}": v for k, v in (c.get("skill") or {}).items() if k != "rows"})
+    s.update(live_summary(live_bench()))
     return s
+
+
+# ------------------------------------------------------------------ the public deployment (evals/live_bench.py)
+def live_bench() -> dict:
+    """evals/results/live_bench.json: measured over HTTPS against the live deployment (not part of `make eval`)."""
+    import json
+    from pathlib import Path
+
+    p = Path(__file__).resolve().parent / "results" / "live_bench.json"
+    return json.loads(p.read_text()) if p.exists() else {}
+
+
+def live_summary(x: dict) -> dict:
+    """latest.json keys: live.* (status, page loads, hero runs end to end, S2, brain, preflight, MCP auth)."""
+    if not x:
+        return {}
+    h, st = x.get("hero") or {}, x.get("status") or {}
+    return {"live.at": x.get("at"), "live.engine": st.get("engine"), "live.templates": st.get("templates"),
+            "live.version": st.get("version"), "live.api_status_ms_p50": (x.get("api_status_ms") or {}).get("p50"),
+            "live.api_status_ms_p95": (x.get("api_status_ms") or {}).get("p95"), "live.pages": len(x.get("pages") or {}),
+            "live.pages_ok": x.get("pages_ok"), "live.pages_ttfb_p50": x.get("pages_ttfb_p50"),
+            "live.pages_load_max_p50": x.get("pages_load_max_p50"), "live.hero.n": h.get("n"),
+            "live.hero.cause_correct": h.get("cause_correct"), "live.hero.resolved": h.get("resolved"),
+            "live.hero.applied": h.get("applied"), "live.hero.verdict_ms_p50": h.get("verdict_ms_p50"),
+            "live.hero.verdict_ms_max": h.get("verdict_ms_max"), "live.hero.act_ms_p50": h.get("act_ms_p50"),
+            "live.hero.total_ms_p50": h.get("total_ms_p50"), "live.s2.cause_correct": (x.get("s2") or {}).get("cause_correct"),
+            "live.s2.verdict_ms": (x.get("s2") or {}).get("verdict_ms"), "live.brain.n": (x.get("brain") or {}).get("n"),
+            "live.brain.ok": (x.get("brain") or {}).get("ok"), "live.brain.ms_p50": (x.get("brain") or {}).get("ms_p50"),
+            "live.preflight.decision": (x.get("preflight") or {}).get("decision"),
+            "live.preflight.ms": (x.get("preflight") or {}).get("ms"), "live.mcp_unauthenticated": x.get("mcp_unauthenticated_http")}
+
+
+def live_markdown(x: dict) -> list[str]:
+    if not x:
+        return []
+    h, st, b, pf, s2 = x["hero"], x["status"], x["brain"], x["preflight"], x.get("s2") or {}
+    L = ["", "## The public deployment, measured over HTTPS (evals/live_bench.py)", "",
+         f"Measured {x['at']} against {x['base']} (engine {st['engine']}, release {st['version']}, {st['templates']} templates, "
+         f"read path `{st['acl']}`), from outside the server; network latency to the server is included.", "",
+         "| what | result |", "|---|---|",
+         f"| hero incident (S1), {h['n']} runs | right cause {h['cause_correct']}/{h['n']}, resolved {h['resolved']}/{h['n']}, "
+         f"verified APPLIED {h['applied']}/{h['n']} |",
+         f"| time to a gate verdict (S1) | p50 {h['verdict_ms_p50']} ms, max {h['verdict_ms_max']} ms |",
+         f"| choose + approve to verified write-back | p50 {h['act_ms_p50']} ms |",
+         f"| alert to RESOLVED, end to end | p50 {h['total_ms_p50']} ms |",
+         f"| data incident (S2) to its verdict | {s2.get('verdict_ms')} ms, right cause = {s2.get('cause_correct')} |",
+         f"| company brain | {b['ok']}/{b['n']} answered, p50 {b['ms_p50']} ms |",
+         f"| preflight on a PR that must block | decision `{pf['decision']}`, {pf['ms']} ms |",
+         f"| /api/status | p50 {x['api_status_ms']['p50']} ms, p95 {x['api_status_ms']['p95']} ms |",
+         f"| pages ({len(x['pages'])}) | {x['pages_ok']}/{len(x['pages'])} load; time to first byte p50 {x['pages_ttfb_p50']} ms |",
+         f"| hosted MCP without a key | HTTP {x['mcp_unauthenticated_http']} (refused) |"]
+    return L
 
 
 # ------------------------------------------------------------------ learned edges (evals/learning_eval.py, M15 #4)
@@ -1041,6 +1094,7 @@ def markdown(out: dict, s: dict, run_name: str) -> str:
               f"p50 {b['ms_p50']} ms; knowledge unchanged = {b['knowledge_unchanged']}. "
               "The questions are ours (no external benchmark)."]
     L += backtest_markdown(c.get("backtest") or {})
+    L += live_markdown(live_bench())
     if c.get("mutation"):
         m = c["mutation"]
         L += ["", "## Safety invariants under mutation (scripts/mutation_check.py)", "",
