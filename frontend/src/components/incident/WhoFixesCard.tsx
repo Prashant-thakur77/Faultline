@@ -50,6 +50,7 @@ export function WhoFixesCard({
               {people.map((p, i) => (
                 <li
                   key={p.person}
+                  data-person={p.person}
                   className={
                     "rounded-md border p-2 " + (i === 0 ? "border-sky-400/60 bg-sky-500/5" : "border-zinc-700")
                   }

@@ -172,6 +172,12 @@ def engine_panel(request: Request, tenant: str = "acme") -> dict:
 
 
 # ------------------------------------------------------------------ status
+
+def _github_real() -> bool:
+    from .actions import github as gh
+
+    return gh.is_real()
+
 @app.get("/api/status")
 def status(tenant: str = "acme") -> dict:
     t = check_tenant(tenant)
@@ -183,7 +189,9 @@ def status(tenant: str = "acme") -> dict:
                            "models": {"orchestrator": settings.anthropic_model if settings.anthropic_api_key else "deterministic investigator (no LLM key)",
                                       "specialists": "deterministic graph workers (no LLM)"},
                            "llm_configured": bool(settings.anthropic_api_key), "templates": len(catalogue()),
-                           "version": __version__}
+                           "version": __version__,
+                           # which outside world approvals act on, so a client can tell before it approves
+                           "github": "real" if _github_real() else "simulated"}
     try:
         ro = RO(t)
         out["ready"] = ro.require_ready()

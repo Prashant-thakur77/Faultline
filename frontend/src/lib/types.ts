@@ -43,6 +43,8 @@ export interface StatusResponse {
   templates: number;
   /** The Faultline release serving this API (absent on older backends). */
   version?: string;
+  /** Which outside world approvals act on (absent on older backends). */
+  github?: "real" | "simulated";
   /** Pinned UDF libraries (GRAPH.UDF LIST): "missing" also covers a library loaded at a different sha. Absent when unavailable. */
   udf?: Record<string, "loaded" | "missing">;
   /** Absent when status is "unavailable". */

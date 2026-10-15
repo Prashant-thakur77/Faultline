@@ -61,7 +61,8 @@ export function ReversalCards({ reversals }: { reversals: PreflightReversal[] })
 function ReversalCard({ r }: { r: PreflightReversal }) {
   const hid = useId();
   return (
-    <article aria-labelledby={hid} className="rounded-xl border border-amber-400/50 bg-amber-500/[0.06] p-3">
+    <article aria-labelledby={hid} data-reversed={r.reversed} data-head={r.head}
+             className="rounded-xl border border-amber-400/50 bg-amber-500/[0.06] p-3">
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
         <History aria-hidden className="size-4 shrink-0 text-amber-300" />
         <h3 id={hid} className="text-sm font-semibold text-amber-50">
