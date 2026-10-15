@@ -12,7 +12,7 @@
 
 **Live demo: [13-203-185-119.sslip.io](https://13-203-185-119.sslip.io)** (keyless: deterministic investigator, simulated GitHub; press Re-arm to reset it) · **Hosted MCP:** `https://13-203-185-119.sslip.io/mcp` with a public read-only demo key ([try it in one command](docs/MCP.md#try-the-hosted-server-now-public-demo-key)) · **Recorded replay (no backend):** [prashant-thakur77.github.io/Faultline](https://prashant-thakur77.github.io/Faultline/) · **Release:** [v1.0.0](https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.0.0) ([changelog](CHANGELOG.md))
 
-Demo video (3 minutes): [`docs/media/demo.mp4`](docs/media/demo.mp4), captions in [`docs/video_captions.srt`](docs/video_captions.srt). It was recorded from real runs with simulated GitHub and the deterministic investigator, before the G4-upstream rule and the context pack were added; a re-record is planned.
+**Demo video (3 minutes):** [watch or download](https://github.com/Prashant-thakur77/Faultline/releases/download/v1.0.0/faultline-demo.mp4) (also at [`docs/media/demo.mp4`](docs/media/demo.mp4), captions in [`docs/video_captions.srt`](docs/video_captions.srt)). Recorded in one take from the product itself: the deterministic investigator, a real pull request on [faultline-demo-infra](https://github.com/Prashant-thakur77/faultline-demo-infra/pulls?q=is%3Apr) merged after the two-step approval and verified APPLIED, and every number on screen read from the page or the results file at record time.
 
 Built for Graph Hacks (WeMakeDevs × FalkorDB). Primary track T1, Agents That Act on Connected Data; secondary track T3, Company Brain.
 

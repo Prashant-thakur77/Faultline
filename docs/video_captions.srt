@@ -1,88 +1,120 @@
 1
-00:00:00,000 --> 00:00:06,148
-Faultline: an on-call agent whose brain is a FalkorDB graph. The model suggests; a read-only query decides.
+00:00:00,002 --> 00:00:08,002
+Roughly 70% of outages come from changes (Site Reliability Engineering, Google). Two deploys land in the same minute. Which one broke checkout?
 
 2
-00:00:06,148 --> 00:00:11,003
-Re-arm: restore the tenant graph from its golden copy and reset the simulated GitHub world.
+00:00:08,002 --> 00:00:11,994
+Checkout is failing and several deploys are in the window. Could D-rec-12 be the cause? Ask FalkorDB for a causal path to checkout (Q-GATE-1), read-only.
 
 3
-00:00:11,003 --> 00:00:20,006
-Run S1, “Checkout errors are spiking”, with the keyless baseline investigator: the stage rail moves INTAKE → RECALL → …
+00:00:11,994 --> 00:00:20,000
+No path, no claim: FalkorDB returns no causal path from D-rec-12 to checkout (0 rows), so it cannot be blamed.
 
 4
-00:00:20,006 --> 00:00:28,002
-First it remembers: past payment incidents found in FalkorDB's vector index and confirmed through a shared symptom node, never similarity alone.
+00:00:20,000 --> 00:00:32,003
+How it got here: a crew of least-privilege agents (9 steps · 5 specialists). Every step is a record in the graph: who claimed it, what it ran, who it handed to.
 
 5
-00:00:28,002 --> 00:00:36,001
-algo.BFS shows what breaks: payment red, the blast radius yellow, hop by hop.
+00:00:32,003 --> 00:00:44,001
+D-email-88 shipped in the same minute and has a path. But algo.maxFlow says it can carry only 0.0200 of the 0.2433 needed. Rejected.
 
 6
-00:00:36,001 --> 00:00:48,412
-Three changes in the window. The recommendation deploy has no causal path to checkout: Q-GATE-1 returns 0 rows. No path, no claim.
+00:00:44,001 --> 00:00:52,380
+The proof path, lit edge by edge: D-pay-417 → payment → checkout.
 
 7
-00:00:48,412 --> 00:00:58,000
-The email deploy shipped in the same minute and has a path. But algo.maxFlow says it carries at most 0.0200; 0.2433 is needed. Rejected, with proof.
+00:00:52,380 --> 00:00:56,001
+Why do you believe this? Provenance from the verdict back to the tool calls and agents that produced each piece of evidence (4 evidence · 5 calls · 2 agents), every arrow a stored edge.
 
 8
-00:00:58,000 --> 00:01:11,305
-algo.SPpaths: D-pay-417 → payment → checkout, lit edge by edge. Every claim carries its Cypher, with PROFILE engine time.
+00:00:56,001 --> 00:01:01,000
+Smallest containment: cut payment
+→
+checkout, payment
+→
+raw.raw_orders (algo.maxFlow min-cut). A what-if on a GRAPH.COPY branch checks it first: contains.
 
 9
-00:01:11,305 --> 00:01:16,819
-Same graph, data incident (recorded replay): a payment provider cutover, traced into the revenue lineage.
+00:01:01,000 --> 00:01:06,000
+Who fixes it: Quinn Lindqvane (p-017) first, ranked by algo.HarmonicCentrality over who wrote this code and fixed past outages here.
 
 10
-00:01:16,819 --> 00:01:22,048
-Same graph, data incident (recorded replay): the path crosses into the revenue lineage; the stale FX feed is ruled out by flow (0.0692 < 0.8000).
+00:01:06,000 --> 00:01:10,180
+Choosing isn't approving: the server first renders the exact diff, the PR body and the plan hash.
 
 11
-00:01:22,048 --> 00:01:26,530
-Better still: the same graph scores the risky pull request before it ships: verdict, the ADRs it contradicts, the path to checkout, reviewers.
+00:01:10,180 --> 00:01:13,797
+Approve this exact action, bound to plan hash d1354eca56f9: if the plan changes, the server refuses it.
 
 12
-00:01:26,530 --> 00:01:36,057
-Preflight verdict: block. The same graph that explained the outage gates the next change before it merges.
+00:01:13,797 --> 00:01:25,624
+Approved: the one write tool opens the pull request, then VERIFY checks it through a second channel.
 
 13
-00:01:36,057 --> 00:01:45,000
-Back to the incident. algo.maxFlow finds the smallest cut; a what-if on a GRAPH.COPY branch checks that it contains the failure first.
+00:01:25,624 --> 00:01:32,980
+APPLIED: GitHub main re-read and telemetry back in band. Write-back verified 7/7: RESOLVED, and the incident becomes memory.
 
 14
-00:01:45,000 --> 00:01:53,001
-Who fixes it: the people who wrote this code and fixed the last outages here, ranked by harmonic centrality; bus factor and escalation tree.
+00:01:32,980 --> 00:01:36,617
+A real pull request (#4), merged after two-step approval and verified through a second channel: APPLIED.
 
 15
-00:01:53,001 --> 00:02:03,000
-Choosing isn't approving: the server renders the exact diff, the PR body with reviewers, and the plan hash first.
+00:01:36,617 --> 00:01:41,683
+Break it: take one edge out of a GRAPH.COPY of the graph and run the product again.
 
 16
-00:02:03,000 --> 00:02:07,058
-Approve this exact change: one PR (simulated GitHub, labelled), verified through a second channel, then written back.
+00:01:41,683 --> 00:01:41,867
+Take a graph edge away and the decision changes (outcome: CONFIRMED → UNKNOWN_ESCALATED). The graph is load-bearing.
 
 17
-00:02:07,058 --> 00:02:17,799
-APPLIED: GitHub main re-read and telemetry back in band, no collateral. Write-back verified 7/7; the incident becomes memory.
+00:01:41,867 --> 00:01:43,721
+Before the next deploy: the same graph scores the risky pull request.
 
 18
-00:02:17,799 --> 00:02:27,051
-And when verification can't confirm the change (S9, an eval run): verdict UNKNOWN, success written = False. Never a silent success: a later reconciler pass → at_main, APPLIED 7/7. (evals/RESULTS.md)
+00:01:43,721 --> 00:01:48,136
+Preflight verdict: block. It contradicts ADR-012, ADR-013. The same graph that explained the outage gates the next change.
 
 19
-00:02:27,051 --> 00:02:38,816
-And it's the team's memory: every node an answer cites was read by that question's own queries, or the answer is withheld.
+00:01:48,136 --> 00:01:48,193
+Reversal guard: a PR that puts back what ADR-009 decided, which the team replaced with ADR-021, is named with the evidence (advisory; the verdict is unchanged).
 
 20
-00:02:38,816 --> 00:02:47,049
-FalkorDB off (A4): 0 confirmed causes. Max-flow check off (A3-noG5): top-1 0.8. S2 can no longer be decided (0.0); S1 still is (1.0): the sweep's origin test rejects the healthy email service.
+00:01:48,193 --> 00:01:49,953
+The company brain: who owns, knows and decided what.
 
 21
-00:02:47,049 --> 00:02:55,032
-Vector similarity only (V): top-1 0.4; it picks the wrong change on S2, S3 and S3b. Naive recency: 0.1. The graph (A3): 1.0. (evals/RESULTS.md)
+00:01:49,953 --> 00:02:00,078
+It answers citing only nodes its own queries returned (citation guard), and draws the answer as a graph.
 
 22
-00:02:55,032 --> 00:02:59,001
-Faultline: no path, no claim. Verify it yourself: make judge-check.
+00:02:00,078 --> 00:02:07,227
+Right verdict on the scenario suite (24 trials): Faultline 100%; telemetry only 62.5%, vector similarity 25%, naive recency 0%. FalkorDB switched off confirms 0 causes.
+
+23
+00:02:07,227 --> 00:02:14,421
+Confidently blaming the wrong change: Faultline 0%; telemetry only 20%, vector similarity 60%, naive recency 100%.
+
+24
+00:02:14,421 --> 00:02:21,620
+Take FalkorDB's algorithms away: correct verdicts on 100 held-out worlds fall from 100 to 80 without algo.maxFlow, 76 without algo.SPpaths, 56 without both; confident wrong blames stay at 0.
+
+25
+00:02:21,620 --> 00:02:28,814
+Context for any agent, unrelated deploys crowding the window: the true cause ranks far higher in the graph's context pack (MRR 0.66) than in vector RAG (0.42) or by recency (0.08).
+
+26
+00:02:28,814 --> 00:02:36,979
+The live deployment, measured over HTTPS: right cause 5/5, verified APPLIED 5/5; alert to RESOLVED p50 2,719 ms.
+
+27
+00:02:36,979 --> 00:02:43,056
+Live now at 13-203-185-119.sslip.io: FalkorDB 6.0.2, 1,823 nodes · 5,946 edges, read through a read-only ACL user.
+
+28
+00:02:43,056 --> 00:02:50,033
+Any agent can query the same graph over hosted MCP (read-only, public demo key). Engine issues found along the way are filed upstream: FalkorDB#3349.
+
+29
+00:02:50,033 --> 00:02:59,902
+No path, no claim. github.com/Prashant-thakur77/Faultline · verify it yourself: make judge-check
 
