@@ -29,7 +29,6 @@ The UI must show a banner with `detail` and never fabricate data.
 | POST | `/api/templates/{tid}/profile` body `{params, incident?, tenant}` | `{id, plan:[…], engine_ms, graph}` (GRAPH.PROFILE; 30/min per visitor, 60/min global) |
 | POST | `/api/templates/{tid}/run` body `{params, incident?, tenant}` | `{rows, ms, digest, truncated, served_by, cypher}` (read-only re-run; 30/min) |
 | POST | `/api/demo/rearm?tenant=acme` | `{src,dst,ms,indexes}` (the UI's "Reset demo data (all visitors)"; 1/min per visitor, 20/h global; audit graph kept; resets only the tenant graph's simulated GitHub) |
-| GET | `/api/metrics/snapshot` | warehouse KPI `{kpi_day,revenue,expected_revenue,anomaly_ratio,status,daily[]}` |
 
 ### Action path (two-step approval)
 | Method | Path | Returns |

@@ -74,6 +74,10 @@ export function TopBar({ state }: { state: StatusState }) {
     <StatusChip tone="fail" icon={Database}>{state.error ? "API unreachable" : "FalkorDB unavailable"}</StatusChip>
   );
 
+  // the phone dot says the same as the pill: "checking" until the first status answer, never "not ready" before it
+  const dotLabel = STATIC_SITE ? "static replay site" : ok ? "FalkorDB ready"
+    : state.loading && !s ? "checking FalkorDB" : state.error ? "API unreachable" : "FalkorDB unavailable";
+
   return (
     // while the phone menu is open the bar is solid: a backdrop-filter would make it the containing block of the
     // fixed menu sheet and clip the sheet to the bar's height
@@ -103,8 +107,8 @@ export function TopBar({ state }: { state: StatusState }) {
           </div>
           <span className="sm:hidden" aria-live="polite">
             <span className={"block size-2.5 rounded-full " + (STATIC_SITE ? "bg-sky-400" : ok ? "bg-emerald-400 shadow-[0_0_12px] shadow-emerald-400/70" : state.loading ? "bg-zinc-500" : "bg-red-500")}
-                  title={STATIC_SITE ? "static replay site" : ok ? "FalkorDB ready" : "FalkorDB not ready"} />
-            <span className="sr-only">{STATIC_SITE ? "static replay site" : ok ? "FalkorDB ready" : "FalkorDB not ready"}</span>
+                  title={dotLabel} />
+            <span className="sr-only">{dotLabel}</span>
           </span>
           <button
             type="button"

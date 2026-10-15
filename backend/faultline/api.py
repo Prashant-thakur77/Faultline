@@ -9,7 +9,7 @@ Routes (full contract: docs/API.md)
   POST incidents/{inc}/reject · incidents/{inc}/contrast · memory/overview · brain/decisions[/{did}]
   brain/ownership[/{cid}] · brain/guardrails
   POST brain/ask · brain/history · POST memory/forget · GET|POST preflight
-  templates/{tid} · POST templates/{tid}/profile · POST templates/{tid}/run · POST demo/rearm · metrics/snapshot
+  templates/{tid} · POST templates/{tid}/profile · POST templates/{tid}/run · POST demo/rearm
 """
 
 from __future__ import annotations
@@ -31,7 +31,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from sse_starlette.sse import EventSourceResponse
 
-from . import __version__, warehouse
+from . import __version__
 from .config import settings
 from .graph import client as gclient
 from .graph import copy as gcopy
@@ -75,7 +75,8 @@ def _limit(key: str, n: int, per_s: float, global_n: int | None = None) -> None:
             recent = [t for t in _rate[k] if now - t <= per_s]
             if len(recent) >= cap:
                 _rate[k] = recent
-                raise HTTPException(429, f"rate limit: {cap} per {int(per_s)}s" + (" (all visitors)" if k.startswith("global:") else ""))
+                raise HTTPException(429, f"rate limit: {cap} per {int(per_s)}s" + (" (all visitors)" if k.startswith("global:") else "")
+                                    + "; the recorded replays (/replay) need no quota")
             _rate[k] = recent + [now]
 
 
@@ -179,7 +180,8 @@ def status(tenant: str = "acme") -> dict:
                            "graph_disabled": settings.faultline_disable_graph,
                            # the specialists are deterministic graph workers today; the configured specialist model is unused until
                            # LLM specialists ship, so it is not advertised (no claim the code does not back)
-                           "models": {"orchestrator": settings.anthropic_model, "specialists": "deterministic graph workers (no LLM)"},
+                           "models": {"orchestrator": settings.anthropic_model if settings.anthropic_api_key else "deterministic investigator (no LLM key)",
+                                      "specialists": "deterministic graph workers (no LLM)"},
                            "llm_configured": bool(settings.anthropic_api_key), "templates": len(catalogue()),
                            "version": __version__}
     try:
@@ -427,8 +429,9 @@ def run_scenario(sid: str, body: RunIn, request: Request) -> dict:
     from . import scenario
     from .agent.weights import weights
 
-    # §11.3: 10 runs/hour per visitor on the public demo (30 locally)
-    _limit(f"run:{_ip(request)}", 10 if settings.faultline_public else 30, 3600,
+    # 25 runs/hour per visitor on the public demo (judges often share one address); the global cap and MAX_RUNNING
+    # still bound the engine
+    _limit(f"run:{_ip(request)}", 25 if settings.faultline_public else 30, 3600,
            global_n=200 if settings.faultline_public else None)
     if body.llm == "anthropic" and not settings.anthropic_api_key:
         raise HTTPException(503, "live LLM unavailable: ANTHROPIC_API_KEY not configured (use llm=baseline or watch the replay)")
@@ -1883,7 +1886,7 @@ def playground_run(kind: str, request: Request) -> dict:
 
     if kind not in playground.perturbations():
         raise HTTPException(404, f"unknown perturbation {kind!r}; see GET /api/playground")
-    _limit(f"play:{_ip(request)}", 6 if settings.faultline_public else 30, 3600,
+    _limit(f"play:{_ip(request)}", 12 if settings.faultline_public else 30, 3600,
            global_n=100 if settings.faultline_public else None)
     t = "acme"  # the playground's scenario tenant (data/scenarios/playground.yaml → S1)
     if settings.faultline_public:  # deterministic: a recorded diff is served, no rooms copied (engine memory)
@@ -2044,9 +2047,3 @@ def rearm(request: Request, tenant: str = "acme") -> dict:
     return out
 
 
-@app.get("/api/metrics/snapshot")
-def metrics_snapshot() -> dict:
-    try:
-        return warehouse.get_metric_snapshot().model_dump()
-    except FileNotFoundError as e:
-        raise HTTPException(503, "warehouse not built: run `make demo-reset`") from e
