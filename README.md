@@ -179,7 +179,7 @@ Recorded through the real API (`scripts/record_demo.py`) with the deterministic 
 | Decision contradiction (G8) | ADR-012 (timeout ≤ 2000 ms), ADR-013 (≥ 2 retries) | n/a |
 | Containment | min-cut `payment → checkout` → flag `paymentGate` off (checkout defers the charge), or roll the deploy back (listed first: it worked more often on past incidents with this symptom) | min-cut found, but its only flag cuts a service edge no failure path to the KPI crosses, so it is shown disabled with that reason (`Q-LEVER-PATH`); the data repair needs a proposed transform patch (live LLM mode) |
 | Who fixes it | ranked people with reasons (recent commits, past resolutions, on-call) | same |
-| Action → verdict | PR to the infra repo (**simulated GitHub**) → **APPLIED**: main re-read + telemetry back in band, no collateral | awaiting a human choice |
+| Action → verdict | PR to the infra repo (**simulated GitHub** here; the same path against real GitHub: [PR #1](https://github.com/Prashant-thakur77/faultline-demo-infra/pull/1)) → **APPLIED**: main re-read + telemetry back in band, no collateral | awaiting a human choice |
 | Write-back | verified <!-- claim:s1.writeback -->7/7<!-- /claim --> through a separate read-only connection, then LEARN | n/a |
 
 Where naive recency and vector similarity put the real cause on every scenario, and why the look-alikes lost, is generated per run in [docs/NAIVE_VS_FAULTLINE.md](docs/NAIVE_VS_FAULTLINE.md).
@@ -648,7 +648,7 @@ The full table (agent cannot … | enforced by | file::function | test) is in [d
 ## What's real vs synthetic
 
 - **Real:** FalkorDB and every query and algorithm; the agent loop; the gate; the existing data pipeline (DuckDB warehouse plus invariant suite), whose rebuild verifies data repairs.
-- **Implemented but not yet exercised against GitHub:** the real-PR action path (`FAULTLINE_GITHUB=real`, `actions/github.py::RealGitHub`). Every recorded run uses the simulated GitHub.
+- **Exercised against real GitHub once, on the hero scenario:** with `FAULTLINE_GITHUB=real`, S1 opened, merged and verified [PR #1 on faultline-demo-infra](https://github.com/Prashant-thakur77/faultline-demo-infra/pull/1) (`paymentGate` off, verdict APPLIED, the plan hash's idempotency key in the PR body). The live demo and every eval run use the simulated GitHub, so visitors never touch a real repo.
 - **Synthetic, seeded and deterministic:** the org, history, ADRs and runbooks; service telemetry, from a share-weighted simulator that writes `MetricWindow` nodes the agent reads only through templates; the OpenTelemetry-Demo-shaped topology.
 - **Keyless mode** uses a simulated GitHub, labelled "simulated" on every result.
 

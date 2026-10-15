@@ -31,7 +31,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from sse_starlette.sse import EventSourceResponse
 
-from . import warehouse
+from . import __version__, warehouse
 from .config import settings
 from .graph import client as gclient
 from .graph import copy as gcopy
@@ -180,7 +180,8 @@ def status(tenant: str = "acme") -> dict:
                            # the specialists are deterministic graph workers today; the configured specialist model is unused until
                            # LLM specialists ship, so it is not advertised (no claim the code does not back)
                            "models": {"orchestrator": settings.anthropic_model, "specialists": "deterministic graph workers (no LLM)"},
-                           "llm_configured": bool(settings.anthropic_api_key), "templates": len(catalogue())}
+                           "llm_configured": bool(settings.anthropic_api_key), "templates": len(catalogue()),
+                           "version": __version__}
     try:
         ro = RO(t)
         out["ready"] = ro.require_ready()

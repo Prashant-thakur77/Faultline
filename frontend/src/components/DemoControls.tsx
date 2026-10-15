@@ -142,6 +142,8 @@ export function DemoControls({ state }: { state: StatusState }) {
                   </dd>
                   <dt className="text-zinc-400">templates</dt>
                   <dd className="font-mono">{fmtInt(s.templates)}</dd>
+                  <dt className="text-zinc-400">release</dt>
+                  <dd className="font-mono">{s.version ? `v${s.version}` : "–"}</dd>
                   <dt className="text-zinc-400">seeded</dt>
                   <dd>{s.ready ? fmtTime(s.ready.seeded_at) : "–"}</dd>
                   <dt className="text-zinc-400">last reset</dt>

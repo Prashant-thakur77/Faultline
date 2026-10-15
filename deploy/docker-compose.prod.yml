@@ -34,7 +34,7 @@ services:
     build:
       context: ..
       dockerfile: deploy/Dockerfile.ui
-      args: {NEXT_PUBLIC_FAULTLINE_API_URL: "https://${FAULTLINE_DOMAIN}"}
+      args: {NEXT_PUBLIC_FAULTLINE_API_URL: "https://${FAULTLINE_DOMAIN}", NEXT_PUBLIC_FAULTLINE_REPO_URL: "${FAULTLINE_REPO_URL:-https://github.com/Prashant-thakur77/Faultline}"}
     restart: unless-stopped
   caddy:
     image: caddy:2.8.4@sha256:226d1f059b75399fe19182893c7184591c07b97afc8dfcf44eeb80c9a77a530f

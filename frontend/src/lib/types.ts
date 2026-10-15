@@ -41,6 +41,8 @@ export interface StatusResponse {
     replay_only: boolean;
   };
   templates: number;
+  /** The Faultline release serving this API (absent on older backends). */
+  version?: string;
   /** Pinned UDF libraries (GRAPH.UDF LIST): "missing" also covers a library loaded at a different sha. Absent when unavailable. */
   udf?: Record<string, "loaded" | "missing">;
   /** Absent when status is "unavailable". */
