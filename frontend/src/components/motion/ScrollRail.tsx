@@ -32,15 +32,16 @@ export function ScrollRail() {
       const h = Math.max(36, (el.clientHeight / el.scrollHeight) * t);
       const y = max > 0 ? (el.scrollTop / max) * (t - h) : 0;
       if (thumb.current) {
-        thumb.current.style.height = `${h}px`;
-        thumb.current.style.transform = `translateY(${y}px)`;
+        const hp = `${Math.round(h)}px`;
+        if (thumb.current.style.height !== hp) thumb.current.style.height = hp;   // a height write invalidates layout: only on change
+        thumb.current.style.transform = `translateY(${y}px)`;                     // compositor-only
       }
       if (el.scrollTop !== last) {   // moved: wake, then sleep after a moment of rest
         if (last >= 0) {
+          // no attribute on <html> here: toggling one restyles the whole page at the start and end of every scroll
           setAwake(true);
-          document.documentElement.dataset.scrolling = "";   // decorative loops pause while the page moves
           clearTimeout(sleep);
-          sleep = setTimeout(() => { setAwake(false); delete document.documentElement.dataset.scrolling; }, 1100);
+          sleep = setTimeout(() => setAwake(false), 1100);
         }
         last = el.scrollTop;
       }

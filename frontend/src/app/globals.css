@@ -444,6 +444,4 @@ html::-webkit-scrollbar, #main::-webkit-scrollbar { display: none; }
 /* smoothness (measured): infinite drifts on large blurred background layers kept the compositor busy every frame on
    weaker GPUs (≈15 fps where everything else ran at 60). The background is still; motion lives in the content. */
 .fl-aurora, .fl-beam, .fl-contours { animation: none !important; }
-/* while the page scrolls, the remaining decorative loops wait (NavFlow/ScrollRail set html[data-scrolling]) */
-html[data-scrolling] .fl-marquee, html[data-scrolling] .fl-ring, html[data-scrolling] .fl-scroll-cue,
-html[data-scrolling] .fl-scroll-cue { animation-play-state: paused; }
+/* the remaining decorative loops animate transform/opacity only, so they stay on the compositor while the page scrolls */

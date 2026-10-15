@@ -28,8 +28,10 @@ export function SmoothScroll() {
       autoRaf: true,
       anchors: true,
       allowNestedScroll: true,
-      duration: 1.05,
-      easing: (t) => 1 - Math.pow(1 - t, 4),
+      // lerp, not a fixed-duration tween: each wheel event only moves the target and the position eases towards it
+      // (frame-rate independent), so quick up-and-down flicks blend instead of restarting a curve mid-flight
+      lerp: 0.1,
+      smoothWheel: true,
     });
     setSmoothScroller(lenis);
     return () => {

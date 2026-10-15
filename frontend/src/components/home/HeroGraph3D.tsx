@@ -79,7 +79,7 @@ function Environment() {
 }
 
 type Place = (k: string, x: number, y: number, show: boolean, proved: boolean, text?: string) => void;
-type Control = { open: boolean; openedAt: number; hover: boolean; drag: { x: number; y: number } };   // hover: the pointer is over the canvas
+type Control = { open: boolean; openedAt: number; now: number; hover: boolean; drag: { x: number; y: number } };   // hover: the pointer is over the canvas
 type Piece = { mesh: THREE.Mesh; from: THREE.Vector3; to: THREE.Vector3; scaleTo: number; delay: number; spin: THREE.Vector3; role?: string; id?: string; info?: string };
 type World = {
   root: THREE.Group;
@@ -94,6 +94,7 @@ type World = {
   curve: THREE.CatmullRomCurve3;
   pulse: THREE.Mesh;
   e: number;   // 0 = closed cube, 1 = split into the graph
+  t: number;   // the cube's own clock: advances only while it renders (frame time capped), so a pause never makes it jump
   h: number;   // 0..1, the pointer is over the closed cube (its seams widen a little: it can open)
   ray: THREE.Raycaster;
 };
@@ -184,7 +185,7 @@ function buildWorld(data: GraphData | null): { world: World; dispose: () => void
   const pulse = new THREE.Mesh(keep(new THREE.SphereGeometry(0.09, 20, 20)), keep(new THREE.MeshBasicMaterial({ color: "#ffffff", toneMapped: false })));
   root.add(pulse);
   return {
-    world: { root, pieces, byRole, mats, dustMat, edgeMat, faintMat, proof, proofMat, curve, pulse, e: 0, h: 0, ray: new THREE.Raycaster() },
+    world: { root, pieces, byRole, mats, dustMat, edgeMat, faintMat, proof, proofMat, curve, pulse, e: 0, h: 0, t: 0, ray: new THREE.Raycaster() },
     dispose: () => disposables.forEach((d) => d.dispose()),
   };
 }
@@ -195,7 +196,9 @@ const arc = new THREE.Vector3();
 /** One frame: split progress, each block's flight, pose, the decision, and where each label goes. */
 function tick(w: World, st: { clock: THREE.Clock; pointer: THREE.Vector2; camera: THREE.Camera; size: { width: number; height: number } },
               dt: number, still: boolean, c: Control, place: Place) {
-  const t = st.clock.elapsedTime;
+  w.t += dt;
+  const t = w.t;
+  c.now = t;   // the split's timeline is measured on the same clock
   const target = c.open ? 1 : 0;
   w.e = still ? target : w.e + (target - w.e) * (1 - Math.exp(-dt * 2.6));
   if (Math.abs(target - w.e) < 0.001) w.e = target;
@@ -226,8 +229,9 @@ function tick(w: World, st: { clock: THREE.Clock; pointer: THREE.Vector2; camera
     // unwrap the closed cube's running yaw so opening does not spin back through several turns
     const ry = g.rotation.y;
     const want = c.open ? yaw + Math.round((ry - yaw) / (Math.PI * 2)) * Math.PI * 2 : yaw;
-    g.rotation.y += (want - ry) * 0.06;
-    g.rotation.x += (pitch - g.rotation.x) * 0.06;
+    const ease = 1 - Math.exp(-dt * 3.7);   // time-based: the same motion at 60, 120 or 144 Hz
+    g.rotation.y += (want - ry) * ease;
+    g.rotation.x += (pitch - g.rotation.x) * ease;
   }
 
   // the decision plays once the cube is open
@@ -310,7 +314,7 @@ function PerfWatch({ onLow }: { onLow: () => void }) {
     if (a.n < 60) return;
     const avg = a.sum / a.n;
     a.n = 0; a.sum = 0;
-    if (avg <= 1 / 30) return;
+    if (avg <= 1 / 50) return;   // below ~50 fps on a 60 Hz screen the stutter shows: step down early, not at 30
     if (!a.stepped && st.viewport.dpr > 1) { st.setDpr(1); a.stepped = true; a.warm = 15; return; }
     a.done = true;
     onLow();
@@ -336,28 +340,14 @@ function webgl(): boolean {
 export default function HeroGraph3D() {
   const reduced = useReducedMotion();
   const wrap = useRef<HTMLDivElement>(null);
-  const control = useRef<Control>({ open: false, openedAt: 0, hover: false, drag: { x: 0, y: 0 } });
+  const control = useRef<Control>({ open: false, openedAt: 0, now: 0, hover: false, drag: { x: 0, y: 0 } });
   const from = useRef<{ x: number; y: number; dx: number; dy: number; moved: boolean } | null>(null);
   const labels = useRef<Record<string, HTMLDivElement | null>>({});
-  const clock = useRef<(() => number) | null>(null);
   const [ok] = useState(webgl);
   const [visible, setVisible] = useState(true);
-  const [scrolling, setScrolling] = useState(false);   // pause rendering while the page scrolls: scrolling stays smooth
   const [low, setLow] = useState(false);               // low-power: render on demand
   const [busy, setBusy] = useState<number>(0);          // ms to keep rendering through the split / close animation
   const invalidate = useRef<(() => void) | null>(null);
-  useEffect(() => {
-    let t: ReturnType<typeof setTimeout> | undefined;
-    const on = () => {
-      setScrolling(true);
-      clearTimeout(t);
-      t = setTimeout(() => setScrolling(false), 180);
-    };
-    const main = document.getElementById("main");
-    main?.addEventListener("scroll", on, { passive: true });
-    window.addEventListener("scroll", on, { passive: true });
-    return () => { main?.removeEventListener("scroll", on); window.removeEventListener("scroll", on); clearTimeout(t); };
-  }, []);
   useEffect(() => {
     if (!busy) return;
     const t = setTimeout(() => setBusy(0), busy);
@@ -396,7 +386,7 @@ export default function HeroGraph3D() {
   const toggle = () => {
     const c = control.current;
     c.open = !c.open;
-    c.openedAt = clock.current ? clock.current() + 0.9 : 0;   // the decision starts as the blocks land
+    c.openedAt = c.now + 0.9;   // the decision starts as the blocks land (on the cube's own clock)
     setOpen(c.open);
     setBusy(c.open ? 10_000 : 3_000);   // low-power mode still animates the split and the decision
   };
@@ -435,11 +425,12 @@ export default function HeroGraph3D() {
          onPointerCancel={() => { from.current = null; }}>
       <Boundary>
         {/* the open graph fades out towards the edges instead of being cut off by the canvas */}
-        <div className="absolute inset-0 [mask-image:radial-gradient(ellipse_70%_75%_at_50%_50%,#000_55%,transparent_100%)]">
+        {/* the edge fade is only needed once the graph spreads out; the closed cube skips the per-frame mask composite */}
+        <div className={"absolute inset-0" + (open ? " [mask-image:radial-gradient(ellipse_70%_75%_at_50%_50%,#000_55%,transparent_100%)]" : "")}>
         <Canvas dpr={[1, 1.5]} camera={{ position: [0, 0.3, 8.4], fov: 36 }}
-                frameloop={reduced ? "demand" : !visible || scrolling ? "never" : low && !busy ? "demand" : "always"}
+                frameloop={reduced ? "demand" : !visible ? "never" : low && !busy ? "demand" : "always"}
                 gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
-                onCreated={(st) => { clock.current = () => st.clock.elapsedTime; invalidate.current = st.invalidate; }}>
+                onCreated={(st) => { invalidate.current = st.invalidate; }}>
           <Environment />
           <ambientLight intensity={0.15} />
           <directionalLight position={[4, 6, 5]} intensity={1.6} />
