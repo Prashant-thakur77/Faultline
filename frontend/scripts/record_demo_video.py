@@ -71,13 +71,16 @@ LLM_ARMS = ROOT / "evals" / "results" / "llm_arms.json"
 VIEW = {"width": 1536, "height": 864}  # the 125 % zoom of a 1920x1080 screen; upscaled to 1080p by ffmpeg
 VIDEO = {"width": 1920, "height": 1080}
 TAIL = 2.0  # seconds of the end card after the last word
+MUSIC_GAIN = 0.30  # the music bed under the voice, before ducking
 GITHUB_SHOT = 4.0  # silent seconds on the merged PR at github.com after the approval beat
 MIN_GAP = 0.25  # the shortest pause between two segments when a beat ran long
 
 # The beats, in narration order. The recorder refuses a narration whose segments differ.
-SEGMENT_IDS = ["problem", "usecase", "built", "cube", "map", "decides", "tour", "run", "g2", "g5", "crew", "proof",
-               "contain", "act", "breakit", "preflight", "brain", "numbers", "llm", "falkordb", "close"]
-CHARTS = ["outcome", "false_blame", "ladder", "live"]  # the chart beats (live: the close)
+SEGMENT_IDS = ["problem", "whyhard", "idea", "cube", "x_tenant", "x_matrices", "x_blast", "x_path", "x_flow", "x_cut",
+               "x_who", "x_readonly", "x_unplug", "run", "g2", "g5", "proof", "contain", "act", "preflight", "brain",
+               "numbers", "cost", "close"]
+CHARTS = ["deep", "cost", "live"]  # the proof beats (live: the close)
+EXPLAINER = ["x_tenant", "x_matrices", "x_blast", "x_path", "x_flow", "x_cut", "x_who", "x_readonly", "x_unplug"]  # /explainer scenes, in order
 NUM_WORDS = {w: i for i, w in enumerate("zero one two three four five six seven eight nine ten eleven twelve".split())}
 
 DEFAULTS = {
@@ -614,8 +617,23 @@ def record(a: argparse.Namespace, work: Path, segs: list[Seg], llm: dict, issue:
     S = {s.id: s for s in segs}
     facts: dict[str, Any] = {"real_github": a.real_github, "key_field_masked": False}
     with sync_playwright() as p:
-        args = ["--enable-unsafe-swiftshader", "--use-angle=swiftshader", "--ignore-gpu-blocklist"]  # WebGL for the cube
-        browser = p.chromium.launch(executable_path=a.chromium, args=args) if a.chromium else p.chromium.launch(args=args)
+        if a.gpu:   # the NVIDIA GPU through ANGLE/EGL (PRIME offload): the 3D renders at full frame rate
+            args = ["--use-gl=angle", "--use-angle=gl-egl", "--ignore-gpu-blocklist", "--enable-gpu"]
+            env = {**os.environ, "__NV_PRIME_RENDER_OFFLOAD": "1", "__GLX_VENDOR_LIBRARY_NAME": "nvidia",
+                   "__EGL_VENDOR_LIBRARY_FILENAMES": "/usr/share/glvnd/egl_vendor.d/10_nvidia.json"}
+        else:       # software WebGL: works anywhere, but the 3D stutters on video
+            args, env = ["--enable-unsafe-swiftshader", "--use-angle=swiftshader", "--ignore-gpu-blocklist"], None
+        browser = p.chromium.launch(executable_path=a.chromium, args=args, env=env) if a.chromium \
+            else p.chromium.launch(args=args, env=env)
+        if a.gpu:
+            page0 = browser.new_page()
+            renderer = page0.evaluate("() => { const g = document.createElement('canvas').getContext('webgl2');"
+                                      " const x = g && g.getExtension('WEBGL_debug_renderer_info');"
+                                      " return x ? g.getParameter(x.UNMASKED_RENDERER_WEBGL) : ''; }")
+            page0.close()
+            if "SwiftShader" in renderer or not renderer:
+                raise fail(f"--gpu, but WebGL renders on {renderer or 'nothing'!r}")
+            facts["renderer"] = renderer
         ctx = browser.new_context(viewport=VIEW, record_video_dir=str(work), record_video_size=VIEW, device_scale_factor=1)
         ctx.add_init_script(INIT_JS)
         page = ctx.new_page()
@@ -651,7 +669,7 @@ def record(a: argparse.Namespace, work: Path, segs: list[Seg], llm: dict, issue:
         _, v = read_room(page, a)
         n = len(v["suspects"])
         # the voice and the cards state these about the page: check them against the page now
-        for sid, pat in (("problem", r"\b(\w+) changes went live"), ("g2", r"\b(\w+) suspects")):
+        for sid, pat in (("problem", r"\b(\w+) changes went live"), ("x_path", r"\b(\w+) deploys landed")):
             said = number_said(S[sid].text, pat)
             if said is not None and said != n:
                 raise fail(f"the narration ({sid}) says {said} suspects, the incident room shows {n}: {v['suspects']}")
@@ -661,8 +679,8 @@ def record(a: argparse.Namespace, work: Path, segs: list[Seg], llm: dict, issue:
         import narrate  # noqa: E402
 
         said_flow = narrate.spoken(float(v["flow"]), "pct")
-        if said_flow not in S["g5"].text:
-            raise fail(f"the page's max flow {v['flow']} is {said_flow}, which the g5 narration does not say")
+        if said_flow not in S["x_flow"].text:
+            raise fail(f"the page's max flow {v['flow']} is {said_flow}, which the x_flow narration does not say")
         facts.update(suspects=v["suspects"], g5={"flow": v["flow"], "needed": v["needed"]}, chain=v["chain"])
         page.goto(f"{ui}/preflight")
         page.get_by_role("button", name=re.compile(r"^S6: payment timeout 5000 ms")).click()
@@ -699,80 +717,54 @@ def record(a: argparse.Namespace, work: Path, segs: list[Seg], llm: dict, issue:
         step(1)
         d.at_word("three changes", lead=0.2)
         step(2)
-        d.at_word("Google's", lead=0.2)
+        d.at_word("Which one", lead=0.1)
         step(3)
         d.at_word("Roll back", lead=0.2)
         step(4)
-        d.begin("usecase")
+        d.begin("whyhard")
         step(5)
         d.at_word("Dashboards", lead=0.2)
         step(6)
         d.at_word("today's", lead=0.2)
         step(7)
+        d.begin("idea")
+        step(8)
+        d.at_word("That's Faultline", lead=0.2)
+        step(9)
+        d.at_word("the engine", lead=0.2)
+        step(10)
 
-        # ---------------- built: the website's hero (its headline rises; the 3D cube loads beside it). The intro
-        # odometer is skipped: in headless Chromium its digits never roll and would read "0000" nodes.
-        d.begin("built")
+        # ---------------- cube: the website's hero; the cube opens into the hero incident's graph
+        d.begin("cube")
         d.go(f"{ui}/?tenant={a.tenant}")
         expect(page.get_by_role("heading", name=re.compile(r"No path,\s*no claim"))).to_be_visible(timeout=20_000)
         cube = page.get_by_role("button", name=re.compile(r"^Click the cube"))
-        d.at_word("No path", lead=0.3)
-        d.move_xy(VIEW["width"] * 0.27, VIEW["height"] * 0.42, 900)
         expect(cube).to_be_visible(timeout=20_000)
-        d.at_word("It will not blame")
+        d.move_xy(VIEW["width"] * 0.27, VIEW["height"] * 0.42, 700)
         d.hover(cube)  # the closed cube's seams widen under the pointer: it can open
-
-        # ---------------- cube: it splits into the hero incident's graph and the gate decides on it
-        d.begin("cube")
+        d.at_word("Open it", lead=0.2)
         d.click(cube, flash=False)  # an outline would box the 3D canvas
         expect(page.get_by_role("button", name=re.compile(r"^Click to close"))).to_be_visible(timeout=5_000)
         box = page.get_by_role("button", name=re.compile(r"^Click to close")).bounding_box()
-        d.at(1.6)
         if box:  # sweep across the open graph: the block under the pointer names itself
-            for fx, fy in ((0.3, 0.42), (0.5, 0.55), (0.66, 0.4), (0.55, 0.3)):
-                if d.left() < 1.4:
+            for fx, fy in ((0.3, 0.42), (0.5, 0.55), (0.66, 0.4)):
+                if d.left() < 1.2:
                     break
                 d.move_xy(box["x"] + box["width"] * fx, box["y"] + box["height"] * fy, 800)
-                d.wait(300)
+                d.wait(250)
 
-        # ---------------- map: "Where it sits", lit part by part with the voice
-        d.begin("map")
-        smap = page.locator("section").filter(has=page.get_by_role("heading", name=re.compile(r"^Where it sits"))).first
-        frame = smap.get_by_role("group", name=re.compile(r"^System map"))
-        d.glide(frame, "center", 1400)
-        caption = smap.locator("p[id^='map-caption-']")
-        for word, part in (("alerts", "Alerts"), ("deploys", "Deploys"), ("warehouse", "Warehouse"),
-                           ("docs", "Docs & decisions"), ("One FalkorDB graph", "FalkorDB context graph"),
-                           ("crew", "Faultline crew"), ("act", "One approved action")):
-            d.at_word(word, lead=0.25)
-            tile = smap.get_by_role("button", name=re.compile(rf"^{re.escape(part)}:"))
-            d.hover(tile)
-            d.wait(120)
-            if not caption.inner_text().startswith(part):
-                tile.focus()  # the map lights a part on hover or focus
-        if d.left() > 1.2:
-            d.at(S["map"].length - 1.2)
-            d.hover(smap.get_by_role("button", name=re.compile(r"^Who fixes it:")))
-
-        # ---------------- decides: the proof story, step by step
-        d.begin("decides")
-        story = page.locator("#how")
-        d.glide(story, "start", 1100)
-        steps = story.get_by_role("navigation", name="Proof steps")
-        for word, name in (("alert", "Step 01: Alert"), ("causal path", "Step 02: Path"), ("flow", "Step 03: Flow"),
-                           ("proof", "Step 04: Proof"), ("smallest cut", "Step 05: Cut"),
-                           ("approved action", "Step 06: Act & remember")):
-            d.at_word(word, lead=0.35)
-            d.click(steps.get_by_role("button", name=name, exact=True))
-
-        # ---------------- tour: one screen per tab, with the voice
-        d.begin("tour")
-        tour = page.locator("#tour")
-        d.glide(tour, "start", 1000)
-        for word, tab in (("incident room", "Incident room"), ("crew", "Crew"), ("reasoning", "Why"),
-                          ("pre-deploy", "Preflight"), ("company brain", "Brain")):
-            d.at_word(word, lead=0.3)
-            d.click(tour.get_by_role("tab", name=tab, exact=True))
+        # ---------------- x_*: how FalkorDB does it, one explainer scene per narration segment
+        # the stage fills the frame; it shows each scene's FalkorDB calls, and the video's subtitles carry the words
+        d.go(f"{ui}/explainer?view=stage&autoplay=0&captions=chips")
+        expect(page.locator("[data-scene]").first).to_be_attached(timeout=20_000)
+        page.wait_for_function("() => !!window.__explainer && window.__explainer.state().mode === 'animated'",
+                               timeout=20_000)
+        if page.evaluate("() => window.__explainer.sceneCount") != len(EXPLAINER):
+            raise fail("the explainer's scenes differ from the narration's x_* segments")
+        d.move_xy(VIEW["width"] + 40, VIEW["height"] / 2, 30)
+        for i, sid in enumerate(EXPLAINER, start=1):
+            d.begin(sid)   # each scene plays across its whole narration line, then holds its last frame
+            page.evaluate("([n, s]) => window.__explainer.playScene(n, s)", [i, max(1.0, S[sid].length - 0.4)])
 
         # ---------------- run: the hero incident, live from the launcher
         d.begin("run")
@@ -810,7 +802,7 @@ def record(a: argparse.Namespace, work: Path, segs: list[Seg], llm: dict, issue:
         zero = res.get_by_text(re.compile(r"^0 rows\. For a G2 path query"))
         d.show(zero, "center")
         d.flash(zero)
-        d.at_word("cannot be blamed")
+        d.end(0.9)
         d.flash(zero)
         d.end(0.3)
         page.keyboard.press("Escape")
@@ -822,26 +814,11 @@ def record(a: argparse.Namespace, work: Path, segs: list[Seg], llm: dict, issue:
         d.at_word("max flow", lead=0.2)
         d.hover(L.g5)
         d.flash(L.g5)
-        d.at_word("Rejected", lead=0.6)
+        d.at_word("rejects it", lead=0.4)
         d.click(L.g5)
         expect(page.get_by_role("dialog").get_by_text("Cypher", exact=True)).to_be_visible()
         d.end(0.3)
         page.keyboard.press("Escape")
-
-        # ---------------- crew: who did what
-        d.begin("crew")
-        d.show(L.crew)
-        lanes = L.crew.get_by_role("article")
-        if lanes.count():
-            d.flash(lanes.first)
-        d.at_word("which query", lead=0.2)
-        if lanes.count() > 1:
-            d.show(lanes.nth(1), "center")
-            d.flash(lanes.nth(1))
-        d.at_word("handed", lead=0.2)
-        if lanes.count() > 3:
-            d.show(lanes.nth(3), "center")
-            d.flash(lanes.nth(3))
 
         # ---------------- proof: the cause passes; the proof path; why we believe it
         d.begin("proof")
@@ -855,7 +832,7 @@ def record(a: argparse.Namespace, work: Path, segs: list[Seg], llm: dict, issue:
         replay = L.graph.get_by_role("button", name="Replay path")
         if replay.count():
             d.click(replay)
-        d.at_word("why we believe", lead=0.5)
+        d.at_word("every piece of evidence", lead=0.5)
         d.show(L.root)
         d.click(L.why)
         prov = page.get_by_role("dialog", name="Why do you believe this?")
@@ -924,7 +901,7 @@ def record(a: argparse.Namespace, work: Path, segs: list[Seg], llm: dict, issue:
         d.at_word("Applied", lead=0.2)
         d.show(L.plan.get_by_role("list", name="Action path after approval"), "center")
         d.flash(big)
-        d.at_word("Written back", lead=0.2)
+        d.at_word("writes the decision back", lead=0.2)
         d.show(status, "center")
         d.flash(status)
         link = L.plan.get_by_role("link", name=re.compile(r"github\.com\/\S+\/pull\/\d+"))
@@ -944,25 +921,6 @@ def record(a: argparse.Namespace, work: Path, segs: list[Seg], llm: dict, issue:
         d.wait(int(GITHUB_SHOT * 1000))
         d.chip("url", None)
         d.chip("badge", None)
-
-        # ---------------- breakit: cut one call, the decision moves
-        d.begin("breakit")
-        d.go(f"{ui}/playground")
-        radio = page.get_by_role("radio", name=re.compile(a.pg_choice))
-        expect(radio).to_be_visible(timeout=20_000)
-        d.click(radio)
-        d.at_word("Cut one call", lead=0.4)
-        d.click(page.get_by_role("button", name="Break it", exact=True))
-        moved = page.get_by_role("heading", name="What moved")
-        pgerr = page.get_by_role("alert").filter(has_text=re.compile(r"^(Playground unavailable|Run failed):"))
-        expect(moved.or_(pgerr).first).to_be_visible(timeout=90_000)
-        if pgerr.count() and pgerr.first.is_visible():
-            raise fail(f"playground: {pgerr.first.inner_text()}")
-        dec, before, after = first_changed(page)
-        facts["break_it"] = {"decision": dec, "before": before, "after": after}
-        sect = page.locator("section[aria-labelledby='pg-diff']")
-        d.show(sect)
-        d.flash(sect.locator("tbody tr").filter(has_text="(changed)").first)
 
         # ---------------- preflight: the same graph blocks the risky PR
         d.begin("preflight")
@@ -997,7 +955,7 @@ def record(a: argparse.Namespace, work: Path, segs: list[Seg], llm: dict, issue:
         facts["brain"] = a.brain_question
         ag = answer.get_by_role("group", name=re.compile(r"^Answer graph: \d+ nodes"))
         expect(ag).to_be_visible(timeout=20_000)
-        d.at_word("drawn as a graph", lead=0.8)
+        d.at_word("comes from a query", lead=0.2)
         d.show(ag, "center")
 
         # ---------------- numbers, llm, falkordb: the proof charts and the LLM card
@@ -1009,16 +967,9 @@ def record(a: argparse.Namespace, work: Path, segs: list[Seg], llm: dict, issue:
             expect(page.locator(f"body[data-state='ready'][data-chart='{name}']")).to_be_attached(timeout=10_000)
 
         d.begin("numbers")
-        chart("outcome")
-        d.at_word("Across", lead=0.3)
-        chart("false_blame")
-        d.begin("llm")
-        page.evaluate("(data) => window.__llm(data)", llm)
-        chart("llm")
-        d.begin("falkordb")
-        chart("ladder")
-        d.at_word("Switch FalkorDB off", lead=0.3)
-        chart("outcome")
+        chart("deep")
+        d.begin("cost")
+        chart("cost")
 
         # ---------------- close: live now, any agent over MCP, the end card
         d.begin("close")
@@ -1033,7 +984,7 @@ def record(a: argparse.Namespace, work: Path, segs: list[Seg], llm: dict, issue:
         page.evaluate("(t) => { document.getElementById('issue-meta').textContent = t; }",
                       f"{issue['title']} · {issue['state'].lower()} · {issue['url']}")
         facts["issue"] = {k: issue[k] for k in ("url", "state", "title")}
-        d.at_word("No path", lead=0.3)
+        d.at_word("built on FalkorDB", lead=0.3)
         d.go(f"{ui}/media/end.html")
         d.end()
         d.wait(int(TAIL * 1000))
@@ -1107,12 +1058,24 @@ def encode(webm: Path, d: Director, segs: list[Seg], ndir: Path, srt: Path, out:
             f"measured_LRA={ln['input_lra']}:measured_thresh={ln['input_thresh']}:offset={ln['target_offset']}:linear=true")
     inputs += ains
     fc += afc
-    fc.append(f"{track},{norm},aresample=48000[a]")
+    # the music bed: composed here to the take's exact length (compose_music.py, ours, no licence), ducked under the voice
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import compose_music  # noqa: E402
+
+    music = out.with_suffix(".music.wav")
+    compose_music.write_wav(str(music), compose_music.compose(total))
+    m = len(segs) + 1
+    inputs += ["-i", str(music)]
+    fc.append(f"{track},{norm},aresample=48000,asplit=2[nar][sc]")
+    fc.append(f"[{m}:a]aresample=48000,volume={MUSIC_GAIN}[mus]")
+    fc.append("[mus][sc]sidechaincompress=threshold=0.03:ratio=8:attack=40:release=450[md]")
+    fc.append("[nar][md]amix=inputs=2:normalize=0:duration=first,alimiter=limit=0.89[a]")
     out.parent.mkdir(parents=True, exist_ok=True)
     subprocess.run([ff, "-y", "-loglevel", "error", *inputs, "-filter_complex", ";".join(fc), "-map", "[v]", "-map", "[a]",
                     "-t", f"{total:.3f}", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-preset", "medium", "-crf", "20",
                     "-r", "30", "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-movflags", "+faststart", str(out)],
                    check=True)
+    music.unlink(missing_ok=True)
 
 
 def main() -> int:
@@ -1124,6 +1087,7 @@ def main() -> int:
                     help="act on real GitHub (API started with FAULTLINE_GITHUB=real; key file in "
                          "$FAULTLINE_APPROVER_KEY_FILE; the flag must be on at main)")
     ap.add_argument("--chromium", default=None, help="a full Chrome/Chromium (WebGL via SwiftShader for the cube)")
+    ap.add_argument("--gpu", action="store_true", help="render WebGL on the NVIDIA GPU (smooth 3D); fails if it cannot")
     ap.add_argument("--work", default=str(ROOT / "tmp" / "demo-video"))
     ap.add_argument("--out", default=None, help="the mp4 (default: docs/media/demo.mp4 for a real take, "
                                                 "tmp/demo-video/narrated_sim.mp4 for a simulated one)")

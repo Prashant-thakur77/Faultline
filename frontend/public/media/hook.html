@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Faultline: which change broke checkout?</title>
-<!-- Demo-video opening card (frontend/scripts/record_demo_video.py): the problem, then who has it. The recorder reveals
-     each line as the narration reaches it (window.__step(n), n = 1..7); opened directly, it plays by itself.
+<!-- Demo-video opening card (frontend/scripts/record_demo_video.py): the problem, why it is hard, then the idea. The recorder reveals
+     each line as the narration reaches it (window.__step(n), n = 1..10); opened directly, it plays by itself.
      The one statistic is third-party and attributed on the card. "Three changes" is the hero incident's suspect
      count; the recorder checks it against the incident room before it records. Mona Sans is the site's hero face. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -43,6 +43,19 @@
   .b2 h2 .m { color:var(--muted); }
   .line { font-size:clamp(1.4rem, 2.6vw, 2.5rem); font-weight:650; letter-spacing:-0.025em; color:#e4e4e7; max-width:30ch; }
   .line .m { color:var(--muted); }
+  .chain { width:min(900px, 80vw); height:auto; }
+  .chain .nd { fill:#111214; stroke:#3f3f46; stroke-width:1.5; }
+  .chain .hot { stroke:var(--red); }
+  .chain .links path { stroke:var(--ember); stroke-width:2.5; fill:none; stroke-dasharray:70; stroke-dashoffset:70; }
+  .chain.on .links path { animation:draw .6s cubic-bezier(.22,1,.36,1) forwards; }
+  .chain.on .links path:nth-child(2) { animation-delay:.45s; } .chain.on .links path:nth-child(3) { animation-delay:.9s; }
+  @keyframes draw { to { stroke-dashoffset:0; } }
+  .b3 h2 { font-size:clamp(2rem, 4.4vw, 4.4rem); max-width:22ch; }
+  .b3 h2 .m { color:var(--muted); }
+  .brand { font-size:clamp(2.6rem, 6vw, 6rem); }
+  .brand .q { background:linear-gradient(100deg, var(--ember), oklch(0.78 0.16 20) 45%, var(--iris)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .fk { color:var(--iris); font-weight:800; }
+  .b2 .line, .b3 .line { max-width:44ch; }
   /* each line rises in when its step is reached; reduced motion shows everything at once */
   .step { opacity:0; transform:translateY(16px); transition:opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1); }
   .step.on { opacity:1; transform:none; }
@@ -61,23 +74,38 @@
     </div>
     <p class="warn step" data-step="4">Roll back the wrong one, and you make it worse.</p>
   </section>
-  <section class="state b2 off" id="b2" aria-label="Who has the problem">
-    <h2 class="step" data-step="5">The on-call question, <span class="m">night after night.</span></h2>
+  <section class="state b2 off" id="b2" aria-label="Why it is hard">
+    <h2 class="step" data-step="5">The answer lives <span class="m">in the connections.</span></h2>
+    <svg class="chain step" data-step="5" viewBox="0 0 900 90" role="img" aria-label="deploy, then service, then table, then checkout">
+      <g font-family="ui-monospace, monospace" font-size="17" fill="#e4e4e7" text-anchor="middle">
+        <rect x="4" y="22" width="170" height="46" rx="10" class="nd"/><text x="89" y="51">deploy</text>
+        <rect x="246" y="22" width="170" height="46" rx="10" class="nd"/><text x="331" y="51">service</text>
+        <rect x="488" y="22" width="170" height="46" rx="10" class="nd"/><text x="573" y="51">table</text>
+        <rect x="730" y="22" width="166" height="46" rx="10" class="nd hot"/><text x="813" y="51">checkout</text>
+      </g>
+      <g class="links"><path d="M176 45H244"/><path d="M418 45H486"/><path d="M660 45H728"/></g>
+    </svg>
     <p class="line step" data-step="6">Dashboards show symptoms, <span class="m">not causes.</span></p>
-    <p class="line step" data-step="7">AI agents answer with confidence, <span class="m">not proof. They guess, and some act on the guess.</span></p>
+    <p class="line step" data-step="7">AI agents answer with confidence, <span class="m">not proof.</span></p>
+  </section>
+  <section class="state b3 off" id="b3" aria-label="The idea">
+    <h2 class="step" data-step="8">What if an agent could never blame <span class="m">what it can&rsquo;t prove as a path?</span></h2>
+    <p class="big brand step" data-step="9">Faultline. <span class="q">No path, no claim.</span></p>
+    <p class="line step" data-step="10">Made possible by <span class="fk">FalkorDB</span>, <span class="m">the graph engine underneath.</span></p>
   </section>
 <script>
-  // Step n reveals every line up to n; steps 5+ belong to the second state, which replaces the first.
+  // Step n reveals every line up to n; steps 5-7 are the second state and 8-10 the third, each replacing the last.
   window.__step = function (n) {
     document.getElementById("b1").classList.toggle("off", n >= 5);
-    document.getElementById("b2").classList.toggle("off", n < 5);
+    document.getElementById("b2").classList.toggle("off", n < 5 || n >= 8);
+    document.getElementById("b3").classList.toggle("off", n < 8);
     document.querySelectorAll(".step").forEach(function (el) { el.classList.toggle("on", Number(el.dataset.step) <= n); });
     document.body.dataset.step = String(n);
   };
   window.__go = function () { window.__step(1); };   // the 3:00 recorder's entry point
   if (window.top === window && !navigator.webdriver) {
     var n = 0;
-    var tick = function () { n += 1; window.__step(n); if (n < 7) setTimeout(tick, n === 4 ? 3200 : 2200); };
+    var tick = function () { n += 1; window.__step(n); if (n < 10) setTimeout(tick, n === 4 || n === 7 ? 3200 : 2200); };
     window.addEventListener("load", function () { setTimeout(tick, 300); });
   }
 </script>
