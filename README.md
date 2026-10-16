@@ -12,7 +12,7 @@
 
 **Live demo: [13-203-185-119.sslip.io](https://13-203-185-119.sslip.io)** (keyless: deterministic investigator, simulated GitHub; press Re-arm to reset it) · **Hosted MCP:** `https://13-203-185-119.sslip.io/mcp` with a public read-only demo key ([try it in one command](docs/MCP.md#try-the-hosted-server-now-public-demo-key)) · **Recorded replay (no backend):** [prashant-thakur77.github.io/Faultline](https://prashant-thakur77.github.io/Faultline/) · **Release:** [v1.0.0](https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.0.0) ([changelog](CHANGELOG.md))
 
-**Demo video (5:14, narrated):** [watch or download](https://github.com/Prashant-thakur77/Faultline/releases/download/v1.0.0/faultline-demo.mp4) (also at [`docs/media/demo.mp4`](docs/media/demo.mp4), captions in [`docs/video_captions.srt`](docs/video_captions.srt)). The 2 a.m. problem first, then how FalkorDB makes "no path, no claim" possible, shown in 3D on the hero incident's own data ([`/explainer`](frontend/src/components/explainer/)), then the product in one take on the GPU: the incident room, a real pull request on [faultline-demo-infra](https://github.com/Prashant-thakur77/faultline-demo-infra/pulls?q=is%3Apr) merged after the two-step approval and verified APPLIED, preflight, the company brain, and the measured trade of recall for safety. Every number on screen or in the voice is read from the page or the results file at record time; script and method in [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md).
+**Demo video (5:14, narrated):** [watch or download](https://github.com/Prashant-thakur77/Faultline/releases/download/v1.0.0/faultline-demo.mp4) (also at [`docs/media/demo.mp4`](docs/media/demo.mp4), captions in [`docs/video_captions.srt`](docs/video_captions.srt)). Chapters: 0:30 the thesis · 0:53 how FalkorDB decides, in 3D ([live `/explainer`](https://13-203-185-119.sslip.io/explainer), drawn from the hero incident's recorded FalkorDB results) · 2:56 the live incident · 3:38 a real PR, APPLIED · 4:23 the numbers. The 2 a.m. problem first, then how FalkorDB makes "no path, no claim" possible, then the product in one take on the GPU: the incident room, a real pull request on [faultline-demo-infra](https://github.com/Prashant-thakur77/faultline-demo-infra/pulls?q=is%3Apr) merged after the two-step approval and verified APPLIED, preflight, the company brain, and the measured trade of recall for safety. Every number on screen or in the voice is read from the page or the results file at record time; script and method in [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md).
 
 Built for Graph Hacks (WeMakeDevs × FalkorDB). Primary track T1, Agents That Act on Connected Data; secondary track T3, Company Brain.
 
@@ -583,7 +583,7 @@ Containment options are reordered by what worked before: a Beta-smoothed success
 
 <table>
 <tr>
-<td valign="top"><img src="docs/screenshots/02-incident-room.png" alt="Incident room: stage timeline, failure-flow graph with the proof path, suspects and the gate"><br><sub><b>Incident room.</b> Stage timeline, the failure-flow graph with the proof path lit hop by hop, suspects and the gate checklist.</sub></td>
+<td valign="top"><img src="docs/screenshots/02-incident-room.png" alt="Incident room, verdict first: the cause and its proven graph path in one line, then the timeline, the failure-flow graph and the root cause"><br><sub><b>Incident room, verdict first.</b> One line says what caused it and by which graph path; each card names the FalkorDB query behind it ("via FalkorDB · algo.SPpaths · Q-GATE-1").</sub></td>
 <td valign="top"><img src="docs/screenshots/03-naive-vs-faultline.png" alt="Naive recency ties two same-minute changes; the gate eliminates the look-alike by max flow and the decoy by no path"><br><sub><b>Naive vs the gate.</b> Recency ties the two same-minute deploys; the gate eliminates one by max flow (G5) and one by no path (G2).</sub></td>
 </tr>
 <tr>
@@ -610,7 +610,7 @@ Containment options are reordered by what worked before: a Beta-smoothed success
 | ![Where it sits: inputs, the per-tenant FalkorDB graph, the crew that proposes and the gate that decides, and what comes out](docs/screenshots/21-system-map.png) | ![Product tour: each tab is a real screenshot of a recorded run, with one callout on what matters](docs/screenshots/22-product-tour.png) |
 | ![FalkorDB Browser: the proof path in the tenant graph](docs/media/falkordb-browser-path.png) | ![FalkorDB Browser: the decisions constraining payment](docs/media/falkordb-browser-decisions.png) |
 
-![On a phone: the hero, the incident room's verdict pane, and the full-screen menu with the live system facts](docs/screenshots/15-mobile.png)
+<img src="docs/screenshots/15-mobile.png" width="300" alt="On a phone: the incident room opens on its verdict, with Verdict, Graph, Crew and Timeline tabs">
 
 </details>
 

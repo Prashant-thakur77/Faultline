@@ -1,5 +1,5 @@
 /**
- * The /explainer storyboard (docs/plans/M18 §3): nine scenes, each one real query or engine feature, its file, and a
+ * The /explainer storyboard: nine scenes, each one real query or engine feature, its file, and a
  * one-line caption. Captions quote numbers only through `V` (public/evals/summary.json, copied verbatim from
  * evals/results/latest.json) or the graph-stats export; a missing value renders as "–", never as a guess.
  */
