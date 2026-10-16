@@ -1,0 +1,327 @@
+{
+ "seed": 20261015,
+ "baseline": {
+  "correct": 100,
+  "wrong_confident": 0,
+  "abstained": 20,
+  "cases": 100,
+  "right_cause": 65,
+  "cause_cases": 65,
+  "other": 0,
+  "abstained_not_correct": 0
+ },
+ "curves": {
+  "noise": {
+   "2": {
+    "correct": 100,
+    "wrong_confident": 0,
+    "abstained": 20,
+    "cases": 100,
+    "right_cause": 65,
+    "cause_cases": 65,
+    "other": 0,
+    "abstained_not_correct": 0
+   },
+   "4": {
+    "correct": 100,
+    "wrong_confident": 0,
+    "abstained": 20,
+    "cases": 100,
+    "right_cause": 65,
+    "cause_cases": 65,
+    "other": 0,
+    "abstained_not_correct": 0
+   },
+   "8": {
+    "correct": 100,
+    "wrong_confident": 0,
+    "abstained": 20,
+    "cases": 100,
+    "right_cause": 65,
+    "cause_cases": 65,
+    "other": 0,
+    "abstained_not_correct": 0
+   },
+   "16": {
+    "correct": 100,
+    "wrong_confident": 0,
+    "abstained": 20,
+    "cases": 100,
+    "right_cause": 65,
+    "cause_cases": 65,
+    "other": 0,
+    "abstained_not_correct": 0
+   },
+   "32": {
+    "correct": 96,
+    "wrong_confident": 0,
+    "abstained": 24,
+    "cases": 100,
+    "right_cause": 61,
+    "cause_cases": 65,
+    "other": 0,
+    "abstained_not_correct": 4
+   },
+   "64": {
+    "correct": 82,
+    "wrong_confident": 0,
+    "abstained": 24,
+    "cases": 100,
+    "right_cause": 51,
+    "cause_cases": 65,
+    "other": 10,
+    "abstained_not_correct": 8
+   }
+  },
+  "missing": {
+   "0.1": {
+    "correct": 92,
+    "wrong_confident": 0,
+    "abstained": 28,
+    "cases": 100,
+    "right_cause": 59,
+    "cause_cases": 65,
+    "other": 0,
+    "abstained_not_correct": 8
+   },
+   "0.2": {
+    "correct": 83,
+    "wrong_confident": 0,
+    "abstained": 37,
+    "cases": 100,
+    "right_cause": 52,
+    "cause_cases": 65,
+    "other": 0,
+    "abstained_not_correct": 17
+   },
+   "0.3": {
+    "correct": 70,
+    "wrong_confident": 0,
+    "abstained": 50,
+    "cases": 100,
+    "right_cause": 39,
+    "cause_cases": 65,
+    "other": 0,
+    "abstained_not_correct": 30
+   },
+   "0.4": {
+    "correct": 64,
+    "wrong_confident": 0,
+    "abstained": 56,
+    "cases": 100,
+    "right_cause": 35,
+    "cause_cases": 65,
+    "other": 0,
+    "abstained_not_correct": 36
+   },
+   "0.5": {
+    "correct": 53,
+    "wrong_confident": 0,
+    "abstained": 67,
+    "cases": 100,
+    "right_cause": 27,
+    "cause_cases": 65,
+    "other": 0,
+    "abstained_not_correct": 47
+   },
+   "0.6": {
+    "correct": 46,
+    "wrong_confident": 0,
+    "abstained": 74,
+    "cases": 100,
+    "right_cause": 20,
+    "cause_cases": 65,
+    "other": 0,
+    "abstained_not_correct": 54
+   },
+   "0.7": {
+    "correct": 40,
+    "wrong_confident": 0,
+    "abstained": 80,
+    "cases": 100,
+    "right_cause": 14,
+    "cause_cases": 65,
+    "other": 0,
+    "abstained_not_correct": 60
+   },
+   "0.8": {
+    "correct": 28,
+    "wrong_confident": 0,
+    "abstained": 92,
+    "cases": 100,
+    "right_cause": 7,
+    "cause_cases": 65,
+    "other": 0,
+    "abstained_not_correct": 72
+   },
+   "0.9": {
+    "correct": 26,
+    "wrong_confident": 0,
+    "abstained": 94,
+    "cases": 100,
+    "right_cause": 3,
+    "cause_cases": 65,
+    "other": 0,
+    "abstained_not_correct": 74
+   },
+   "1.0": {
+    "correct": 20,
+    "wrong_confident": 0,
+    "abstained": 100,
+    "cases": 100,
+    "right_cause": 0,
+    "cause_cases": 65,
+    "other": 0,
+    "abstained_not_correct": 80
+   }
+  },
+  "effect": {
+   "0.5": {
+    "correct": 100,
+    "wrong_confident": 0,
+    "abstained": 20,
+    "cases": 100,
+    "right_cause": 65,
+    "cause_cases": 65,
+    "other": 0,
+    "abstained_not_correct": 0
+   },
+   "0.25": {
+    "correct": 99,
+    "wrong_confident": 0,
+    "abstained": 20,
+    "cases": 100,
+    "right_cause": 65,
+    "cause_cases": 65,
+    "other": 0,
+    "abstained_not_correct": 0
+   },
+   "0.1": {
+    "correct": 88,
+    "wrong_confident": 0,
+    "abstained": 20,
+    "cases": 100,
+    "right_cause": 65,
+    "cause_cases": 65,
+    "other": 0,
+    "abstained_not_correct": 0
+   },
+   "0.05": {
+    "correct": 54,
+    "wrong_confident": 0,
+    "abstained": 15,
+    "cases": 100,
+    "right_cause": 37,
+    "cause_cases": 65,
+    "other": 33,
+    "abstained_not_correct": 2
+   },
+   "0.025": {
+    "correct": 15,
+    "wrong_confident": 0,
+    "abstained": 0,
+    "cases": 100,
+    "right_cause": 0,
+    "cause_cases": 65,
+    "other": 85,
+    "abstained_not_correct": 0
+   }
+  }
+ },
+ "engine_pressure": [
+  {
+   "after": "robustness-None-None",
+   "fraction": 0.402
+  },
+  {
+   "after": "robustness-noise-2",
+   "fraction": 0.432
+  },
+  {
+   "after": "robustness-noise-4",
+   "fraction": 0.463
+  },
+  {
+   "after": "robustness-noise-8",
+   "fraction": 0.493
+  },
+  {
+   "after": "robustness-noise-16",
+   "fraction": 0.528,
+   "compacted_to": 0.106
+  },
+  {
+   "after": "robustness-noise-32",
+   "fraction": 0.206
+  },
+  {
+   "after": "robustness-noise-64",
+   "fraction": 0.229
+  },
+  {
+   "after": "robustness-missing-0.1",
+   "fraction": 0.262
+  },
+  {
+   "after": "robustness-missing-0.2",
+   "fraction": 0.288
+  },
+  {
+   "after": "robustness-missing-0.3",
+   "fraction": 0.305
+  },
+  {
+   "after": "robustness-missing-0.4",
+   "fraction": 0.324
+  },
+  {
+   "after": "robustness-missing-0.5",
+   "fraction": 0.345
+  },
+  {
+   "after": "robustness-missing-0.6",
+   "fraction": 0.359
+  },
+  {
+   "after": "robustness-missing-0.7",
+   "fraction": 0.371
+  },
+  {
+   "after": "robustness-missing-0.8",
+   "fraction": 0.378
+  },
+  {
+   "after": "robustness-missing-0.9",
+   "fraction": 0.387
+  },
+  {
+   "after": "robustness-missing-1.0",
+   "fraction": 0.391
+  },
+  {
+   "after": "robustness-effect-0.5",
+   "fraction": 0.446
+  },
+  {
+   "after": "robustness-effect-0.25",
+   "fraction": 0.488
+  },
+  {
+   "after": "robustness-effect-0.1",
+   "fraction": 0.513,
+   "compacted_to": 0.106
+  },
+  {
+   "after": "robustness-effect-0.05",
+   "fraction": 0.181
+  },
+  {
+   "after": "robustness-effect-0.025",
+   "fraction": 0.174
+  }
+ ],
+ "seconds": 1189.1,
+ "started": "2026-10-16T13:19:18",
+ "finished": "2026-10-16T13:39:07",
+ "reason": "M18 phase 2: pre-registered robustness curves"
+}

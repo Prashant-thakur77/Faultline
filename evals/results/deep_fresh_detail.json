@@ -1,0 +1,4450 @@
+{
+ "seed": 20261016,
+ "all": {
+  "cases": 140,
+  "cause_cases": 100,
+  "correct": 91,
+  "correct_strict": 82,
+  "bystander_not_confident": 18,
+  "right_cause": 51,
+  "wrong_confident": 0,
+  "abstained": 89,
+  "ok": 127,
+  "t": {
+   "right_strict": 85,
+   "right_frac": 85.0,
+   "wrong_frac": 55.0,
+   "wrong_any": 55,
+   "abstained": 0
+  },
+  "tplus": {
+   "right_strict": 85,
+   "right_frac": 85.0,
+   "wrong_frac": 55.0,
+   "wrong_any": 55,
+   "abstained": 0
+  },
+  "acceptances": {
+   "expected_cause": 9,
+   "other_faulty_change": 0,
+   "bystander": 9
+  }
+ },
+ "by_category": {
+  "abstain_downstream": {
+   "cases": 20,
+   "cause_cases": 0,
+   "correct": 20,
+   "correct_strict": 11,
+   "bystander_not_confident": 9,
+   "right_cause": 0,
+   "wrong_confident": 0,
+   "abstained": 20,
+   "ok": 20,
+   "t": {
+    "right_strict": 0,
+    "right_frac": 0,
+    "wrong_frac": 20.0,
+    "wrong_any": 20,
+    "abstained": 0
+   },
+   "tplus": {
+    "right_strict": 0,
+    "right_frac": 0,
+    "wrong_frac": 20.0,
+    "wrong_any": 20,
+    "abstained": 0
+   },
+   "acceptances": {
+    "expected_cause": 0,
+    "other_faulty_change": 0,
+    "bystander": 9
+   }
+  },
+  "deep_onpath": {
+   "cases": 20,
+   "cause_cases": 20,
+   "correct": 11,
+   "correct_strict": 11,
+   "bystander_not_confident": 0,
+   "right_cause": 11,
+   "wrong_confident": 0,
+   "abstained": 9,
+   "ok": 11,
+   "t": {
+    "right_strict": 15,
+    "right_frac": 15.0,
+    "wrong_frac": 5.0,
+    "wrong_any": 5,
+    "abstained": 0
+   },
+   "tplus": {
+    "right_strict": 15,
+    "right_frac": 15.0,
+    "wrong_frac": 5.0,
+    "wrong_any": 5,
+    "abstained": 0
+   },
+   "acceptances": {
+    "expected_cause": 0,
+    "other_faulty_change": 0,
+    "bystander": 0
+   }
+  },
+  "late_upstream": {
+   "cases": 20,
+   "cause_cases": 20,
+   "correct": 0,
+   "correct_strict": 0,
+   "bystander_not_confident": 0,
+   "right_cause": 0,
+   "wrong_confident": 0,
+   "abstained": 20,
+   "ok": 20,
+   "t": {
+    "right_strict": 20,
+    "right_frac": 20.0,
+    "wrong_frac": 0.0,
+    "wrong_any": 0,
+    "abstained": 0
+   },
+   "tplus": {
+    "right_strict": 20,
+    "right_frac": 20.0,
+    "wrong_frac": 0.0,
+    "wrong_any": 0,
+    "abstained": 0
+   },
+   "acceptances": {
+    "expected_cause": 0,
+    "other_faulty_change": 0,
+    "bystander": 0
+   }
+  },
+  "noisy_upstream": {
+   "cases": 20,
+   "cause_cases": 20,
+   "correct": 11,
+   "correct_strict": 11,
+   "bystander_not_confident": 9,
+   "right_cause": 11,
+   "wrong_confident": 0,
+   "abstained": 9,
+   "ok": 20,
+   "t": {
+    "right_strict": 20,
+    "right_frac": 20.0,
+    "wrong_frac": 0.0,
+    "wrong_any": 0,
+    "abstained": 0
+   },
+   "tplus": {
+    "right_strict": 20,
+    "right_frac": 20.0,
+    "wrong_frac": 0.0,
+    "wrong_any": 0,
+    "abstained": 0
+   },
+   "acceptances": {
+    "expected_cause": 9,
+    "other_faulty_change": 0,
+    "bystander": 0
+   }
+  },
+  "symptom_decoy": {
+   "cases": 20,
+   "cause_cases": 20,
+   "correct": 16,
+   "correct_strict": 16,
+   "bystander_not_confident": 0,
+   "right_cause": 16,
+   "wrong_confident": 0,
+   "abstained": 4,
+   "ok": 16,
+   "t": {
+    "right_strict": 17,
+    "right_frac": 17.0,
+    "wrong_frac": 3.0,
+    "wrong_any": 3,
+    "abstained": 0
+   },
+   "tplus": {
+    "right_strict": 17,
+    "right_frac": 17.0,
+    "wrong_frac": 3.0,
+    "wrong_any": 3,
+    "abstained": 0
+   },
+   "acceptances": {
+    "expected_cause": 0,
+    "other_faulty_change": 0,
+    "bystander": 0
+   }
+  },
+  "two_causes_chain": {
+   "cases": 20,
+   "cause_cases": 0,
+   "correct": 20,
+   "correct_strict": 20,
+   "bystander_not_confident": 0,
+   "right_cause": 0,
+   "wrong_confident": 0,
+   "abstained": 20,
+   "ok": 20,
+   "t": {
+    "right_strict": 0,
+    "right_frac": 0,
+    "wrong_frac": 20.0,
+    "wrong_any": 20,
+    "abstained": 0
+   },
+   "tplus": {
+    "right_strict": 0,
+    "right_frac": 0,
+    "wrong_frac": 20.0,
+    "wrong_any": 20,
+    "abstained": 0
+   },
+   "acceptances": {
+    "expected_cause": 0,
+    "other_faulty_change": 0,
+    "bystander": 0
+   }
+  },
+  "weak_link": {
+   "cases": 20,
+   "cause_cases": 20,
+   "correct": 13,
+   "correct_strict": 13,
+   "bystander_not_confident": 0,
+   "right_cause": 13,
+   "wrong_confident": 0,
+   "abstained": 7,
+   "ok": 20,
+   "t": {
+    "right_strict": 13,
+    "right_frac": 13.0,
+    "wrong_frac": 7.0,
+    "wrong_any": 7,
+    "abstained": 0
+   },
+   "tplus": {
+    "right_strict": 13,
+    "right_frac": 13.0,
+    "wrong_frac": 7.0,
+    "wrong_any": 7,
+    "abstained": 0
+   },
+   "acceptances": {
+    "expected_cause": 0,
+    "other_faulty_change": 0,
+    "bystander": 0
+   }
+  }
+ },
+ "rows": [
+  {
+   "id": "db001",
+   "category": "deep_onpath",
+   "outcome": "CONFIRMED",
+   "blamed": "D-d0693af7",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 3,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db002",
+   "category": "deep_onpath",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 3,
+   "ok": false,
+   "correct_strict": false
+  },
+  {
+   "id": "db003",
+   "category": "deep_onpath",
+   "outcome": "CONFIRMED",
+   "blamed": "D-40dd07fb",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 3,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db004",
+   "category": "deep_onpath",
+   "outcome": "CONFIRMED",
+   "blamed": "D-8d180a11",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db005",
+   "category": "deep_onpath",
+   "outcome": "CONFIRMED",
+   "blamed": "D-ee99dfc3",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db006",
+   "category": "deep_onpath",
+   "outcome": "CONFIRMED",
+   "blamed": "D-48157c27",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 3,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db007",
+   "category": "deep_onpath",
+   "outcome": "CONFIRMED",
+   "blamed": "D-e7f59be8",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db008",
+   "category": "deep_onpath",
+   "outcome": "CONFIRMED",
+   "blamed": "D-3cecda0f",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db009",
+   "category": "deep_onpath",
+   "outcome": "CONFIRMED",
+   "blamed": "D-6e21afc6",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db010",
+   "category": "deep_onpath",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": false,
+   "correct_strict": false
+  },
+  {
+   "id": "db011",
+   "category": "deep_onpath",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 3,
+   "ok": false,
+   "correct_strict": false
+  },
+  {
+   "id": "db012",
+   "category": "deep_onpath",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": false,
+   "correct_strict": false
+  },
+  {
+   "id": "db013",
+   "category": "deep_onpath",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": false,
+   "correct_strict": false
+  },
+  {
+   "id": "db014",
+   "category": "deep_onpath",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 3,
+   "ok": false,
+   "correct_strict": false
+  },
+  {
+   "id": "db015",
+   "category": "deep_onpath",
+   "outcome": "CONFIRMED",
+   "blamed": "D-19df0782",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db016",
+   "category": "deep_onpath",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": false,
+   "correct_strict": false
+  },
+  {
+   "id": "db017",
+   "category": "deep_onpath",
+   "outcome": "CONFIRMED",
+   "blamed": "D-539a92cc",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 3,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db018",
+   "category": "deep_onpath",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": false,
+   "correct_strict": false
+  },
+  {
+   "id": "db019",
+   "category": "deep_onpath",
+   "outcome": "CONFIRMED",
+   "blamed": "D-92eac7c2",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db020",
+   "category": "deep_onpath",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 3,
+   "ok": false,
+   "correct_strict": false
+  },
+  {
+   "id": "db021",
+   "category": "symptom_decoy",
+   "outcome": "CONFIRMED",
+   "blamed": "D-e5ca8b51",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db022",
+   "category": "symptom_decoy",
+   "outcome": "CONFIRMED",
+   "blamed": "D-fd3e0263",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db023",
+   "category": "symptom_decoy",
+   "outcome": "CONFIRMED",
+   "blamed": "D-16e94e95",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db024",
+   "category": "symptom_decoy",
+   "outcome": "CONFIRMED",
+   "blamed": "D-9d210d64",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db025",
+   "category": "symptom_decoy",
+   "outcome": "CONFIRMED",
+   "blamed": "D-49cc7dd0",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db026",
+   "category": "symptom_decoy",
+   "outcome": "CONFIRMED",
+   "blamed": "D-4b1b4cd1",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db027",
+   "category": "symptom_decoy",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": false,
+   "correct_strict": false
+  },
+  {
+   "id": "db028",
+   "category": "symptom_decoy",
+   "outcome": "CONFIRMED",
+   "blamed": "D-51368119",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db029",
+   "category": "symptom_decoy",
+   "outcome": "CONFIRMED",
+   "blamed": "D-051ec0b5",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db030",
+   "category": "symptom_decoy",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": false,
+   "correct_strict": false
+  },
+  {
+   "id": "db031",
+   "category": "symptom_decoy",
+   "outcome": "CONFIRMED",
+   "blamed": "D-310f4c14",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db032",
+   "category": "symptom_decoy",
+   "outcome": "CONFIRMED",
+   "blamed": "D-d27dde18",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db033",
+   "category": "symptom_decoy",
+   "outcome": "CONFIRMED",
+   "blamed": "D-96e43ab1",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db034",
+   "category": "symptom_decoy",
+   "outcome": "CONFIRMED",
+   "blamed": "D-d95dd181",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db035",
+   "category": "symptom_decoy",
+   "outcome": "CONFIRMED",
+   "blamed": "D-e37ceb0c",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db036",
+   "category": "symptom_decoy",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": false,
+   "correct_strict": false
+  },
+  {
+   "id": "db037",
+   "category": "symptom_decoy",
+   "outcome": "CONFIRMED",
+   "blamed": "D-c1623c73",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db038",
+   "category": "symptom_decoy",
+   "outcome": "CONFIRMED",
+   "blamed": "D-426f8ed7",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db039",
+   "category": "symptom_decoy",
+   "outcome": "CONFIRMED",
+   "blamed": "D-e3868e30",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db040",
+   "category": "symptom_decoy",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 3,
+   "ok": false,
+   "correct_strict": false
+  },
+  {
+   "id": "db041",
+   "category": "abstain_downstream",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db042",
+   "category": "abstain_downstream",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-13a3544c",
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 3,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db043",
+   "category": "abstain_downstream",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db044",
+   "category": "abstain_downstream",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db045",
+   "category": "abstain_downstream",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db046",
+   "category": "abstain_downstream",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-2d45b05e",
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db047",
+   "category": "abstain_downstream",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-31991d1a",
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db048",
+   "category": "abstain_downstream",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 3,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db049",
+   "category": "abstain_downstream",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-3d7a9043",
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db050",
+   "category": "abstain_downstream",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-5630a6a8",
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 3,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db051",
+   "category": "abstain_downstream",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db052",
+   "category": "abstain_downstream",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-98235931",
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db053",
+   "category": "abstain_downstream",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-935947bf",
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db054",
+   "category": "abstain_downstream",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db055",
+   "category": "abstain_downstream",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-fca0d6cb",
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db056",
+   "category": "abstain_downstream",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db057",
+   "category": "abstain_downstream",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db058",
+   "category": "abstain_downstream",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db059",
+   "category": "abstain_downstream",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db060",
+   "category": "abstain_downstream",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-1fcf19ff",
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db061",
+   "category": "two_causes_chain",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db062",
+   "category": "two_causes_chain",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db063",
+   "category": "two_causes_chain",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 3,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db064",
+   "category": "two_causes_chain",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db065",
+   "category": "two_causes_chain",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db066",
+   "category": "two_causes_chain",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db067",
+   "category": "two_causes_chain",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db068",
+   "category": "two_causes_chain",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 3,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db069",
+   "category": "two_causes_chain",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db070",
+   "category": "two_causes_chain",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 4,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db071",
+   "category": "two_causes_chain",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db072",
+   "category": "two_causes_chain",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 3,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db073",
+   "category": "two_causes_chain",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db074",
+   "category": "two_causes_chain",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 3,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db075",
+   "category": "two_causes_chain",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 3,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db076",
+   "category": "two_causes_chain",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db077",
+   "category": "two_causes_chain",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db078",
+   "category": "two_causes_chain",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db079",
+   "category": "two_causes_chain",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db080",
+   "category": "two_causes_chain",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": false,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db081",
+   "category": "weak_link",
+   "outcome": "CONFIRMED",
+   "blamed": "D-11939c0f",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": null,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db082",
+   "category": "weak_link",
+   "outcome": "CONFIRMED",
+   "blamed": "D-9795599f",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": null,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db083",
+   "category": "weak_link",
+   "outcome": "CONFIRMED",
+   "blamed": "D-8f8a2c51",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": null,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db084",
+   "category": "weak_link",
+   "outcome": "CONFIRMED",
+   "blamed": "D-ffd08245",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": null,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db085",
+   "category": "weak_link",
+   "outcome": "CONFIRMED",
+   "blamed": "D-1d21233a",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": null,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db086",
+   "category": "weak_link",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": null,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db087",
+   "category": "weak_link",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": null,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db088",
+   "category": "weak_link",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": null,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db089",
+   "category": "weak_link",
+   "outcome": "CONFIRMED",
+   "blamed": "D-831304eb",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": null,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db090",
+   "category": "weak_link",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": null,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db091",
+   "category": "weak_link",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": null,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db092",
+   "category": "weak_link",
+   "outcome": "CONFIRMED",
+   "blamed": "D-fee83594",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": null,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db093",
+   "category": "weak_link",
+   "outcome": "CONFIRMED",
+   "blamed": "D-01dd7feb",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": null,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db094",
+   "category": "weak_link",
+   "outcome": "CONFIRMED",
+   "blamed": "D-014a7f73",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": null,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db095",
+   "category": "weak_link",
+   "outcome": "CONFIRMED",
+   "blamed": "D-6c506af2",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": null,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db096",
+   "category": "weak_link",
+   "outcome": "CONFIRMED",
+   "blamed": "D-b183318a",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": null,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db097",
+   "category": "weak_link",
+   "outcome": "CONFIRMED",
+   "blamed": "D-009ad2ac",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": null,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db098",
+   "category": "weak_link",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": null,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db099",
+   "category": "weak_link",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": null,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db100",
+   "category": "weak_link",
+   "outcome": "CONFIRMED",
+   "blamed": "D-53c1293c",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": null,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db101",
+   "category": "late_upstream",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db102",
+   "category": "late_upstream",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db103",
+   "category": "late_upstream",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db104",
+   "category": "late_upstream",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db105",
+   "category": "late_upstream",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db106",
+   "category": "late_upstream",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 3,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db107",
+   "category": "late_upstream",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db108",
+   "category": "late_upstream",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db109",
+   "category": "late_upstream",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db110",
+   "category": "late_upstream",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db111",
+   "category": "late_upstream",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db112",
+   "category": "late_upstream",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db113",
+   "category": "late_upstream",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db114",
+   "category": "late_upstream",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 4,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db115",
+   "category": "late_upstream",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db116",
+   "category": "late_upstream",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db117",
+   "category": "late_upstream",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db118",
+   "category": "late_upstream",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 3,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db119",
+   "category": "late_upstream",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db120",
+   "category": "late_upstream",
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db121",
+   "category": "noisy_upstream",
+   "outcome": "CONFIRMED",
+   "blamed": "D-9b2cc3c9",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db122",
+   "category": "noisy_upstream",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-600d672e",
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db123",
+   "category": "noisy_upstream",
+   "outcome": "CONFIRMED",
+   "blamed": "D-aa0d5d1b",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db124",
+   "category": "noisy_upstream",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-c4039cd0",
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 3,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db125",
+   "category": "noisy_upstream",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-d91eb657",
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 3,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db126",
+   "category": "noisy_upstream",
+   "outcome": "CONFIRMED",
+   "blamed": "D-0697ba2b",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db127",
+   "category": "noisy_upstream",
+   "outcome": "CONFIRMED",
+   "blamed": "D-0cf4292b",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db128",
+   "category": "noisy_upstream",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-26c9a208",
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db129",
+   "category": "noisy_upstream",
+   "outcome": "CONFIRMED",
+   "blamed": "D-71c457e9",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db130",
+   "category": "noisy_upstream",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-3509bb44",
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 4,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db131",
+   "category": "noisy_upstream",
+   "outcome": "CONFIRMED",
+   "blamed": "D-daa0ecc2",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db132",
+   "category": "noisy_upstream",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-ecc96d65",
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db133",
+   "category": "noisy_upstream",
+   "outcome": "CONFIRMED",
+   "blamed": "D-1c23eebf",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db134",
+   "category": "noisy_upstream",
+   "outcome": "CONFIRMED",
+   "blamed": "D-2ad0ff60",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db135",
+   "category": "noisy_upstream",
+   "outcome": "CONFIRMED",
+   "blamed": "D-8667993d",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db136",
+   "category": "noisy_upstream",
+   "outcome": "CONFIRMED",
+   "blamed": "D-a0d6f948",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": true
+  },
+  {
+   "id": "db137",
+   "category": "noisy_upstream",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-e32c6fd5",
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db138",
+   "category": "noisy_upstream",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-21b26354",
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db139",
+   "category": "noisy_upstream",
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-8bce7eca",
+   "has_cause": true,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "correct": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 1,
+   "ok": true,
+   "correct_strict": false
+  },
+  {
+   "id": "db140",
+   "category": "noisy_upstream",
+   "outcome": "CONFIRMED",
+   "blamed": "D-cb1d92e4",
+   "accepted_not_confident": null,
+   "has_cause": true,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "correct": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED",
+   "hops": 2,
+   "ok": true,
+   "correct_strict": true
+  }
+ ],
+ "started": "2026-10-16T13:39:15",
+ "finished": "2026-10-16T13:41:02",
+ "reason": "M18 phase 2: headline deep bench re-run with per-world rows (not-confident acceptances); must reproduce run_0033"
+}

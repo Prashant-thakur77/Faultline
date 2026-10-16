@@ -41,6 +41,9 @@ from faultline.graph.ro import RO  # noqa: E402
 
 SEED = 20261015
 KNOBS = {"duplicates": [2, 5, 10], "missing": [0.2, 0.5, 0.8], "noise": [2, 4], "intermittent": [1]}
+# PREREGISTRATION amendment 2026-10-16: the same knobs as curves, plus the fault's size (every effect's error rate scaled)
+CURVES = {"noise": [2, 4, 8, 16, 32, 64], "missing": [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+          "effect": [0.5, 0.25, 0.1, 0.05, 0.025]}
 
 
 def _spec(case: dict, knob: str, level) -> dict:
@@ -53,6 +56,8 @@ def _spec(case: dict, knob: str, level) -> dict:
         spec["alerts"] = spec["alerts"] + extra
     elif knob == "noise":
         spec["noise"] = 0.15 * float(level)
+    elif knob == "effect":
+        spec["effects"] = [{**e, "error_rate": round(float(e["error_rate"]) * float(level), 5)} for e in spec.get("effects", [])]
     elif knob == "intermittent":
         out = []
         for e in spec.get("effects", []):
@@ -92,6 +97,32 @@ def _summary(rows: list[dict]) -> dict:
             "abstained": sum(r["abstained"] for r in rows), "cases": len(rows)}
 
 
+def run_curves(seed: int = SEED, progress: bool = True) -> dict:
+    """Every curve point on the same 100 worlds, compacting the engine between points (harness._relieve_engine)."""
+    import harness
+
+    t0 = time.perf_counter()
+    cases = gate_bench.generate(seed=seed)
+    log: list[dict] = []
+
+    def point(knob, level):
+        rows = [_run(c, knob, level) for c in cases]
+        b = gate_bench.buckets(rows, cases)
+        s = _summary(rows) | {"right_cause": b["right_cause"], "cause_cases": b["confirm_cases"],
+                              "other": b["other"], "abstained_not_correct": b["abstained_not_correct"]}
+        harness._relieve_engine(f"robustness-{knob}-{level}", log)
+        if progress:
+            print(f"[curves] {knob}={level}: {s}", file=sys.stderr, flush=True)
+        return s
+
+    out: dict = {"seed": seed, "baseline": point(None, None), "curves": {}}
+    for knob, levels in CURVES.items():
+        out["curves"][knob] = {str(lv): point(knob, lv) for lv in levels}
+    out["engine_pressure"] = log
+    out["seconds"] = round(time.perf_counter() - t0, 1)
+    return out
+
+
 def run(knobs=tuple(KNOBS), seed: int = SEED, progress: bool = True) -> dict:
     t0 = time.perf_counter()
     cases = gate_bench.generate(seed=seed)
@@ -120,7 +151,17 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--knobs", default=",".join(KNOBS))
     ap.add_argument("--out")
+    ap.add_argument("--curves", action="store_true", help="the 2026-10-16 curves → evals/results/robustness_curves.json")
+    ap.add_argument("--reason", default="")
     a = ap.parse_args()
+    if a.curves:
+        if not a.reason:
+            raise SystemExit("--curves needs --reason")
+        started = time.strftime("%Y-%m-%dT%H:%M:%S")
+        r = run_curves()
+        r.update({"started": started, "finished": time.strftime("%Y-%m-%dT%H:%M:%S"), "reason": a.reason})
+        Path(a.out or ROOT / "evals" / "results" / "robustness_curves.json").write_text(json.dumps(r, indent=1) + "\n")
+        return
     r = run(tuple(k for k in a.knobs.split(",") if k))
     if a.out:
         Path(a.out).write_text(json.dumps(r, indent=2, default=str))

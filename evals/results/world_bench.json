@@ -1,0 +1,2813 @@
+{
+ "seed": 20261131,
+ "all": {
+  "cases": 100,
+  "cause_cases": 64,
+  "right_cause": 43,
+  "wrong_confident": 0,
+  "abstained": 41,
+  "verdict_ok": 79,
+  "bystander_not_confident": 27,
+  "t": {
+   "right_strict": 56,
+   "right_frac": 56.0,
+   "wrong_any": 44,
+   "wrong_frac": 44.0,
+   "abstained": 0
+  },
+  "tplus": {
+   "right_strict": 56,
+   "right_frac": 56.0,
+   "wrong_any": 10,
+   "wrong_frac": 10.0,
+   "abstained": 34
+  }
+ },
+ "by_category": {
+  "cause": {
+   "cases": 64,
+   "cause_cases": 64,
+   "right_cause": 43,
+   "wrong_confident": 0,
+   "abstained": 21,
+   "verdict_ok": 43,
+   "bystander_not_confident": 15,
+   "t": {
+    "right_strict": 56,
+    "right_frac": 56.0,
+    "wrong_any": 8,
+    "wrong_frac": 8.0,
+    "abstained": 0
+   },
+   "tplus": {
+    "right_strict": 56,
+    "right_frac": 56.0,
+    "wrong_any": 2,
+    "wrong_frac": 2.0,
+    "abstained": 6
+   }
+  },
+  "unchanged": {
+   "cases": 20,
+   "cause_cases": 0,
+   "right_cause": 0,
+   "wrong_confident": 0,
+   "abstained": 20,
+   "verdict_ok": 20,
+   "bystander_not_confident": 12,
+   "t": {
+    "right_strict": 0,
+    "right_frac": 0,
+    "wrong_any": 20,
+    "wrong_frac": 20.0,
+    "abstained": 0
+   },
+   "tplus": {
+    "right_strict": 0,
+    "right_frac": 0,
+    "wrong_any": 8,
+    "wrong_frac": 8.0,
+    "abstained": 12
+   }
+  },
+  "quiet": {
+   "cases": 16,
+   "cause_cases": 0,
+   "right_cause": 0,
+   "wrong_confident": 0,
+   "abstained": 0,
+   "verdict_ok": 16,
+   "bystander_not_confident": 0,
+   "t": {
+    "right_strict": 0,
+    "right_frac": 0,
+    "wrong_any": 16,
+    "wrong_frac": 16.0,
+    "abstained": 0
+   },
+   "tplus": {
+    "right_strict": 0,
+    "right_frac": 0,
+    "wrong_any": 0,
+    "wrong_frac": 0.0,
+    "abstained": 16
+   }
+  }
+ },
+ "rows": [
+  {
+   "id": "wb001",
+   "category": "unchanged",
+   "error": 0.367,
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb002",
+   "category": "cause",
+   "error": 0.32,
+   "outcome": "CONFIRMED",
+   "blamed": "D-133b98cd",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb003",
+   "category": "cause",
+   "error": 0.289,
+   "outcome": "CONFIRMED",
+   "blamed": "D-3a2963c4",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb004",
+   "category": "cause",
+   "error": 0.125,
+   "outcome": "CONFIRMED",
+   "blamed": "D-550e16a4",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb005",
+   "category": "unchanged",
+   "error": 0.5,
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-afae3a89",
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb006",
+   "category": "unchanged",
+   "error": 0.36,
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-64f848a6",
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NOT_CONFIDENT"
+  },
+  {
+   "id": "wb007",
+   "category": "cause",
+   "error": 0.062,
+   "outcome": "CONFIRMED",
+   "blamed": "D-55b34a46",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb008",
+   "category": "cause",
+   "error": 0.387,
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": false,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NO_INCIDENT"
+  },
+  {
+   "id": "wb009",
+   "category": "unchanged",
+   "error": 0.209,
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb010",
+   "category": "cause",
+   "error": 0.41,
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": false,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NO_INCIDENT"
+  },
+  {
+   "id": "wb011",
+   "category": "cause",
+   "error": 0.176,
+   "outcome": "CONFIRMED",
+   "blamed": "D-125a48b6",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb012",
+   "category": "unchanged",
+   "error": 0.376,
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-e438a756",
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb013",
+   "category": "cause",
+   "error": 0.554,
+   "outcome": "CONFIRMED",
+   "blamed": "D-ce82a375",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb014",
+   "category": "cause",
+   "error": 0.195,
+   "outcome": "CONFIRMED",
+   "blamed": "D-41c007c0",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb015",
+   "category": "unchanged",
+   "error": 0.569,
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-c402f2aa",
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NOT_CONFIDENT"
+  },
+  {
+   "id": "wb016",
+   "category": "cause",
+   "error": 0.124,
+   "outcome": "CONFIRMED",
+   "blamed": "D-cb280f92",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb017",
+   "category": "cause",
+   "error": 0.588,
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-ff464814",
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb018",
+   "category": "quiet",
+   "error": 0.173,
+   "outcome": "NO_INCIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NO_INCIDENT"
+  },
+  {
+   "id": "wb019",
+   "category": "cause",
+   "error": 0.086,
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-7848491d",
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb020",
+   "category": "cause",
+   "error": 0.22,
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-210172b6",
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb021",
+   "category": "cause",
+   "error": 0.445,
+   "outcome": "CONFIRMED",
+   "blamed": "D-dbda4a9a",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb022",
+   "category": "quiet",
+   "error": 0.102,
+   "outcome": "NO_INCIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NO_INCIDENT"
+  },
+  {
+   "id": "wb023",
+   "category": "unchanged",
+   "error": 0.463,
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-3042c34d",
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NOT_CONFIDENT"
+  },
+  {
+   "id": "wb024",
+   "category": "quiet",
+   "error": 0.293,
+   "outcome": "NO_INCIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NO_INCIDENT"
+  },
+  {
+   "id": "wb025",
+   "category": "cause",
+   "error": 0.344,
+   "outcome": "CONFIRMED",
+   "blamed": "D-c0c667de",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb026",
+   "category": "unchanged",
+   "error": 0.382,
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb027",
+   "category": "unchanged",
+   "error": 0.1,
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-977cb0b0",
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NOT_CONFIDENT"
+  },
+  {
+   "id": "wb028",
+   "category": "cause",
+   "error": 0.328,
+   "outcome": "CONFIRMED",
+   "blamed": "D-17225143",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb029",
+   "category": "cause",
+   "error": 0.525,
+   "outcome": "CONFIRMED",
+   "blamed": "D-c9799ccc",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb030",
+   "category": "cause",
+   "error": 0.42,
+   "outcome": "CONFIRMED",
+   "blamed": "D-2d3941f5",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb031",
+   "category": "cause",
+   "error": 0.436,
+   "outcome": "CONFIRMED",
+   "blamed": "D-68c2ee32",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb032",
+   "category": "cause",
+   "error": 0.549,
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-c67629ca",
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb033",
+   "category": "cause",
+   "error": 0.073,
+   "outcome": "CONFIRMED",
+   "blamed": "D-ebdbf2ef",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb034",
+   "category": "cause",
+   "error": 0.182,
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-b3b7d938",
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb035",
+   "category": "cause",
+   "error": 0.311,
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-528f875f",
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb036",
+   "category": "cause",
+   "error": 0.241,
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-6a717390",
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb037",
+   "category": "cause",
+   "error": 0.255,
+   "outcome": "CONFIRMED",
+   "blamed": "D-2b89a287",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb038",
+   "category": "cause",
+   "error": 0.562,
+   "outcome": "CONFIRMED",
+   "blamed": "D-77906ab0",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb039",
+   "category": "unchanged",
+   "error": 0.483,
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NOT_CONFIDENT"
+  },
+  {
+   "id": "wb040",
+   "category": "cause",
+   "error": 0.279,
+   "outcome": "CONFIRMED",
+   "blamed": "D-dd4764d6",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb041",
+   "category": "quiet",
+   "error": 0.425,
+   "outcome": "NO_INCIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NO_INCIDENT"
+  },
+  {
+   "id": "wb042",
+   "category": "cause",
+   "error": 0.058,
+   "outcome": "CONFIRMED",
+   "blamed": "D-85113322",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb043",
+   "category": "unchanged",
+   "error": 0.416,
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NOT_CONFIDENT"
+  },
+  {
+   "id": "wb044",
+   "category": "quiet",
+   "error": 0.401,
+   "outcome": "NO_INCIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NO_INCIDENT"
+  },
+  {
+   "id": "wb045",
+   "category": "quiet",
+   "error": 0.526,
+   "outcome": "NO_INCIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NO_INCIDENT"
+  },
+  {
+   "id": "wb046",
+   "category": "cause",
+   "error": 0.54,
+   "outcome": "CONFIRMED",
+   "blamed": "D-bd7b4f65",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb047",
+   "category": "quiet",
+   "error": 0.569,
+   "outcome": "NO_INCIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NO_INCIDENT"
+  },
+  {
+   "id": "wb048",
+   "category": "cause",
+   "error": 0.184,
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-39fb0ed8",
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb049",
+   "category": "quiet",
+   "error": 0.315,
+   "outcome": "NO_INCIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NO_INCIDENT"
+  },
+  {
+   "id": "wb050",
+   "category": "cause",
+   "error": 0.234,
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-c74bd406",
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb051",
+   "category": "cause",
+   "error": 0.471,
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-c95d85f5",
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb052",
+   "category": "cause",
+   "error": 0.314,
+   "outcome": "CONFIRMED",
+   "blamed": "D-4ae43712",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb053",
+   "category": "cause",
+   "error": 0.26,
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": false,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NO_INCIDENT"
+  },
+  {
+   "id": "wb054",
+   "category": "cause",
+   "error": 0.491,
+   "outcome": "CONFIRMED",
+   "blamed": "D-b2e2bc96",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb055",
+   "category": "quiet",
+   "error": 0.501,
+   "outcome": "NO_INCIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NO_INCIDENT"
+  },
+  {
+   "id": "wb056",
+   "category": "cause",
+   "error": 0.472,
+   "outcome": "CONFIRMED",
+   "blamed": "D-4bfcfb35",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb057",
+   "category": "cause",
+   "error": 0.37,
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-2ff32258",
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb058",
+   "category": "cause",
+   "error": 0.139,
+   "outcome": "CONFIRMED",
+   "blamed": "D-bf100ce2",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb059",
+   "category": "cause",
+   "error": 0.471,
+   "outcome": "CONFIRMED",
+   "blamed": "D-62241b0c",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb060",
+   "category": "cause",
+   "error": 0.297,
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": false,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NO_INCIDENT"
+  },
+  {
+   "id": "wb061",
+   "category": "cause",
+   "error": 0.102,
+   "outcome": "CONFIRMED",
+   "blamed": "D-dfd48608",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb062",
+   "category": "cause",
+   "error": 0.597,
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": false,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NO_INCIDENT"
+  },
+  {
+   "id": "wb063",
+   "category": "unchanged",
+   "error": 0.144,
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-d330238e",
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NOT_CONFIDENT"
+  },
+  {
+   "id": "wb064",
+   "category": "quiet",
+   "error": 0.093,
+   "outcome": "NO_INCIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NO_INCIDENT"
+  },
+  {
+   "id": "wb065",
+   "category": "cause",
+   "error": 0.341,
+   "outcome": "CONFIRMED",
+   "blamed": "D-c656b359",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb066",
+   "category": "cause",
+   "error": 0.105,
+   "outcome": "CONFIRMED",
+   "blamed": "D-3cc78c71",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb067",
+   "category": "cause",
+   "error": 0.534,
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-d449b488",
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb068",
+   "category": "cause",
+   "error": 0.379,
+   "outcome": "CONFIRMED",
+   "blamed": "D-b83d24b3",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb069",
+   "category": "cause",
+   "error": 0.589,
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-94869902",
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb070",
+   "category": "unchanged",
+   "error": 0.14,
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-824d6bfa",
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NOT_CONFIDENT"
+  },
+  {
+   "id": "wb071",
+   "category": "cause",
+   "error": 0.058,
+   "outcome": "CONFIRMED",
+   "blamed": "D-d6f20cd2",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb072",
+   "category": "cause",
+   "error": 0.05,
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-b730ae6e",
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb073",
+   "category": "cause",
+   "error": 0.186,
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-b0bcbcf4",
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": false,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb074",
+   "category": "cause",
+   "error": 0.222,
+   "outcome": "CONFIRMED",
+   "blamed": "D-ae97cd87",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb075",
+   "category": "cause",
+   "error": 0.248,
+   "outcome": "CONFIRMED",
+   "blamed": "D-59b60328",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb076",
+   "category": "cause",
+   "error": 0.544,
+   "outcome": "CONFIRMED",
+   "blamed": "D-73433d08",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb077",
+   "category": "unchanged",
+   "error": 0.25,
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NOT_CONFIDENT"
+  },
+  {
+   "id": "wb078",
+   "category": "unchanged",
+   "error": 0.097,
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-46031197",
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb079",
+   "category": "unchanged",
+   "error": 0.196,
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NOT_CONFIDENT"
+  },
+  {
+   "id": "wb080",
+   "category": "quiet",
+   "error": 0.148,
+   "outcome": "NO_INCIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NO_INCIDENT"
+  },
+  {
+   "id": "wb081",
+   "category": "unchanged",
+   "error": 0.129,
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-11b1febd",
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NOT_CONFIDENT"
+  },
+  {
+   "id": "wb082",
+   "category": "cause",
+   "error": 0.24,
+   "outcome": "CONFIRMED",
+   "blamed": "D-35839b1e",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb083",
+   "category": "quiet",
+   "error": 0.558,
+   "outcome": "NO_INCIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NO_INCIDENT"
+  },
+  {
+   "id": "wb084",
+   "category": "cause",
+   "error": 0.297,
+   "outcome": "CONFIRMED",
+   "blamed": "D-02614cfe",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb085",
+   "category": "unchanged",
+   "error": 0.273,
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-4378b4c6",
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NOT_CONFIDENT"
+  },
+  {
+   "id": "wb086",
+   "category": "quiet",
+   "error": 0.08,
+   "outcome": "NO_INCIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NO_INCIDENT"
+  },
+  {
+   "id": "wb087",
+   "category": "cause",
+   "error": 0.349,
+   "outcome": "CONFIRMED",
+   "blamed": "D-746d37a5",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb088",
+   "category": "quiet",
+   "error": 0.332,
+   "outcome": "NO_INCIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NO_INCIDENT"
+  },
+  {
+   "id": "wb089",
+   "category": "cause",
+   "error": 0.066,
+   "outcome": "UNKNOWN_ESCALATED",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": false,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NO_INCIDENT"
+  },
+  {
+   "id": "wb090",
+   "category": "quiet",
+   "error": 0.376,
+   "outcome": "NO_INCIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NO_INCIDENT"
+  },
+  {
+   "id": "wb091",
+   "category": "cause",
+   "error": 0.124,
+   "outcome": "CONFIRMED",
+   "blamed": "D-f0743212",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb092",
+   "category": "cause",
+   "error": 0.484,
+   "outcome": "CONFIRMED",
+   "blamed": "D-6755de0e",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb093",
+   "category": "cause",
+   "error": 0.1,
+   "outcome": "CONFIRMED",
+   "blamed": "D-a2522b1e",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb094",
+   "category": "cause",
+   "error": 0.599,
+   "outcome": "CONFIRMED",
+   "blamed": "D-21a16b8d",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb095",
+   "category": "cause",
+   "error": 0.069,
+   "outcome": "CONFIRMED",
+   "blamed": "D-5b01f6e2",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb096",
+   "category": "quiet",
+   "error": 0.074,
+   "outcome": "NO_INCIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": false,
+    "abstained": true
+   },
+   "tplus_outcome": "NO_INCIDENT"
+  },
+  {
+   "id": "wb097",
+   "category": "unchanged",
+   "error": 0.426,
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": null,
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb098",
+   "category": "cause",
+   "error": 0.245,
+   "outcome": "CONFIRMED",
+   "blamed": "D-cfb7087b",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb099",
+   "category": "cause",
+   "error": 0.406,
+   "outcome": "CONFIRMED",
+   "blamed": "D-ade46aea",
+   "accepted_not_confident": null,
+   "right_cause": true,
+   "wrong_confident": false,
+   "abstained": false,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": true,
+    "right_frac": 1.0,
+    "wrong_frac": 0.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  },
+  {
+   "id": "wb100",
+   "category": "unchanged",
+   "error": 0.331,
+   "outcome": "NOT_CONFIDENT",
+   "blamed": null,
+   "accepted_not_confident": "D-a7df00f3",
+   "right_cause": false,
+   "wrong_confident": false,
+   "abstained": true,
+   "verdict_ok": true,
+   "t": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus": {
+    "right_strict": false,
+    "right_frac": 0.0,
+    "wrong_frac": 1.0,
+    "blamed": true,
+    "abstained": false
+   },
+   "tplus_outcome": "CONFIRMED"
+  }
+ ],
+ "engine_pressure": [
+  {
+   "after": "world-50",
+   "fraction": 0.284
+  },
+  {
+   "after": "world-100",
+   "fraction": 0.317
+  }
+ ],
+ "seconds": 72.1,
+ "started": "2026-10-16T12:42:46",
+ "finished": "2026-10-16T12:43:58",
+ "reason": "M18 phase 2: first run of the pre-registered independent-parameter world bench (acme addendum)"
+}

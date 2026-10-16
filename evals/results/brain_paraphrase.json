@@ -1,0 +1,249 @@
+{
+ "paraphrase": {
+  "questions": 33,
+  "correct": 17,
+  "graph": "clean room (copy of golden)",
+  "answerable": 27,
+  "unanswerable_honest": 4,
+  "unanswerable": 6,
+  "intent_correct": 18,
+  "guard_ok": 33,
+  "ms_p50": 16.7,
+  "ms_max": 56.3,
+  "knowledge_unchanged": true,
+  "failures": [
+   {
+    "q": "Has anyone here touched the payment service before?",
+    "intent": "context",
+    "expected_intent": "people",
+    "ok": false,
+    "citation_precision": 0.4,
+    "cited": 5,
+    "cites_ok": true,
+    "missing": [],
+    "guard_ok": true,
+    "tier": 2
+   },
+   {
+    "q": "Which engineer is most familiar with the checkout codebase?",
+    "intent": "context",
+    "expected_intent": "people",
+    "ok": false,
+    "citation_precision": 0.25,
+    "cited": 4,
+    "cites_ok": true,
+    "missing": [],
+    "guard_ok": true,
+    "tier": 2
+   },
+   {
+    "q": "How are we supposed to handle retries in payment?",
+    "intent": "context",
+    "expected_intent": "decision",
+    "ok": false,
+    "citation_precision": 0.2,
+    "cited": 5,
+    "cites_ok": true,
+    "missing": [],
+    "guard_ok": true,
+    "tier": 2
+   },
+   {
+    "q": "Where did we land on schema migrations for the catalog database?",
+    "intent": "context",
+    "expected_intent": "decision",
+    "ok": false,
+    "citation_precision": 0.25,
+    "cited": 4,
+    "cites_ok": false,
+    "missing": [
+     "ADR-009"
+    ],
+    "guard_ok": true,
+    "tier": 2
+   },
+   {
+    "q": "If product-catalog is down, what else stops working?",
+    "intent": "context",
+    "expected_intent": "blast",
+    "ok": false,
+    "citation_precision": 0.25,
+    "cited": 4,
+    "cites_ok": false,
+    "missing": [
+     "checkout",
+     "frontend"
+    ],
+    "guard_ok": true,
+    "tier": 2
+   },
+   {
+    "q": "What fails downstream when payment is unavailable?",
+    "intent": "context",
+    "expected_intent": "blast",
+    "ok": false,
+    "citation_precision": 0.2,
+    "cited": 5,
+    "cites_ok": false,
+    "missing": [
+     "checkout"
+    ],
+    "guard_ok": true,
+    "tier": 2
+   },
+   {
+    "q": "If cart dies, what goes with it?",
+    "intent": "context",
+    "expected_intent": "blast",
+    "ok": false,
+    "citation_precision": 0.5,
+    "cited": 2,
+    "cites_ok": true,
+    "missing": [],
+    "guard_ok": true,
+    "tier": 2
+   },
+   {
+    "q": "Summarise what we know about payment.",
+    "intent": "people",
+    "expected_intent": "context",
+    "ok": false,
+    "citation_precision": 0.1429,
+    "cited": 7,
+    "cites_ok": false,
+    "missing": [
+     "ADR-012"
+    ],
+    "guard_ok": true,
+    "tier": 2
+   },
+   {
+    "q": "Did we ever make a call on Kubernetes autoscaling?",
+    "intent": "context",
+    "expected_intent": "decision",
+    "ok": false,
+    "citation_precision": null,
+    "cited": 0,
+    "cites_ok": false,
+    "missing": [],
+    "guard_ok": true,
+    "tier": 1
+   },
+   {
+    "q": "Which team was responsible for fraud-detection at the time of inc-h002?",
+    "intent": "asof",
+    "expected_intent": "owner_then",
+    "ok": false,
+    "citation_precision": 0.6667,
+    "cited": 3,
+    "cites_ok": false,
+    "missing": [
+     "p-004",
+     "team-platform"
+    ],
+    "guard_ok": true,
+    "tier": 2
+   },
+   {
+    "q": "Which team had product-catalog on 2026-03-01?",
+    "intent": "context",
+    "expected_intent": "owner_then",
+    "ok": false,
+    "citation_precision": 0.5,
+    "cited": 4,
+    "cites_ok": false,
+    "missing": [],
+    "guard_ok": true,
+    "tier": 2
+   },
+   {
+    "q": "Back on 2025-11-01, what was known about product-catalog?",
+    "intent": "context",
+    "expected_intent": "asof",
+    "ok": false,
+    "citation_precision": 0.25,
+    "cited": 4,
+    "cites_ok": false,
+    "missing": [
+     "ADR-009"
+    ],
+    "guard_ok": true,
+    "tier": 2
+   },
+   {
+    "q": "Which service-level objectives rely on payment?",
+    "intent": "context",
+    "expected_intent": "obligations",
+    "ok": false,
+    "citation_precision": 0.2,
+    "cited": 5,
+    "cites_ok": false,
+    "missing": [
+     "slo-checkout",
+     "slo-payment"
+    ],
+    "guard_ok": true,
+    "tier": 2
+   },
+   {
+    "q": "what happens if chckout is down",
+    "intent": "context",
+    "expected_intent": "blast",
+    "ok": false,
+    "citation_precision": 0.25,
+    "cited": 4,
+    "cites_ok": false,
+    "missing": [
+     "frontend"
+    ],
+    "guard_ok": true,
+    "tier": 2
+   },
+   {
+    "q": "What relies on cart?",
+    "intent": "context",
+    "expected_intent": "blast",
+    "ok": false,
+    "citation_precision": 0.5,
+    "cited": 2,
+    "cites_ok": true,
+    "missing": [],
+    "guard_ok": true,
+    "tier": 2
+   },
+   {
+    "q": "Show me the feature flags right now",
+    "intent": "context",
+    "expected_intent": "context",
+    "ok": false,
+    "citation_precision": null,
+    "cited": 2,
+    "cites_ok": false,
+    "missing": [],
+    "guard_ok": true,
+    "tier": 2
+   }
+  ],
+  "citation_precision_mean": 0.2983,
+  "cites_ok": 22
+ },
+ "original": {
+  "questions": 33,
+  "correct": 33,
+  "graph": "clean room (copy of golden)",
+  "answerable": 27,
+  "unanswerable_honest": 6,
+  "unanswerable": 6,
+  "intent_correct": 33,
+  "guard_ok": 33,
+  "ms_p50": 6.4,
+  "ms_max": 18.4,
+  "knowledge_unchanged": true,
+  "failures": [],
+  "citation_precision_mean": 0.3118,
+  "cites_ok": 33
+ },
+ "started": "2026-10-16T13:18:16",
+ "finished": "2026-10-16T13:18:17",
+ "reason": "M18 phase 2: paraphrase set (not blind) + citation precision"
+}

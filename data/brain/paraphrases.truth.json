@@ -1,0 +1,290 @@
+{
+ "tenant": "acme",
+ "note": "grader-only. One natural paraphrase per question of questions.truth.json, same expected citations (PREREGISTRATION amendment 2026-10-16). Written by the agent that audited the gate, which had read part of the intent router: not a blind set.",
+ "questions": [
+  {
+   "q": "Has anyone here touched the payment service before?",
+   "intent": "people",
+   "must_cite": [
+    "payment",
+    "team-payments"
+   ],
+   "original": "Who on the team has worked on payment before?"
+  },
+  {
+   "q": "Which engineer is most familiar with the checkout codebase?",
+   "intent": "people",
+   "must_cite": [
+    "checkout"
+   ],
+   "original": "Who knows the checkout code?"
+  },
+  {
+   "q": "Who's been in the product catalog code?",
+   "intent": "people",
+   "must_cite": [
+    "product-catalog"
+   ],
+   "original": "Who has worked on productcatalog?"
+  },
+  {
+   "q": "Any devs who've committed to cart recently?",
+   "intent": "people",
+   "must_cite": [
+    "cart"
+   ],
+   "original": "Which engineers worked on cart?"
+  },
+  {
+   "q": "I need someone who really understands recommendation. Who should I ask?",
+   "intent": "people",
+   "must_cite": [
+    "recommendation"
+   ],
+   "original": "Who is an expert on recommendation?"
+  },
+  {
+   "q": "Is there a standing rule on payment client timeouts, and does it still apply?",
+   "intent": "decision",
+   "must_cite": [
+    "ADR-012"
+   ],
+   "original": "What did we decide about payment timeouts, and is it still current?"
+  },
+  {
+   "q": "How are we supposed to handle retries in payment?",
+   "intent": "decision",
+   "must_cite": [
+    "ADR-013"
+   ],
+   "original": "What is our decision on payment retries?"
+  },
+  {
+   "q": "Where did we land on schema migrations for the catalog database?",
+   "intent": "decision",
+   "must_cite": [
+    "ADR-009",
+    "ADR-021"
+   ],
+   "must_say": "superseded",
+   "original": "What did we decide about catalog db migrations?"
+  },
+  {
+   "q": "Was there an ADR about the order-confirmation email?",
+   "intent": "decision",
+   "must_cite": [
+    "ADR-004"
+   ],
+   "original": "What did we decide about the order confirmation email?"
+  },
+  {
+   "q": "On the revenue path, which services have no runbook or no owning team?",
+   "intent": "gaps",
+   "must_cite": [
+    "cart",
+    "currency"
+   ],
+   "original": "Which revenue-path services lack a runbook or owner?"
+  },
+  {
+   "q": "If product-catalog is down, what else stops working?",
+   "intent": "blast",
+   "must_cite": [
+    "product-catalog",
+    "checkout",
+    "frontend"
+   ],
+   "original": "What breaks if productcatalog goes down?"
+  },
+  {
+   "q": "What fails downstream when payment is unavailable?",
+   "intent": "blast",
+   "must_cite": [
+    "payment",
+    "checkout"
+   ],
+   "original": "What breaks if payment goes down?"
+  },
+  {
+   "q": "How bad is it if the currency service has an outage?",
+   "intent": "blast",
+   "must_cite": [
+    "currency"
+   ],
+   "original": "What is the impact if currency has an outage?"
+  },
+  {
+   "q": "If cart dies, what goes with it?",
+   "intent": "blast",
+   "must_cite": [
+    "cart"
+   ],
+   "original": "What breaks if cart fails?"
+  },
+  {
+   "q": "Give me an overview of the checkout service.",
+   "intent": "context",
+   "must_cite": [
+    "checkout",
+    "team-checkout",
+    "ADR-004"
+   ],
+   "original": "Tell me about checkout"
+  },
+  {
+   "q": "Summarise what we know about payment.",
+   "intent": "context",
+   "must_cite": [
+    "payment",
+    "ADR-012"
+   ],
+   "original": "Tell me about payment"
+  },
+  {
+   "q": "Did we ever make a call on Kubernetes autoscaling?",
+   "intent": "decision",
+   "must_cite": [],
+   "must_say": "no decision",
+   "original": "What did we decide about kubernetes autoscaling?"
+  },
+  {
+   "q": "Who are the experts on the warp drive?",
+   "intent": "people",
+   "must_cite": [],
+   "must_say": "could not find",
+   "original": "Who has worked on the warp drive?"
+  },
+  {
+   "q": "What's the blast radius if the flux capacitor fails?",
+   "intent": "blast",
+   "must_cite": [],
+   "must_say": "could not find",
+   "original": "What breaks if the flux capacitor goes down?"
+  },
+  {
+   "q": "What can you tell me about the quantum router?",
+   "intent": "context",
+   "must_cite": [],
+   "must_say": "could not find",
+   "original": "Tell me about the quantum router"
+  },
+  {
+   "q": "Which team was responsible for fraud-detection at the time of inc-h002?",
+   "intent": "owner_then",
+   "must_cite": [
+    "fraud-detection",
+    "team-payments",
+    "team-platform",
+    "p-004"
+   ],
+   "original": "Who owned fraud-detection during inc-h002?"
+  },
+  {
+   "q": "Which team had product-catalog on 2026-03-01?",
+   "intent": "owner_then",
+   "must_cite": [
+    "product-catalog",
+    "team-catalog"
+   ],
+   "must_say": "still is",
+   "original": "Who owned product-catalog on 2026-03-01?"
+  },
+  {
+   "q": "Back on 2025-11-01, what was known about product-catalog?",
+   "intent": "asof",
+   "must_cite": [
+    "product-catalog",
+    "ADR-009"
+   ],
+   "original": "What did we know about product-catalog as of 2025-11-01?"
+  },
+  {
+   "q": "What has happened to fraud-detection over time?",
+   "intent": "history",
+   "must_cite": [
+    "fraud-detection",
+    "inc-h040"
+   ],
+   "original": "What is the history of fraud-detection?"
+  },
+  {
+   "q": "Which parts of our ops knowledge have gone stale or been lost when people handed over?",
+   "intent": "knowledge",
+   "must_cite": [
+    "fraud-detection",
+    "team-payments",
+    "accounting",
+    "rb-kafka-lag"
+   ],
+   "original": "Where is our operational knowledge stale or lost in a handover?"
+  },
+  {
+   "q": "Who was the owner of the warp drive on 2026-01-01?",
+   "intent": "owner_then",
+   "must_cite": [],
+   "must_say": "could not find",
+   "original": "Who owned the warp drive back in 2026-01-01?"
+  },
+  {
+   "q": "If checkout goes down, which customers feel it?",
+   "intent": "obligations",
+   "must_cite": [
+    "checkout",
+    "cust-orion-optics",
+    "cust-lyra-labs",
+    "slo-checkout"
+   ],
+   "original": "Which customers are affected if checkout goes down?"
+  },
+  {
+   "q": "Which service-level objectives rely on payment?",
+   "intent": "obligations",
+   "must_cite": [
+    "payment",
+    "slo-payment",
+    "slo-checkout"
+   ],
+   "original": "What SLOs depend on payment?"
+  },
+  {
+   "q": "who worked on paymnt",
+   "intent": "people",
+   "must_cite": [
+    "payment"
+   ],
+   "original": "Who has worked on pyment?"
+  },
+  {
+   "q": "what happens if chckout is down",
+   "intent": "blast",
+   "must_cite": [
+    "checkout",
+    "frontend"
+   ],
+   "original": "What breaks if chekout goes down?"
+  },
+  {
+   "q": "What relies on cart?",
+   "intent": "blast",
+   "must_cite": [
+    "cart"
+   ],
+   "original": "Check what depends on cart"
+  },
+  {
+   "q": "Are there feature flags that gate payment?",
+   "intent": "context",
+   "must_cite": [
+    "payment"
+   ],
+   "original": "Which flags affect payment?"
+  },
+  {
+   "q": "Show me the feature flags right now",
+   "intent": "context",
+   "must_cite": [],
+   "must_say": "could not find",
+   "original": "Check the current flags"
+  }
+ ]
+}

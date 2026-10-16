@@ -12,6 +12,27 @@ def _mean(xs: list) -> float | None:
     return round(statistics.fmean(xs), 4) if xs else None
 
 
+def wilson(k: float, n: int, z: float = 1.96) -> tuple[float, float] | None:
+    """Wilson score interval (95 %) for k successes in n independent cases; None when n is 0."""
+    import math
+
+    if not n:
+        return None
+    p = k / n
+    d = 1 + z * z / n
+    c = p + z * z / (2 * n)
+    h = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n))
+    return round(max(0.0, (c - h) / d), 4), round(min(1.0, (c + h) / d), 4)
+
+
+def wilson_keys(prefix: str, k: float, n: int) -> dict:
+    """{prefix}.k / .n / .ci_lo / .ci_hi: a count with its denominator and 95 % Wilson interval (as rates 0–1)."""
+    ci = wilson(k, n)
+    if ci is None:
+        return {}
+    return {f"{prefix}.k": k, f"{prefix}.n": n, f"{prefix}.ci_lo": ci[0], f"{prefix}.ci_hi": ci[1]}
+
+
 def _pct(xs: list[float], q: float) -> float | None:
     if not xs:
         return None
@@ -50,7 +71,9 @@ def summarize(out: dict) -> dict:
         s[f"{p}.abstention_correct_rate"] = _mean([1.0 if t["abstention_correct"] else 0.0 for t in ts
                                                     if t["abstention_correct"] is not None])
         s[f"{p}.outcome_correct_rate"] = _mean([1.0 if t["outcome_correct"] else 0.0 for t in ts])
-        s[f"{p}.confident_rate"] = _mean([1.0 if t.get("confident") else 0.0 for t in ts if t.get("top1") is not None])
+        # only arms whose runs record a confidence (the graph arms); N/V/T/A0/A1 always commit and record none (M18 audit)
+        s[f"{p}.confident_rate"] = (_mean([1.0 if t.get("confident") else 0.0 for t in ts if t.get("top1") is not None])
+                                    if any("confident" in t for t in ts) else None)
         s[f"{p}.confirmed_causes"] = sum(1 for t in ts if t.get("cause") and t["outcome"] in ("CONFIRMED", "NOT_CONFIDENT"))
         if arm != "N":
             s[f"{p}.grounded_rate"] = _mean([1.0 if t.get("grounded") else 0.0 for t in ts if t.get("grounded") is not None])
@@ -164,7 +187,9 @@ def summarize(out: dict) -> dict:
         if k in c:
             s.update({f"{k.lower()}.{kk}": vv for kk, vv in c[k].items()})
     s.update(backtest_summary(c.get("backtest") or {}))
-    s.update(scale_summary(c.get("scale") or {}))
+    sc = current_scale(c)
+    s.update(scale_summary(sc))
+    s["scale.started"] = sc.get("started")
     s.update(futures_summary(c.get("futures") or {}))
     s.update(mismatch_summary(c.get("mismatch") or {}))
     s.update({f"learning.{k}": v for k, v in (c.get("learning") or {}).items() if k not in ("rows", "seconds")})
@@ -175,7 +200,401 @@ def summarize(out: dict) -> dict:
     s.update(context_summary(c.get("context_eval") or {}))
     s.update({f"skill.{k}": v for k, v in (c.get("skill") or {}).items() if k != "rows"})
     s.update(live_summary(live_bench()))
+    # what one decision costs in model tokens, per LLM arm (recorded usage; the graph's own check costs none)
+    for arm in ("A0", "A1", "A3L"):
+        toks = sorted(int((t.get("usage") or {}).get("input_tokens", 0)) + int((t.get("usage") or {}).get("output_tokens", 0))
+                      for t in out["trials"] if t["arm"] == arm and t.get("usage"))
+        if toks:
+            s[f"arm.{arm}.tokens_median"] = toks[len(toks) // 2]
+    s.update(audit_summary(out, s))
     return s
+
+
+# ------------------------------------------------------------------ M18 numbers audit (PREREGISTRATION 2026-10-16)
+def _key_arm(arm: str) -> str:
+    return arm.replace("+", "plus")   # claim tags allow [A-Za-z0-9_.-] only
+
+
+def _truth_of(sid: str) -> dict:
+    import json
+    from pathlib import Path
+
+    return json.loads((Path(__file__).resolve().parents[1] / "data" / "scenarios" / f"{sid}.truth.json").read_text())
+
+
+def _strict(t: dict, tr: dict) -> dict:
+    """Tie-aware per-trial grading: a tie is never a verdict; wrong blame counted over ALL scenarios (controls too)."""
+    tied = t.get("tied") or ([t["cause"]] if t.get("cause") else [])
+    blamed = bool(t.get("cause"))
+    if tr["outcome"] == "CONFIRMED":
+        oc = bool(t.get("outcome_correct")) and len(tied) <= 1
+        wrong = blamed and tied != [tr["cause"]]
+    else:
+        oc, wrong = bool(t.get("outcome_correct")), blamed
+    return {"oc": oc, "wrong": wrong}
+
+
+def audit_summary(out: dict, s: dict) -> dict:
+    """New keys only (existing keys keep their meaning):
+      arm.<A>.outcome_correct.{k,n,ci_lo,ci_hi}            over trials (as published)
+      arm.<A>.scen.n                                      distinct scenarios (the effective N: trials are identical copies)
+      arm.<A>.scen.<metric>.{k,n,ci_lo,ci_hi}             per distinct scenario: outcome_correct, outcome_correct_strict
+                                                          (a tie is never correct), false_blame (cause scenarios),
+                                                          abstention (no-cause scenarios), wrong_blame (any blame of a
+                                                          wrong change on ANY scenario, controls included)
+      arm.<A>.outcome_correct_strict_rate                 per trial, ties never correct
+      arm.<A>.distractors_rejected_any_gate.{k,n,...}     per distinct cause scenario: every look-alike eliminated, by any gate
+      gate_bench[_heldout].correct_strict(.k/n/ci)        bystander changes accepted NOT_CONFIDENT counted wrong
+      deep.<run>.all.arm_t_wrong                          arm T's (fractional) wrong blames: T always blames"""
+    from collections import defaultdict
+
+    k: dict = {}
+    trials = with_llm_trials(out)["trials"]
+    by = defaultdict(list)
+    for t in trials:
+        by[t["arm"]].append(t)
+    for arm, ts in by.items():
+        p = f"arm.{_key_arm(arm)}"
+        k.update(wilson_keys(f"{p}.outcome_correct", sum(1 for t in ts if t["outcome_correct"]), len(ts)))
+        scen: dict[str, list[dict]] = defaultdict(list)
+        for t in ts:
+            scen[t["scenario"]].append(t)
+        tr = {sid: _truth_of(sid) for sid in scen}
+        st = {sid: [_strict(t, tr[sid]) for t in xs] for sid, xs in scen.items()}
+        k[f"{p}.scen.n"] = len(scen)
+        k[f"{p}.outcome_correct_strict_rate"] = round(sum(x["oc"] for v in st.values() for x in v) / len(ts), 4)
+        k.update(wilson_keys(f"{p}.scen.outcome_correct", sum(all(t["outcome_correct"] for t in xs) for xs in scen.values()),
+                             len(scen)))
+        k.update(wilson_keys(f"{p}.scen.outcome_correct_strict", sum(all(x["oc"] for x in v) for v in st.values()), len(scen)))
+        k.update(wilson_keys(f"{p}.scen.wrong_blame", sum(any(x["wrong"] for x in v) for v in st.values()), len(scen)))
+        cause = [sid for sid in scen if tr[sid]["outcome"] == "CONFIRMED"]
+        other = [sid for sid in scen if tr[sid]["outcome"] != "CONFIRMED"]
+        k.update(wilson_keys(f"{p}.scen.false_blame", sum(any(t["false_blame"] for t in scen[sid]) for sid in cause), len(cause)))
+        k.update(wilson_keys(f"{p}.scen.abstention", sum(all(t["abstention_correct"] for t in scen[sid]) for sid in other),
+                             len(other)))
+        if any(t.get("sweep") is not None for t in ts):
+            def all_rejected(sid: str, xs: list[dict]) -> bool:
+                d = tr[sid].get("distractors") or []
+                d = list(d.keys()) if isinstance(d, dict) else list(d)
+                return all(all(any(v["change"] == x and v["status"] == "eliminated" for v in (t.get("sweep") or []))
+                               for x in d) for t in xs)
+            cs = [sid for sid in cause if tr[sid].get("distractors")]
+            k.update(wilson_keys(f"{p}.distractors_rejected_any_gate", sum(all_rejected(sid, scen[sid]) for sid in cs), len(cs)))
+    c = out.get("checks") or {}
+    for name in ("gate_bench", "gate_bench_heldout"):
+        b = c.get(name) or {}
+        if b.get("cases_detail"):
+            strict = sum(1 for r in b["cases_detail"] if r["correct"] and not (
+                r["expected"]["outcome"] != "CONFIRMED" and r.get("accepted_not_confident")))
+            k[f"{name}.correct_strict"] = strict
+            k[f"{name}.bystander_not_confident"] = b.get("abstain_bystander_not_confident")
+            k.update(wilson_keys(f"{name}.correct_strict", strict, b["cases"]))
+            k.update(wilson_keys(f"{name}.correct", b["correct"], b["cases"]))
+    for run, d in (c.get("deep_bench") or {}).items():
+        if "arm_t" in d["all"]:
+            k[f"deep.{run}.all.arm_t_wrong"] = round(d["all"]["cases"] - d["all"]["arm_t"], 2)
+            k[f"deep.{run}.all.arm_t_abstained"] = 0   # T cannot abstain (by definition)
+            k.update(wilson_keys(f"deep.{run}.all.abstained", d["all"]["abstained"], d["all"]["cases"]))
+    lad = (c.get("ladder") or {}).get("rungs") or {}
+    for rung, v in lad.items():
+        b = v.get("buckets") or {}
+        if b.get("confirm_cases"):
+            k.update(wilson_keys(f"ladder.{rung}.b.right_cause", b["right_cause"], b["confirm_cases"]))
+    k.update(side_summaries(s))
+    return k
+
+
+def _kn(s: dict, p: str, pct: bool = True) -> str:
+    """'k/n (95 % CI lo–hi %)' from the wilson keys of prefix p; '—' when absent."""
+    if s.get(f"{p}.n") is None:
+        return "—"
+    lo, hi = s[f"{p}.ci_lo"], s[f"{p}.ci_hi"]
+    k = s[f"{p}.k"]
+    k = int(k) if float(k).is_integer() else k
+    return f"{k}/{s[f'{p}.n']} ({lo * 100:.0f}–{hi * 100:.0f} %)" if pct else f"{k}/{s[f'{p}.n']}"
+
+
+def audit_markdown(out: dict, s: dict) -> list[str]:
+    arms = with_llm_trials(out)["arms"]
+    L = ["", "## Per distinct scenario, with 95 % intervals (M18 audit)", "",
+         "Each scenario counts once (its identical trials are one case). Strict: a tie between changes is never a "
+         "correct verdict (arms N and T break ties alphabetically in the trial field above, which credited T with S2 "
+         "where both changes measure 0.0). Wrong blame: any blame of a change that is not the cause, on any of the 8 "
+         "scenarios, controls included (the false-blame column above counts only the 5 with a cause).", "",
+         "| arm | scenarios | outcome correct | strict (ties never correct) | wrong blame, any scenario | abstention (no-cause scenarios) |",
+         "|---|---|---|---|---|---|"]
+    for arm in arms:
+        p = f"arm.{_key_arm(arm)}"
+        L.append(f"| {arm} | {s.get(f'{p}.scen.n')} | {_kn(s, f'{p}.scen.outcome_correct')} | "
+                 f"{_kn(s, f'{p}.scen.outcome_correct_strict')} | {_kn(s, f'{p}.scen.wrong_blame')} | "
+                 f"{_kn(s, f'{p}.scen.abstention')} |")
+    if s.get("arm.A3-noG5.distractors_rejected_any_gate.n"):
+        L += ["", f"Look-alikes rejected by any gate, per scenario with a look-alike: A3 "
+                  f"{_kn(s, 'arm.A3.distractors_rejected_any_gate', False)}, A3-noG5 "
+                  f"{_kn(s, 'arm.A3-noG5.distractors_rejected_any_gate', False)} (the strict column above requires the "
+                  "gate the truth file names, so A3-noG5's S1 look-alike, rejected by G4 origin, counts as not rejected there)."]
+    for name, label in (("gate_bench", "development"), ("gate_bench_heldout", "second seed")):
+        if s.get(f"{name}.correct_strict") is not None:
+            L += ["", f"Gate bench, {label}: {_kn(s, f'{name}.correct')} by outcome; {_kn(s, f'{name}.correct_strict')} when "
+                      f"an abstain case where the gate accepted a bystander change NOT_CONFIDENT "
+                      f"({s.get(f'{name}.bystander_not_confident')} such cases) counts as wrong."]
+    L += side_markdown(s)
+    return L
+
+
+def side_markdown(s: dict) -> list[str]:
+    L: list[str] = []
+    if s.get("seeds.scen.seeds"):
+        L += ["", f"## Scenario suite across {s['seeds.scen.seeds']} world seeds (evals/scenario_seeds.py)", "",
+              "Each trial is a different telemetry world (base rates and noise); S2 and S4D have no simulated telemetry "
+              "and run once. Strict grading; wrong blame on any scenario.", "",
+              "| arm | trials | outcome correct | right cause (cause scenarios) | wrong blame | abstention (no-cause) |",
+              "|---|---|---|---|---|---|"]
+        for arm in ("N", "V", "T", "Tplus", "A3", "A3-noG5"):
+            p = f"seeds.scen.{arm}"
+            if s.get(f"{p}.trials"):
+                L.append(f"| {arm} | {s[f'{p}.trials']} | {_kn(s, f'{p}.outcome_correct')} | {_kn(s, f'{p}.right_cause')} | "
+                         f"{_kn(s, f'{p}.wrong_blame')} | {_kn(s, f'{p}.abstention')} |")
+    for kind, title in (("gate", "Gate bench"), ("deep", "Deep bench")):
+        p = f"seeds.{kind}"
+        if s.get(f"{p}.cases"):
+            L += ["", f"## {title} on {s[f'{p}.seeds']} new seeds (evals/seed_bench.py, never generated before)", "",
+                  "| | right cause (worlds with a cause) | wrong blames, all worlds (Faultline: confident; T, T+: any) | abstained |",
+                  "|---|---|---|---|",
+                  f"| Faultline | {_kn(s, f'{p}.right_cause')} | {_kn(s, f'{p}.wrong_confident')} | {s[f'{p}.abstained']} |",
+                  f"| telemetry only (T) | {_kn(s, f'{p}.T.right_strict')} (fractional {s[f'{p}.T.right_frac']}) | "
+                  f"{_kn(s, f'{p}.T.wrong_any')} | {s[f'{p}.T.abstained']} |",
+                  f"| thresholded telemetry (T+) | {_kn(s, f'{p}.Tplus.right_strict')} (fractional "
+                  f"{s[f'{p}.Tplus.right_frac']}) | {_kn(s, f'{p}.Tplus.wrong_any')} | {s[f'{p}.Tplus.abstained']} |", "",
+                  f"Strict verdicts (a bystander accepted NOT_CONFIDENT on a no-cause world counted wrong): "
+                  f"{_kn(s, f'{p}.correct_strict')}; runs that ended NOT_CONFIDENT having accepted some change: "
+                  f"{s.get(f'{p}.accepted_nc.any')}"
+                  + (f" (the true cause {s.get('seeds.deep.accepted_nc.expected_cause')}, a bystander with no fault of its "
+                     f"own {s.get('seeds.deep.accepted_nc.bystander')}, all in abstain_downstream: "
+                     f"{s.get('seeds.deep.abstain_downstream.bystander_nc')} of {s.get('seeds.deep.abstain_downstream.cases')})"
+                     if kind == "deep" else "") + "."]
+    if s.get("decisive.full.g5_only.cases") is not None:
+        L += ["", "## Decisive bench: look-alikes with their own fault (evals/decisive_bench.py)", "",
+              "| rung | category | worlds | right cause | wrong-confident | abstained |", "|---|---|---|---|---|---|"]
+        for rung in ("full", "no_maxflow", "no_sppaths", "neither"):
+            for cat in ("g5_only", "anomalous_no_path"):
+                p = f"decisive.{rung}.{cat}"
+                if s.get(f"{p}.cases") is not None:
+                    L.append(f"| {rung} | {cat} | {s[f'{p}.cases']} | {s[f'{p}.right_cause']} | {s[f'{p}.wrong_confident']} | "
+                             f"{s[f'{p}.abstained']} |")
+        for arm in ("T", "Tplus"):
+            L.append("")
+            L.append(f"{arm} on the same worlds: " + "; ".join(
+                f"{cat} right {s.get(f'decisive.{arm}.{cat}.right_strict')} (fractional {s.get(f'decisive.{arm}.{cat}.right_frac')}), "
+                f"wrong {s.get(f'decisive.{arm}.{cat}.wrong_frac')}" for cat in ("g5_only", "anomalous_no_path")) + ".")
+    if s.get("world.cases"):
+        L += ["", "## Independent-parameter worlds (evals/world_bench.py; not blind)", "",
+              "| | right cause (worlds with a cause) | wrong blames, all worlds (Faultline: confident; T, T+: any) | abstained |",
+              "|---|---|---|---|",
+              f"| Faultline | {_kn(s, 'world.right_cause')} | {_kn(s, 'world.wrong_confident')} | {s['world.abstained']} |",
+              f"| T | {_kn(s, 'world.T.right_strict')} | {_kn(s, 'world.T.wrong_any')} | {s['world.T.abstained']} |",
+              f"| T+ | {_kn(s, 'world.Tplus.right_strict')} | {_kn(s, 'world.Tplus.wrong_any')} | {s['world.Tplus.abstained']} |",
+              "", f"Runs that ended NOT_CONFIDENT having accepted a change: the true cause {s.get('world.accepted_nc.expected_cause')}, "
+                  f"a bystander with no fault of its own {s.get('world.accepted_nc.bystander')} (all in worlds where an unchanged "
+                  f"component broke: {s.get('world.unchanged.bystander_nc')} of {s.get('world.unchanged.cases')}).",
+              "", "By world kind (Faultline): " + "; ".join(
+                  f"{c} {s.get(f'world.{c}.cases')} worlds, verdict right {s.get(f'world.{c}.verdict_ok')}, wrong "
+                  f"{s.get(f'world.{c}.wrong_confident')}, abstained {s.get(f'world.{c}.abstained')}"
+                  for c in ("cause", "unchanged", "quiet")) + "."]
+    if s.get("curve.points"):
+        L += ["", "## Robustness curves (evals/robustness.py --curves, the 100 second-seed worlds)", "",
+              f"Baseline: correct {s['curve.baseline.correct']}, right cause {s['curve.baseline.right_cause']}/"
+              f"{s['curve.baseline.cause_cases']}, wrong-confident {s['curve.baseline.wrong_confident']}. Highest "
+              f"wrong-confident at any point: {s['curve.wrong_confident_max']}.", "",
+              "| knob | level | correct | right cause | wrong-confident | abstained |", "|---|---|---|---|---|---|"]
+        for knob in ("noise", "missing", "effect"):
+            lvls = sorted({k[len(f"curve.{knob}."):-len(".correct")] for k in s
+                           if k.startswith(f"curve.{knob}.") and k.endswith(".correct")}, key=float)
+            for lv in lvls:
+                p = f"curve.{knob}.{lv}"
+                L.append(f"| {knob} | {lv} | {s[f'{p}.correct']} | {s[f'{p}.right_cause']} | {s[f'{p}.wrong_confident']} | "
+                         f"{s[f'{p}.abstained']} |")
+    if s.get("ctx.busy30.b1000.TR.mrr") is not None:
+        L += ["", "## Context ranking with a telemetry-only comparator (evals/context_eval.py, side run)", "",
+              f"TR ranks every change in the window by its measured excess, with no graph. Rerun reproduces the run's "
+              f"G/GA/V/R exactly: {s.get('ctx.rerun_reproduces_run')}.", "",
+              "| busy deploys | budget | GA (product) | G (distance) | V | R | TR (telemetry, no graph) |", "|---|---|---|---|---|---|---|"]
+        for busy in ("0", "10", "30", "100"):
+            for b in ("500", "1000"):
+                cells = []
+                for arm in ("GA", "G", "V", "R", "TR"):
+                    m = s.get(f"ctx.busy{busy}.b{b}.{arm}.mrr")
+                    lo, hi = s.get(f"ctx.busy{busy}.b{b}.{arm}.mrr_ci_lo"), s.get(f"ctx.busy{busy}.b{b}.{arm}.mrr_ci_hi")
+                    cells.append("—" if m is None else (f"{m} ({lo}–{hi})" if lo is not None else f"{m}"))
+                L.append(f"| {busy} | {b} | " + " | ".join(cells) + " |")
+    if s.get("brain_para.questions"):
+        L += ["", "## Company brain on paraphrased questions (not a blind set)", "",
+              f"Original wording: {_kn(s, 'brain_orig.correct')} correct, citation precision "
+              f"{s.get('brain_orig.citation_precision_mean')}. Paraphrased: {_kn(s, 'brain_para.correct')} correct "
+              f"({s.get('brain_para.intent_correct')} routed to the expected intent; {s.get('brain_para.cites_ok')} with "
+              f"every expected citation whatever the intent label), citation precision "
+              f"{s.get('brain_para.citation_precision_mean')}."]
+    return L
+
+
+def _side(name: str) -> dict:
+    import json
+    from pathlib import Path
+
+    p = Path(__file__).resolve().parent / "results" / name
+    return json.loads(p.read_text()) if p.exists() else {}
+
+
+def side_summaries(s: dict) -> dict:
+    """The phase-2 side files (each written by its own script, with a `reason`; PREREGISTRATION 2026-10-16)."""
+    k: dict = {}
+    sc = _side("scenario_seeds.json")
+    if sc:
+        from collections import defaultdict
+
+        by = defaultdict(list)
+        for t in sc["trials"]:
+            by[t["arm"]].append(t)
+        for arm, ts in by.items():
+            p = f"seeds.scen.{_key_arm(arm)}"
+            k[f"{p}.trials"] = len(ts)
+            k.update(wilson_keys(f"{p}.outcome_correct", sum(1 for t in ts if t["outcome_correct_strict"]), len(ts)))
+            k.update(wilson_keys(f"{p}.wrong_blame", sum(1 for t in ts if t["wrong_blame_any"]), len(ts)))
+            cause = [t for t in ts if t["top1"] is not None]
+            other = [t for t in ts if t["top1"] is None]
+            k.update(wilson_keys(f"{p}.right_cause", sum(1 for t in cause if t["outcome_correct_strict"]), len(cause)))
+            k.update(wilson_keys(f"{p}.abstention", sum(1 for t in other if t["abstention_correct"]), len(other)))
+        k["seeds.scen.seeds"] = len(sc["seeds"])
+    sb = _side("seed_bench.json") or {}
+    for kind in ("gate", "deep"):
+        pooled = sb.get(f"{kind}_pooled") if sb else None
+        if not pooled:
+            continue
+        p = f"seeds.{kind}"
+        k[f"{p}.seeds"] = len(sb[kind])
+        for m in ("cases", "cause_cases", "correct", "correct_strict", "right_cause", "wrong_confident", "abstained", "ok"):
+            if m in pooled:
+                k[f"{p}.{m}"] = pooled[m]
+        # every run that ended NOT_CONFIDENT having accepted some change (cause or bystander; split below for deep)
+        k[f"{p}.accepted_nc.any"] = pooled.get("bystander_not_confident")
+        k.update(wilson_keys(f"{p}.right_cause", pooled["right_cause"], pooled["cause_cases"]))
+        k.update(wilson_keys(f"{p}.wrong_confident", pooled["wrong_confident"], pooled["cases"]))
+        k.update(wilson_keys(f"{p}.correct_strict", pooled["correct_strict"], pooled["cases"]))
+        for arm in ("t", "tplus"):
+            a = pooled[arm]
+            q = f"{p}.{'T' if arm == 't' else 'Tplus'}"
+            k.update({f"{q}.{m}": a[m] for m in ("right_strict", "right_frac", "wrong_any", "wrong_frac", "abstained")})
+            k.update(wilson_keys(f"{q}.right_strict", a["right_strict"], pooled["cause_cases"]))
+            k.update(wilson_keys(f"{q}.wrong_any", a["wrong_any"], pooled["cases"]))
+    if sb.get("deep"):   # not-confident acceptances on the new deep seeds (rows + the deterministic generator)
+        import deep_bench
+        import seed_bench
+
+        acc = {"expected_cause": 0, "other_faulty_change": 0, "bystander": 0}
+        for seed, v in sb["deep"].items():
+            for kk, n in seed_bench.classify_acceptances(v["rows"], deep_bench.generate(seed=int(seed))).items():
+                acc[kk] += n
+        k.update({f"seeds.deep.accepted_nc.{kk}": n for kk, n in acc.items()})
+        k.update(wilson_keys("seeds.deep.accepted_nc.bystander", acc["bystander"], sb["deep_pooled"]["cases"]))
+        ad = [r for v in sb["deep"].values() for r in v["rows"] if r["category"] == "abstain_downstream"]
+        k["seeds.deep.abstain_downstream.cases"] = len(ad)
+        k["seeds.deep.abstain_downstream.bystander_nc"] = sum(1 for r in ad if r["accepted_not_confident"])
+    hd = _side("deep_fresh_detail.json")
+    if hd:   # the headline deep bench re-run with rows: reproduction check + its not-confident acceptances
+        a = hd["all"]
+        k["deep.fresh.detail.reproduces_run"] = all(s.get(f"deep.fresh.all.{m}") == a[m]
+                                                    for m in ("cases", "right_cause", "wrong_confident", "abstained"))
+        k.update({f"deep.fresh.accepted_nc.{kk}": n for kk, n in a["acceptances"].items()})
+        k.update(wilson_keys("deep.fresh.accepted_nc.bystander", a["acceptances"]["bystander"], a["cases"]))
+        ad = hd["by_category"].get("abstain_downstream") or {}
+        k["deep.fresh.abstain_downstream.bystander_nc"] = (ad.get("acceptances") or {}).get("bystander")
+    fb = (sb or {}).get("deep_fresh_baselines")
+    if fb:   # T and T+ on the headline deep bench's 140 worlds (comparators; the product's numbers are the run's)
+        for arm in ("t", "tplus"):
+            x, q = fb[arm], f"deep.fresh.all.{'T' if arm == 't' else 'Tplus'}"
+            k.update({f"{q}.{m}": x[m] for m in ("right_strict", "right_frac", "wrong_any", "wrong_frac", "abstained")})
+            k.update(wilson_keys(f"{q}.right_strict", x["right_strict"], fb["cause_cases"]))
+            k.update(wilson_keys(f"{q}.wrong_any", x["wrong_any"], fb["cases"]))
+            k.update(wilson_keys(f"{q}.abstained", x["abstained"], fb["cases"]))
+    dc = _side("decisive_bench.json")
+    if dc:
+        for rung, v in dc["rungs"].items():
+            for cat, x in v["by_category"].items():
+                for m in ("cases", "right_cause", "wrong_confident", "abstained"):
+                    k[f"decisive.{rung}.{cat}.{m}"] = x[m]
+        for arm, v in dc["arms"].items():
+            for cat, x in v.items():
+                for m in ("right_strict", "right_frac", "wrong_frac"):
+                    k[f"decisive.{'T' if arm == 't' else 'Tplus'}.{cat}.{m}"] = x[m]
+    wb = _side("world_bench.json")
+    if wb:
+        a = wb["all"]
+        for m in ("cases", "cause_cases", "right_cause", "wrong_confident", "abstained", "verdict_ok"):
+            k[f"world.{m}"] = a[m]
+        k["world.accepted_nc.any"] = a.get("bystander_not_confident")
+        import seed_bench
+        import world_bench
+
+        acc = seed_bench.classify_acceptances(wb["rows"], world_bench.generate(seed=wb["seed"]))
+        k.update({f"world.accepted_nc.{kk}": n for kk, n in acc.items()})
+        k["world.unchanged.bystander_nc"] = sum(1 for r in wb["rows"] if r["category"] == "unchanged" and r["accepted_not_confident"])
+        k.update(wilson_keys("world.right_cause", a["right_cause"], a["cause_cases"]))
+        k.update(wilson_keys("world.wrong_confident", a["wrong_confident"], a["cases"]))
+        for cat, x in wb["by_category"].items():
+            for m in ("cases", "right_cause", "wrong_confident", "abstained", "verdict_ok"):
+                k[f"world.{cat}.{m}"] = x[m]
+        for arm in ("t", "tplus"):
+            x = a[arm]
+            q = f"world.{'T' if arm == 't' else 'Tplus'}"
+            k.update({f"{q}.{m}": x[m] for m in ("right_strict", "right_frac", "wrong_any", "wrong_frac", "abstained")})
+            k.update(wilson_keys(f"{q}.right_strict", x["right_strict"], a["cause_cases"]))
+            k.update(wilson_keys(f"{q}.wrong_any", x["wrong_any"], a["cases"]))
+    rc = _side("robustness_curves.json")
+    if rc:
+        for knob, levels in rc["curves"].items():
+            for lv, x in levels.items():
+                for m in ("correct", "right_cause", "wrong_confident", "abstained"):
+                    k[f"curve.{knob}.{lv}.{m}"] = x[m]
+        for m in ("correct", "right_cause", "wrong_confident", "abstained", "cause_cases"):
+            k[f"curve.baseline.{m}"] = rc["baseline"][m]
+        k["curve.points"] = sum(len(v) for v in rc["curves"].values())
+        k["curve.wrong_confident_max"] = max(x["wrong_confident"] for v in rc["curves"].values() for x in v.values())
+    ce = _side("context_eval.json")
+    if ce:
+        same = True
+        for busy, v in ce["busy"].items():
+            for b, arms in v["budgets"].items():
+                for arm, m in arms.items():
+                    if arm != "TR" and s.get(f"ctx.busy{busy}.b{b}.{arm}.mrr") not in (None, m["mrr"]):
+                        same = False
+                    k[f"ctx.busy{busy}.b{b}.{arm}.mrr_ci_lo"] = m.get("mrr_ci_lo")
+                    k[f"ctx.busy{busy}.b{b}.{arm}.mrr_ci_hi"] = m.get("mrr_ci_hi")
+                    if arm == "TR":
+                        k.update({f"ctx.busy{busy}.b{b}.TR.{mm}": m[mm] for mm in ("cause", "mrr")})
+        k["ctx.rerun_reproduces_run"] = same   # the side rerun must reproduce the run's G, GA, V and R exactly
+        import random
+        import statistics as st
+
+        for busy, v in ce["busy"].items():   # paired bootstrap on the same worlds: GA minus each comparator (seed 0)
+            rows = v.get("rows") or []
+            for b in ("500", "1000"):
+                for other in ("TR", "V", "G"):
+                    diffs = [r["rr"][b]["GA"] - r["rr"][b][other] for r in rows if other in r["rr"].get(b, {})]
+                    if not diffs:
+                        continue
+                    rnd = random.Random(0)
+                    means = sorted(st.fmean(rnd.choices(diffs, k=len(diffs))) for _ in range(2000))
+                    q = f"ctx.busy{busy}.b{b}.GA_minus_{other}"
+                    k[f"{q}.mrr_diff"] = round(st.fmean(diffs), 4)
+                    k[f"{q}.ci_lo"], k[f"{q}.ci_hi"] = round(means[50], 4), round(means[1949], 4)
+    bp = _side("brain_paraphrase.json")
+    if bp:
+        for name, x in (("brain_para", bp["paraphrase"]), ("brain_orig", bp["original"])):
+            for m in ("questions", "correct", "cites_ok", "intent_correct", "citation_precision_mean", "unanswerable_honest",
+                      "unanswerable"):
+                k[f"{name}.{m}"] = x.get(m)
+            k.update(wilson_keys(f"{name}.correct", x["correct"], x["questions"]))
+    return k
 
 
 # ------------------------------------------------------------------ the public deployment (evals/live_bench.py)
@@ -356,6 +775,11 @@ def deep_summary(x: dict) -> dict:
     out: dict = {}
     for run, d in x.items():
         out.update({f"deep.{run}.all.{k}": d["all"][k] for k in DEEP_KEYS if k in d["all"]})   # older runs: no "ok"
+        cc = (d["all"].get("buckets") or {}).get("confirm_cases")   # worlds that have a cause (right_cause's denominator)
+        if cc is not None:
+            out[f"deep.{run}.all.cause_cases"] = cc
+            out.update(wilson_keys(f"deep.{run}.all.right_cause", d["all"]["right_cause"], cc))
+            out.update(wilson_keys(f"deep.{run}.all.wrong_confident", d["all"]["wrong_confident"], d["all"]["cases"]))
         for cat, v in d["by_category"].items():
             out.update({f"deep.{run}.{cat}.{k}": v[k] for k in DEEP_KEYS if k in v})
         for h, v in d["by_hops"].items():
@@ -376,8 +800,10 @@ def deep_markdown(x: dict) -> list[str]:
          "an unchanged upstream fault next to a real cause. ok = the expected cause, or an abstention where the "
          "pre-registration allows one; wrong-confident = any confident blame of another change (the safety metric). "
          "G4 upstream eliminates only under a strict lower bound (best single path, cap × call share, no slack, the "
-         "upstream fault first); the development seed's runs found the gap and then the first version's unsafety "
-         "; the fresh seed was generated and run only after the redesign. Arm T = telemetry only.",
+         "upstream fault first); the development seed's runs found the gap and then the first version's unsafety. "
+         "On the fresh seed, the 60 worlds of the first three categories were first run with the first-shipped rule "
+         "(all correct, run_0025) before the redesign; the 80 adversarial worlds were added after it, and the "
+         "redesign was developed on the development seed and the reviewer's worlds. Arm T = telemetry only.",
          "", "| seed | category | cases | ok | right cause | wrong-confident | abstained | arm T |",
          "|---|---|---|---|---|---|---|---|"]
     for run, d in x.items():
@@ -629,6 +1055,16 @@ def scale_summary(sc: dict) -> dict:
         if dom:
             out[f"{p}.dominant"] = dom["template"]
     return out
+
+
+def current_scale(c: dict) -> dict:
+    """The run's recorded scale check, or a later `make scale` (evals/results/scale.json) when that is newer (M18: the
+    10k rerun on the current gate supersedes the copy the run embedded)."""
+    sc = c.get("scale") or {}
+    newer = _side("scale.json")
+    if newer and str(newer.get("started", "")) > str(sc.get("started", "")):
+        return {**newer, "source": "evals/results/scale.json (make scale, newer than the run's copy)"}
+    return sc
 
 
 def scale_markdown(sc: dict) -> list[str]:
@@ -997,14 +1433,21 @@ ARM_DESC = {"N": "naive recency over the change files (also A4's ungated guess)"
             "V": "vector only: the change whose title embedding is nearest the incident's (cosine in FalkorDB)", "A2": "graph, memory off",
             "A3": "graph + memory (the product)", "A4": "FalkorDB off (the run cannot start: fails closed)",
             "A3-noG5": "the product with the max-flow sufficiency check (G5) switched off",
-            "T": "telemetry only: the window's change whose own component shows the largest measured excess (no topology)"}
+            "T": "telemetry only: the window's change whose own component shows the largest measured excess (no topology)",
+            "A0": "LLM only (claude-opus-5-5, one trial): alert, raw service error rates, the change list (prompt v1: a change "
+                  "id or none; no data-plane evidence)",
+            "A1": "A0 plus vector-RAG context over runbooks, postmortems, ADRs and a text topology (prompt v1)",
+            "A3L": "the product with the LLM investigator (claude-opus-5-5, one trial); the same gate decides"}
 
 
 def markdown(out: dict, s: dict, run_name: str) -> str:
     out = with_llm_trials(out)
     L = ["# Results", "", f"> GENERATED by `evals/report.py` from `evals/results/{run_name}`. Do not edit by hand.", "",
-         f"Run {out['started']} → {out['finished']} · engine FalkorDB {out['engine']} · investigator: {out['investigator']}"
-         f" · N = {out['n']} per scenario per graph arm.", ""]
+         f"Run started {out['started']} (scenario trials done {out['finished']}; the checks below ran after that) · engine "
+         f"FalkorDB {out['engine']} · keyless arms' investigator: {out['investigator']}"
+         f" · N = {out['n']} per scenario per graph arm. The deterministic investigator makes those trials identical "
+         "copies, so the effective N is the number of distinct scenarios (8, of which 5 have a cause); intervals below "
+         "are Wilson 95 % over distinct scenarios. LLM arms A0, A1 and A3L come from `evals/results/llm_arms.json`.", ""]
     if out.get("skipped_arms"):
         L += [f"**Not run:** LLM arms {', '.join(out['skipped_arms'])} (need an API key and an approved budget).", ""]
     L += ["## Arms", "", "False blame is measured on the scenarios with a true cause only (the controls and no-incident scenarios "
@@ -1020,6 +1463,7 @@ def markdown(out: dict, s: dict, run_name: str) -> str:
           "|---|" + "---|" * len(out["arms"])]
     for sid in out["scenarios"]:
         L.append(f"| {sid} | " + " | ".join(str(s.get(f"arm.{a}.{sid}.outcome_correct_rate")) for a in out["arms"]) + " |")
+    L += audit_markdown(out, s)
     c = out.get("checks") or {}
     if c:
         L += ["", "## Product checks", ""]
@@ -1089,7 +1533,7 @@ def markdown(out: dict, s: dict, run_name: str) -> str:
                      f"{(x.get('control_naive_retry') or {}).get('merged_prs')} PRs (control).")
     L += detail_markdown(out, s)
     L += gate_bench_markdown({**(c.get("gate_bench") or {}), "_heldout": c.get("gate_bench_heldout")} if c.get("gate_bench") else {})
-    L += scale_markdown(c.get("scale") or {})
+    L += scale_markdown(current_scale(c))
     L += futures_markdown(c.get("futures") or {})
     L += mismatch_markdown(c.get("mismatch") or {})
     L += learning_markdown(c.get("learning") or {})
@@ -1149,7 +1593,7 @@ def markdown(out: dict, s: dict, run_name: str) -> str:
             break
     notes += backtest_notes(c.get("backtest") or {})
     notes += gate_bench_notes(c.get("gate_bench") or {})
-    notes += scale_notes(c.get("scale") or {})
+    notes += scale_notes(current_scale(c))
     notes += robustness_notes(c.get("robustness") or {}, c.get("ladder") or {}, c.get("perf_vs_flat") or {})
     wrong = sorted({(t["scenario"], next((f"{o['kind']} {o['target']}" for o in (t.get("detail") or {}).get("options", [])
                                           if o["enabled"] and o["kind"] != "open_issue"), "?"))

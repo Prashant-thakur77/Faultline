@@ -13,6 +13,7 @@ The model must answer JSON {"cause": "<change id>" | "none", "why": "..."}. Grad
 from __future__ import annotations
 
 import json
+import os
 import re
 import time
 from pathlib import Path
@@ -20,6 +21,19 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PRICE_PER_MTOK = {"in": 15.0, "out": 75.0}  # conservative upper bound used for the pre-run estimate (USD)
+
+# v1 (the recorded 2026-10-16 run): "a change id or none" only, and no data-plane evidence. The M18 audit found that made
+# S12 unanswerable (its truth is NOT_CONFIDENT with an inferred origin) and starved S2/S4D of the evidence the product
+# reads. v2 (PREREGISTRATION amendment 2026-10-16): the answer can say "an incident no listed change explains, starting
+# at <component>", and data scenarios carry the warehouse comparison and invariant results. Default v2; results record it.
+PROMPT_VERSION = int(os.environ.get("FAULTLINE_LLM_PROMPT", "2"))
+
+ASK_V2 = ("You are on call. Given the alert, telemetry, data-plane evidence and the changes below, decide what happened. "
+          "Answer ONLY with JSON: {\"cause\": \"<change id>\" or \"none\", \"incident\": true or false, "
+          "\"origin\": \"<component id>\" or null, \"why\": \"<one sentence>\"}. "
+          "Name a change only if the evidence shows it caused the incident. If there is an incident but no listed change "
+          "explains it, answer cause \"none\", incident true and the component where it most likely started as origin. "
+          "If the evidence shows nothing is wrong, answer cause \"none\", incident false.")
 
 ASK = ("You are on call. Given the alert, telemetry and the changes below, name the single change that caused the "
        "incident, or 'none' if nothing in the data shows an incident. Answer ONLY with JSON: "
@@ -48,12 +62,30 @@ def _world_text(sid: str) -> tuple[str, dict]:
         changes = [f"- {c['change']} ({c.get('kind', 'deploy')} on {c['target']}, {c['at']} before onset): {c.get('title', '')}"
                    for c in s.get("inject", [])]
         facts = [f"- {f['change']} sets {f['key']} = {f['value']} ({f.get('file', '')})" for f in s.get("facts", [])]
+        data = _data_plane_text(s) if PROMPT_VERSION >= 2 and s.get("pipeline_mode") else ""
         text = (f"ALERTS: {', '.join(a['metric'] + ' on ' + a['target'] for a in s.get('alerts', []))}\n"
                 f"REPORT: {s.get('report', '')}\n\nERROR RATE PER MINUTE (last value = onset):\n" + "\n".join(lines)
+                + data
                 + "\n\nCHANGES IN THE WINDOW:\n" + ("\n".join(changes) or "- none") + ("\n\nDIFF FACTS:\n" + "\n".join(facts) if facts else ""))
         return text, {"graph": p.graph}
     finally:
         gcopy.delete_if_exists(gclient.engine(), p.graph)
+
+
+def _data_plane_text(s: dict) -> str:
+    """v2: what the product's data specialist reads for a data incident, as text: daily revenue / orders / AOV against the
+    committed healthy baseline, and the pipeline invariant suite's result (warehouse in the scenario's mode)."""
+    from faultline import scenario, warehouse
+
+    with scenario.WAREHOUSE.use(s["pipeline_mode"]):
+        cmp = warehouse.compare_to_baseline(10)["comparisons"]
+        inv = warehouse.run_invariants()
+    lines = [f"{c['day']}: revenue {c['revenue_usd']} (baseline {c['baseline_revenue_usd']}, ratio {c['revenue_ratio']}), "
+             f"orders {c['order_count']} (baseline {c['baseline_order_count']}), AOV {c['aov_median_usd']} "
+             f"(baseline {c['baseline_aov_median_usd']})" for c in cmp]
+    fails = "; ".join(f"{f.name}: {f.message[:160]}" for f in inv.failures[:8]) or "none"
+    return ("\n\nDATA PLANE (warehouse marts.fct_revenue vs the healthy baseline, newest first):\n" + "\n".join(lines)
+            + f"\nPIPELINE INVARIANTS: {inv.passed}/{inv.total} passed; failures: {fails}")
 
 
 def _corpus() -> list[tuple[str, str]]:
@@ -90,8 +122,9 @@ def _ask(text: str, model: str) -> tuple[dict, dict]:
     api = Anthropic(api_key=settings.anthropic_api_key, max_retries=3)
     # current models take no sampling parameters and always think; thinking counts against max_tokens, so leave room.
     # A one-line JSON verdict: low effort keeps the comparison cheap without changing what the model is asked.
+    ask = ASK_V2 if PROMPT_VERSION >= 2 else ASK
     resp = api.messages.create(model=model, max_tokens=16000, output_config={"effort": "low"},
-                               messages=[{"role": "user", "content": ASK + "\n\n" + text}])
+                               messages=[{"role": "user", "content": ask + "\n\n" + text}])
     raw = "".join(b.text for b in resp.content if b.type == "text")
     m = re.search(r"\{.*\}", raw, re.S)
     ans = json.loads(m.group(0)) if m else {"cause": None, "why": raw[:200]}
@@ -124,10 +157,17 @@ def arm_a3l(sid: str, model: str) -> dict:
 def _result(sid: str, ans: dict, usage: dict, t0: float) -> dict:
     cause = ans.get("cause")
     cause = None if cause in (None, "", "none", "None") else str(cause)
-    outcome = "CONFIRMED" if cause else "NO_INCIDENT"
+    inferred = None
+    if cause:
+        outcome = "CONFIRMED"
+    elif PROMPT_VERSION >= 2 and ans.get("incident") is True:   # v2: an incident no listed change explains
+        outcome, inferred = "NOT_CONFIDENT", (str(ans["origin"]) if ans.get("origin") else None)
+    else:
+        outcome = "NO_INCIDENT"
     from harness import grade  # the same grader as every keyless arm (imported late: the harness imports this module)
 
-    return {"outcome": outcome, "cause": cause, "why": ans.get("why", "")[:300], **grade(sid, outcome, cause),
+    return {"outcome": outcome, "cause": cause, "inferred": inferred, "why": ans.get("why", "")[:300],
+            **grade(sid, outcome, cause, inferred=inferred), "prompt_version": PROMPT_VERSION,
             "usage": usage, "seconds": round(time.perf_counter() - t0, 2), "tool_calls": 0}
 
 

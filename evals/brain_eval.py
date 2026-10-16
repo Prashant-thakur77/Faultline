@@ -35,10 +35,10 @@ def _knowledge(tenant: str, graph: str) -> dict:
     return {r["label"]: r["n"] for r in RO(tenant, graph).run("Q-COUNT-2", {}).rows if r["label"] in KNOWLEDGE}
 
 
-def run() -> dict:
+def run(truth_file: str = "questions.truth.json") -> dict:
     import uuid
 
-    truth = json.loads((ROOT / "data" / "brain" / "questions.truth.json").read_text())
+    truth = json.loads((ROOT / "data" / "brain" / truth_file).read_text())
     tenant = truth["tenant"]
     db = gclient.engine()
     room = f"eval_{tenant}_braineval_{uuid.uuid4().hex[:8]}"
@@ -56,7 +56,13 @@ def run() -> dict:
                 ok = ok and (item.get("must_say", "").lower() in a.answer.lower())
             else:
                 ok = not cited and item["must_say"].lower() in a.answer.lower()
+            if item["must_cite"]:   # the answer's content, whatever intent label the router gave it
+                cites_ok = set(item["must_cite"]) <= cited and a.guard["ok"] and (item.get("must_say", "").lower() in a.answer.lower())
+            else:
+                cites_ok = not cited and item["must_say"].lower() in a.answer.lower()
+            prec = (round(len(set(item["must_cite"]) & cited) / len(cited), 4) if cited else None) if item["must_cite"] else None
             rows.append({"q": item["q"], "intent": a.intent, "expected_intent": item["intent"], "ok": ok,
+                         "citation_precision": prec, "cited": len(cited), "cites_ok": cites_ok,
                          "missing": sorted(set(item["must_cite"]) - cited), "guard_ok": a.guard["ok"], "tier": a.tier})
         after = _knowledge(tenant, room)
     finally:
@@ -68,8 +74,28 @@ def run() -> dict:
             "intent_correct": sum(r["intent"] == r["expected_intent"] for r in rows),
             "guard_ok": sum(r["guard_ok"] for r in rows),
             "ms_p50": round(statistics.median(ms), 1), "ms_max": round(max(ms), 1),
-            "knowledge_unchanged": before == after, "failures": [r for r in rows if not r["ok"]]}
+            "knowledge_unchanged": before == after, "failures": [r for r in rows if not r["ok"]],
+            # amendment 2026-10-16: expected ∩ cited / cited, over answerable questions that cited anything
+            "citation_precision_mean": round(statistics.fmean(ps), 4) if (ps := [r["citation_precision"] for r in rows
+                                                                                 if r["citation_precision"] is not None]) else None,
+            "cites_ok": sum(r["cites_ok"] for r in rows)}
 
 
 if __name__ == "__main__":
-    print(json.dumps(run(), indent=2))
+    import argparse
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--truth", default="questions.truth.json")
+    ap.add_argument("--side", action="store_true", help="paraphrase run → evals/results/brain_paraphrase.json")
+    ap.add_argument("--reason", default="")
+    a = ap.parse_args()
+    started = time.strftime("%Y-%m-%dT%H:%M:%S")
+    r = run(a.truth)
+    print(json.dumps({k: v for k, v in r.items() if k != "rows"}, indent=2))
+    if a.side:
+        if not a.reason:
+            raise SystemExit("--side needs --reason")
+        orig = run("questions.truth.json")
+        out = {"paraphrase": r, "original": orig, "started": started, "finished": time.strftime("%Y-%m-%dT%H:%M:%S"),
+               "reason": a.reason}
+        (ROOT / "evals" / "results" / "brain_paraphrase.json").write_text(json.dumps(out, indent=1, default=str) + "\n")

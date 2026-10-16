@@ -1,0 +1,2080 @@
+{
+ "seed": 20261121,
+ "cases": 40,
+ "rungs": {
+  "full": {
+   "by_category": {
+    "g5_only": {
+     "cases": 20,
+     "right_cause": 20,
+     "wrong_confident": 0,
+     "abstained": 0,
+     "correct": 20,
+     "decoys_by": {
+      "G5": 20
+     }
+    },
+    "anomalous_no_path": {
+     "cases": 20,
+     "right_cause": 20,
+     "wrong_confident": 0,
+     "abstained": 0,
+     "correct": 20,
+     "decoys_by": {
+      "G2": 20
+     }
+    }
+   },
+   "rows": [
+    {
+     "id": "dc001",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-c310b289",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-bb1d8d91": "G5"
+     }
+    },
+    {
+     "id": "dc002",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-a6f0a2c9",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-fbddbf14": "G5"
+     }
+    },
+    {
+     "id": "dc003",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-77af8fcd",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-3958769f": "G5"
+     }
+    },
+    {
+     "id": "dc004",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-dae43947",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-808bc540": "G5"
+     }
+    },
+    {
+     "id": "dc005",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-a4ae1eb2",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-68fef959": "G5"
+     }
+    },
+    {
+     "id": "dc006",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-61803809",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-3f187341": "G5"
+     }
+    },
+    {
+     "id": "dc007",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-8a11fa6d",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-41d76720": "G5"
+     }
+    },
+    {
+     "id": "dc008",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-1919c058",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-f884038e": "G5"
+     }
+    },
+    {
+     "id": "dc009",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-3f3a4ae5",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-984426bd": "G5"
+     }
+    },
+    {
+     "id": "dc010",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-1d05aa58",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-fe42ba0d": "G5"
+     }
+    },
+    {
+     "id": "dc011",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-9a390230",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-c85a6ba0": "G5"
+     }
+    },
+    {
+     "id": "dc012",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-78a8d0ae",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-1efa623d": "G5"
+     }
+    },
+    {
+     "id": "dc013",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-dd0b97de",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-4f01b432": "G5"
+     }
+    },
+    {
+     "id": "dc014",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-e79c0ee0",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-1d6cf994": "G5"
+     }
+    },
+    {
+     "id": "dc015",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-8ef2c599",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-f8c3acf5": "G5"
+     }
+    },
+    {
+     "id": "dc016",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-d35bcb83",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-93e6f3f4": "G5"
+     }
+    },
+    {
+     "id": "dc017",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-0a54e538",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-89ed00a3": "G5"
+     }
+    },
+    {
+     "id": "dc018",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-90956f65",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-8d411301": "G5"
+     }
+    },
+    {
+     "id": "dc019",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-54619d83",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-dd2ab21d": "G5"
+     }
+    },
+    {
+     "id": "dc020",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-d0810d5e",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-b77e544c": "G5"
+     }
+    },
+    {
+     "id": "dc021",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-9ef1918e",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-a209d6dc": "G2"
+     }
+    },
+    {
+     "id": "dc022",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-0ec352fb",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-95626123": "G2"
+     }
+    },
+    {
+     "id": "dc023",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-64694471",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-4b09e963": "G2"
+     }
+    },
+    {
+     "id": "dc024",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-f2659d7e",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-c029dd90": "G2"
+     }
+    },
+    {
+     "id": "dc025",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-41967711",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-98b7ce63": "G2"
+     }
+    },
+    {
+     "id": "dc026",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-b6b21b79",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-b23bb5e9": "G2"
+     }
+    },
+    {
+     "id": "dc027",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-e9a50cd4",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-8a1b796c": "G2"
+     }
+    },
+    {
+     "id": "dc028",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-3f9143d8",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-8f98c439": "G2"
+     }
+    },
+    {
+     "id": "dc029",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-e65e7329",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-b9f48d5d": "G2"
+     }
+    },
+    {
+     "id": "dc030",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-221d2f33",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-9829e214": "G2"
+     }
+    },
+    {
+     "id": "dc031",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-86c73afa",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-d8c67290": "G2"
+     }
+    },
+    {
+     "id": "dc032",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-1b1e8fe7",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-958c4f46": "G2"
+     }
+    },
+    {
+     "id": "dc033",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-df0ef9be",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-8b87ca5f": "G2"
+     }
+    },
+    {
+     "id": "dc034",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-cff600e9",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-18d58407": "G2"
+     }
+    },
+    {
+     "id": "dc035",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-176a8abd",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-dc8871aa": "G2"
+     }
+    },
+    {
+     "id": "dc036",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-f66944aa",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-31d1b81d": "G2"
+     }
+    },
+    {
+     "id": "dc037",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-6b4d5377",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-55bfd5ab": "G2"
+     }
+    },
+    {
+     "id": "dc038",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-abfc8bf3",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-70d60da0": "G2"
+     }
+    },
+    {
+     "id": "dc039",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-a99fb81a",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-d05f3b20": "G2"
+     }
+    },
+    {
+     "id": "dc040",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-3ffb4ae4",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-a55a2c3c": "G2"
+     }
+    }
+   ]
+  },
+  "no_maxflow": {
+   "by_category": {
+    "g5_only": {
+     "cases": 20,
+     "right_cause": 0,
+     "wrong_confident": 0,
+     "abstained": 20,
+     "correct": 0,
+     "decoys_by": {
+      "candidate": 20
+     }
+    },
+    "anomalous_no_path": {
+     "cases": 20,
+     "right_cause": 20,
+     "wrong_confident": 0,
+     "abstained": 0,
+     "correct": 20,
+     "decoys_by": {
+      "G2": 20
+     }
+    }
+   },
+   "rows": [
+    {
+     "id": "dc001",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-bb1d8d91": "candidate"
+     }
+    },
+    {
+     "id": "dc002",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-fbddbf14": "candidate"
+     }
+    },
+    {
+     "id": "dc003",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-3958769f": "candidate"
+     }
+    },
+    {
+     "id": "dc004",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-808bc540": "candidate"
+     }
+    },
+    {
+     "id": "dc005",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-68fef959": "candidate"
+     }
+    },
+    {
+     "id": "dc006",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-3f187341": "candidate"
+     }
+    },
+    {
+     "id": "dc007",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-41d76720": "candidate"
+     }
+    },
+    {
+     "id": "dc008",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-f884038e": "candidate"
+     }
+    },
+    {
+     "id": "dc009",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-984426bd": "candidate"
+     }
+    },
+    {
+     "id": "dc010",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-fe42ba0d": "candidate"
+     }
+    },
+    {
+     "id": "dc011",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-c85a6ba0": "candidate"
+     }
+    },
+    {
+     "id": "dc012",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-1efa623d": "candidate"
+     }
+    },
+    {
+     "id": "dc013",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-4f01b432": "candidate"
+     }
+    },
+    {
+     "id": "dc014",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-1d6cf994": "candidate"
+     }
+    },
+    {
+     "id": "dc015",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-f8c3acf5": "candidate"
+     }
+    },
+    {
+     "id": "dc016",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-93e6f3f4": "candidate"
+     }
+    },
+    {
+     "id": "dc017",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-89ed00a3": "candidate"
+     }
+    },
+    {
+     "id": "dc018",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-8d411301": "candidate"
+     }
+    },
+    {
+     "id": "dc019",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-dd2ab21d": "candidate"
+     }
+    },
+    {
+     "id": "dc020",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-b77e544c": "candidate"
+     }
+    },
+    {
+     "id": "dc021",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-9ef1918e",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-a209d6dc": "G2"
+     }
+    },
+    {
+     "id": "dc022",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-0ec352fb",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-95626123": "G2"
+     }
+    },
+    {
+     "id": "dc023",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-64694471",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-4b09e963": "G2"
+     }
+    },
+    {
+     "id": "dc024",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-f2659d7e",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-c029dd90": "G2"
+     }
+    },
+    {
+     "id": "dc025",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-41967711",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-98b7ce63": "G2"
+     }
+    },
+    {
+     "id": "dc026",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-b6b21b79",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-b23bb5e9": "G2"
+     }
+    },
+    {
+     "id": "dc027",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-e9a50cd4",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-8a1b796c": "G2"
+     }
+    },
+    {
+     "id": "dc028",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-3f9143d8",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-8f98c439": "G2"
+     }
+    },
+    {
+     "id": "dc029",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-e65e7329",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-b9f48d5d": "G2"
+     }
+    },
+    {
+     "id": "dc030",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-221d2f33",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-9829e214": "G2"
+     }
+    },
+    {
+     "id": "dc031",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-86c73afa",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-d8c67290": "G2"
+     }
+    },
+    {
+     "id": "dc032",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-1b1e8fe7",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-958c4f46": "G2"
+     }
+    },
+    {
+     "id": "dc033",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-df0ef9be",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-8b87ca5f": "G2"
+     }
+    },
+    {
+     "id": "dc034",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-cff600e9",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-18d58407": "G2"
+     }
+    },
+    {
+     "id": "dc035",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-176a8abd",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-dc8871aa": "G2"
+     }
+    },
+    {
+     "id": "dc036",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-f66944aa",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-31d1b81d": "G2"
+     }
+    },
+    {
+     "id": "dc037",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-6b4d5377",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-55bfd5ab": "G2"
+     }
+    },
+    {
+     "id": "dc038",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-abfc8bf3",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-70d60da0": "G2"
+     }
+    },
+    {
+     "id": "dc039",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-a99fb81a",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-d05f3b20": "G2"
+     }
+    },
+    {
+     "id": "dc040",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-3ffb4ae4",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-a55a2c3c": "G2"
+     }
+    }
+   ]
+  },
+  "no_sppaths": {
+   "by_category": {
+    "g5_only": {
+     "cases": 20,
+     "right_cause": 20,
+     "wrong_confident": 0,
+     "abstained": 0,
+     "correct": 20,
+     "decoys_by": {
+      "G5": 20
+     }
+    },
+    "anomalous_no_path": {
+     "cases": 20,
+     "right_cause": 20,
+     "wrong_confident": 0,
+     "abstained": 0,
+     "correct": 7,
+     "decoys_by": {
+      "G2": 7,
+      "G5": 13
+     }
+    }
+   },
+   "rows": [
+    {
+     "id": "dc001",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-c310b289",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-bb1d8d91": "G5"
+     }
+    },
+    {
+     "id": "dc002",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-a6f0a2c9",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-fbddbf14": "G5"
+     }
+    },
+    {
+     "id": "dc003",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-77af8fcd",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-3958769f": "G5"
+     }
+    },
+    {
+     "id": "dc004",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-dae43947",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-808bc540": "G5"
+     }
+    },
+    {
+     "id": "dc005",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-a4ae1eb2",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-68fef959": "G5"
+     }
+    },
+    {
+     "id": "dc006",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-61803809",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-3f187341": "G5"
+     }
+    },
+    {
+     "id": "dc007",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-8a11fa6d",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-41d76720": "G5"
+     }
+    },
+    {
+     "id": "dc008",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-1919c058",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-f884038e": "G5"
+     }
+    },
+    {
+     "id": "dc009",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-3f3a4ae5",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-984426bd": "G5"
+     }
+    },
+    {
+     "id": "dc010",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-1d05aa58",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-fe42ba0d": "G5"
+     }
+    },
+    {
+     "id": "dc011",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-9a390230",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-c85a6ba0": "G5"
+     }
+    },
+    {
+     "id": "dc012",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-78a8d0ae",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-1efa623d": "G5"
+     }
+    },
+    {
+     "id": "dc013",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-dd0b97de",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-4f01b432": "G5"
+     }
+    },
+    {
+     "id": "dc014",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-e79c0ee0",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-1d6cf994": "G5"
+     }
+    },
+    {
+     "id": "dc015",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-8ef2c599",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-f8c3acf5": "G5"
+     }
+    },
+    {
+     "id": "dc016",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-d35bcb83",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-93e6f3f4": "G5"
+     }
+    },
+    {
+     "id": "dc017",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-0a54e538",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-89ed00a3": "G5"
+     }
+    },
+    {
+     "id": "dc018",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-90956f65",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-8d411301": "G5"
+     }
+    },
+    {
+     "id": "dc019",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-54619d83",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-dd2ab21d": "G5"
+     }
+    },
+    {
+     "id": "dc020",
+     "category": "g5_only",
+     "outcome": "CONFIRMED",
+     "blamed": "D-d0810d5e",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-b77e544c": "G5"
+     }
+    },
+    {
+     "id": "dc021",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-9ef1918e",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-a209d6dc": "G5"
+     }
+    },
+    {
+     "id": "dc022",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-0ec352fb",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-95626123": "G5"
+     }
+    },
+    {
+     "id": "dc023",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-64694471",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-4b09e963": "G5"
+     }
+    },
+    {
+     "id": "dc024",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-f2659d7e",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-c029dd90": "G5"
+     }
+    },
+    {
+     "id": "dc025",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-41967711",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-98b7ce63": "G2"
+     }
+    },
+    {
+     "id": "dc026",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-b6b21b79",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-b23bb5e9": "G5"
+     }
+    },
+    {
+     "id": "dc027",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-e9a50cd4",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-8a1b796c": "G2"
+     }
+    },
+    {
+     "id": "dc028",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-3f9143d8",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-8f98c439": "G5"
+     }
+    },
+    {
+     "id": "dc029",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-e65e7329",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-b9f48d5d": "G5"
+     }
+    },
+    {
+     "id": "dc030",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-221d2f33",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-9829e214": "G5"
+     }
+    },
+    {
+     "id": "dc031",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-86c73afa",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-d8c67290": "G5"
+     }
+    },
+    {
+     "id": "dc032",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-1b1e8fe7",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-958c4f46": "G5"
+     }
+    },
+    {
+     "id": "dc033",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-df0ef9be",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-8b87ca5f": "G2"
+     }
+    },
+    {
+     "id": "dc034",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-cff600e9",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-18d58407": "G5"
+     }
+    },
+    {
+     "id": "dc035",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-176a8abd",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-dc8871aa": "G2"
+     }
+    },
+    {
+     "id": "dc036",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-f66944aa",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-31d1b81d": "G2"
+     }
+    },
+    {
+     "id": "dc037",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-6b4d5377",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-55bfd5ab": "G5"
+     }
+    },
+    {
+     "id": "dc038",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-abfc8bf3",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-70d60da0": "G2"
+     }
+    },
+    {
+     "id": "dc039",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-a99fb81a",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-d05f3b20": "G5"
+     }
+    },
+    {
+     "id": "dc040",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-3ffb4ae4",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-a55a2c3c": "G2"
+     }
+    }
+   ]
+  },
+  "neither": {
+   "by_category": {
+    "g5_only": {
+     "cases": 20,
+     "right_cause": 0,
+     "wrong_confident": 0,
+     "abstained": 20,
+     "correct": 0,
+     "decoys_by": {
+      "candidate": 20
+     }
+    },
+    "anomalous_no_path": {
+     "cases": 20,
+     "right_cause": 7,
+     "wrong_confident": 0,
+     "abstained": 13,
+     "correct": 7,
+     "decoys_by": {
+      "G2": 7,
+      "candidate": 13
+     }
+    }
+   },
+   "rows": [
+    {
+     "id": "dc001",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-bb1d8d91": "candidate"
+     }
+    },
+    {
+     "id": "dc002",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-fbddbf14": "candidate"
+     }
+    },
+    {
+     "id": "dc003",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-3958769f": "candidate"
+     }
+    },
+    {
+     "id": "dc004",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-808bc540": "candidate"
+     }
+    },
+    {
+     "id": "dc005",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-68fef959": "candidate"
+     }
+    },
+    {
+     "id": "dc006",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-3f187341": "candidate"
+     }
+    },
+    {
+     "id": "dc007",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-41d76720": "candidate"
+     }
+    },
+    {
+     "id": "dc008",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-f884038e": "candidate"
+     }
+    },
+    {
+     "id": "dc009",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-984426bd": "candidate"
+     }
+    },
+    {
+     "id": "dc010",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-fe42ba0d": "candidate"
+     }
+    },
+    {
+     "id": "dc011",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-c85a6ba0": "candidate"
+     }
+    },
+    {
+     "id": "dc012",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-1efa623d": "candidate"
+     }
+    },
+    {
+     "id": "dc013",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-4f01b432": "candidate"
+     }
+    },
+    {
+     "id": "dc014",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-1d6cf994": "candidate"
+     }
+    },
+    {
+     "id": "dc015",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-f8c3acf5": "candidate"
+     }
+    },
+    {
+     "id": "dc016",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-93e6f3f4": "candidate"
+     }
+    },
+    {
+     "id": "dc017",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-89ed00a3": "candidate"
+     }
+    },
+    {
+     "id": "dc018",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-8d411301": "candidate"
+     }
+    },
+    {
+     "id": "dc019",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-dd2ab21d": "candidate"
+     }
+    },
+    {
+     "id": "dc020",
+     "category": "g5_only",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-b77e544c": "candidate"
+     }
+    },
+    {
+     "id": "dc021",
+     "category": "anomalous_no_path",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-a209d6dc": "candidate"
+     }
+    },
+    {
+     "id": "dc022",
+     "category": "anomalous_no_path",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-95626123": "candidate"
+     }
+    },
+    {
+     "id": "dc023",
+     "category": "anomalous_no_path",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-4b09e963": "candidate"
+     }
+    },
+    {
+     "id": "dc024",
+     "category": "anomalous_no_path",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-c029dd90": "candidate"
+     }
+    },
+    {
+     "id": "dc025",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-41967711",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-98b7ce63": "G2"
+     }
+    },
+    {
+     "id": "dc026",
+     "category": "anomalous_no_path",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-b23bb5e9": "candidate"
+     }
+    },
+    {
+     "id": "dc027",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-e9a50cd4",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-8a1b796c": "G2"
+     }
+    },
+    {
+     "id": "dc028",
+     "category": "anomalous_no_path",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-8f98c439": "candidate"
+     }
+    },
+    {
+     "id": "dc029",
+     "category": "anomalous_no_path",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-b9f48d5d": "candidate"
+     }
+    },
+    {
+     "id": "dc030",
+     "category": "anomalous_no_path",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-9829e214": "candidate"
+     }
+    },
+    {
+     "id": "dc031",
+     "category": "anomalous_no_path",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-d8c67290": "candidate"
+     }
+    },
+    {
+     "id": "dc032",
+     "category": "anomalous_no_path",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-958c4f46": "candidate"
+     }
+    },
+    {
+     "id": "dc033",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-df0ef9be",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-8b87ca5f": "G2"
+     }
+    },
+    {
+     "id": "dc034",
+     "category": "anomalous_no_path",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-18d58407": "candidate"
+     }
+    },
+    {
+     "id": "dc035",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-176a8abd",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-dc8871aa": "G2"
+     }
+    },
+    {
+     "id": "dc036",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-f66944aa",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-31d1b81d": "G2"
+     }
+    },
+    {
+     "id": "dc037",
+     "category": "anomalous_no_path",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-55bfd5ab": "candidate"
+     }
+    },
+    {
+     "id": "dc038",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-abfc8bf3",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-70d60da0": "G2"
+     }
+    },
+    {
+     "id": "dc039",
+     "category": "anomalous_no_path",
+     "outcome": "UNKNOWN_ESCALATED",
+     "blamed": null,
+     "right_cause": false,
+     "wrong_confident": false,
+     "abstained": true,
+     "decoys_by": {
+      "D-d05f3b20": "candidate"
+     }
+    },
+    {
+     "id": "dc040",
+     "category": "anomalous_no_path",
+     "outcome": "CONFIRMED",
+     "blamed": "D-3ffb4ae4",
+     "right_cause": true,
+     "wrong_confident": false,
+     "abstained": false,
+     "decoys_by": {
+      "D-a55a2c3c": "G2"
+     }
+    }
+   ]
+  }
+ },
+ "engine_pressure": [
+  {
+   "after": "decisive-full",
+   "fraction": 0.232
+  },
+  {
+   "after": "decisive-no_maxflow",
+   "fraction": 0.252
+  },
+  {
+   "after": "decisive-no_sppaths",
+   "fraction": 0.277
+  },
+  {
+   "after": "decisive-neither",
+   "fraction": 0.269
+  }
+ ],
+ "arms": {
+  "t": {
+   "g5_only": {
+    "right_strict": 13,
+    "right_frac": 13.0,
+    "wrong_frac": 7.0
+   },
+   "anomalous_no_path": {
+    "right_strict": 15,
+    "right_frac": 15.0,
+    "wrong_frac": 5.0
+   }
+  },
+  "tplus": {
+   "g5_only": {
+    "right_strict": 13,
+    "right_frac": 13.0,
+    "wrong_frac": 7.0
+   },
+   "anomalous_no_path": {
+    "right_strict": 15,
+    "right_frac": 15.0,
+    "wrong_frac": 5.0
+   }
+  }
+ },
+ "seconds": 115.4,
+ "started": "2026-10-16T12:39:20",
+ "finished": "2026-10-16T12:41:15",
+ "reason": "M18 phase 2: first run of the pre-registered decisive bench"
+}

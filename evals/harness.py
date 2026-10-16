@@ -86,7 +86,8 @@ def arm_naive(sid: str) -> dict:
     return {"outcome": "CONFIRMED", "cause": cause, "tied": tied, "ranking": ranking, **g, "tool_calls": 0, "seconds": 0.0}
 
 
-def _graph_arm(sid: str, nomem: bool, disable: bool = False, no_g5: bool = False, investigator=None) -> dict:
+def _graph_arm(sid: str, nomem: bool, disable: bool = False, no_g5: bool = False, investigator=None,
+               spec: dict | None = None) -> dict:
     """no_g5 (arm A3-noG5, eval process only): flow_slack → 0, so every suspect with a path passes the max-flow
     sufficiency check; shows what algo.maxFlow decides. The product never runs with this."""
     t0 = time.perf_counter()
@@ -96,10 +97,10 @@ def _graph_arm(sid: str, nomem: bool, disable: bool = False, no_g5: bool = False
         saved = _w()["gate"]["flow_slack"]
         _w()["gate"]["flow_slack"] = 0.0
         try:
-            return _graph_arm(sid, nomem, disable, investigator=investigator)
+            return _graph_arm(sid, nomem, disable, investigator=investigator, spec=spec)
         finally:
             _w()["gate"]["flow_slack"] = saved
-    p = scenario.prepare(sid, set_mode=True, nomem=nomem)
+    p = scenario.prepare(sid, set_mode=True, nomem=nomem, spec=spec)
     from faultline.agent.loop import run_incident
 
     settings.faultline_disable_graph = disable
@@ -184,7 +185,7 @@ def grade_detail(sid: str, d: dict, chain: list[str] | None) -> dict:
     return g
 
 
-def arm_vector(sid: str) -> dict:
+def arm_vector(sid: str, spec: dict | None = None) -> dict:
     """V (comparator, keyless): "embeddings find it". Embed the window's change titles with the same local model,
     rank them by cosine distance to the incident's own vector INSIDE FalkorDB (vec.cosineDistance), blame the
     nearest. No graph traversal, no gate; like N it cannot abstain."""
@@ -193,7 +194,7 @@ def arm_vector(sid: str) -> dict:
     from faultline.memory.embed import embed
 
     t0 = time.perf_counter()
-    p = scenario.prepare(sid, set_mode=True)
+    p = scenario.prepare(sid, set_mode=True, spec=spec)
     try:
         g = gclient.engine().select_graph(p.graph)
         win = int(p.scenario.get("window_min") or 30)
@@ -218,7 +219,7 @@ def arm_vector(sid: str) -> dict:
         gcopy.delete_if_exists(gclient.engine(), p.graph)
 
 
-def arm_telemetry(sid: str) -> dict:
+def arm_telemetry(sid: str, spec: dict | None = None, plus: bool = False) -> dict:
     """T (comparator, keyless; PREREGISTRATION amendment 2026-10-13): "a plain anomaly heuristic already solves it".
     Among the window's changes (the list arm N and V read), blame the one whose own component shows the largest measured
     excess: peak error rate since onset minus its pre-onset mean, from its MetricWindows. No topology, no gate; ties
@@ -227,11 +228,13 @@ def arm_telemetry(sid: str) -> dict:
     from faultline.graph.ro import RO
 
     t0 = time.perf_counter()
-    p = scenario.prepare(sid, set_mode=True)
+    p = scenario.prepare(sid, set_mode=True, spec=spec)
     try:
         ro = RO(p.tenant, p.graph)
         win = int(p.scenario.get("window_min") or 30)
         changes = ro.run("Q-SUS-2", {"onset": p.onset_ms, "window_ms": win * 60_000}).rows
+        if plus:
+            return _telemetry_plus(sid, p, ro, changes, t0)
         if not changes:
             return {"outcome": "NO_INCIDENT", "cause": None, "ranking": [], **grade(sid, "NO_INCIDENT", None),
                     "tool_calls": 0, "seconds": round(time.perf_counter() - t0, 2)}
@@ -257,7 +260,54 @@ def arm_telemetry(sid: str) -> dict:
         gcopy.delete_if_exists(gclient.engine(), p.graph)
 
 
-ARMS = {"N": arm_naive, "V": arm_vector, "T": arm_telemetry, "A2": lambda s: _graph_arm(s, nomem=True), "A3": lambda s: _graph_arm(s, nomem=False),
+def excess_of(ro, target: str, onset_ms: int) -> float | None:
+    """Arm T's measurement (comparator only): peak error rate in [onset, onset + 10 min] minus the mean over the intake
+    baseline window; None without error-rate windows."""
+    from faultline.agent.weights import weights
+
+    iw = weights()["intake"]
+    b0, b1 = onset_ms - int(iw["baseline_min"]) * 60_000, onset_ms - int(iw["baseline_gap_min"]) * 60_000
+    base = [r["value"] for r in ro.run("Q-MW-1", {"target": target, "metric": "error_rate", "since": b0, "until": b1}).rows]
+    after = [r["value"] for r in ro.run("Q-MW-1", {"target": target, "metric": "error_rate", "since": onset_ms,
+                                                   "until": onset_ms + 10 * 60_000}).rows]
+    return round(max(after) - sum(base) / len(base), 5) if base and after else None
+
+
+def telemetry_plus_decision(symptom_excess: list[float | None], change_excess: dict[str, float | None]) -> dict:
+    """Arm T+ (PREREGISTRATION amendment 2026-10-16): T with a floor. No alerting symptom above gate.err_abs_min →
+    NO_INCIDENT; no changed component above it → NOT_CONFIDENT (no blame, no inferred origin); else the change(s) with
+    the largest excess (a tie is reported as tied, scored 1/k and strict-wrong)."""
+    from faultline.agent.weights import weights
+
+    floor = float(weights()["gate"]["err_abs_min"])
+    if not any(e is not None and e >= floor for e in symptom_excess):
+        return {"outcome": "NO_INCIDENT", "tied": []}
+    hot = {c: e for c, e in change_excess.items() if e is not None and e >= floor}
+    if not hot:
+        return {"outcome": "NOT_CONFIDENT", "tied": []}
+    best = max(hot.values())
+    return {"outcome": "CONFIRMED", "tied": sorted(c for c, e in hot.items() if e == best)}
+
+
+def _telemetry_plus(sid: str, p, ro, changes: list[dict], t0: float) -> dict:
+    sym = [excess_of(ro, s, p.onset_ms) for s in p.symptoms]
+    exc = {c["deploy"]: excess_of(ro, c["target"], p.onset_ms) for c in changes}
+    d = telemetry_plus_decision(sym, exc)
+    t = truth(sid)
+    tied = d["tied"]
+    cause = tied[0] if tied else None
+    frac = ((1.0 / len(tied) if t.get("cause") in tied else 0.0) if t["outcome"] == "CONFIRMED" else None)
+    g_ = grade(sid, d["outcome"], cause, frac if tied else (0.0 if t["outcome"] == "CONFIRMED" else None))
+    if t["outcome"] == "CONFIRMED":
+        g_["outcome_correct"] = d["outcome"] == "CONFIRMED" and tied == [t["cause"]]   # strict: a tie is not a verdict
+        g_["false_blame"] = any(c in _distractors(t) for c in tied)
+    return {"outcome": d["outcome"], "cause": cause, "tied": tied,
+            "ranking": sorted(([c, v] for c, v in exc.items()), key=lambda x: -(x[1] or 0.0)),
+            "symptom_excess": sym, **g_, "tool_calls": 0, "seconds": round(time.perf_counter() - t0, 2)}
+
+
+ARMS = {"N": arm_naive, "V": arm_vector, "T": arm_telemetry, "T+": lambda s: arm_telemetry(s, plus=True),
+        "A2": lambda s: _graph_arm(s, nomem=True), "A3": lambda s: _graph_arm(s, nomem=False),
         "A4": lambda s: _graph_arm(s, nomem=False, disable=True),
         "A3-noG5": lambda s: _graph_arm(s, nomem=False, no_g5=True)}
 
@@ -619,7 +669,7 @@ def main() -> int:
     trials: list[dict] = []
     for sid in a.scenarios.split(","):
         for arm in arms:
-            for i in range(a.n if arm not in ("N", "T") else 1):  # N and T are deterministic arithmetic
+            for i in range(a.n if arm not in ("N", "T", "T+") else 1):  # N, T and T+ are deterministic arithmetic
                 t = {"scenario": sid, "arm": arm, "trial": i + 1, **ARMS[arm](sid)}
                 print(json.dumps({k: t[k] for k in ("scenario", "arm", "trial", "outcome", "cause", "top1")}))
                 trials.append(t)

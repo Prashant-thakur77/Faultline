@@ -98,6 +98,56 @@ def recency_pack(window: list[dict], pool: list[dict], topo: dict, budget: int) 
     return greedy(changes + alerts + [topo], budget)
 
 
+def telemetry_items(ro: RO, window: list[dict], onset: int) -> list[dict]:
+    """TR (PREREGISTRATION amendment 2026-10-16): every change in the window, ranked by the error-rate excess measured on
+    its component with the product's own windows and floor (Q-CTX-RANK: anomalous first by excess, then measured-quiet,
+    then unmeasured; within each, most recent first), with no graph scoping or distance. Comparator only."""
+    from faultline.agent.weights import weights
+
+    iw, floor = weights()["intake"], float(weights()["gate"]["err_abs_min"])
+    a_since = onset - int(iw["alert_lead_min"]) * 60_000
+    until = onset + int(iw["alert_lag_min"]) * 60_000
+    b0, b1 = a_since - int(iw["baseline_min"]) * 60_000, a_since - int(iw["baseline_gap_min"]) * 60_000
+    cache: dict[str, float | None] = {}
+    out = []
+    for it in window:
+        dep, target = it["ids"]
+        if target not in cache:
+            rows = ro.run("Q-MW-1", {"target": target, "metric": "error_rate", "since": b0, "until": until}).rows
+            base = [r["value"] for r in rows if r["at"] <= b1] if rows and "at" in rows[0] else None
+            if base is None:   # Q-MW-1 without `at`: read the two windows separately
+                base = [r["value"] for r in ro.run("Q-MW-1", {"target": target, "metric": "error_rate", "since": b0,
+                                                                "until": b1}).rows]
+                peak = [r["value"] for r in ro.run("Q-MW-1", {"target": target, "metric": "error_rate", "since": a_since,
+                                                                "until": until}).rows]
+            else:
+                peak = [r["value"] for r in rows if r["at"] >= a_since]
+            cache[target] = (max(peak) - sum(base) / len(base)) if base and peak else None
+        e = cache[target]
+        grp = 2 if e is None else (0 if e >= floor else 1)
+        meas = "no error-rate windows" if e is None else f"error-rate excess {e:+.3f}"
+        text = it["text"].replace(f" on {target},", f" on {target} ({meas}),")
+        out.append({**it, "text": text, "tokens": tokens(text), "_key": (grp, -(e or 0.0) if grp == 0 else 0.0,
+                                                                         -(it.get("at") or 0), dep)})
+    return [{k: v for k, v in x.items() if k != "_key"} for x in sorted(out, key=lambda x: x["_key"])]
+
+
+def telemetry_pack(ranked: list[dict], pool: list[dict], topo: dict, budget: int) -> list[dict]:
+    alerts = [it for it in pool if it["kind"] == "alert"]
+    return greedy(ranked + alerts + [topo], budget)
+
+
+def bootstrap_ci(xs: list[float], n: int = 2000, seed: int = 0) -> tuple[float, float] | None:
+    """95 % percentile bootstrap interval of the mean (amendment 2026-10-16: 2,000 resamples, seed 0)."""
+    import random
+
+    if not xs:
+        return None
+    rnd = random.Random(seed)
+    means = sorted(statistics.fmean(rnd.choices(xs, k=len(xs))) for _ in range(n))
+    return round(means[int(0.025 * n)], 4), round(means[int(0.975 * n) - 1], 4)
+
+
 def recall(pack: list[dict], truth: dict) -> dict:
     # correction 5: the topology paragraph lists every service id, so it would score component/chain recall for free;
     # only retrieved items count (the paragraph still spends its tokens)
@@ -192,12 +242,14 @@ def run_world(w: dict, busy: int = 0) -> dict:
             from faultline.agent.weights import weights
             window = window_items(RO(p.tenant, p.graph), p.onset_ms,
                                   int(p.scenario.get("window_min") or weights()["gate"]["window_min"]))
+            tr_ranked = telemetry_items(RO(p.tenant, p.graph), window, p.onset_ms)
             row = {"id": w["id"], "source": w["source"], "busy": busy, "ms": round(ms, 1), "pool": len(pool), "budgets": {}}
             for b in BUDGETS:
                 g = T.pack_items(pool, b)
                 row["budgets"][str(b)] = {"G": recall(g, truth), "GA": recall(T.pack_items(ga["pool"], b), truth),
                                           "V": recall(vector_pack(pool, text, topo, b), truth),
-                                          "R": recall(recency_pack(window, pool, topo, b), truth)}
+                                          "R": recall(recency_pack(window, pool, topo, b), truth),
+                                          "TR": recall(telemetry_pack(tr_ranked, pool, topo, b), truth)}
         finally:
             mcpctx.unbind(token)
     finally:
@@ -211,11 +263,16 @@ def summarise(rows: list[dict]) -> dict:
                  "ms_p95": round(sorted(r["ms"] for r in rows)[max(0, math.ceil(0.95 * len(rows)) - 1)], 1), "budgets": {}}
     for b in BUDGETS:
         per = {}
-        for arm in ("G", "GA", "V", "R"):
-            rs = [r["budgets"][str(b)][arm] for r in rows]
+        for arm in ("G", "GA", "V", "R", "TR"):
+            rs = [r["budgets"][str(b)][arm] for r in rows if arm in r["budgets"][str(b)]]
+            if not rs:
+                continue
             m = {"cause": round(sum(x["cause"] for x in rs) / len(rs), 4), "mrr": round(statistics.mean(x["rr"] for x in rs), 4),
                  "component": round(sum(bool(x["component"]) for x in rs) / len(rs), 4),
                  "chain": round(statistics.mean(x["chain"] for x in rs if x["chain"] is not None), 4)}
+            ci = bootstrap_ci([x["rr"] for x in rs])
+            if ci:
+                m["mrr_ci_lo"], m["mrr_ci_hi"] = ci
             for k in ("decisions", "responder", "fix_target"):
                 xs = [x[k] for x in rs if k in x]
                 if xs:
@@ -248,11 +305,26 @@ def run(progress: bool = True, busy: tuple[int, ...] = BUSY) -> dict:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out")
+    ap.add_argument("--side", action="store_true",
+                    help="write evals/results/context_eval.json (summaries + per-world cause/rr per arm), folded by report.py")
+    ap.add_argument("--reason", default="", help="why this run (logged in the side file; PREREGISTRATION 2026-10-16)")
     a = ap.parse_args()
+    started = time.strftime("%Y-%m-%dT%H:%M:%S")
     r = run()
     print(json.dumps({k: {kk: vv for kk, vv in v.items() if kk != "rows"} for k, v in r["busy"].items()}, indent=1))
     if a.out:
         Path(a.out).write_text(json.dumps(r, indent=2, default=str))
+    if a.side:
+        if not a.reason:
+            raise SystemExit("--side needs --reason")
+        slim = {k: {**{kk: vv for kk, vv in v.items() if kk != "rows"},
+                    "rows": [{"id": x["id"], "source": x["source"],
+                              "rr": {b: {arm: m["rr"] for arm, m in arms.items()} for b, arms in x["budgets"].items()},
+                              "cause": {b: {arm: m["cause"] for arm, m in arms.items()} for b, arms in x["budgets"].items()}}
+                             for x in v["rows"]]} for k, v in r["busy"].items()}
+        side = {"busy": slim, "seconds": r["seconds"], "started": started,
+                "finished": time.strftime("%Y-%m-%dT%H:%M:%S"), "reason": a.reason}
+        (ROOT / "evals" / "results" / "context_eval.json").write_text(json.dumps(side, indent=1, default=str) + "\n")
 
 
 if __name__ == "__main__":
