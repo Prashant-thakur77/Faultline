@@ -333,7 +333,11 @@ class Boundary extends Component<{ children: React.ReactNode }, { failed: boolea
 function webgl(): boolean {
   try {
     const c = document.createElement("canvas");
-    return !!(c.getContext("webgl2") || c.getContext("webgl"));
+    const ctx = c.getContext("webgl2") || c.getContext("webgl");
+    // release the probe now: left to the garbage collector, destroying it forces a GPU finish (~200 ms) at a random
+    // moment mid-animation
+    ctx?.getExtension("WEBGL_lose_context")?.loseContext();
+    return !!ctx;
   } catch {
     return false;
   }

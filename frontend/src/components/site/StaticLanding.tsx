@@ -5,6 +5,7 @@ import { Marquee } from "@/components/home/Marquee";
 import { ProofStory } from "@/components/home/ProofStory";
 import { SiteFooter } from "@/components/home/SiteFooter";
 import { SystemMap } from "@/components/home/SystemMap";
+import { ExplainerLink } from "@/components/home/ExplainerLink";
 import { ProductTour } from "@/components/home/ProductTour";
 import { Faq } from "@/components/home/Faq";
 import { SectionRule } from "@/components/home/SectionRule";
@@ -44,6 +45,7 @@ export async function StaticLanding() {
       <Features />
       <SectionRule />
       <SystemMap />
+      <ExplainerLink />
       <SectionRule />
       <ProofStory />
       <SectionRule />

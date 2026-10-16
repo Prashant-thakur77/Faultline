@@ -9,6 +9,7 @@ import { ProofStory } from "@/components/home/ProofStory";
 import { SiteFooter } from "@/components/home/SiteFooter";
 import { STATIC_SITE } from "@/lib/site";
 import { SystemMap } from "@/components/home/SystemMap";
+import { ExplainerLink } from "@/components/home/ExplainerLink";
 import { ProductTour } from "@/components/home/ProductTour";
 import { Faq } from "@/components/home/Faq";
 import { SectionRule } from "@/components/home/SectionRule";
@@ -23,6 +24,7 @@ export default function Home() {
       <Features />
       <SectionRule />
       <SystemMap />
+      <ExplainerLink />
       <SectionRule />
       <ProofStory />
       <SectionRule />

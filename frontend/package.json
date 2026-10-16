@@ -11,7 +11,8 @@
     "replay:export": "node scripts/export-replay.mjs",
     "media:results": "node scripts/render-results.mjs",
     "evals:summary": "node scripts/export-eval-summary.mjs",
-    "test": "vitest run"
+    "test": "vitest run",
+    "explainer:stats": "node scripts/export-explainer-stats.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

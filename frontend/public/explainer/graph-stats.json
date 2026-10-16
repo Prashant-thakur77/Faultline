@@ -1,0 +1,233 @@
+{
+  "source": "docs/GRAPH_SCHEMA.md (scripts/gen_graph_schema.py, db.meta.stats)",
+  "graph": "golden_acme",
+  "engine": "FalkorDB 6.0.2",
+  "nodes": 1824,
+  "edges": 5938,
+  "rel_types_with_edges": 42,
+  "rel_types": [
+    {
+      "type": "TOUCHES",
+      "lifecycle": "seed",
+      "edges": 1748
+    },
+    {
+      "type": "CONTAINS",
+      "lifecycle": "seed",
+      "edges": 1381
+    },
+    {
+      "type": "AUTHORED",
+      "lifecycle": "seed",
+      "edges": 950
+    },
+    {
+      "type": "CHANGED",
+      "lifecycle": "seed",
+      "edges": 360
+    },
+    {
+      "type": "COLLABORATES",
+      "lifecycle": "seed",
+      "edges": 206
+    },
+    {
+      "type": "ON_CALL",
+      "lifecycle": "seed",
+      "edges": 176
+    },
+    {
+      "type": "AFFECTED",
+      "lifecycle": "seed",
+      "edges": 145
+    },
+    {
+      "type": "COMMITTED",
+      "lifecycle": "seed",
+      "edges": 142
+    },
+    {
+      "type": "PART_OF",
+      "lifecycle": "seed",
+      "edges": 91
+    },
+    {
+      "type": "WINDOW_OF",
+      "lifecycle": "seed",
+      "edges": 90
+    },
+    {
+      "type": "DEPENDS_ON",
+      "lifecycle": "seed",
+      "edges": 43
+    },
+    {
+      "type": "PROPAGATES_TO",
+      "lifecycle": "seed",
+      "edges": 43
+    },
+    {
+      "type": "CAUSED",
+      "lifecycle": "seed",
+      "edges": 40
+    },
+    {
+      "type": "DOCUMENTS",
+      "lifecycle": "seed",
+      "edges": 40
+    },
+    {
+      "type": "HAS_SYMPTOM",
+      "lifecycle": "seed",
+      "edges": 40
+    },
+    {
+      "type": "OF",
+      "lifecycle": "seed",
+      "edges": 40
+    },
+    {
+      "type": "RESOLVED",
+      "lifecycle": "seed",
+      "edges": 40
+    },
+    {
+      "type": "RESOLVED_BY",
+      "lifecycle": "seed",
+      "edges": 40
+    },
+    {
+      "type": "REPORTS_TO",
+      "lifecycle": "seed",
+      "edges": 39
+    },
+    {
+      "type": "MEMBER_OF",
+      "lifecycle": "seed",
+      "edges": 37
+    },
+    {
+      "type": "OWNED_AT",
+      "lifecycle": "seed",
+      "edges": 32
+    },
+    {
+      "type": "CALLS",
+      "lifecycle": "seed",
+      "edges": 30
+    },
+    {
+      "type": "OWNS",
+      "lifecycle": "seed",
+      "edges": 30
+    },
+    {
+      "type": "DERIVES_FROM",
+      "lifecycle": "seed",
+      "edges": 29
+    },
+    {
+      "type": "DERIVED_FROM",
+      "lifecycle": "seed",
+      "edges": 19
+    },
+    {
+      "type": "RUNBOOK_FOR",
+      "lifecycle": "seed",
+      "edges": 16
+    },
+    {
+      "type": "FOR",
+      "lifecycle": "seed",
+      "edges": 14
+    },
+    {
+      "type": "GATES",
+      "lifecycle": "seed",
+      "edges": 13
+    },
+    {
+      "type": "PRODUCED",
+      "lifecycle": "seed",
+      "edges": 10
+    },
+    {
+      "type": "CITES",
+      "lifecycle": "seed",
+      "edges": 9
+    },
+    {
+      "type": "ABOUT",
+      "lifecycle": "seed",
+      "edges": 7
+    },
+    {
+      "type": "CONSTRAINS",
+      "lifecycle": "seed",
+      "edges": 7
+    },
+    {
+      "type": "CONSUMES",
+      "lifecycle": "seed",
+      "edges": 7
+    },
+    {
+      "type": "EXPOSES",
+      "lifecycle": "seed",
+      "edges": 7
+    },
+    {
+      "type": "READS",
+      "lifecycle": "seed",
+      "edges": 6
+    },
+    {
+      "type": "WRITES",
+      "lifecycle": "seed",
+      "edges": 5
+    },
+    {
+      "type": "ATTEMPTED",
+      "lifecycle": "seed",
+      "edges": 1
+    },
+    {
+      "type": "BASELINE_OF",
+      "lifecycle": "seed",
+      "edges": 1
+    },
+    {
+      "type": "COMPUTED_FROM",
+      "lifecycle": "seed",
+      "edges": 1
+    },
+    {
+      "type": "EMITS",
+      "lifecycle": "seed",
+      "edges": 1
+    },
+    {
+      "type": "SHOWS",
+      "lifecycle": "seed",
+      "edges": 1
+    },
+    {
+      "type": "SUPERSEDES",
+      "lifecycle": "seed",
+      "edges": 1
+    }
+  ],
+  "algorithms": [
+    "algo.BFS",
+    "algo.SPpaths",
+    "algo.SSpaths",
+    "algo.pageRank",
+    "algo.betweenness",
+    "algo.HarmonicCentrality",
+    "algo.WCC",
+    "algo.labelPropagation",
+    "algo.maxFlow",
+    "algo.MSF"
+  ],
+  "algorithms_engine": "6.0.2"
+}
