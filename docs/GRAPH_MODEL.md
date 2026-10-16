@@ -190,6 +190,7 @@ erDiagram
 | `MetricWindow` | `target_id` (range-indexed), `metric`, `kind`, `value` | telemetry tools, alert coverage, obligation clock, G4 upstream (measured excess) |
 | `SLO` | `objective`, `budget` (= 1 − objective), `window_days`, `metric`, `spent_prior` (synthetic share of the budget spent before the telemetry horizon) | obligation clock burn and budget left (`Q-OBL-SLO`) |
 | `Customer` | `mrr`, `tier`, `name` (all synthetic); `CONSUMES {via}` to an entry service, API service or KPI | customers reached and MRR at risk, counted once per customer (`Q-OBL-CUST`) |
+| `IntentExemplar` | `intent`, `text` (full-text index), `embedding` (vector index), `refuse`; seeded from `data/brain/intent_exemplars.yaml`, tenant-agnostic, no edges | company-brain question routing: vector + full-text fused in one query (`Q-BRAIN-INTENT`), and which words are question vocabulary rather than a component name (`Q-BRAIN-VOCAB`) |
 | `Evidence` | `cypher`, `params`, `digest`, `value`, `baseline`, `ratio`, `source` | G1, G4, G5 observed share, G7 (`gate_*.cypher`) |
 | `Action` | `kind`, `target_id`, `verdict`, `plan_hash`, `idem` | approval, verify, write-back, fix history (`Q-REM-1`) |
 | `Intent` | `idem` (unique constraint), `state` | idempotent execute, reconciler (`actions/reconcile.py`) |

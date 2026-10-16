@@ -53,7 +53,7 @@ claude mcp add --transport http faultline http://127.0.0.1:8401/mcp --header "Au
 | decisions | `trace_decision`, `decision_check` |
 | change and code (specialists) | `change_details` (a change as recorded: kind, time, CHANGED target, asserted facts), `diff_summary` (commits it CONTAINS → files they TOUCH → component PART_OF, PRs, authors, diff facts; `code_on_target`; no function-level code) |
 | memory | `similar_incidents` (vector index → shared Symptom), `incident_families` (labelPropagation), `runbook_for`, `session_history`, `remedy_stats` (Beta-smoothed success per action kind on incidents sharing a symptom) |
-| company brain | `resolve_entity`, `people_who_worked_on`, `missing_guardrails`, `decisions_about` |
+| company brain | `route_question`, `resolve_entity`, `people_who_worked_on`, `missing_guardrails`, `decisions_about` |
 | company brain over time | `owner_at` (owner at a time or an incident's onset vs now, and who held the context), `beliefs_at` (owner, on-call, decisions in force, runbooks in effect as of a time), `component_timeline`, `topology_at` (what a component could break at a past time vs now, and which PR introduced each call since: versioned topology), `knowledge_health` (stale runbooks, handovers with no runbook since, decisions at risk, likely missing edges), `hidden_coupling` (co-failure in incident history with no failure path) |
 | pre-deploy gate | `preflight_change` (BFS + betweenness + Q-DEC-1 + ownership → allow / require_review / block) |
 | schema | `graph_schema`: the live labels (counts, property keys, indexes) and relationship types (counts, from → to label pairs) of your tenant's graph |

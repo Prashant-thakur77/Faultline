@@ -14,6 +14,7 @@ import functools
 import time
 import hashlib
 import math
+import re
 from typing import Any, Callable
 
 from pydantic import BaseModel, Field, ValidationError, model_validator
@@ -941,6 +942,64 @@ def people_who_worked_on(target_id: str) -> dict[str, Any]:
                      kind="people", about=[a.id] + [x["person"] for x in r.rows[:5]], summary=f"{len(r.rows)} people on {a.id}")
 
 
+class _Question(BaseModel):
+    text: str = Field(..., min_length=3, max_length=500)
+
+
+# Slot words: a literal date or incident id says WHEN a question is about, not what kind of question it is. Both are
+# replaced by the words the IntentExemplar texts use for them (data/brain/intent_exemplars.yaml), so "on <YYYY-MM-DD>"
+# and "during <incident id>" read like the exemplars' "on a past date" / "during an incident". Nothing else is rewritten.
+_SLOT_DATE = re.compile(r"\b20\d\d-\d\d-\d\d\b")
+_SLOT_INCIDENT = re.compile(r"\b(?:[a-z]{1,4}-)?inc-[a-z0-9-]+\b", re.I)
+_WORD = re.compile(r"[a-z0-9]+")
+
+
+def route_text(text: str) -> str:
+    """The text a question is routed on: its slot values (dates, incident ids) replaced by slot words."""
+    return " ".join(_SLOT_INCIDENT.sub("an incident", _SLOT_DATE.sub("a past date", text)).split())
+
+
+@_guard
+def route_question(text: str) -> dict[str, Any]:
+    """Company brain: which kind of question this is (people, decision, gaps, blast, context, owner_then, asof,
+    history, knowledge, obligations), decided in FalkorDB: the question's nearest IntentExemplar nodes by meaning
+    (vector index) fused with its full-text matches over the exemplar texts, one row per kind, ranked in the engine.
+    `routed` is the first row's kind when it clears brain.route_min_similarity and is not a refusal kind, else null:
+    the question is then not one the graph can answer. `question_words` are the question's words that occur in an
+    answerable exemplar (Q-BRAIN-VOCAB): how it is asked, not what it is about. Without the embedding model it routes
+    by full-text only and says so (`mode`, `note`)."""
+    a = _Question(text=text)
+    norm = route_text(a.text)
+    words = list(dict.fromkeys(t for t in _WORD.findall(norm.lower()) if len(t) >= 2))[:24]
+    if not words:
+        return {"error": "invalid arguments: the question has no words to route on"}
+    w = weights()["brain"]
+    ft = " | ".join(words)   # alphanumeric tokens only: nothing the full-text query syntax could read as an operator
+    try:
+        from ..memory.embed import embed
+
+        qv, note = embed([norm])[0], ""
+    except Exception as e:  # noqa: BLE001  (model missing: say so; the full-text index still routes)
+        qv, note = None, f"vector route unavailable ({type(e).__name__}); routed by full-text only"
+    if qv is not None:
+        r = _ro().run("Q-BRAIN-INTENT", {"text": ft, "q": qv, "k": int(w["route_k"]), "w_ft": float(w["route_ft_weight"]),
+                                         "min_sim": float(w["route_min_similarity"])})
+        mode, via = "vector+fulltext", (f"db.idx.vector.queryNodes(IntentExemplar) + {w['route_ft_weight']} × "
+                                        f"db.idx.fulltext.queryNodes(IntentExemplar), similarity ≥ {w['route_min_similarity']}")
+    else:
+        r = _ro().run("Q-BRAIN-INTENT-FT", {"text": ft, "min_ft": float(w["route_ft_min"])})
+        mode, via = "fulltext", f"db.idx.fulltext.queryNodes(IntentExemplar), score ≥ {w['route_ft_min']}"
+    vocab = _ro().run("Q-BRAIN-VOCAB", {"words": words})   # how the question is asked, not what it is about
+    top = r.rows[0] if r.rows else None
+    routed = top["intent"] if top and top["answerable"] else None
+    extra = {"routed": routed, "mode": mode, "routed_text": norm, "question_words": [x["word"] for x in vocab.rows],
+             **({"note": note} if note else {})}
+    r = _combine([r, vocab], r.rows)
+    best = (f"{top['intent']} at {float(top['vsim'] if top['vsim'] is not None else top['score']):.3f}" if top else "no match")
+    return _envelope(r, tool="route_question", via=via, kind="lookup", about=[], extra=extra,
+                     summary=f"routed to {routed}" if routed else f"not routed (best: {best})")
+
+
 @_guard
 def missing_guardrails() -> dict[str, Any]:
     """Company brain: revenue-path services with no owning team or no current runbook (a set difference)."""
@@ -1696,6 +1755,7 @@ def run_cypher_readonly(query: str, failed_template: str, reason: str) -> dict[s
 TOOLS: dict[str, Callable[..., dict]] = {f.__name__: f for f in (
     run_cypher_readonly, preflight_change, session_history, notify_set, alert_coverage, owner_at, component_timeline,
     beliefs_at, topology_at, knowledge_health, hidden_coupling, resolve_entity, people_who_worked_on, missing_guardrails, decisions_about,
+    route_question,
     similar_incidents, incident_families, runbook_for,
     remedy_stats, residue_check, obligation_clock,
     whatif, futures,

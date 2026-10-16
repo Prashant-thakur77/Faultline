@@ -34,6 +34,7 @@ PRODUCERS = {
         "faultline.ingest.history",
         "faultline.ingest.docs",
         "faultline.ingest.embeddings",
+        "faultline.ingest.brain_intents",  # the brain's question router (IntentExemplar nodes; tenant-agnostic)
     ],
     "globex": [  # generated scale tenant (data/topology/globex.yaml → ingest/globex/)
         "faultline.ingest.globex.topology",
@@ -42,6 +43,7 @@ PRODUCERS = {
         "faultline.ingest.globex.history",
         "faultline.ingest.globex.docs",
         "faultline.ingest.globex.embeddings",
+        "faultline.ingest.brain_intents",
     ],
 }
 MEMORY_LABELS = {"Incident", "Postmortem", "Runbook", "Symptom", "Action"}

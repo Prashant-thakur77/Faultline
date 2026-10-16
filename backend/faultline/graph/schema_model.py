@@ -20,6 +20,8 @@ NODE_LABELS = frozenset({
     "PlaygroundRun",
     # obligations (M12 obligation clock): what we promised, and to whom
     "SLO", "Customer",
+    # company-brain question routing: worded examples of each question kind, matched by vector + full-text index
+    "IntentExemplar",
     # actions and coordination
     "Intent", "Action", "Approval", "Remediation", "Task", "Agent", "Session", "Turn",
     "Run", "StageEvent", "ToolCall", "ForgetReceipt", "Rearm", "Meta", "RunIndex", "LlmSpend",

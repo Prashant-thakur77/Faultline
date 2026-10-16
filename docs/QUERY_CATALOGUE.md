@@ -4,7 +4,7 @@
 
 **PROFILE p50 / p95** = engine milliseconds from `GRAPH.PROFILE` (nearest-rank percentiles of 20 runs; `scripts/profile_templates.py`) for the templates the S1/S2 runs executed, with those runs' recorded params (measured by the eval harness, read from `evals/results/latest.json`). Blank = not executed in those runs; `scratch` = runs on a temporary projection.
 
-<!-- claim:repo.templates -->178<!-- /claim --> templates. `{algo:x}` is resolved to the procedure name recorded by `make smoke` (`graph/algo/resolved.json`).
+<!-- claim:repo.templates -->181<!-- /claim --> templates. `{algo:x}` is resolved to the procedure name recorded by `make smoke` (`graph/algo/resolved.json`).
 
 ## Gate and proof
 
@@ -118,6 +118,14 @@
 | `Q-FORGET-1` | forget dry run (W-MEM-3 preview): nodes this Doc ALONE produced (deleted with it), their relationship counts and vectors | Cypher |  |  | [forget_preview.cypher](../backend/faultline/graph/templates/forget_preview.cypher) |
 | `Q-FORGET-2` | forget proof: re-query the vector index with a forgotten node's own vector; the node must not come back | vector index |  |  | [forget_vector_probe.cypher](../backend/faultline/graph/templates/forget_vector_probe.cypher) |
 | `Q-GAP-1` | missing guardrails (set difference): revenue-path services with no owning team or no current runbook | Cypher |  |  | [gap_guardrails.cypher](../backend/faultline/graph/templates/gap_guardrails.cypher) |
+
+## Company-brain question routing (route_question)
+
+| id | purpose | uses | PROFILE p50 (ms) | p95 (ms) | file |
+|---|---|---|---|---|---|
+| `Q-BRAIN-INTENT` | company-brain question routing, decided in the engine: the question's full-text matches over IntentExemplar.text (summed per kind, relative to the best kind) fused with its nearest IntentExemplar nodes by meaning (vector index, cosine; the nearest exemplar per kind), one row per question kind ranked by vsim + $w_ft × ft_rel. `answerable` = the kind's nearest exemplar is at least $min_sim similar AND the kind is not a refusal kind; the caller routes on the first row only, and refuses when it is not answerable | fulltext index, vector index |  |  | [brain_intent.cypher](../backend/faultline/graph/templates/brain_intent.cypher) |
+| `Q-BRAIN-INTENT-FT` | company-brain question routing by full-text only, used when the embedding model cannot load (the route says so): IntentExemplar.text matches summed per question kind; `answerable` = the summed score reaches $min_ft AND the kind is not a refusal kind | fulltext index |  |  | [brain_intent_ft.cypher](../backend/faultline/graph/templates/brain_intent_ft.cypher) |
+| `Q-BRAIN-VOCAB` | which of a question's words are how brain questions are ASKED rather than what they are about: the words that occur (stemmed, full-text index) in an answerable IntentExemplar text ("feature", "flags", "dashboards"). Entity resolution still tries every word as an exact id, but never fuzzy- or full-text-matches these to a component | fulltext index |  |  | [brain_vocab.cypher](../backend/faultline/graph/templates/brain_vocab.cypher) |
 
 ## Memory
 

@@ -40,6 +40,7 @@ TITLES: dict[str, str] = {
     "residue_check": "Is anything anomalous that the confirmed cause cannot reach?",
     "resolve_entity": "Which graph id does this name refer to?",
     "run_cypher_readonly": "Run a read-only Cypher query (guarded, last resort)",
+    "route_question": "Which kind of question is this, and can the graph answer it?",
     "runbook_for": "Which runbooks cover these components or symptoms?",
     "service_context": "What is this component, who owns it, and who is on call?",
     "session_history": "What did this user ask before?",

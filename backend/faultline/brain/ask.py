@@ -4,7 +4,10 @@ query: every cited id must have been SEEN by a tool call of this question's run 
 an unseen id is refused, never shown.
 
 Two answerers share the tools and the guard:
-* `ask(..., llm="baseline")`: a deterministic router + composer (keyless; covers the four on-camera question kinds);
+* `ask(..., llm="baseline")`: a deterministic composer (keyless). Which kind of question it is: the keyword router
+  when any of its patterns matches; otherwise one read-only query (route_question → Q-BRAIN-INTENT: vector +
+  full-text over (:IntentExemplar) nodes, fused in the engine), and a question no kind matches closely enough is
+  refused ("I can't answer that from the graph"), never answered as the nearest kind;
 * `ask(..., llm="anthropic")`: the model picks tools and writes the answer; the guard still decides.
 """
 
@@ -30,8 +33,13 @@ BRAIN_TOOLS = ["resolve_entity", "find_entities", "service_context", "people_who
                "trace_decision", "missing_guardrails", "blast_radius", "runbook_for", "run_cypher_readonly",
                "session_history", "owner_at", "beliefs_at", "component_timeline", "knowledge_health", "hidden_coupling", "graph_schema",
                "obligation_clock"]
-TIER1 = {"resolve_entity", "find_entities", "session_history"}
 
+# Question routing has two stages (DECISIONS 2026-10-16, hybrid router):
+# 1. the keyword router below: precise where its vocabulary matches, so it decides whenever any pattern matches;
+# 2. only when no pattern matches (the old fall-through to a generic context answer), route_question decides in
+#    FalkorDB (Q-BRAIN-INTENT: vector + full-text over seeded (:IntentExemplar) nodes, fused in the engine), and a
+#    question no kind matches closely enough is refused. No similarity is computed in Python.
+# ROUTE_TOOL is called by the deterministic answerer only; the LLM answerer picks its own tools and is not offered it.
 INTENTS: list[tuple[str, re.Pattern]] = [  # first match wins; order matters ("lack … owner" is a gap question)
     ("knowledge", re.compile(r"\b(stale|outdated|out of date|knowledge (health|gaps?|decay|loss)|(lost|losing) knowledge|"
                              r"knowledge (is |was )?(lost|stale|decayed)|handovers?|handed over|changed hands)\b", re.I)),
@@ -45,6 +53,13 @@ INTENTS: list[tuple[str, re.Pattern]] = [  # first match wins; order matters ("l
     ("blast", re.compile(r"\b(break|breaks|goes down|go down|outage|blast|impact|affected|depends on)\b", re.I)),
     ("people", re.compile(r"\b(who|worked on|knows?|expert|experts|owners?|on-?call)\b", re.I)),
 ]
+ROUTE_TOOL = "route_question"
+REFUSAL = "I can't answer that from the graph"
+# The kinds the deterministic composer answers: exactly the answerable intents of the seeded exemplars and the
+# keyword router's kinds (unit tests keep them equal, so neither stage can route to a kind the composer does not handle).
+KINDS = ("knowledge", "gaps", "decision", "obligations", "owner_then", "asof", "history", "people", "blast", "context")
+TIER1 = {"resolve_entity", "find_entities", "session_history", ROUTE_TOOL}
+# Words never sent to entity resolution (question words and the vocabulary of the question kinds themselves).
 STOP = set("""a an the and or of on in to for if is are was were be been what which who whom whose how why when where
 did do does we our us team has have had about still current it its this that these those any some goes go down break
 breaks worked work knows know expert experts lack lacks missing without services service runbook runbooks owner owners
@@ -71,6 +86,7 @@ class Answer:
     answered_by: str = ""
     ms: float = 0.0
     session: str | None = None
+    route: dict = field(default_factory=dict)  # which stage routed it ("keyword" | "graph") and how (match / scores)
 
     def as_dict(self) -> dict:
         return asdict(self)
@@ -84,9 +100,10 @@ class _Session:
         self.tenant, self.run_id, self.graph = tenant, run_id, graph or tenant_graph(tenant)
         self.steps: list[dict] = []
         self.usage = usage if usage is not None else {}  # LLM tokens (the caller's dict: costed even if the answer fails)
+        self.route: dict = {}  # the routing decision (route_question's result), when the deterministic answerer routed
 
     def call(self, name: str, **args: Any) -> dict:
-        if name not in BRAIN_TOOLS:
+        if name not in BRAIN_TOOLS and name != ROUTE_TOOL:
             return {"error": f"tool {name!r} is not a brain tool"}
         try:  # a model that names an argument the tool does not take gets a clean tool error, never a 500
             inspect.signature(T.TOOLS[name]).bind(**args)
@@ -135,14 +152,17 @@ def _first(r: dict, what: str) -> dict | None:
 def _entity(s: _Session, q: str, user: str | None = None) -> dict | None:
     """The component a question is about. Every exact id match (word pairs first: "product catalog") is tried
     before any fuzzy match, so "Check what depends on cart" finds cart, not checkout by spelling. Fuzzy (FLEX
-    Jaro-Winkler) runs only when nothing matched exactly, and never on generic words (tools.FUZZY_STOP)."""
+    Jaro-Winkler) and full-text name matching run only when nothing matched exactly, and never on generic words
+    (tools.FUZZY_STOP) or on the words the question kinds are asked with (route_question's question_words, read
+    from the IntentExemplar full-text index: "feature" in "show me the feature flags" is not a component's name)."""
     toks = _tokens(q)
     pairs = lambda ts: [ts[i] + ts[i + 1] for i in range(len(ts) - 1)]  # noqa: E731
     for text in pairs(toks) + toks:
         hit = _first(s.call("resolve_entity", text=text, fuzzy=False), f"resolve_entity({text!r})")
         if hit:
             return hit
-    specific = [t for t in toks if t not in T.FUZZY_STOP]
+    asked = set(s.route.get("question_words") or [])  # words of the question kinds (the graph's Q-BRAIN-VOCAB)
+    specific = [t for t in toks if t not in T.FUZZY_STOP and t not in asked]
     min_len = int(weights()["brain"]["fuzzy_min_len"])
     for text in [p for p in pairs(specific) + specific if len(p) >= min_len]:
         hit = _first(s.call("resolve_entity", text=text, fuzzy=True), f"resolve_entity({text!r})")
@@ -199,16 +219,67 @@ def _fmt_day(ms: int | None) -> str:
     return dt.datetime.fromtimestamp(ms / 1000, tz=dt.timezone.utc).strftime("%Y-%m-%d") if ms is not None else "now"
 
 
-def _intent(q: str) -> str:
-    intent = next((name for name, rx in INTENTS if rx.search(q)), "context")
-    if intent in ("people", "context") and re.search(r"\bowner\b", q, re.I) and (DATE.search(q) or INCIDENT.search(q)):
-        return "owner_then"  # "who was the owner on 2026-03-01 / during inc-…" is a question about the past
-    return intent
+def _keyword(q: str) -> tuple[str, str] | None:
+    """Stage 1, the keyword router: (kind, matched words) for the first pattern that matches, else None."""
+    hit = next(((name, m.group(0)) for name, rx in INTENTS if (m := rx.search(q))), None)
+    if hit and hit[0] == "people" and re.search(r"\bowner\b", q, re.I) and (DATE.search(q) or INCIDENT.search(q)):
+        return "owner_then", "owner + a date or incident"  # "who was the owner on <date> / during <incident>" is the past
+    return hit
+
+
+def _intent(q: str) -> str | None:
+    """The keyword router's kind for `q`, or None when no pattern matches (then the graph routes it)."""
+    kw = _keyword(q)
+    return kw[0] if kw else None
+
+
+def _route(s: _Session, q: str) -> str | None:
+    """The kind of question `q` is. Stage 1: the keyword router, when any pattern matches. Stage 2 (only then): one
+    read-only query (route_question → Q-BRAIN-INTENT), the first row of the engine's ranking when it is answerable,
+    else None (refuse). Records which stage routed it, and how, on the session (`Answer.route`)."""
+    kw = _keyword(q)
+    if kw:
+        s.route = {"stage": "keyword", "routed": kw[0], "matched": kw[1]}
+        return kw[0]
+    r = s.call(ROUTE_TOOL, text=q)
+    if r.get("error"):
+        raise BrainToolError(f"{ROUTE_TOOL}: {r['error']}")
+    rows = r.get("rows") or []
+    top = rows[0] if rows else {}
+    s.route = {"stage": "graph", "routed": r.get("routed"), "mode": r.get("mode"), "note": r.get("note"),
+               "evidence_id": r.get("evidence_id"),
+               "question_words": r.get("question_words") or [],
+               "best": {k: top.get(k) for k in ("intent", "vsim", "fts", "ft_rel", "score", "refuse", "nearest_text")} if top else None,
+               "runner_up": rows[1]["intent"] if len(rows) > 1 else None}
+    return r.get("routed")
+
+
+def _refusal(route: dict) -> str:
+    """Why a question was not routed, in numbers the router's query returned (never a guess at what was meant)."""
+    best = route.get("best") or {}
+    w = weights()["brain"]
+    if not best:
+        return f"{REFUSAL}: nothing in the graph's question examples matches it."
+    if best.get("refuse"):
+        return (f"{REFUSAL}: it is not a question about the organisation's components, people, decisions or knowledge "
+                "(it reads like a request to act, small talk or a general question).")
+    if route.get("mode") == "fulltext":
+        return (f"{REFUSAL}: it does not match a kind of question the graph answers closely enough (nearest kind: "
+                f"{best['intent']}, full-text score {float(best['fts']):.1f} < {float(w['route_ft_min']):.1f}).")
+    return (f"{REFUSAL}: it does not match a kind of question the graph answers closely enough (nearest kind: "
+            f"{best['intent']}, similarity {float(best['vsim']):.2f} < {float(w['route_min_similarity']):.2f}).")
 
 
 def _baseline(s: _Session, q: str, user: str | None = None) -> tuple[str, str, list[str]]:
-    intent = _intent(q)
     sources: list[str] = []
+    try:
+        intent = _route(s, q)
+    except BrainToolError as e:  # fail loudly: a broken router is not "I can't answer that"
+        return "none", f"Question routing is unavailable, so I cannot answer: {e}", sources
+    if intent is None:
+        return "none", _refusal(s.route), sources
+    if intent not in KINDS:  # an exemplar kind the composer has no answer for: fail loudly, never fall through
+        return "none", f"{REFUSAL}: the router chose {intent!r}, which this answerer does not handle.", sources
     if intent == "knowledge":
         r = s.call("knowledge_health", now=int(time.time() * 1000))
         rows = r.get("rows") or []
@@ -487,7 +558,7 @@ def ask(question: str, tenant: str, llm: str = "baseline", user: str | None = No
     tools_used = {x["tool"] for x in s.steps}
     tier = 3 if "run_cypher_readonly" in tools_used else (2 if tools_used - TIER1 else 1)
     return Answer(q, tenant, run_id, intent, tier, text, guard.get("cited", []), s.steps, sources, guard, by,
-                  round((time.perf_counter() - t0) * 1000, 1), session)
+                  round((time.perf_counter() - t0) * 1000, 1), session, s.route)
 
 
-__all__ = ["ask", "citation_guard", "session_id", "Answer", "BRAIN_TOOLS", "BrainToolError"]
+__all__ = ["ask", "citation_guard", "session_id", "Answer", "BRAIN_TOOLS", "BrainToolError", "REFUSAL", "ROUTE_TOOL", "KINDS", "INTENTS"]

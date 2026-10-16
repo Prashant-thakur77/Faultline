@@ -48,6 +48,7 @@ CREATE INDEX FOR (n:ToolCall) ON (n.id)
 CREATE INDEX FOR (n:StageEvent) ON (n.id)
 CREATE INDEX FOR (n:SLO) ON (n.id)
 CREATE INDEX FOR (n:Customer) ON (n.id)
+CREATE INDEX FOR (n:IntentExemplar) ON (n.id)
 // Full-text (DDL form only; never on an attribute that also has a range index, 6.0 #3248)
 CREATE FULLTEXT INDEX FOR (n:Service) ON (n.name)
 CREATE FULLTEXT INDEX FOR (n:Table) ON (n.name)
@@ -55,7 +56,9 @@ CREATE FULLTEXT INDEX FOR (n:Runbook) ON (n.title)
 CREATE FULLTEXT INDEX FOR (n:Decision) ON (n.title)
 CREATE FULLTEXT INDEX FOR (n:Postmortem) ON (n.summary)
 CREATE FULLTEXT INDEX FOR (n:Doc) ON (n.title)
+CREATE FULLTEXT INDEX FOR (n:IntentExemplar) ON (n.text)
 // Vector (384-dim cosine; written only via vecf32(); query score is a distance)
 CREATE VECTOR INDEX FOR (n:Incident) ON (n.embedding) OPTIONS {dimension:384, similarityFunction:'cosine'}
 CREATE VECTOR INDEX FOR (n:Runbook) ON (n.embedding) OPTIONS {dimension:384, similarityFunction:'cosine'}
 CREATE VECTOR INDEX FOR (n:Postmortem) ON (n.embedding) OPTIONS {dimension:384, similarityFunction:'cosine'}
+CREATE VECTOR INDEX FOR (n:IntentExemplar) ON (n.embedding) OPTIONS {dimension:384, similarityFunction:'cosine'}

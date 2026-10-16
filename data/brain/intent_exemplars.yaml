@@ -1,0 +1,179 @@
+# Company-brain intent exemplars: seed data for the graph-native question router.
+#
+# `make seed` writes each exemplar as (:IntentExemplar {id, intent, text, embedding: vecf32(...)}) into every golden
+# graph (ingest/brain_intents.py), with a vector index and a full-text index on it (graph/schema.cypher). A question
+# is routed by ONE read-only template (Q-BRAIN-INTENT) that queries both indexes and fuses the scores in the engine;
+# nothing is matched in Python.
+#
+# How these were written (keep it this way, or the dev score stops meaning anything):
+# * from each intent's DEFINITION below (what the composer in brain/ask.py answers and the tool docstrings say),
+#   in the author's own words, with generic subjects ("this service", "this component") and never a tenant id;
+# * NOT copied or adapted from data/brain/paraphrases.truth.json (the dev set) and never from the blind held-out set;
+#   the dev set's distinctive wordings were deliberately left out;
+# * dates and incident ids are written as the router's slot words: "a past date" and "an incident" (brain/ask.py
+#   replaces a literal date / incident id in a question with the same words before routing).
+#
+# Vectors are precomputed (data/gen/embed_intents.py → data/gen/embeddings/intent_exemplar.json) so seeding needs no
+# model; the ingest fails loudly when that file is stale against this one.
+
+version: 1
+intents:
+  people:
+    definition: The people who have worked on a component (commit counts, incidents they resolved there, their teams), i.e. who knows it and whom to ask.
+    exemplars:
+      - Who has worked on this service?
+      - Who knows this component best?
+      - Which people have committed code to this service?
+      - Who is the expert on this system?
+      - Which engineers know how this service works?
+      - Who has experience with this component?
+      - Who wrote most of the code in this service?
+      - Who resolved incidents on this service in the past?
+      - Who is on call for this service?
+      - Who can help me debug this component?
+      - Which person has the most commits on this service?
+      - Does someone on the team know this table?
+      - Who maintains this service?
+      - Who has knowledge of this component?
+  decision:
+    definition: The decisions (ADRs, policies, rules) about a topic or constraining a component, whether each is still current or superseded, and who decided it.
+    exemplars:
+      - What did we decide about this topic?
+      - What is our decision on this?
+      - Is there a decision record about this?
+      - Which ADR covers this?
+      - What is the policy for this?
+      - Is that decision still current, or was it superseded?
+      - What rule do we follow for this?
+      - Has this decision been replaced by a newer one?
+      - Who decided this, and are they still here?
+      - What architecture decisions constrain this service?
+      - What was agreed about this design choice?
+      - Is there a guideline for how we do this?
+      - Have we made any decision about this?
+  gaps:
+    definition: Revenue-path services with no owning team or no current runbook (missing guardrails).
+    exemplars:
+      - Which revenue-path services lack a runbook or an owner?
+      - Which critical services have no owning team?
+      - Which services are missing a current runbook?
+      - Where are we missing guardrails on the revenue path?
+      - Are there important services without an owner?
+      - What gaps do we have in ownership and runbooks?
+      - Which services that make money are unowned?
+      - List the services that have no runbook.
+      - Which tier-1 services lack operational coverage?
+      - Which services nobody owns?
+  blast:
+    definition: What is downstream of a component and breaks or is affected when it fails (its blast radius), ranked by impact.
+    exemplars:
+      - What breaks if this service goes down?
+      - What is the impact if this component fails?
+      - What is affected when this service has an outage?
+      - What depends on this service?
+      - What is the blast radius of this component?
+      - If this database fails, what else is impacted?
+      - Which services would be hurt by an outage of this one?
+      - What would go wrong if this service crashed?
+      - How far does a failure of this component spread?
+      - Which dashboards and services are affected if this fails?
+      - What is at risk when this service fails?
+      - Which consumers break when this table is wrong?
+  context:
+    definition: What a component is, who owns it, which runbooks and decisions apply to it, and which feature flags affect it.
+    exemplars:
+      - Tell me about this service.
+      - What is this component?
+      - Describe this service.
+      - Who owns this service, and which runbooks and decisions apply to it?
+      - What runbooks exist for this service?
+      - Which feature flags affect this service?
+      - Which flags control this component?
+      - Give me the details of this component.
+      - Show me information about this table.
+      - What team runs this service?
+      - Explain what this service does.
+      - What should I know before working on this service?
+  owner_then:
+    definition: Which team owned a component at a past date or at an incident's onset, versus who owns it now (ownership history).
+    exemplars:
+      - Who owned this service on a past date?
+      - Which team owned this component during an incident?
+      - Who was the owner of this service on a past date?
+      - What is the ownership history of this service?
+      - Has this service changed owners?
+      - Which team was the owner of this table at that time?
+      - Who used to own this service?
+      - Who were the previous owners of this component?
+      - Who owned it during an incident, and who owns it now?
+      - When did the ownership of this service move to another team?
+  asof:
+    definition: What the graph held true about a component at a past date or at an incident's onset (owner, on-call, decisions in force, runbooks in effect).
+    exemplars:
+      - What did we know about this service as of a past date?
+      - What did the graph say about this component at a past date?
+      - As of a past date, who was on call and which decisions were in force for this service?
+      - What was true about this service back then?
+      - Show this service as it was on a past date.
+      - Which runbooks and decisions applied to this component at that time?
+      - What did the records show for this service during an incident?
+      - Reconstruct what we believed about this service on a past date.
+  history:
+    definition: A component's timeline, newest first (deploys that changed it, incidents that touched it, ownership changes).
+    exemplars:
+      - What is the history of this service?
+      - Show the timeline of this component.
+      - What happened to this service?
+      - Which deploys and incidents has this service had?
+      - List past incidents on this service.
+      - What changes were made to this component?
+      - When was this service last deployed?
+      - What events are recorded for this service?
+      - Give the chronology of changes and outages for this component.
+  knowledge:
+    definition: Where the organisation's knowledge has decayed (stale runbooks, handovers with no runbook since, decisions at risk, edges the graph is probably missing).
+    exemplars:
+      - Where is our operational knowledge stale?
+      - Which runbooks are out of date?
+      - Where did we lose knowledge in a handover?
+      - What knowledge gaps does the organisation have?
+      - Which decisions are at risk because their authors left?
+      - Which teams took over services without a runbook?
+      - Where has our documentation decayed?
+      - What does nobody know any more?
+      - Which runbooks have not been reviewed in a long time?
+      - Is our knowledge base healthy?
+      - Where is the graph probably missing an edge?
+  obligations:
+    definition: The customers reached through a component's failure (revenue at risk) and the SLOs on it and its blast radius (error budgets, burn).
+    exemplars:
+      - Which customers are affected if this service goes down?
+      - What SLOs depend on this service?
+      - How much revenue is at risk if this component fails?
+      - Which customers would notice an outage of this service?
+      - How much error budget is left on the SLOs for this service?
+      - Which SLOs are burning because of this component?
+      - What promises to customers depend on this service?
+      - How much MRR is exposed if this service fails?
+      - Which customer accounts are at risk from this table?
+      - Will we breach an SLO if this service stays down?
+  out_of_scope:
+    definition: Not a question about the organisation's components, people, decisions or knowledge. Requests to operate or change a system (deploy, restart, scale, roll back, delete), small talk, and general-knowledge, maths or coding questions. The router refuses these.
+    refuse: true
+    exemplars:
+      - Deploy this service to production.
+      - Roll back the last release for me.
+      - Restart the pods of this service.
+      - Scale this service up to ten replicas.
+      - Delete this table.
+      - Hi there!
+      - Good morning, how are you?
+      - Thanks, that is all.
+      - Tell me a joke.
+      - What is the capital of France?
+      - Write a Python function that sorts a list.
+      - Translate this sentence into Spanish.
+      - What is the square root of 144?
+      - Recommend a good movie to watch tonight.
+      - What time is it?
+      - Summarise this news article.
