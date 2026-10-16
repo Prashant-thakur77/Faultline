@@ -169,19 +169,18 @@ def main() -> int:
                                  lambda v: f"{v:,.0f} ms",
                                  max(v for v in (d.get("live.hero.total_ms_p50"), d.get("live.brain.ms_p50"), 1) if v))
     dr = [rate_row("Right cause · Faultline", "deep.fresh.all.right_cause", True, "worlds with a cause"),
+          rate_row("Right cause · LLM alone", "llm_deep.deep.all.right_cause", False, "worlds with a cause"),
           rate_row("Right cause · telemetry only", "deep.fresh.all.T.right_strict", False, "worlds with a cause"),
-          rate_row("Right cause · thresholded telemetry", "deep.fresh.all.Tplus.right_strict", False, "worlds with a cause"),
           rate_row("Confident wrong blames · Faultline", "deep.fresh.all.wrong_confident", True, "worlds"),
+          rate_row("Wrong blames · LLM alone", "llm_deep.deep.all.wrong_confident", False, "worlds"),
           rate_row("Wrong blames · telemetry only", "deep.fresh.all.T.wrong_any", False, "worlds"),
-          rate_row("Wrong blames · thresholded telemetry", "deep.fresh.all.Tplus.wrong_any", False, "worlds"),
           rate_row("Abstained · Faultline", "deep.fresh.all.abstained", True, "worlds"),
-          rate_row("Abstained · telemetry only", "deep.fresh.all.T.abstained", False, "worlds"),
-          rate_row("Abstained · thresholded telemetry", "deep.fresh.all.Tplus.abstained", False, "worlds")]
+          rate_row("Abstained · LLM alone", "llm_deep.deep.all.abstained", False, "worlds"),
+          rate_row("Abstained · telemetry only", "deep.fresh.all.T.abstained", False, "worlds")]
     files["deep.svg"] = bars("Faultline trades recall for safety",
                              f"Deep bench, {d.get('deep.fresh.all.cases')} adversarial worlds ({d.get('deep.fresh.all.cause_cases')} "
                              "with a cause). Whiskers: 95 % interval.", [r for r in dr if r[1] is not None], pct, 1.0,
-                             note="Telemetry only: the most anomalous changed component; thresholded: it may also say "
-                                  "\"none\". Ties never count as right. Faultline's \"not confident\" suspects: docs/EVALS.md.")
+                             note="LLM alone: claude-opus-5-5, the same telemetry and change list, one trial per world. Ties never count.")
     nopath = d.get("perf.acme.shortest_causal_path.falkordb_engine_p50")
     cost = [("FalkorDB proving \"no path\" (G2)", 0, True, f"0 model tokens; engine time p50 {nopath} ms", None,
              f"0 tokens · {nopath} ms engine time")]

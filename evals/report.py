@@ -339,6 +339,7 @@ def audit_markdown(out: dict, s: dict) -> list[str]:
                       f"an abstain case where the gate accepted a bystander change NOT_CONFIDENT "
                       f"({s.get(f'{name}.bystander_not_confident')} such cases) counts as wrong."]
     L += side_markdown(s)
+    L += new_benches_markdown(s)
     return L
 
 
@@ -535,29 +536,12 @@ def side_summaries(s: dict) -> dict:
             for cat, x in v.items():
                 for m in ("right_strict", "right_frac", "wrong_frac"):
                     k[f"decisive.{'T' if arm == 't' else 'Tplus'}.{cat}.{m}"] = x[m]
-    wb = _side("world_bench.json")
-    if wb:
-        a = wb["all"]
-        for m in ("cases", "cause_cases", "right_cause", "wrong_confident", "abstained", "verdict_ok"):
-            k[f"world.{m}"] = a[m]
-        k["world.accepted_nc.any"] = a.get("bystander_not_confident")
-        import seed_bench
-        import world_bench
-
-        acc = seed_bench.classify_acceptances(wb["rows"], world_bench.generate(seed=wb["seed"]))
-        k.update({f"world.accepted_nc.{kk}": n for kk, n in acc.items()})
-        k["world.unchanged.bystander_nc"] = sum(1 for r in wb["rows"] if r["category"] == "unchanged" and r["accepted_not_confident"])
-        k.update(wilson_keys("world.right_cause", a["right_cause"], a["cause_cases"]))
-        k.update(wilson_keys("world.wrong_confident", a["wrong_confident"], a["cases"]))
-        for cat, x in wb["by_category"].items():
-            for m in ("cases", "right_cause", "wrong_confident", "abstained", "verdict_ok"):
-                k[f"world.{cat}.{m}"] = x[m]
-        for arm in ("t", "tplus"):
-            x = a[arm]
-            q = f"world.{'T' if arm == 't' else 'Tplus'}"
-            k.update({f"{q}.{m}": x[m] for m in ("right_strict", "right_frac", "wrong_any", "wrong_frac", "abstained")})
-            k.update(wilson_keys(f"{q}.right_strict", x["right_strict"], a["cause_cases"]))
-            k.update(wilson_keys(f"{q}.wrong_any", x["wrong_any"], a["cases"]))
+    for name, prefix in (("world_bench.json", "world"), ("world_bench_globex.json", "world_globex")):
+        wb = _side(name)
+        if wb:
+            k.update(_world_keys(prefix, wb))
+    k.update(_seeds2_keys(sb))
+    k.update(llm_deep_keys())
     rc = _side("robustness_curves.json")
     if rc:
         for knob, levels in rc["curves"].items():
@@ -609,6 +593,214 @@ def side_summaries(s: dict) -> dict:
         k[f"{q}.correct"], k[f"{q}.questions"] = r["correct"], r["questions"]
         k.update(wilson_keys(f"{q}.correct", r["correct"], r["questions"]))
     return k
+
+
+def _world_keys(p: str, wb: dict) -> dict:
+    """world.* (acme) / world_globex.* (addendum 2026-10-16 item 3): the independent-parameter world bench."""
+    import seed_bench
+    import world_bench
+
+    k: dict = {}
+    a = wb["all"]
+    for m in ("cases", "cause_cases", "right_cause", "wrong_confident", "abstained", "verdict_ok"):
+        k[f"{p}.{m}"] = a[m]
+    k[f"{p}.accepted_nc.any"] = a.get("bystander_not_confident")
+    cases = world_bench.generate(n=wb.get("n", world_bench.N_WORLDS), seed=wb["seed"], tenant=wb.get("tenant", "acme"))
+    acc = seed_bench.classify_acceptances(wb["rows"], cases)
+    k.update({f"{p}.accepted_nc.{kk}": n for kk, n in acc.items()})
+    k[f"{p}.unchanged.bystander_nc"] = sum(1 for r in wb["rows"] if r["category"] == "unchanged" and r["accepted_not_confident"])
+    k.update(wilson_keys(f"{p}.right_cause", a["right_cause"], a["cause_cases"]))
+    k.update(wilson_keys(f"{p}.wrong_confident", a["wrong_confident"], a["cases"]))
+    if p != "world":   # newer prefixes also carry the abstention interval
+        k.update(wilson_keys(f"{p}.abstained", a["abstained"], a["cases"]))
+        k[f"{p}.seed"], k[f"{p}.tenant"] = wb["seed"], wb.get("tenant")
+    for cat, x in wb["by_category"].items():
+        for m in ("cases", "right_cause", "wrong_confident", "abstained", "verdict_ok"):
+            k[f"{p}.{cat}.{m}"] = x[m]
+    for arm in ("t", "tplus"):
+        x = a[arm]
+        q = f"{p}.{'T' if arm == 't' else 'Tplus'}"
+        k.update({f"{q}.{m}": x[m] for m in ("right_strict", "right_frac", "wrong_any", "wrong_frac", "abstained")})
+        k.update(wilson_keys(f"{q}.right_strict", x["right_strict"], a["cause_cases"]))
+        k.update(wilson_keys(f"{q}.wrong_any", x["wrong_any"], a["cases"]))
+    return k
+
+
+def _pooled_deep_keys(p: str, pooled: dict) -> dict:
+    """Faultline, T and T+ on a pool of deep-bench worlds (seed_bench.summary shape), each count with its Wilson 95 %."""
+    k: dict = {}
+    for m in ("cases", "cause_cases", "correct", "correct_strict", "right_cause", "wrong_confident", "abstained", "ok"):
+        if m in pooled:
+            k[f"{p}.{m}"] = pooled[m]
+    k[f"{p}.accepted_nc.any"] = pooled.get("bystander_not_confident")
+    k.update(wilson_keys(f"{p}.right_cause", pooled["right_cause"], pooled["cause_cases"]))
+    k.update(wilson_keys(f"{p}.wrong_confident", pooled["wrong_confident"], pooled["cases"]))
+    k.update(wilson_keys(f"{p}.abstained", pooled["abstained"], pooled["cases"]))
+    k.update(wilson_keys(f"{p}.correct_strict", pooled["correct_strict"], pooled["cases"]))
+    for arm in ("t", "tplus"):
+        a = pooled[arm]
+        q = f"{p}.{'T' if arm == 't' else 'Tplus'}"
+        k.update({f"{q}.{m}": a[m] for m in ("right_strict", "right_frac", "wrong_any", "wrong_frac", "abstained")})
+        k.update(wilson_keys(f"{q}.right_strict", a["right_strict"], pooled["cause_cases"]))
+        k.update(wilson_keys(f"{q}.wrong_any", a["wrong_any"], pooled["cases"]))
+        k.update(wilson_keys(f"{q}.abstained", a["abstained"], pooled["cases"]))
+    return k
+
+
+def _seeds2_keys(sb: dict) -> dict:
+    """seeds2.deep.* (addendum 2026-10-16 item 2: 8 more deep-bench seeds) and seedsall.deep.* (those plus the three
+    earlier new seeds): pooled, per category, with the not-confident acceptances split as for seeds.deep."""
+    import deep_bench
+    import seed_bench
+
+    s2 = _side("seed_bench2.json")
+    if not (s2 and s2.get("deep")):
+        return {}
+    rows2 = [r for v in s2["deep"].values() for r in v["rows"]]
+    k = _pooled_deep_keys("seeds2.deep", seed_bench.summary(rows2))
+    k["seeds2.deep.seeds"] = len(s2["deep"])
+    k["seeds2.deep.complete"] = bool(s2.get("complete"))
+    for cat in sorted({r["category"] for r in rows2}):
+        x = seed_bench.summary([r for r in rows2 if r["category"] == cat])
+        for m in ("cases", "cause_cases", "right_cause", "wrong_confident", "abstained", "ok"):
+            k[f"seeds2.deep.{cat}.{m}"] = x[m]
+        for arm in ("t", "tplus"):
+            k[f"seeds2.deep.{cat}.{'T' if arm == 't' else 'Tplus'}.wrong_any"] = x[arm]["wrong_any"]
+            k[f"seeds2.deep.{cat}.{'T' if arm == 't' else 'Tplus'}.right_strict"] = x[arm]["right_strict"]
+    acc = {"expected_cause": 0, "other_faulty_change": 0, "bystander": 0}
+    for seed, v in s2["deep"].items():
+        for kk, n in seed_bench.classify_acceptances(v["rows"], deep_bench.generate(seed=int(seed))).items():
+            acc[kk] += n
+    k.update({f"seeds2.deep.accepted_nc.{kk}": n for kk, n in acc.items()})
+    k.update(wilson_keys("seeds2.deep.accepted_nc.bystander", acc["bystander"], len(rows2)))
+    rows1 = [r for v in (sb or {}).get("deep", {}).values() for r in v["rows"]]
+    if rows1:
+        k.update(_pooled_deep_keys("seedsall.deep", seed_bench.summary(rows1 + rows2)))
+        k["seedsall.deep.seeds"] = len(s2["deep"]) + len(sb["deep"])
+    return k
+
+
+def llm_deep_keys() -> dict:
+    """llm_deep.<bench>.<all|category>.* (addendum 2026-10-16 item 1: the LLM alone on the deep and decisive benches),
+    from evals/results/llm_deep.json (a paid run, owner-approved); the dry run's estimate as llm_deep_dry.<bench>.*."""
+    k: dict = {}
+    for bench, d in (_side("llm_deep_dryrun.json") or {}).items():
+        k[f"llm_deep_dry.{bench}.worlds"] = d["n"]
+        k[f"llm_deep_dry.{bench}.est_usd"] = d["est_usd"]
+        k[f"llm_deep_dry.{bench}.est_input_tokens"] = d["est_input_tokens"]
+    side = _side("llm_deep.json")
+    for bench, b in (side.get("benches") or {}).items():
+        rows = list(b.get("worlds", {}).values())
+        if not rows:
+            continue
+        p = f"llm_deep.{bench}"
+        k[f"{p}.model"], k[f"{p}.prompt_version"] = side.get("model"), side.get("prompt_version")
+        k[f"{p}.complete"] = bool(b.get("complete"))
+        groups = {"all": rows, **{c: [r for r in rows if r["category"] == c] for c in sorted({r["category"] for r in rows})}}
+        for g, rs in groups.items():
+            q = f"{p}.{g}"
+            cc = sum(1 for r in rs if r["has_cause"])
+            k[f"{q}.cases"], k[f"{q}.cause_cases"] = len(rs), cc
+            for m in ("right_cause", "wrong_confident", "abstained", "no_incident", "unparsed", "named_unknown", "ok"):
+                if m in rs[0]:
+                    k[f"{q}.{m}"] = sum(bool(r[m]) for r in rs)
+            k.update(wilson_keys(f"{q}.right_cause", k[f"{q}.right_cause"], cc))
+            k.update(wilson_keys(f"{q}.wrong_confident", k[f"{q}.wrong_confident"], len(rs)))
+            k.update(wilson_keys(f"{q}.abstained", k[f"{q}.abstained"], len(rs)))
+        tin = [r["usage"]["input_tokens"] for r in rows if r.get("usage")]
+        tout = [r["usage"]["output_tokens"] for r in rows if r.get("usage")]
+        k[f"{p}.tokens_in_median"] = statistics.median(tin) if tin else None
+        k[f"{p}.tokens_out_median"] = statistics.median(tout) if tout else None
+        k[f"{p}.seconds_median"] = statistics.median([r["seconds"] for r in rows])
+        k[f"{p}.prompts_match_dry_run"] = all(r.get("matches_dry_run") for r in rows)
+        sp = sum(x.get("spent_usd", 0.0) for x in b.get("runs", []))
+        k[f"{p}.cost_usd"] = round(sp, 2)
+    return k
+
+
+def new_benches_markdown(s: dict) -> list[str]:
+    """RESULTS.md sections for addendum 2026-10-16 (more deep seeds, globex world bench, the LLM on the adversarial
+    benches)."""
+    L: list[str] = []
+    for p, title in (("seeds2.deep", f"Deep bench on {s.get('seeds2.deep.seeds')} more seeds (evals/seed_bench.py --seeds2)"),
+                     ("seedsall.deep", f"Deep bench, all {s.get('seedsall.deep.seeds')} non-headline seeds pooled")):
+        if not s.get(f"{p}.cases"):
+            continue
+        L += ["", f"## {title}", "",
+              f"{s[f'{p}.cases']} worlds, {s[f'{p}.cause_cases']} with a cause."
+              + ("" if p != "seeds2.deep" or s.get("seeds2.deep.complete") else " Partial: not every pre-registered seed has run."), "",
+              "| | right cause (worlds with a cause) | wrong blames, all worlds (Faultline: confident; T, T+: any) | abstained |",
+              "|---|---|---|---|",
+              f"| Faultline | {_kn(s, f'{p}.right_cause')} | {_kn(s, f'{p}.wrong_confident')} | {_kn(s, f'{p}.abstained')} |",
+              f"| telemetry only (T) | {_kn(s, f'{p}.T.right_strict')} | {_kn(s, f'{p}.T.wrong_any')} | {_kn(s, f'{p}.T.abstained')} |",
+              f"| thresholded telemetry (T+) | {_kn(s, f'{p}.Tplus.right_strict')} | {_kn(s, f'{p}.Tplus.wrong_any')} | "
+              f"{_kn(s, f'{p}.Tplus.abstained')} |"]
+        if p == "seeds2.deep":
+            cats = sorted({kk.split(".")[2] for kk in s if kk.startswith("seeds2.deep.") and kk.endswith(".T.wrong_any")
+                           and kk.count(".") == 4})
+            L += ["", "| category | worlds | Faultline right | Faultline wrong-confident | abstained | T right | T wrong | T+ wrong |",
+                  "|---|---|---|---|---|---|---|---|"]
+            for c in cats:
+                q = f"seeds2.deep.{c}"
+                na = not s[f"{q}.cause_cases"]   # no cause in this category: "right cause" does not apply
+                L.append(f"| {c} | {s[f'{q}.cases']} | {'n/a' if na else s[f'{q}.right_cause']} | {s[f'{q}.wrong_confident']} | "
+                         f"{s[f'{q}.abstained']} | {'n/a' if na else s[f'{q}.T.right_strict']} | {s[f'{q}.T.wrong_any']} | "
+                         f"{s[f'{q}.Tplus.wrong_any']} |")
+            L += ["", f"Runs that ended NOT_CONFIDENT having accepted a change: the true cause "
+                      f"{s.get('seeds2.deep.accepted_nc.expected_cause')}, a bystander with no fault of its own "
+                      f"{s.get('seeds2.deep.accepted_nc.bystander')}."]
+    if s.get("world_globex.cases"):
+        p = "world_globex"
+        L += ["", f"## Independent-parameter worlds on the second tenant (globex, 200 services; evals/world_bench.py "
+                  f"--tenant globex, seed {s.get('world_globex.seed')}; not blind)", "",
+              "| | right cause (worlds with a cause) | wrong blames, all worlds (Faultline: confident; T, T+: any) | abstained |",
+              "|---|---|---|---|",
+              f"| Faultline | {_kn(s, f'{p}.right_cause')} | {_kn(s, f'{p}.wrong_confident')} | {_kn(s, f'{p}.abstained')} |",
+              f"| T | {_kn(s, f'{p}.T.right_strict')} | {_kn(s, f'{p}.T.wrong_any')} | {s[f'{p}.T.abstained']} |",
+              f"| T+ | {_kn(s, f'{p}.Tplus.right_strict')} | {_kn(s, f'{p}.Tplus.wrong_any')} | {s[f'{p}.Tplus.abstained']} |",
+              "", "By world kind (Faultline): " + "; ".join(
+                  f"{c} {s.get(f'{p}.{c}.cases')} worlds, verdict right {s.get(f'{p}.{c}.verdict_ok')}, wrong "
+                  f"{s.get(f'{p}.{c}.wrong_confident')}, abstained {s.get(f'{p}.{c}.abstained')}"
+                  for c in ("cause", "unchanged", "quiet")) + ".",
+              "", f"Runs that ended NOT_CONFIDENT having accepted a change: the true cause "
+                  f"{s.get(f'{p}.accepted_nc.expected_cause')}, a bystander with no fault of its own "
+                  f"{s.get(f'{p}.accepted_nc.bystander')}."]
+    benches = [b for b in ("deep", "decisive") if s.get(f"llm_deep.{b}.all.cases")]
+    if benches or s.get("llm_deep_dry.deep.est_usd") is not None:
+        L += ["", "## The LLM alone on the adversarial benches (evals/llm_deep.py; A0 v2 evidence and prompt)", ""]
+        if not benches:
+            L.append("Built and dry-run; the paid run waits for the owner's approval. Estimate at list price: "
+                     + "; ".join(f"{b} {s.get(f'llm_deep_dry.{b}.worlds')} worlds, ${s.get(f'llm_deep_dry.{b}.est_usd')}"
+                                 for b in ("deep", "decisive") if s.get(f"llm_deep_dry.{b}.est_usd") is not None) + ".")
+        for b in benches:
+            p = f"llm_deep.{b}.all"
+            fl = ({"rc": _kn(s, "deep.fresh.all.right_cause"), "wc": _kn(s, "deep.fresh.all.wrong_confident"),
+                   "ab": _kn(s, "deep.fresh.all.abstained")} if b == "deep" else
+                  {"rc": f"{(s.get('decisive.full.g5_only.right_cause') or 0) + (s.get('decisive.full.anomalous_no_path.right_cause') or 0)}/40",
+                   "wc": f"{(s.get('decisive.full.g5_only.wrong_confident') or 0) + (s.get('decisive.full.anomalous_no_path.wrong_confident') or 0)}/40",
+                   "ab": f"{(s.get('decisive.full.g5_only.abstained') or 0) + (s.get('decisive.full.anomalous_no_path.abstained') or 0)}/40"})
+            L += [f"**{b}** ({s[f'{p}.cases']} worlds, {s[f'{p}.cause_cases']} with a cause"
+                  + ("" if s.get(f"llm_deep.{b}.complete") else "; partial") + f"; {s.get(f'llm_deep.{b}.model')}, "
+                  f"prompt v{s.get(f'llm_deep.{b}.prompt_version')}; median {s.get(f'llm_deep.{b}.tokens_in_median')} input / "
+                  f"{s.get(f'llm_deep.{b}.tokens_out_median')} output tokens, {s.get(f'llm_deep.{b}.seconds_median')} s per world; "
+                  f"cost ${s.get(f'llm_deep.{b}.cost_usd')})", "",
+                  "| | right cause | wrong blames (any named innocent change) | abstained |", "|---|---|---|---|",
+                  f"| LLM alone | {_kn(s, f'{p}.right_cause')} | {_kn(s, f'{p}.wrong_confident')} | {_kn(s, f'{p}.abstained')} |",
+                  f"| Faultline | {fl['rc']} | {fl['wc']} | {fl['ab']} |"]
+            if b == "deep":
+                L += [f"| T | {_kn(s, 'deep.fresh.all.T.right_strict')} | {_kn(s, 'deep.fresh.all.T.wrong_any')} | "
+                      f"{_kn(s, 'deep.fresh.all.T.abstained')} |",
+                      f"| T+ | {_kn(s, 'deep.fresh.all.Tplus.right_strict')} | {_kn(s, 'deep.fresh.all.Tplus.wrong_any')} | "
+                      f"{_kn(s, 'deep.fresh.all.Tplus.abstained')} |"]
+            cats = sorted({kk.split(".")[2] for kk in s if kk.startswith(f"llm_deep.{b}.") and kk.endswith(".cause_cases")
+                           and kk.split(".")[2] != "all"})
+            L += ["", "| category | worlds | LLM right | LLM wrong | LLM abstained | LLM no incident |", "|---|---|---|---|---|---|"]
+            for c in cats:
+                q = f"llm_deep.{b}.{c}"
+                L.append(f"| {c} | {s[f'{q}.cases']} | {s[f'{q}.right_cause'] if s[f'{q}.cause_cases'] else 'n/a'} | {s[f'{q}.wrong_confident']} | "
+                         f"{s[f'{q}.abstained']} | {s[f'{q}.no_incident']} |")
+            L.append("")
+    return L
 
 
 # ------------------------------------------------------------------ the public deployment (evals/live_bench.py)

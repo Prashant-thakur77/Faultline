@@ -176,6 +176,84 @@ Original wording: 33/33 (90–100 %) correct, citation precision 0.3118. Paraphr
 
 Set 1 informed the hybrid's design (it is no longer blind for the hybrid); set 2 was written before the hybrid was scored, under the pre-registered rule in evals/PREREGISTRATION.md.
 
+## Deep bench on 8 more seeds (evals/seed_bench.py --seeds2)
+
+1120 worlds, 800 with a cause.
+
+| | right cause (worlds with a cause) | wrong blames, all worlds (Faultline: confident; T, T+: any) | abstained |
+|---|---|---|---|
+| Faultline | 382/800 (44–51 %) | 0/1120 (0–0 %) | 738/1120 (63–69 %) |
+| telemetry only (T) | 671/800 (81–86 %) | 449/1120 (37–43 %) | 0/1120 (0–0 %) |
+| thresholded telemetry (T+) | 671/800 (81–86 %) | 449/1120 (37–43 %) | 0/1120 (0–0 %) |
+
+| category | worlds | Faultline right | Faultline wrong-confident | abstained | T right | T wrong | T+ wrong |
+|---|---|---|---|---|---|---|---|
+| abstain_downstream | 160 | n/a | 0 | 160 | n/a | 160 | 160 |
+| deep_onpath | 160 | 70 | 0 | 90 | 141 | 19 | 19 |
+| late_upstream | 160 | 0 | 0 | 160 | 157 | 3 | 3 |
+| noisy_upstream | 160 | 87 | 0 | 73 | 160 | 0 | 0 |
+| symptom_decoy | 160 | 132 | 0 | 28 | 124 | 36 | 36 |
+| two_causes_chain | 160 | n/a | 0 | 160 | n/a | 160 | 160 |
+| weak_link | 160 | 93 | 0 | 67 | 89 | 71 | 71 |
+
+Runs that ended NOT_CONFIDENT having accepted a change: the true cause 73, a bystander with no fault of its own 48.
+
+## Deep bench, all 11 non-headline seeds pooled
+
+1540 worlds, 1100 with a cause.
+
+| | right cause (worlds with a cause) | wrong blames, all worlds (Faultline: confident; T, T+: any) | abstained |
+|---|---|---|---|
+| Faultline | 518/1100 (44–50 %) | 0/1540 (0–0 %) | 1022/1540 (64–69 %) |
+| telemetry only (T) | 920/1100 (81–86 %) | 620/1540 (38–43 %) | 0/1540 (0–0 %) |
+| thresholded telemetry (T+) | 920/1100 (81–86 %) | 620/1540 (38–43 %) | 0/1540 (0–0 %) |
+
+## Independent-parameter worlds on the second tenant (globex, 200 services; evals/world_bench.py --tenant globex, seed 20261131; not blind)
+
+| | right cause (worlds with a cause) | wrong blames, all worlds (Faultline: confident; T, T+: any) | abstained |
+|---|---|---|---|
+| Faultline | 106/117 (84–95 %) | 0/200 (0–2 %) | 66/200 (27–40 %) |
+| T | 107/117 (85–95 %) | 93/200 (40–53 %) | 0 |
+| T+ | 107/117 (85–95 %) | 1/200 (0–3 %) | 92 |
+
+By world kind (Faultline): cause 117 worlds, verdict right 106, wrong 0, abstained 11; unchanged 53 worlds, verdict right 53, wrong 0, abstained 53; quiet 30 worlds, verdict right 28, wrong 0, abstained 2.
+
+Runs that ended NOT_CONFIDENT having accepted a change: the true cause 1, a bystander with no fault of its own 5.
+
+## The LLM alone on the adversarial benches (evals/llm_deep.py; A0 v2 evidence and prompt)
+
+**deep** (140 worlds, 100 with a cause; claude-opus-5-5, prompt v2; median 2284.5 input / 394.0 output tokens, 5.85 s per world; cost $2.45)
+
+| | right cause | wrong blames (any named innocent change) | abstained |
+|---|---|---|---|
+| LLM alone | 66/100 (56–75 %) | 37/140 (20–34 %) | 37/140 (20–34 %) |
+| Faultline | 51/100 (41–61 %) | 0/140 (0–3 %) | 89/140 (55–71 %) |
+| T | 85/100 (77–91 %) | 55/140 (32–48 %) | 0/140 (0–3 %) |
+| T+ | 85/100 (77–91 %) | 55/140 (32–48 %) | 0/140 (0–3 %) |
+
+| category | worlds | LLM right | LLM wrong | LLM abstained | LLM no incident |
+|---|---|---|---|---|---|
+| abstain_downstream | 20 | n/a | 4 | 16 | 0 |
+| deep_onpath | 20 | 18 | 2 | 0 | 0 |
+| late_upstream | 20 | 20 | 0 | 0 | 0 |
+| noisy_upstream | 20 | 7 | 0 | 13 | 0 |
+| symptom_decoy | 20 | 14 | 1 | 5 | 0 |
+| two_causes_chain | 20 | n/a | 20 | 0 | 0 |
+| weak_link | 20 | 7 | 10 | 3 | 0 |
+
+**decisive** (40 worlds, 40 with a cause; claude-opus-5-5, prompt v2; median 2283.0 input / 450.5 output tokens, 6.48 s per world; cost $0.74)
+
+| | right cause | wrong blames (any named innocent change) | abstained |
+|---|---|---|---|
+| LLM alone | 27/40 (52–80 %) | 7/40 (9–32 %) | 6/40 (7–29 %) |
+| Faultline | 40/40 | 0/40 | 0/40 |
+
+| category | worlds | LLM right | LLM wrong | LLM abstained | LLM no incident |
+|---|---|---|---|---|---|
+| anomalous_no_path | 20 | 13 | 4 | 3 | 0 |
+| g5_only | 20 | 14 | 3 | 3 | 0 |
+
+
 ## Product checks
 
 - **S13 concurrency**: 16 workers × 100 rounds → 100/100 rounds with exactly one owner, 0 lost updates; RO read p50/p95 3.791/9.462 ms during writes (quiet 1.92/3.788 ms).

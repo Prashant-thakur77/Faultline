@@ -28,6 +28,10 @@ import gate_bench  # noqa: E402
 GATE_SEEDS = (20261101, 20261102, 20261103)
 DEEP_SEEDS = (20261111, 20261112, 20261113)
 OUT = ROOT / "evals" / "results" / "seed_bench.json"
+# addendum 2026-10-16 (item 2): 8 more deep-bench seeds, 1,120 worlds, never generated before; own side file
+DEEP_SEEDS2 = tuple(range(20261141, 20261149))
+OUT2 = ROOT / "evals" / "results" / "seed_bench2.json"
+RELIEVE_EVERY = 35   # worlds between engine-pressure checks (each world makes two clean rooms: product + T/T+)
 
 
 def run_world(c: dict, kind: str) -> dict:
@@ -149,13 +153,56 @@ def headline_deep(progress: bool = True) -> dict:
             "rows": rows}
 
 
+def run_seeds2(out_path: Path, reason: str, progress: bool = True) -> dict:
+    """Addendum 2026-10-16 item 2: the deep bench on DEEP_SEEDS2 through run_world (product + T + T+). Each seed is
+    written to the side file as it completes, so an interrupted run resumes at the next seed."""
+    import harness
+
+    out = json.loads(out_path.read_text()) if out_path.exists() else {}
+    out.setdefault("deep", {})
+    out.setdefault("engine_pressure", [])
+    out.setdefault("runs", []).append({"started": time.strftime("%Y-%m-%dT%H:%M:%S"), "reason": reason})
+    out["deep_seeds"] = list(DEEP_SEEDS2)
+    for seed in DEEP_SEEDS2:
+        if str(seed) in out["deep"]:
+            continue
+        t0 = time.perf_counter()
+        rows = []
+        for i, c in enumerate(deep_bench.generate(seed=seed)):
+            rows.append(run_world(c, "deep"))
+            if progress:
+                r = rows[-1]
+                print(f"[seeds2] {seed} {r['id']} {r['category']}: {r['outcome']} right={r['right_cause']} "
+                      f"wc={r['wrong_confident']} T+={r['tplus_outcome']}", file=sys.stderr, flush=True)
+            if (i + 1) % RELIEVE_EVERY == 0:
+                harness._relieve_engine(f"seeds2-{seed}-{i + 1}", out["engine_pressure"])
+        cats = sorted({r["category"] for r in rows})
+        out["deep"][str(seed)] = {"all": summary(rows), "by_category": {k: summary([r for r in rows if r["category"] == k])
+                                                                       for k in cats},
+                                  "rows": rows, "seconds": round(time.perf_counter() - t0, 1)}
+        out["deep_pooled"] = summary([r for v in out["deep"].values() for r in v["rows"]])
+        out["complete"] = all(str(x) in out["deep"] for x in DEEP_SEEDS2)
+        out["runs"][-1]["finished"] = time.strftime("%Y-%m-%dT%H:%M:%S")
+        tmp = out_path.with_suffix(".json.tmp")
+        tmp.write_text(json.dumps(out, indent=1, default=str) + "\n")
+        tmp.replace(out_path)
+        harness._relieve_engine(f"seeds2-{seed}", out["engine_pressure"])
+    return out
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--reason", required=True, help="why this run (logged in the side file; PREREGISTRATION 2026-10-16)")
     ap.add_argument("--out", default=str(OUT))
     ap.add_argument("--headline-deep", action="store_true",
                     help="re-run the headline deep bench with rows → evals/results/deep_fresh_detail.json")
+    ap.add_argument("--seeds2", action="store_true",
+                    help="the 8 deep-bench seeds of addendum 2026-10-16 (1,120 worlds) → evals/results/seed_bench2.json")
     a = ap.parse_args()
+    if a.seeds2:
+        r = run_seeds2(OUT2, a.reason)
+        print(json.dumps(r.get("deep_pooled"), indent=1))
+        return
     if a.headline_deep:
         started = time.strftime("%Y-%m-%dT%H:%M:%S")
         r = headline_deep()

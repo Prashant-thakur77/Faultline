@@ -54,8 +54,10 @@ BENCH_REPORT = "{target} errors are elevated"  # intake text; its vector is prec
 
 # ------------------------------------------------------------------ oracle (topology config, not the engine)
 class Topo:
-    def __init__(self, path: Path = TOPOLOGY):
-        t = yaml.safe_load(path.read_text())
+    def __init__(self, path: Path = TOPOLOGY, config: dict | None = None):
+        """`config`: the same shape as the topology YAML ({services, datastores, calls}) from another source (the globex
+        generator, evals/world_bench.py --tenant globex); default: acme's committed config file."""
+        t = config if config is not None else yaml.safe_load(path.read_text())
         self.nodes = sorted([s["id"] for s in t["services"]] + [d["id"] for d in t["datastores"]])
         self.calls = [c for c in t["calls"] if c["cap"] > 0]            # client → server; failure flows server → client
         incoming: dict[str, float] = {}

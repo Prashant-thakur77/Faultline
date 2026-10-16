@@ -20,7 +20,9 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PRICE_PER_MTOK = {"in": 15.0, "out": 75.0}  # conservative upper bound used for the pre-run estimate (USD)
+# claude-opus-5-5 list price (USD per million tokens). The estimate below stays an upper bound through its conservative
+# tokens-per-trial assumptions, not through the price.
+PRICE_PER_MTOK = {"in": 4.0, "out": 20.0}
 
 # v1 (the recorded 2026-10-16 run): "a change id or none" only, and no data-plane evidence. The M18 audit found that made
 # S12 unanswerable (its truth is NOT_CONFIDENT with an inferred origin) and starved S2/S4D of the evidence the product
@@ -46,30 +48,39 @@ def _world_text(sid: str) -> tuple[str, dict]:
     from faultline import scenario
     from faultline.graph import client as gclient
     from faultline.graph import copy as gcopy
-    from faultline.graph.ro import RO
 
     p = scenario.prepare(sid, set_mode=True)
     try:
-        ro = RO(p.tenant, p.graph)
-        svc = sorted({r["src"] for r in ro.run("Q-SIM-1", {}).rows} | {r["dst"] for r in ro.run("Q-SIM-1", {}).rows})
-        lines = []
-        for t in svc:
-            rows = ro.run("Q-MW-1", {"target": t, "metric": "error_rate", "since": p.onset_ms - 20 * 60_000,
-                                     "until": p.onset_ms + 60_000}).rows
-            if rows:
-                lines.append(f"{t}: " + " ".join(f"{r['value']:.3f}" for r in rows[-21:]))
-        s = p.scenario
-        changes = [f"- {c['change']} ({c.get('kind', 'deploy')} on {c['target']}, {c['at']} before onset): {c.get('title', '')}"
-                   for c in s.get("inject", [])]
-        facts = [f"- {f['change']} sets {f['key']} = {f['value']} ({f.get('file', '')})" for f in s.get("facts", [])]
-        data = _data_plane_text(s) if PROMPT_VERSION >= 2 and s.get("pipeline_mode") else ""
-        text = (f"ALERTS: {', '.join(a['metric'] + ' on ' + a['target'] for a in s.get('alerts', []))}\n"
-                f"REPORT: {s.get('report', '')}\n\nERROR RATE PER MINUTE (last value = onset):\n" + "\n".join(lines)
-                + data
-                + "\n\nCHANGES IN THE WINDOW:\n" + ("\n".join(changes) or "- none") + ("\n\nDIFF FACTS:\n" + "\n".join(facts) if facts else ""))
-        return text, {"graph": p.graph}
+        return evidence_text(p, p.scenario), {"graph": p.graph}
     finally:
         gcopy.delete_if_exists(gclient.engine(), p.graph)
+
+
+def evidence_text(p, s: dict) -> str:
+    """The A0 evidence for a prepared world `p` (its clean room still exists) and its definition `s`: alerts, report,
+    per-minute error rates around onset for every simulated component (RO templates on the world's graph), the change
+    list with kind, target, time and title, diff facts and (v2) the data plane. Shared with evals/llm_deep.py so the
+    LLM sees the same evidence on every bench."""
+    from faultline.graph.ro import RO
+    from faultline.sim.telemetry import sim_view
+
+    ro = RO(p.tenant, p.graph)
+    view = sim_view(ro)   # the simulator's components (paged; on acme identical to Q-SIM-1's one read)
+    svc = sorted({r["src"] for r in view} | {r["dst"] for r in view})
+    lines = []
+    for t in svc:
+        rows = ro.run("Q-MW-1", {"target": t, "metric": "error_rate", "since": p.onset_ms - 20 * 60_000,
+                                 "until": p.onset_ms + 60_000}).rows
+        if rows:
+            lines.append(f"{t}: " + " ".join(f"{r['value']:.3f}" for r in rows[-21:]))
+    changes = [f"- {c['change']} ({c.get('kind', 'deploy')} on {c['target']}, {c['at']} before onset): {c.get('title', '')}"
+               for c in s.get("inject", [])]
+    facts = [f"- {f['change']} sets {f['key']} = {f['value']} ({f.get('file', '')})" for f in s.get("facts", [])]
+    data = _data_plane_text(s) if PROMPT_VERSION >= 2 and s.get("pipeline_mode") else ""
+    return (f"ALERTS: {', '.join(a['metric'] + ' on ' + a['target'] for a in s.get('alerts', []))}\n"
+            f"REPORT: {s.get('report', '')}\n\nERROR RATE PER MINUTE (last value = onset):\n" + "\n".join(lines)
+            + data
+            + "\n\nCHANGES IN THE WINDOW:\n" + ("\n".join(changes) or "- none") + ("\n\nDIFF FACTS:\n" + "\n".join(facts) if facts else ""))
 
 
 def _data_plane_text(s: dict) -> str:
@@ -127,7 +138,10 @@ def _ask(text: str, model: str) -> tuple[dict, dict]:
                                messages=[{"role": "user", "content": ask + "\n\n" + text}])
     raw = "".join(b.text for b in resp.content if b.type == "text")
     m = re.search(r"\{.*\}", raw, re.S)
-    ans = json.loads(m.group(0)) if m else {"cause": None, "why": raw[:200]}
+    try:
+        ans = json.loads(m.group(0)) if m else {"cause": None, "why": raw[:200], "_unparsed": True}
+    except json.JSONDecodeError:   # keep the paid-for usage; the caller decides how an unparseable answer is graded
+        ans = {"cause": None, "why": raw[:200], "_unparsed": True}
     return ans, {"input_tokens": resp.usage.input_tokens, "output_tokens": resp.usage.output_tokens}
 
 
@@ -155,6 +169,17 @@ def arm_a3l(sid: str, model: str) -> dict:
 
 
 def _result(sid: str, ans: dict, usage: dict, t0: float) -> dict:
+    outcome, cause, inferred = outcome_of(ans)
+    from harness import grade  # the same grader as every keyless arm (imported late: the harness imports this module)
+
+    return {"outcome": outcome, "cause": cause, "inferred": inferred, "why": ans.get("why", "")[:300],
+            **grade(sid, outcome, cause, inferred=inferred), "prompt_version": PROMPT_VERSION,
+            "usage": usage, "seconds": round(time.perf_counter() - t0, 2), "tool_calls": 0}
+
+
+def outcome_of(ans: dict) -> tuple[str, str | None, str | None]:
+    """(outcome, cause, inferred origin) from the model's JSON answer: a named change → CONFIRMED; v2: no change and an
+    incident → NOT_CONFIDENT (with the origin it names); else NO_INCIDENT. Shared with evals/llm_deep.py."""
     cause = ans.get("cause")
     cause = None if cause in (None, "", "none", "None") else str(cause)
     inferred = None
@@ -164,11 +189,7 @@ def _result(sid: str, ans: dict, usage: dict, t0: float) -> dict:
         outcome, inferred = "NOT_CONFIDENT", (str(ans["origin"]) if ans.get("origin") else None)
     else:
         outcome = "NO_INCIDENT"
-    from harness import grade  # the same grader as every keyless arm (imported late: the harness imports this module)
-
-    return {"outcome": outcome, "cause": cause, "inferred": inferred, "why": ans.get("why", "")[:300],
-            **grade(sid, outcome, cause, inferred=inferred), "prompt_version": PROMPT_VERSION,
-            "usage": usage, "seconds": round(time.perf_counter() - t0, 2), "tool_calls": 0}
+    return outcome, cause, inferred
 
 
 def estimate(n_scenarios: int, n: int, arms: list[str]) -> dict:

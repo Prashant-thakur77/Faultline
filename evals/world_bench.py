@@ -11,7 +11,13 @@ at −2m. The alert is on a component the fault visibly reaches: error ≥ 0.05 
 (cap × call share along the best single path, ≤ 4 hops, the faulty component itself included), computed here from the
 topology config. Arms T and T+ run on the same worlds.
 
+--tenant globex (addendum 2026-10-16, item 3): the same world rule on the 200-service globex tenant. Its oracle is
+built from the globex topology generator (seed 42, the config the seeder writes) and must equal the engine's simulator
+view of golden_globex (every failure edge, cap and call share) before any world runs; the simulator reads that view
+page by page (Q-SIM-2), so globex's 305 failure edges no longer exceed one read.
+
     PYTHONPATH=backend scripts/memguard.sh 4000 uv run python evals/world_bench.py --reason "…"
+    PYTHONPATH=backend scripts/memguard.sh 4000 uv run python evals/world_bench.py --tenant globex --n 200 --reason "…"
 """
 
 from __future__ import annotations
@@ -35,6 +41,44 @@ SEED = 20261131
 N_WORLDS = 100
 VISIBLE = 0.05
 OUT = ROOT / "evals" / "results" / "world_bench.json"
+OUT_BY_TENANT = {"acme": OUT, "globex": ROOT / "evals" / "results" / "world_bench_globex.json"}
+TENANTS = ("acme", "globex")
+
+
+def globex_config() -> dict:
+    """globex's topology in the config-file shape the oracle reads, from the deterministic generator the seeder uses
+    (seed 42): the system under observation, never the engine."""
+    from faultline.ingest.globex import topology
+
+    t = topology.generate(42)
+    return {"services": [{"id": x["id"]} for x in t.services], "datastores": [{"id": x["id"]} for x in t.datastores],
+            "calls": [{"client": c.client, "server": c.server, "rps": c.rps, "cap": c.cap} for c in t.calls]}
+
+
+def topo_for(tenant: str) -> gate_bench.Topo:
+    if tenant == "acme":
+        return gate_bench.Topo()
+    if tenant == "globex":
+        return gate_bench.Topo(config=globex_config())
+    raise ValueError(f"unknown tenant {tenant!r} (one of {', '.join(TENANTS)})")
+
+
+def oracle_check(tenant: str) -> dict:
+    """The oracle's failure edges (cap > 0 between services/datastores, call share as the simulator computes it) must
+    equal the simulator's view of the tenant's golden graph, read through the RO wrapper. A mismatch means the grader
+    and the world disagree: refuse to run."""
+    from faultline.graph.ro import RO
+    from faultline.graph.tenant import golden_graph
+    from faultline.sim.telemetry import sim_view
+
+    topo = topo_for(tenant)
+    orc = {(c["server"], c["client"]): (float(c["cap"]), round(topo.share[(c["server"], c["client"])], 9))
+           for c in topo.calls if c["server"] in topo.nodes and c["client"] in topo.nodes}
+    view = sim_view(RO(tenant, golden_graph(tenant)))
+    eng = {(r["src"], r["dst"]): (float(r["cap"]), round(min(1.0, float(r["rps"] or 0) / float(r["in_rps"] or 1)), 9))
+           for r in view}
+    diff = sorted(k for k in set(orc) | set(eng) if orc.get(k) != eng.get(k))
+    return {"oracle_edges": len(orc), "engine_edges": len(eng), "equal": not diff, "differences": [list(k) for k in diff[:20]]}
 
 
 def best_transfer(topo: gate_bench.Topo, src: str, max_hops: int = 4) -> dict[str, float]:
@@ -54,8 +98,8 @@ def best_transfer(topo: gate_bench.Topo, src: str, max_hops: int = 4) -> dict[st
     return best
 
 
-def generate(n: int = N_WORLDS, seed: int = SEED) -> list[dict]:
-    topo, rnd = gate_bench.Topo(), random.Random(seed)
+def generate(n: int = N_WORLDS, seed: int = SEED, tenant: str = "acme") -> list[dict]:
+    topo, rnd = topo_for(tenant), random.Random(seed)
     ids_rnd = random.Random(seed ^ 0x0BAD1D5)
 
     def opaque(k: int = 8) -> str:
@@ -85,7 +129,7 @@ def generate(n: int = N_WORLDS, seed: int = SEED) -> list[dict]:
         effects = [] if kind == "quiet" else [{"target": origin, "error_rate": err, "from": "-2m",
                                                **({"change": cause} if cause else {})}]
         sid = f"C{opaque(6)}"
-        spec = {"id": sid, "name": f"generated incident {sid.lower()}", "tenant": "acme", "onset": "anchor+3h",
+        spec = {"id": sid, "name": f"generated incident {sid.lower()}", "tenant": tenant, "onset": "anchor+3h",
                 "inject": inject, "effects": effects, "seed": rnd.randrange(1, 10_000),
                 "alerts": [{"id": f"al-{opaque()}", "target": symptom, "metric": "error_rate", "at": "0m"}],
                 "report": gate_bench.BENCH_REPORT.format(target=symptom), "window_min": 30}
@@ -97,11 +141,14 @@ def generate(n: int = N_WORLDS, seed: int = SEED) -> list[dict]:
     return cases
 
 
-def run(progress: bool = True) -> dict:
+def run(progress: bool = True, n: int = N_WORLDS, seed: int = SEED, tenant: str = "acme") -> dict:
     import harness
 
     t0 = time.perf_counter()
-    cases = generate()
+    check = oracle_check(tenant) if tenant != "acme" else None
+    if check is not None and not check["equal"]:
+        raise SystemExit(f"world bench: the {tenant} oracle and the engine's simulator view differ: {check}")
+    cases = generate(n=n, seed=seed, tenant=tenant)
     rows, log = [], []
     for i, c in enumerate(cases):
         r = gate_bench.run_case(c)
@@ -122,8 +169,8 @@ def run(progress: bool = True) -> dict:
             x = rows[-1]
             print(f"[world] {x['id']} {x['category']} err={x['error']}: {x['outcome']} right={x['right_cause']} "
                   f"wc={x['wrong_confident']} T+={x['tplus_outcome']}", file=sys.stderr, flush=True)
-        if (i + 1) % 50 == 0:
-            harness._relieve_engine(f"world-{i + 1}", log)
+        if (i + 1) % (50 if tenant == "acme" else 25) == 0:
+            harness._relieve_engine(f"world-{tenant}-{i + 1}" if tenant != "acme" else f"world-{i + 1}", log)
 
     def summ(rs: list[dict]) -> dict:
         cause = [r for r in rs if r["category"] == "cause"]
@@ -139,20 +186,23 @@ def run(progress: bool = True) -> dict:
                         "abstained": sum(r[arm]["abstained"] for r in rs)}
         return out
 
-    return {"seed": SEED, "all": summ(rows), "by_category": {k: summ([r for r in rows if r["category"] == k])
-                                                             for k in ("cause", "unchanged", "quiet")},
+    return {"seed": seed, "tenant": tenant, "n": n, "oracle_check": check, "all": summ(rows),
+            "by_category": {k: summ([r for r in rows if r["category"] == k]) for k in ("cause", "unchanged", "quiet")},
             "rows": rows, "engine_pressure": log, "seconds": round(time.perf_counter() - t0, 1)}
 
 
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--reason", required=True)
-    ap.add_argument("--out", default=str(OUT))
+    ap.add_argument("--tenant", choices=TENANTS, default="acme")
+    ap.add_argument("--n", type=int, default=N_WORLDS)
+    ap.add_argument("--seed", type=int, default=SEED)
+    ap.add_argument("--out", default=None, help="default: evals/results/world_bench[_globex].json")
     a = ap.parse_args()
     started = time.strftime("%Y-%m-%dT%H:%M:%S")
-    r = run()
+    r = run(n=a.n, seed=a.seed, tenant=a.tenant)
     r.update({"started": started, "finished": time.strftime("%Y-%m-%dT%H:%M:%S"), "reason": a.reason})
-    Path(a.out).write_text(json.dumps(r, indent=1, default=str) + "\n")
+    Path(a.out or OUT_BY_TENANT[a.tenant]).write_text(json.dumps(r, indent=1, default=str) + "\n")
     print(json.dumps({"all": r["all"], "by_category": r["by_category"]}, indent=1))
 
 
