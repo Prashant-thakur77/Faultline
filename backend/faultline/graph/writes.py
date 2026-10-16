@@ -172,7 +172,7 @@ def normalise_flow_props(g: Graph) -> int:
         timeout=WRITE_TIMEOUT_MS,
     )
     # call share on service/datastore failure edges (server a → client b): the share of b's incoming traffic that
-    # calls a, the same quantity the telemetry simulator propagates with (Q-SIM-1). G4 upstream's strict lower bound
+    # calls a, the same quantity the telemetry simulator propagates with (Q-SIM-2). G4 upstream's strict lower bound
     # reads it; an edge without one (data plane, learned link) is unusable for elimination
     g.query(W_SHARE, timeout=WRITE_TIMEOUT_MS)
     return res.result_set[0][0]

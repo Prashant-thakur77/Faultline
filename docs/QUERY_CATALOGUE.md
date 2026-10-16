@@ -4,7 +4,7 @@
 
 **PROFILE p50 / p95** = engine milliseconds from `GRAPH.PROFILE` (nearest-rank percentiles of 20 runs; `scripts/profile_templates.py`) for the templates the S1/S2 runs executed, with those runs' recorded params (measured by the eval harness, read from `evals/results/latest.json`). Blank = not executed in those runs; `scratch` = runs on a temporary projection.
 
-<!-- claim:repo.templates -->181<!-- /claim --> templates. `{algo:x}` is resolved to the procedure name recorded by `make smoke` (`graph/algo/resolved.json`).
+<!-- claim:repo.templates -->182<!-- /claim --> templates. `{algo:x}` is resolved to the procedure name recorded by `make smoke` (`graph/algo/resolved.json`).
 
 ## Gate and proof
 
@@ -203,7 +203,8 @@
 | `Q-BASE-3` | which columns of the given tables have a healthy baseline (what can be measured for anomalous rows) | Cypher |  |  | [baseline_columns_in_scope.cypher](../backend/faultline/graph/templates/baseline_columns_in_scope.cypher) |
 | `Q-MW-1` | a component's error-rate windows in a time range (telemetry the agent reasons over, read from the graph) | Cypher |  |  | [metric_window.cypher](../backend/faultline/graph/templates/metric_window.cypher) |
 | `Q-SIM-1` | service/datastore failure-flow edges with criticality and call share (input to the telemetry simulator: the world, not the agent) | Cypher |  |  | [sim_topology.cypher](../backend/faultline/graph/templates/sim_topology.cypher) |
-| `Q-SIM-SLO` | the simulated world's SLO budgets (service, budget): the simulator raises slo_burn alerts from them, as a monitoring system would | Cypher |  |  | [sim_slo_budgets.cypher](../backend/faultline/graph/templates/sim_slo_budgets.cypher) |
+| `Q-SIM-2` | one page of the simulator failure-flow view, keyset-paged by (src, dst) (input to the telemetry simulator: the world, not the agent) | Cypher |  |  | [sim_topology_page.cypher](../backend/faultline/graph/templates/sim_topology_page.cypher) |
+| `Q-SIM-SLO` | one page of the simulated world SLO budgets (service, budget), keyset-paged by slo id: the simulator raises slo_burn alerts from them, as a monitoring system would | Cypher |  |  | [sim_slo_budgets.cypher](../backend/faultline/graph/templates/sim_slo_budgets.cypher) |
 | `Q-VIEW-1` | the failure-flow graph for the UI (services, datastores, data lineage); edges carry cap/domain | Cypher |  |  | [graph_view.cypher](../backend/faultline/graph/templates/graph_view.cypher) |
 | `Q-VIEW-2` | the failure-flow graph around a set of nodes (large tenants: the UI view scoped to a focus's upstream + downstream) | Cypher |  |  | [graph_view_scoped.cypher](../backend/faultline/graph/templates/graph_view_scoped.cypher) |
 

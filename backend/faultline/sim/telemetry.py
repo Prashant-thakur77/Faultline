@@ -34,12 +34,32 @@ class Effect:
     change: str | None = None  # the change that causes it (a rollback of that change removes the effect)
 
 
+PAGE_GUARD = 1_000   # pages of Q-SIM-2 (100 rows each) before the read is declared runaway: 100k failure edges
+
+
+def sim_view(ro: RO) -> list[dict]:
+    """The simulator's whole failure-flow view (Q-SIM-2 rows {src, dst, cap, rps, in_rps}, ordered by (src, dst)), read
+    page by page with a keyset on (src, dst): every page is one RO read under the product-wide LIMIT, and the view is
+    complete or the read fails loudly. A (src, dst) pair seen twice would make the keyset skip rows, so it is refused."""
+    rows: list[dict] = []
+    after = ("", "")
+    for _ in range(PAGE_GUARD):
+        res = ro.run("Q-SIM-2", {"after_src": after[0], "after_dst": after[1]})
+        rows += res.rows
+        if not res.truncated:
+            break
+        after = (res.rows[-1]["src"], res.rows[-1]["dst"])
+    else:
+        raise RuntimeError(f"simulator topology view: more than {PAGE_GUARD} pages; refusing to simulate")
+    pairs = [(r["src"], r["dst"]) for r in rows]
+    if len(set(pairs)) != len(pairs):
+        raise RuntimeError("simulator topology view: a failure edge appears twice (two CALLS between one pair); the "
+                           "keyset pages would skip rows")
+    return rows
+
+
 def _components(ro: RO) -> tuple[list[str], list[tuple[str, str, float]]]:
-    res = ro.run("Q-SIM-1", {})
-    if res.truncated:  # fail loudly: a partial topology would simulate a wrong world
-        raise RuntimeError("simulator topology view truncated at the template LIMIT; this tenant is too large for "
-                           "the simulator's view (scope it before simulating)")
-    view = res.rows
+    view = sim_view(ro)
     nodes = sorted({r["src"] for r in view} | {r["dst"] for r in view})
     edges = [(r["src"], r["dst"], float(r["cap"]) * min(1.0, float(r["rps"] or 0) / float(r["in_rps"] or 1))) for r in view]
     return nodes, edges
@@ -62,6 +82,9 @@ def simulate(g: Graph, ro: RO, *, onset_ms: int, effects: list[Effect], seed: in
     bs = seed if base_seed is None else base_seed
     base = {n: round(0.002 + random.Random(f"{bs}:{n}").random() * 0.006, 5) for n in nodes}
     edges = [(u, v, c) for u, v, c in edges if (u, v) not in (cut_edges or set())]
+    into: dict[str, list[tuple[str, float]]] = {n: [] for n in nodes}   # incoming edges per node, in edge-list order
+    for u, v, c in edges:                                                # (the same products in the same order as a
+        into[v].append((u, c))                                           # scan of the whole list: identical windows)
     start = start_ms if start_ms is not None else onset_ms - baseline_min * MINUTE
     span = minutes if minutes is not None else baseline_min + after_min + 1
     rows, edge_rows = [], []
@@ -77,9 +100,8 @@ def simulate(g: Graph, ro: RO, *, onset_ms: int, effects: list[Effect], seed: in
             changed = False
             for n in nodes:
                 ok = 1.0
-                for u, v, cap in edges:
-                    if v == n:
-                        ok *= 1.0 - cap * max(0.0, err[u] - base[u])
+                for u, cap in into[n]:
+                    ok *= 1.0 - cap * max(0.0, err[u] - base[u])
                 new = own[n] + (1 - own[n]) * (1 - ok)
                 if abs(new - err[n]) > 1e-9:
                     err[n], changed = new, True
@@ -109,7 +131,19 @@ def _burn_alerts(g: Graph, ro: RO, series: dict[str, list[tuple[int, float]]], o
     w = weights()["obligation"]
     fast, k = float(w["fast_burn"]), int(w["burn_window_min"])
     out = []
-    for slo in ro.run("Q-SIM-SLO", {}).rows:
+    slos: list[dict] = []
+    after = ""
+    for _ in range(PAGE_GUARD):   # keyset pages on the SLO id (globex has more SLOs than one read)
+        res = ro.run("Q-SIM-SLO", {"after": after})
+        slos += res.rows
+        if not res.truncated:
+            break
+        after = res.rows[-1]["slo"]
+    else:
+        raise RuntimeError(f"SLO budgets: more than {PAGE_GUARD} pages; refusing to simulate")
+    if len({s["slo"] for s in slos}) != len(slos):   # an SLO on two components would make the keyset skip rows
+        raise RuntimeError("SLO budgets: an SLO id appears twice; the keyset pages would skip rows")
+    for slo in slos:
         pts = series.get(slo["service"]) or []
         budget = float(slo["budget"] or 0)
         if budget <= 0:
@@ -127,10 +161,13 @@ def _burn_alerts(g: Graph, ro: RO, series: dict[str, list[tuple[int, float]]], o
 
 
 def _edges_by_target_label(ro: RO, edge_rows: list[dict], targets: dict[str, str]) -> dict[str, list[dict]]:
-    res = ro.run("Q-LABELS-1", {"ids": sorted(set(targets.values()))})
-    if res.truncated:
-        raise RuntimeError("Q-LABELS-1 truncated: too many simulated components for one read")
-    lbl = {r["id"]: r["label"] for r in res.rows}
+    ids = sorted(set(targets.values()))
+    lbl: dict[str, str] = {}
+    for i in range(0, len(ids), 100):   # one read per 100 ids (the template LIMIT): globex simulates 200+ components
+        res = ro.run("Q-LABELS-1", {"ids": ids[i:i + 100]})
+        if res.truncated:
+            raise RuntimeError("Q-LABELS-1 truncated on a 100-id chunk")
+        lbl.update({r["id"]: r["label"] for r in res.rows})
     out: dict[str, list[dict]] = {}
     for e in edge_rows:
         out.setdefault(lbl[e["dst"]], []).append(e)
