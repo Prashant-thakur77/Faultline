@@ -243,7 +243,9 @@ function tick(w: World, st: { clock: THREE.Clock; pointer: THREE.Vector2; camera
   const draw = ph.draw * vis;
   w.proof.setDrawRange(0, Math.floor((count * draw) / 6) * 6);
   w.proofMat.opacity = 0.95 * ph.fade;
-  w.pulse.visible = draw > 0 && draw < 1;
+  // always in the scene (its shader compiles with the rest at mount); hidden by scale, so the first split never
+  // pays a shader compile mid-animation
+  w.pulse.scale.setScalar(draw > 0 && draw < 1 ? 1 : 0.0001);
   w.curve.getPointAt(Math.min(0.999, draw), w.pulse.position);
 
   const n = w.mats;
@@ -425,8 +427,9 @@ export default function HeroGraph3D() {
          onPointerCancel={() => { from.current = null; }}>
       <Boundary>
         {/* the open graph fades out towards the edges instead of being cut off by the canvas */}
-        {/* the edge fade is only needed once the graph spreads out; the closed cube skips the per-frame mask composite */}
-        <div className={"absolute inset-0" + (open ? " [mask-image:radial-gradient(ellipse_70%_75%_at_50%_50%,#000_55%,transparent_100%)]" : "")}>
+        {/* the open graph fades out towards the edges; the mask stays constant (toggling it on open creates a new
+            compositing surface mid-animation, a visible hitch; on a GPU the constant mask is nearly free) */}
+        <div className="absolute inset-0 [mask-image:radial-gradient(ellipse_70%_75%_at_50%_50%,#000_55%,transparent_100%)]">
         <Canvas dpr={[1, 1.5]} camera={{ position: [0, 0.3, 8.4], fov: 36 }}
                 frameloop={reduced ? "demand" : !visible ? "never" : low && !busy ? "demand" : "always"}
                 gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
