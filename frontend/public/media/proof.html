@@ -4,12 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Faultline: proof charts</title>
-<!-- Demo-video proof beat (frontend/scripts/record_demo_video.py): one chart at a time, full screen, chosen by the URL
+<!-- Demo-video proof beats (frontend/scripts/record_demo_video.py): one chart at a time, full screen, chosen by the URL
      hash (#outcome, #false_blame, #ladder, #context_mrr, #vs_sql, #live). The SVGs under charts/ are byte-for-byte
      copies of docs/media/charts/ (drawn from evals/results/latest.json by scripts/gen_charts.py); docs/ is the
-     source and the recorder refuses to run when a copy differs. Nothing here holds a number of its own. -->
+     source and the recorder refuses to run when a copy differs.
+     #llm is the language-model comparison: it has no numbers of its own. The recorder passes the values it read from
+     evals/results/latest.json (and the model name from evals/results/llm_arms.json) to window.__llm(data) before it
+     opens #llm; without them the page says so instead of drawing anything. -->
 <style>
-  :root { --bg:#08090a; --muted:#8a8f98; }
+  :root { --bg:#08090a; --muted:#8a8f98; --accent:#2a78d6; --gray:#8c8a84; --ink:#0b0b0b; --ink2:#52514e; --grid:#e7e6e2; --card:#fcfcfb; }
   html, body { height:100%; margin:0; background:var(--bg); color:#fafafa; font:15px/1.45 Inter, ui-sans-serif, system-ui, sans-serif; }
   body { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:24px 0 96px; box-sizing:border-box; }
   figure { margin:0; display:flex; flex-direction:column; align-items:center; gap:12px; }
@@ -18,6 +21,22 @@
   figcaption { font:500 12px/1.4 ui-monospace, "Geist Mono", monospace; letter-spacing:.06em; color:var(--muted); }
   .err { border:1px solid rgba(248,113,113,.6); background:rgba(239,68,68,.12); color:#fecaca; padding:12px 16px; border-radius:10px; }
   [hidden] { display:none !important; }
+  /* the LLM card: the same light card and emphasis as the SVG charts (Faultline in the accent, the rest gray) */
+  .card { width:min(86vw, 1180px); box-sizing:border-box; background:var(--card); color:var(--ink); border:1px solid var(--grid);
+          border-radius:14px; padding:30px 36px 26px; box-shadow:0 30px 80px -30px rgba(0,0,0,.8); }
+  .card h2 { margin:0; font-size:28px; font-weight:650; letter-spacing:-0.015em; }
+  .card .sub { margin:6px 0 22px; color:var(--ink2); font-size:16px; }
+  .rows { display:grid; grid-template-columns:minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, 1fr); gap:14px 26px; align-items:center; }
+  .hd { font:600 12px/1.3 ui-monospace, monospace; letter-spacing:.08em; text-transform:uppercase; color:var(--ink2); }
+  .lbl { font-size:17px; color:var(--ink2); }
+  .lbl b { color:var(--ink); font-weight:650; }
+  .lbl small { display:block; color:#77756f; font-size:13px; margin-top:2px; }
+  .bar { position:relative; height:26px; background:#f0efeb; border-radius:6px; margin-right:76px; }
+  .bar span { position:absolute; inset:0 auto 0 0; border-radius:6px; background:var(--gray); }
+  .bar.mine span { background:var(--accent); }
+  .bar em { position:absolute; left:calc(100% + 10px); top:2px; font-style:normal; font-weight:650; font-size:16px; white-space:nowrap; }
+  .bar.end em { left:auto; right:8px; color:#fff; }
+  .note { margin:22px 0 0; color:#77756f; font-size:13px; }
 </style>
 </head>
 <body>
@@ -25,6 +44,12 @@
     <img id="chart" alt="">
     <figcaption>drawn from evals/results/latest.json by scripts/gen_charts.py · docs/PROOF.md</figcaption>
   </figure>
+  <section id="llm" class="card" hidden aria-labelledby="llm-title">
+    <h2 id="llm-title">The same language model, three ways</h2>
+    <p class="sub" id="llm-sub"></p>
+    <div class="rows" id="llm-rows" role="table" aria-label="Right verdicts by approach"></div>
+    <p class="note" id="llm-note"></p>
+  </section>
   <p id="err" class="err" role="alert" hidden></p>
 <script>
   // Only the known chart names; anything else, or a chart that fails to load, is said plainly (never a blank frame).
@@ -37,12 +62,42 @@
     live: "The live deployment, measured over HTTPS"
   };
   var fig = document.getElementById("fig"), img = document.getElementById("chart"), err = document.getElementById("err");
-  function fail(text) { fig.hidden = true; err.textContent = text; err.hidden = false; document.body.dataset.state = "error"; }
+  var llm = document.getElementById("llm");
+  function fail(text) { fig.hidden = true; llm.hidden = true; err.textContent = text; err.hidden = false; document.body.dataset.state = "error"; }
+  function ready(name) { err.hidden = true; document.body.dataset.state = "ready"; document.body.dataset.chart = name; }
+  function pct(v) { var x = v * 100; return (Math.abs(x - Math.round(x)) < 0.05 ? x.toFixed(0) : x.toFixed(1)) + "%"; }
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function bar(v, mine) {
+    var b = el("div", "bar" + (mine ? " mine" : "") + (v > 0.86 ? " end" : ""));
+    var s = el("span"); s.style.width = Math.max(0, Math.min(1, v)) * 100 + "%"; b.appendChild(s);
+    b.appendChild(el("em", null, pct(v)));
+    return b;
+  }
+  // data: {model, rows: [{label, detail, mine, outcome, abstain, trials}], note}
+  window.__llm = function (data) { window.__llmData = data; if (location.hash === "#llm") show(); };
+  function showLlm() {
+    var d = window.__llmData;
+    if (!d || !d.rows || !d.rows.length) { fail("No measured values were passed to this card (evals/results/latest.json); nothing is drawn."); return; }
+    document.getElementById("llm-sub").textContent = "Model: " + d.model + ". Share of scenarios with the right verdict, graded by the same grader as every other arm.";
+    var rows = document.getElementById("llm-rows"); rows.textContent = "";
+    rows.appendChild(el("span", "hd", "Approach"));
+    rows.appendChild(el("span", "hd", "Right verdict"));
+    rows.appendChild(el("span", "hd", "Right when nothing is to blame"));
+    d.rows.forEach(function (r) {
+      var l = el("div", "lbl"); var b = el("b", null, r.label); l.appendChild(b);
+      l.appendChild(el("small", null, r.detail + " · " + r.trials + " scenarios"));
+      rows.appendChild(l); rows.appendChild(bar(r.outcome, r.mine)); rows.appendChild(bar(r.abstain, r.mine));
+    });
+    document.getElementById("llm-note").textContent = d.note || "";
+    fig.hidden = true; llm.hidden = false; ready("llm");
+  }
   function show() {
     var name = location.hash.slice(1);
     document.body.dataset.state = "loading";
+    if (name === "llm") { showLlm(); return; }
+    llm.hidden = true;
     if (!Object.prototype.hasOwnProperty.call(CHARTS, name)) { fail("Unknown chart: “" + name + "”."); return; }
-    img.onload = function () { err.hidden = true; fig.hidden = false; document.body.dataset.state = "ready"; document.body.dataset.chart = name; };
+    img.onload = function () { fig.hidden = false; ready(name); };
     img.onerror = function () { fail("Chart charts/" + name + ".svg could not be loaded."); };
     img.alt = CHARTS[name];
     img.src = "charts/" + name + ".svg";

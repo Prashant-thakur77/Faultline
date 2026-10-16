@@ -1,120 +1,172 @@
 1
-00:00:00,002 --> 00:00:08,002
-Roughly 70% of outages come from changes (Site Reliability Engineering, Google). Two deploys land in the same minute. Which one broke checkout?
+00:00:00,801 --> 00:00:04,719
+It's two a.m. Checkout is failing, and money is walking out the door.
 
 2
-00:00:08,002 --> 00:00:11,994
-Checkout is failing and several deploys are in the window. Could D-rec-12 be the cause? Ask FalkorDB for a causal path to checkout (Q-GATE-1), read-only.
+00:00:04,719 --> 00:00:08,637
+In the last few minutes, three changes went live. Which one broke it?
 
 3
-00:00:11,994 --> 00:00:20,000
-No path, no claim: FalkorDB returns no causal path from D-rec-12 to checkout (0 rows), so it cannot be blamed.
+00:00:08,637 --> 00:00:17,015
+Google's S.R.E. book says roughly seventy percent of outages come from changes. Roll back the wrong one, and you have just made it worse.
 
 4
-00:00:20,000 --> 00:00:32,003
-How it got here: a crew of least-privilege agents (9 steps · 5 specialists). Every step is a record in the graph: who claimed it, what it ran, who it handed to.
+00:00:17,015 --> 00:00:23,084
+That is the on-call engineer's question, night after night. Dashboards show symptoms, not causes.
 
 5
-00:00:32,003 --> 00:00:44,001
-D-email-88 shipped in the same minute and has a path. But algo.maxFlow says it can carry only 0.0200 of the 0.2433 needed. Rejected.
+00:00:23,084 --> 00:00:30,254
+And today's A.I. agents answer with confidence, not proof. They guess, and some of them act on the guess.
 
 6
-00:00:44,001 --> 00:00:52,380
-The proof path, lit edge by edge: D-pay-417 → payment → checkout.
+00:00:30,362 --> 00:00:37,625
+So we built Faultline. An on-call agent whose brain is a FalkorDB knowledge graph, and it lives by one rule.
 
 7
-00:00:52,380 --> 00:00:56,001
-Why do you believe this? Provenance from the verdict back to the tool calls and agents that produced each piece of evidence (4 evidence · 5 calls · 2 agents), every arrow a stored edge.
+00:00:37,625 --> 00:00:45,824
+No path, no claim. It will not blame a change until the graph proves that the change is connected to the failure.
 
 8
-00:00:56,001 --> 00:01:01,000
-Smallest containment: cut payment
-→
-checkout, payment
-→
-raw.raw_orders (algo.maxFlow min-cut). A what-if on a GRAPH.COPY branch checks it first: contains.
+00:00:46,224 --> 00:00:53,757
+Click the cube, and it opens into the real graph of this system: the services, the deploys, and the proof path between them.
 
 9
-00:01:01,000 --> 00:01:06,000
-Who fixes it: Quinn Lindqvane (p-017) first, ranked by algo.HarmonicCentrality over who wrote this code and fixed past outages here.
+00:00:53,757 --> 00:01:01,728
+Here is where it sits. It reads what your stack already emits: alerts, deploys, the data warehouse, docs and decisions.
 
 10
-00:01:06,000 --> 00:01:10,180
-Choosing isn't approving: the server first renders the exact diff, the PR body and the plan hash.
+00:01:01,728 --> 00:01:11,237
+One FalkorDB graph per tenant holds all of it. A crew of agents proposes; the evidence gate decides; and only then does anything act.
 
 11
-00:01:10,180 --> 00:01:13,797
-Approve this exact action, bound to plan hash d1354eca56f9: if the plan changes, the server refuses it.
+00:01:11,370 --> 00:01:14,937
+How it decides, step by step. The alert. The causal path.
 
 12
-00:01:13,797 --> 00:01:25,624
-Approved: the one write tool opens the pull request, then VERIFY checks it through a second channel.
+00:01:14,937 --> 00:01:19,630
+The flow that path can carry. The proof. The smallest cut that contains it.
 
 13
-00:01:25,624 --> 00:01:32,980
-APPLIED: GitHub main re-read and telemetry back in band. Write-back verified 7/7: RESOLVED, and the incident becomes memory.
+00:01:19,630 --> 00:01:21,382
+And one approved action.
 
 14
-00:01:32,980 --> 00:01:36,617
-A real pull request (#4), merged after two-step approval and verified through a second channel: APPLIED.
+00:01:21,382 --> 00:01:26,073
+Every screen runs on that same graph: the incident room, the crew,
 
 15
-00:01:36,617 --> 00:01:41,683
-Break it: take one edge out of a GRAPH.COPY of the graph and run the product again.
+00:01:26,073 --> 00:01:32,288
+the reasoning behind each verdict, the pre-deploy check, and the company brain.
 
 16
-00:01:41,683 --> 00:01:41,867
-Take a graph edge away and the decision changes (outcome: CONFIRMED → UNKNOWN_ESCALATED). The graph is load-bearing.
+00:01:32,447 --> 00:01:42,944
+Let's run it. Checkout errors are spiking. The incident opens, and the crew gets to work: recall, scope, suspects, investigation, all recorded in the graph.
 
 17
-00:01:41,867 --> 00:01:43,721
-Before the next deploy: the same graph scores the risky pull request.
+00:01:42,944 --> 00:01:47,740
+Three suspects. The recommendation deploy has no causal path to checkout.
 
 18
-00:01:43,721 --> 00:01:48,136
-Preflight verdict: block. It contradicts ADR-012, ADR-013. The same graph that explained the outage gates the next change.
+00:01:47,740 --> 00:01:52,314
+FalkorDB returns zero rows. So it cannot be blamed. Full stop.
 
 19
-00:01:48,136 --> 00:01:48,193
-Reversal guard: a PR that puts back what ADR-009 decided, which the team replaced with ADR-021, is named with the evidence (advisory; the verdict is unchanged).
+00:01:52,314 --> 00:02:02,145
+The email deploy does have a path. But max flow shows that path can carry only 2 percent of checkout's traffic, and we need far more to explain what we see.
 
 20
-00:01:48,193 --> 00:01:49,953
-The company brain: who owns, knows and decided what.
+00:02:02,145 --> 00:02:03,968
+Rejected, with proof.
 
 21
-00:01:49,953 --> 00:02:00,078
-It answers citing only nodes its own queries returned (citation guard), and draws the answer as a graph.
+00:02:03,968 --> 00:02:11,760
+Who did what? Every step is a record: which agent claimed it, which query it ran, and whom it handed to next.
 
 22
-00:02:00,078 --> 00:02:07,227
-Right verdict on the scenario suite (24 trials): Faultline 100%; telemetry only 62.5%, vector similarity 25%, naive recency 0%. FalkorDB switched off confirms 0 causes.
+00:02:11,760 --> 00:02:16,359
+The payment deploy passes every check. Here is the proof path, lit edge by edge.
 
 23
-00:02:07,227 --> 00:02:14,421
-Confidently blaming the wrong change: Faultline 0%; telemetry only 20%, vector similarity 60%, naive recency 100%.
+00:02:16,359 --> 00:02:23,744
+And here is why we believe it: every piece of evidence, traced back to the agent and the exact query that produced it.
 
 24
-00:02:14,421 --> 00:02:21,620
-Take FalkorDB's algorithms away: correct verdicts on 100 held-out worlds fall from 100 to 80 without algo.maxFlow, 76 without algo.SPpaths, 56 without both; confident wrong blames stay at 0.
+00:02:24,029 --> 00:02:29,918
+Max flow also finds the smallest cut that contains the damage, tried first on a copy of the graph.
 
 25
-00:02:21,620 --> 00:02:28,814
-Context for any agent, unrelated deploys crowding the window: the true cause ranks far higher in the graph's context pack (MRR 0.66) than in vector RAG (0.42) or by recency (0.08).
+00:02:29,918 --> 00:02:35,756
+And the graph knows who should fix it: the people who wrote this code and fixed it last time.
 
 26
-00:02:28,814 --> 00:02:36,979
-The live deployment, measured over HTTPS: right cause 5/5, verified APPLIED 5/5; alert to RESOLVED p50 2,719 ms.
+00:02:35,756 --> 00:02:39,642
+Now a human approves the exact change, bound to its plan hash.
 
 27
-00:02:36,979 --> 00:02:43,056
-Live now at 13-203-185-119.sslip.io: FalkorDB 6.0.2, 1,823 nodes · 5,946 edges, read through a read-only ACL user.
+00:02:39,642 --> 00:02:45,846
+Faultline opens a real pull request on GitHub, merges it, and verifies it through a second channel.
 
 28
-00:02:43,056 --> 00:02:50,033
-Any agent can query the same graph over hosted MCP (read-only, public demo key). Engine issues found along the way are filed upstream: FalkorDB#3349.
+00:02:45,846 --> 00:02:50,895
+Applied. Written back into the graph, so the next incident starts warm.
 
 29
-00:02:50,033 --> 00:02:59,902
-No path, no claim. github.com/Prashant-thakur77/Faultline · verify it yourself: make judge-check
+00:03:04,028 --> 00:03:10,311
+Is the graph just decoration? Cut one call in it, and the decision changes. The graph is load-bearing.
+
+30
+00:03:10,311 --> 00:03:18,443
+The same graph works before the next deploy. This pull request drops payment retries, and it contradicts two decisions the team already made.
+
+31
+00:03:18,443 --> 00:03:20,135
+Blocked, before it ships.
+
+32
+00:03:20,135 --> 00:03:25,740
+And it is the team's memory. Ask who decided the payment timeout, and whether they are still here.
+
+33
+00:03:25,740 --> 00:03:29,538
+Every name in the answer comes from a query, drawn as a graph.
+
+34
+00:03:29,538 --> 00:03:37,864
+Now, the numbers. Faultline gets every scenario right, where telemetry alone manages 62.5 percent,
+
+35
+00:03:37,864 --> 00:03:42,791
+vector search 25 percent, and the latest deploy 0 percent.
+
+36
+00:03:42,791 --> 00:03:48,056
+Across 140 adversarial worlds, zero confident wrong blames.
+
+37
+00:03:48,056 --> 00:03:51,354
+And a strong language model on its own? 75 percent.
+
+38
+00:03:51,354 --> 00:03:54,652
+It blames an innocent deploy when nothing is wrong.
+
+39
+00:03:54,652 --> 00:03:58,524
+Put that same model inside Faultline's gate: 4 out of 4.
+
+40
+00:03:58,524 --> 00:04:03,655
+Take FalkorDB's algorithms away and the correct answers fall from 100 to 56.
+
+41
+00:04:03,655 --> 00:04:09,651
+Switch FalkorDB off, and it confirms nothing at all. That is what load-bearing means.
+
+42
+00:04:09,651 --> 00:04:16,887
+And it is live right now: 5 out of 5 real runs, verified. Any agent can use the same read-only tools over M.C.P.
+
+43
+00:04:16,887 --> 00:04:22,980
+Faultline. No path, no claim. Clone it, run make judge check, and verify it yourself.
 
