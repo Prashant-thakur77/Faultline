@@ -42,8 +42,8 @@ export const TOUR_SHOTS: Shot[] = [
     title: ["One incident,", "decided in the open."],
     body: "The stage timeline, the failure path lit hop by hop, and every suspect the gate tried, each ruled in or out by a query you can open.",
     href: "/replay/s1-hero", src: "/shots/incident-room-full.webp",
-    alt: "The incident room on the hero scenario: the stage timeline, the failure-flow graph with the proof path, and the suspects: D-pay-417 confirmed, D-email-88 and D-rec-12 eliminated by the gate, each with its reason.",
-    callout: { text: "two look-alike deploys eliminated by the gate", anchor: { x: 77.9, y: 55 }, bubble: { x: 66, y: 45 }, side: "left" },
+    alt: "The incident room on the hero scenario: the verdict line (D-pay-417 caused this, proven by the path D-pay-417 → payment → checkout; 2 other suspects, D-email-88 and D-rec-12, ruled out), the stage timeline, the failure-flow graph with the proof path, the root cause and the suspects.",
+    callout: { text: "two look-alike deploys eliminated by the gate", anchor: { x: 63, y: 17.4 }, bubble: { x: 60, y: 27.3 }, side: "left" },
   },
   {
     id: "crew", tab: "Crew", eyebrow: "Crew",
@@ -51,7 +51,7 @@ export const TOUR_SHOTS: Shot[] = [
     body: "Each specialist claims its step, runs its templates and hands off. The lane shows who claimed what, which query it ran and how long it took.",
     href: "/replay/s1-hero", src: "/shots/crew.webp",
     alt: "The crew lanes of the hero incident: Triage groups the alert storm and hands to Historian, which recalls precedents and runbooks; each step shows who claimed it, the queries it ran and their timings.",
-    callout: { text: "every step is a record in FalkorDB", anchor: { x: 24, y: 64.2 }, bubble: { x: 31, y: 76 }, side: "right" },
+    callout: { text: "every step is a record in FalkorDB", anchor: { x: 39, y: 42.4 }, bubble: { x: 36, y: 60 }, side: "right" },
   },
   {
     id: "why", tab: "Why", eyebrow: "Provenance",
@@ -59,15 +59,15 @@ export const TOUR_SHOTS: Shot[] = [
     body: "Agent, tool call, evidence, verdict: every arrow is a stored edge, so the answer to “why do you believe this?” is itself a query.",
     href: "/replay/s1-hero", src: "/shots/provenance.webp",
     alt: "The “Why do you believe this?” panel: agents, their tool calls, the evidence each produced and the verdict D-pay-417 confirmed, connected by stored edges.",
-    callout: { text: "the verdict's own provenance, edge by edge", anchor: { x: 74.3, y: 46.5 }, bubble: { x: 70, y: 64 }, side: "left" },
+    callout: { text: "the verdict's own provenance, edge by edge", anchor: { x: 73.8, y: 48.3 }, bubble: { x: 92, y: 17.5 }, side: "left" },
   },
   {
     id: "preflight", tab: "Preflight", eyebrow: "Pre-deploy gate",
     title: ["The same graph,", "before the deploy."],
     body: "A pull request is scored on what it reaches, who must review it and which decisions it contradicts, including one the org already reversed.",
     href: "/preflight", src: "/shots/preflight-reversal.webp",
-    alt: "Preflight on a pull request: the verdict is require review, with an amber card saying the change reinstates a reversed decision, ADR-009 replaced by ADR-021, and the weighted risk terms below.",
-    callout: { text: "reinstates a decision the org reversed", anchor: { x: 45.1, y: 55.3 }, bubble: { x: 40, y: 62 }, side: "left" },
+    alt: "Preflight on a pull request: the verdict is require review, with an amber card saying the change reinstates a reversed decision, ADR-009 replaced by ADR-021, and below it the path the change reaches and the required reviewers.",
+    callout: { text: "reinstates a decision the org reversed", anchor: { x: 41.1, y: 37.2 }, bubble: { x: 37, y: 63 }, side: "left" },
   },
   {
     id: "brain", tab: "Brain", eyebrow: "Company brain",
@@ -75,7 +75,7 @@ export const TOUR_SHOTS: Shot[] = [
     body: "Ask who decided something and whether they are still here. Every id in the answer was returned by a read-only query of that question.",
     href: "/brain", src: "/shots/brain-graph.webp",
     alt: "The company brain answering “Who decided the payment timeout, and are they still here?”: the decisions, who made them and whether they are still on the team, and the answer drawn as a graph of people, decisions, context and systems.",
-    callout: { text: "who decided, and are they still here", anchor: { x: 46.9, y: 76 }, bubble: { x: 41, y: 64 }, side: "left" },
+    callout: { text: "who decided, and are they still here", anchor: { x: 65.4, y: 28.2 }, bubble: { x: 68, y: 44 }, side: "right" },
   },
 ];
 
