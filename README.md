@@ -203,6 +203,7 @@ Where naive recency and vector similarity put the real cause on every scenario, 
 
 Gate G2 is the load-bearing query. If it returns no rows, Faultline cannot claim the cause, whatever the model thinks:
 
+
 ```cypher
 // Q-GATE-1, as rendered (gate_path.cypher writes {algo:sppaths}; graph/algo/registry.py resolves it on the pinned engine)
 MATCH (c:Node {id:$cause}), (s:Node {id:$symptom})
@@ -214,11 +215,15 @@ ORDER BY weight, hops LIMIT 3
 
 What it returned on the eval run:
 
+
 | Call | Rows |
 |---|---|
 | `D-pay-417` → checkout (S1, the real cause) | chain <!-- claim:s1.chain -->D-pay-417 → payment → checkout<!-- /claim --> |
 | `D-rec-12` → checkout (S1, decoy) | **0 rows**: rejected by <!-- claim:s1.D-rec-12.rejected_by -->G2<!-- /claim --> ("no path, no claim") |
 | `D-cutover-1` → kpi.exec_revenue (S2, data incident) | chain <!-- claim:s2.chain -->D-cutover-1 → payment → raw.raw_orders → staging.stg_orders → marts.fct_revenue → marts.exec_revenue_metric → kpi.exec_revenue<!-- /claim --> |
+
+<details><summary>Show the other checks, their Cypher and how a verdict is reached</summary>
+
 
 A path is necessary but not sufficient. G5 asks whether the change can carry the observed impact, as `algo.maxFlow` over `PROPAGATES_TO.cap`. On service edges `cap` is criticality; on lineage edges it is the end-to-end row share computed from the warehouse. The strongest case is S2: `D-fx-pause-7` has a multi-hop path to the revenue KPI, but it can carry at most <!-- claim:s2.D-fx-pause-7.max_flow -->0.0692<!-- /claim --> of the anomaly, and <!-- claim:s2.D-fx-pause-7.needed -->0.8<!-- /claim --> is needed. Why the bound is valid, including the path-multiplicity factor and joint sufficiency for two causes, is in [docs/EXPLAINER.md](docs/EXPLAINER.md).
 
@@ -267,6 +272,8 @@ sequenceDiagram
 
 If nothing passes, the run abstains: it reports an inferred origin as unconfirmed, or proves "no incident" with an `algo.SSpaths` negative proof when every alerting symptom is measured and normal.
 
+</details>
+
 ## Architecture
 
 ```mermaid
@@ -277,6 +284,9 @@ flowchart LR
     LI["Data lineage and warehouse"]
     OR["People, teams, ADRs, runbooks"]
   end
+
+<details><summary>Show the architecture: components, data flow and the safety envelope</summary>
+
 
   subgraph FDB["FalkorDB, pinned engine"]
     T1[("tenant_acme")]
@@ -341,9 +351,14 @@ flowchart LR
 
 **The crew.** Each stage is worked by a named, least-privilege role: Triage, Historian, Cartographer, Profiler, the Lead investigator with its five investigators (topology, telemetry, data, change, code), the Gatekeeper, Containment, Dispatcher, Planner, Operator, Auditor and Librarian ([docs/AGENTS.md](docs/AGENTS.md), generated from `agent/crew.py`). Each role is deterministic code with its own tool whitelist, enforced in code; only the lead may use a model, and the Gatekeeper never does. The Operator is the only holder of `execute_action`. Every step is a record in FalkorDB: `(:Run)-[:HAS_TASK]->(:Task)-[:CLAIMED_BY]->(:Agent)`, the graph calls it made (`MADE`) and the hand-off order (`NEXT`). The incident room's Crew board reads it back (`Q-CREW-1`), and "Why do you believe this?" draws the verdict's provenance (`Q-PROV-1`): which agent's call produced which evidence that supports the confirmed cause. Crew records are records, not locks: execution is serialised by the Intent lease, and a crew record never counts as a G7 vote. Per-stage tool whitelists: [docs/STAGE_TOOLS.md](docs/STAGE_TOOLS.md).
 
+</details>
+
 ## Graph model
 
 One graph per tenant. Every node carries the base label `Node` plus one domain label, so ids resolve across labels. The core of the model:
+
+<details><summary>Show the graph model: labels, relationships and validity windows</summary>
+
 
 ```mermaid
 flowchart LR
@@ -379,6 +394,8 @@ flowchart LR
 - Run state lives in the same graph: `Run`, `StageEvent`, `ToolCall`, `Evidence`, `Hypothesis`, `GateRun`, `Approval`, `Intent`, `Action`, `Task`/`Agent`, `Session`/`Turn`.
 
 Full ER diagrams, property semantics and validity windows: [docs/GRAPH_MODEL.md](docs/GRAPH_MODEL.md). The live schema, generated from the seeded graphs and checked for drift against the declared model (`graph/schema_model.py`): [docs/GRAPH_SCHEMA.md](docs/GRAPH_SCHEMA.md). Seeded sizes: acme has <!-- claim:repo.acme.services -->21<!-- /claim --> services, <!-- claim:repo.acme.persons -->40<!-- /claim --> people and <!-- claim:repo.acme.incidents -->40<!-- /claim --> past incidents; globex has <!-- claim:repo.globex.services -->200<!-- /claim --> services, <!-- claim:repo.globex.persons -->180<!-- /claim --> people and <!-- claim:repo.globex.incidents -->150<!-- /claim --> past incidents.
+
+</details>
 
 ## FalkorDB feature map
 
@@ -525,6 +542,9 @@ Vector search finds the entry points; FalkorDB walks from them to the changes up
 - **Preflight** blocks a risky PR from the same graph (S6 → <!-- claim:s6.verdict -->block<!-- /claim -->).
 - **Coordination** uses atomic claims in one query (<!-- claim:s13.lost_updates -->0<!-- /claim --> lost updates under contention).
 
+<details><summary>Show memory, the company brain, preflight and coordination in detail</summary>
+
+
 
 **The company brain (T3), answered by the live deployment.** Every `[id]` is a node a read-only query of that question returned; the brain cannot cite anything else.
 
@@ -581,6 +601,8 @@ Containment options are reordered by what worked before: a Beta-smoothed success
 
 </details>
 
+</details>
+
 ## Screens
 
 <table>
@@ -620,6 +642,9 @@ Containment options are reordered by what worked before: a Beta-smoothed success
 
 <!-- claim:repo.templates -->182<!-- /claim --> parameterised templates, one `.cypher` file per query id, linted for `LIMIT`, `ORDER BY`, bounded paths, a `CALL` allowlist and no writes. Cypher is never built from inputs. The full list with purposes and PROFILE timings: [docs/QUERY_CATALOGUE.md](docs/QUERY_CATALOGUE.md). Three of them, as stored:
 
+<details><summary>Show the query catalogue</summary>
+
+
 G5, the sufficiency bound ([`gate_flow.cypher`](backend/faultline/graph/templates/gate_flow.cypher)):
 
 ```cypher
@@ -656,9 +681,14 @@ RETURN collect(DISTINCT n.id) AS seen
 LIMIT 1
 ```
 
+</details>
+
 ## Safety
 
 The full table (agent cannot … | enforced by | file::function | test) is in [docs/SAFETY.md](docs/SAFETY.md); the public-demo threat model is in [SECURITY.md](SECURITY.md).
+
+<details><summary>Show the safety envelope in detail</summary>
+
 
 - **Reads.** `GRAPH.RO_QUERY` only, with a per-query `TIMEOUT` (clamped to `TIMEOUT_MAX`) and a literal `LIMIT` sent as n+1 so truncation is detected. They run as a per-tenant ACL user (`ro_<tenant>`) when ACL passwords are configured, as the production compose does; local keyless runs use the default user. The model never holds a write connection.
 - **Templates first.** Text2cypher is the last resort and passes three layers: a guard on the masked text, a `GRAPH.EXPLAIN` plan check, and `RO_QUERY` as the read-only user with a short timeout.
@@ -679,6 +709,8 @@ The full table (agent cannot … | enforced by | file::function | test) is in [d
 | A fix that didn't take is reported as success | three-valued verify; NOT_APPLIED goes back to approval; UNKNOWN never writes success | S5, S9 |
 | A crash between GitHub and the graph | intent → execute → reconcile by idempotency key | `test_reconciler_*`; chaos eval |
 | One tenant sees another's data | graph per tenant, RO wrapper ownership check, ACL user, guard | S7 |
+
+</details>
 
 ## What's real vs synthetic
 
