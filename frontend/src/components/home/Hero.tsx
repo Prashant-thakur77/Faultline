@@ -151,8 +151,15 @@ function Numbers() {
           {get("deep.fresh.all.abstained")} of {get("deep.fresh.all.cases")} handed to a human
         </>
       ) },
-    { big: get("arm.A4.confirmed_causes"), unit: "causes", tag: "Ablation", good: "zero by design",
-      text: <>confirmed with FalkorDB switched off: without the graph, the agent cannot claim anything</> },
+    // the same worlds given to a strong LLM alone (evals/llm_deep.py): it finds more causes, and blames innocent changes
+    { big: get("llm_deep.deep.all.wrong_confident"), unit: "wrong blames by an LLM", tag: "Versus an LLM", good: "same worlds",
+      text: (
+        <>
+          confident wrong blames by a strong LLM alone (claude-opus-5-5) given the same telemetry on the same{" "}
+          {get("llm_deep.deep.all.cases")} worlds: it names {get("llm_deep.deep.all.right_cause")}/{get("llm_deep.deep.all.cause_cases")}{" "}
+          right causes, but nothing checks its guesses against the graph
+        </>
+      ) },
     { big: two("ctx.busy30.b1000.GA.mrr"), unit: "MRR", tag: "Ranking", good: "higher is better", exact: get("ctx.busy30.b1000.GA.mrr"),
       text: <>where the context pack ranks the true cause (MRR), vs {two("ctx.busy30.b1000.V.mrr")} for vector RAG and {two("ctx.busy30.b1000.R.mrr")} for recency, with 30 unrelated deploys in the window</> },
   ];

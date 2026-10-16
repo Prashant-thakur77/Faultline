@@ -19,7 +19,7 @@ import { fileURLToPath } from "node:url";
 const frontend = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const src = path.resolve(frontend, "..", "evals", "results", "latest.json");
 const out = path.join(frontend, "public", "evals", "summary.json");
-const PREFIXES = ["s7.", "memory.", "s8.", "deep.fresh.all.", "arm.A4.", "arm.A3.", "ctx.busy30.b1000.", "ctx.busy0.", "gate_bench_heldout.", "mutation.", "mismatch.all."];
+const PREFIXES = ["s7.", "memory.", "s8.", "deep.fresh.all.", "arm.A4.", "arm.A3.", "ctx.busy30.b1000.", "ctx.busy0.", "gate_bench_heldout.", "mutation.", "mismatch.all.", "llm_deep.deep.all.", "llm_deep.decisive.all."];
 
 // /explainer: each scene quotes one of these (src/components/explainer/scenes.ts)
 const KEYS = [
