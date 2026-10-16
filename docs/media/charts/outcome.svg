@@ -1,26 +1,32 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 358" width="760" height="358" role="img" aria-label="Right outcome on the scenario suite">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 358" width="820" height="358" role="img" aria-label="Right outcome on the scenario suite">
 <title>Right outcome on the scenario suite</title>
-<rect x="0.5" y="0.5" width="759" height="357" rx="12" fill="#fcfcfb" stroke="#e7e6e2"/>
+<rect x="0.5" y="0.5" width="819" height="357" rx="12" fill="#fcfcfb" stroke="#e7e6e2"/>
 <text x="24" y="34" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#0b0b0b">Right outcome on the scenario suite</text>
-<text x="24" y="56" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" fill="#52514e">Share of trials with the correct verdict (confirm the true cause, or abstain when there is none). Higher is better. Eval run_0033.</text>
-<line x1="250.0" y1="76" x2="250.0" y2="300" stroke="#e7e6e2"/>
-<line x1="470.0" y1="76" x2="470.0" y2="300" stroke="#e7e6e2"/>
-<line x1="690.0" y1="76" x2="690.0" y2="300" stroke="#e7e6e2"/>
-<text x="236" y="98" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">Faultline (graph + evidence gate)</text>
-<g><title>Faultline (graph + evidence gate): outcome_correct_rate = 1.0 over 24 trials</title><rect x="250" y="84" width="440.0" height="18" rx="4" fill="#2a78d6"/></g>
-<text x="698.0" y="98" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">100%</text>
-<text x="236" y="136" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Same, max-flow check G5 off</text>
-<g><title>Same, max-flow check G5 off: outcome_correct_rate = 0.875 over 24 trials</title><rect x="250" y="122" width="385.0" height="18" rx="4" fill="#8c8a84"/></g>
-<text x="643.0" y="136" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">87.5%</text>
-<text x="236" y="174" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Telemetry only</text>
-<g><title>Telemetry only: outcome_correct_rate = 0.625 over 8 trials</title><rect x="250" y="160" width="275.0" height="18" rx="4" fill="#8c8a84"/></g>
-<text x="533.0" y="174" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">62.5%</text>
-<text x="236" y="212" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Vector similarity only</text>
-<g><title>Vector similarity only: outcome_correct_rate = 0.25 over 24 trials</title><rect x="250" y="198" width="110.0" height="18" rx="4" fill="#8c8a84"/></g>
-<text x="368.0" y="212" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">25%</text>
-<text x="236" y="250" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Naive recency</text>
-<text x="258.0" y="250" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">0%</text>
-<text x="236" y="288" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">FalkorDB switched off</text>
-<text x="258.0" y="288" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">0%</text>
-<text x="24" y="340" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" fill="#77756f">FalkorDB switched off fails closed: it confirms nothing rather than guessing.</text>
+<text x="24" y="56" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" fill="#52514e">Distinct scenarios with the correct verdict (confirm the true cause, or abstain when there is none); a tie is never correct. Whiskers: 95 % interval. Eval run_0033.</text>
+<line x1="290.0" y1="76" x2="290.0" y2="300" stroke="#e7e6e2"/>
+<line x1="480.0" y1="76" x2="480.0" y2="300" stroke="#e7e6e2"/>
+<line x1="670.0" y1="76" x2="670.0" y2="300" stroke="#e7e6e2"/>
+<text x="276" y="98" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">Faultline (graph + evidence gate)</text>
+<g><title>Faultline (graph + evidence gate): 8/8 scenarios</title><rect x="290" y="84" width="380.0" height="18" rx="4" fill="#2a78d6"/></g>
+<g stroke="#0b0b0b" stroke-width="1.4"><title>Faultline (graph + evidence gate): 8/8 scenarios: 95 % interval 0.6756–1.0</title><line x1="546.7" y1="93.0" x2="670.0" y2="93.0"/><line x1="546.7" y1="88.0" x2="546.7" y2="98.0"/><line x1="670.0" y1="88.0" x2="670.0" y2="98.0"/></g>
+<text x="678.0" y="98" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">8/8  (68–100 %)</text>
+<text x="276" y="136" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Same, max-flow check G5 off</text>
+<g><title>Same, max-flow check G5 off: 7/8 scenarios</title><rect x="290" y="122" width="332.5" height="18" rx="4" fill="#8c8a84"/></g>
+<g stroke="#0b0b0b" stroke-width="1.4"><title>Same, max-flow check G5 off: 7/8 scenarios: 95 % interval 0.5291–0.9776</title><line x1="491.1" y1="131.0" x2="661.5" y2="131.0"/><line x1="491.1" y1="126.0" x2="491.1" y2="136.0"/><line x1="661.5" y1="126.0" x2="661.5" y2="136.0"/></g>
+<text x="669.5" y="136" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">7/8  (53–98 %)</text>
+<text x="276" y="174" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Telemetry only</text>
+<g><title>Telemetry only: 4/8 scenarios</title><rect x="290" y="160" width="190.0" height="18" rx="4" fill="#8c8a84"/></g>
+<g stroke="#0b0b0b" stroke-width="1.4"><title>Telemetry only: 4/8 scenarios: 95 % interval 0.2152–0.7848</title><line x1="371.8" y1="169.0" x2="588.2" y2="169.0"/><line x1="371.8" y1="164.0" x2="371.8" y2="174.0"/><line x1="588.2" y1="164.0" x2="588.2" y2="174.0"/></g>
+<text x="596.2" y="174" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">4/8  (22–78 %)</text>
+<text x="276" y="212" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Vector similarity only</text>
+<g><title>Vector similarity only: 2/8 scenarios</title><rect x="290" y="198" width="95.0" height="18" rx="4" fill="#8c8a84"/></g>
+<g stroke="#0b0b0b" stroke-width="1.4"><title>Vector similarity only: 2/8 scenarios: 95 % interval 0.0715–0.5907</title><line x1="317.2" y1="207.0" x2="514.5" y2="207.0"/><line x1="317.2" y1="202.0" x2="317.2" y2="212.0"/><line x1="514.5" y1="202.0" x2="514.5" y2="212.0"/></g>
+<text x="522.5" y="212" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">2/8  (7–59 %)</text>
+<text x="276" y="250" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Naive recency</text>
+<g stroke="#0b0b0b" stroke-width="1.4"><title>Naive recency: 0/8 scenarios: 95 % interval 0.0–0.3244</title><line x1="290.0" y1="245.0" x2="413.3" y2="245.0"/><line x1="290.0" y1="240.0" x2="290.0" y2="250.0"/><line x1="413.3" y1="240.0" x2="413.3" y2="250.0"/></g>
+<text x="421.3" y="250" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">0/8  (0–32 %)</text>
+<text x="276" y="288" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">FalkorDB switched off</text>
+<g stroke="#0b0b0b" stroke-width="1.4"><title>FalkorDB switched off: 0/8 scenarios: 95 % interval 0.0–0.3244</title><line x1="290.0" y1="283.0" x2="413.3" y2="283.0"/><line x1="290.0" y1="278.0" x2="290.0" y2="288.0"/><line x1="413.3" y1="278.0" x2="413.3" y2="288.0"/></g>
+<text x="421.3" y="288" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">0/8  (0–32 %)</text>
+<text x="24" y="340" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" fill="#77756f">8 scenarios (5 with a cause). FalkorDB switched off fails closed by design: it confirms nothing.</text>
 </svg>

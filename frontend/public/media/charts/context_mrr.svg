@@ -1,19 +1,30 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 244" width="760" height="244" role="img" aria-label="Is the true cause near the top of the agent&#x27;s context?">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 320" width="820" height="320" role="img" aria-label="Is the true cause near the top of the agent&#x27;s context?">
 <title>Is the true cause near the top of the agent&#x27;s context?</title>
-<rect x="0.5" y="0.5" width="759" height="243" rx="12" fill="#fcfcfb" stroke="#e7e6e2"/>
+<rect x="0.5" y="0.5" width="819" height="319" rx="12" fill="#fcfcfb" stroke="#e7e6e2"/>
 <text x="24" y="34" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#0b0b0b">Is the true cause near the top of the agent&#x27;s context?</text>
-<text x="24" y="56" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" fill="#52514e">Mean reciprocal rank of the true cause with 30 unrelated deploys in the window, 1,000-token budget. Higher is better.</text>
-<line x1="250.0" y1="76" x2="250.0" y2="186" stroke="#e7e6e2"/>
-<line x1="470.0" y1="76" x2="470.0" y2="186" stroke="#e7e6e2"/>
-<line x1="690.0" y1="76" x2="690.0" y2="186" stroke="#e7e6e2"/>
-<text x="236" y="98" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">Graph context pack (FalkorDB)</text>
-<g><title>graph context_pack MRR</title><rect x="250" y="84" width="290.3" height="18" rx="4" fill="#2a78d6"/></g>
-<text x="548.3" y="98" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">0.66</text>
-<text x="236" y="136" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Vector RAG</text>
-<g><title>vector RAG MRR</title><rect x="250" y="122" width="185.9" height="18" rx="4" fill="#8c8a84"/></g>
-<text x="443.9" y="136" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">0.42</text>
-<text x="236" y="174" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Recency</text>
-<g><title>recency MRR</title><rect x="250" y="160" width="33.8" height="18" rx="4" fill="#8c8a84"/></g>
-<text x="291.8" y="174" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">0.08</text>
-<text x="24" y="226" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" fill="#77756f">1.00 means the true cause is ranked first every time.</text>
+<text x="24" y="56" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" fill="#52514e">Mean reciprocal rank of the true cause over 110 worlds with 30 unrelated deploys in the window, 1,000-token budget. Whiskers: 95 % bootstrap interval.</text>
+<line x1="290.0" y1="76" x2="290.0" y2="262" stroke="#e7e6e2"/>
+<line x1="480.0" y1="76" x2="480.0" y2="262" stroke="#e7e6e2"/>
+<line x1="670.0" y1="76" x2="670.0" y2="262" stroke="#e7e6e2"/>
+<text x="276" y="98" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">Graph context pack: graph-scoped, anomaly-ranked</text>
+<g><title>Graph context pack: graph-scoped, anomaly-ranked MRR</title><rect x="290" y="84" width="250.7" height="18" rx="4" fill="#2a78d6"/></g>
+<g stroke="#0b0b0b" stroke-width="1.4"><title>Graph context pack: graph-scoped, anomaly-ranked MRR: 95 % interval 0.6025–0.7224</title><line x1="519.0" y1="93.0" x2="564.5" y2="93.0"/><line x1="519.0" y1="88.0" x2="519.0" y2="98.0"/><line x1="564.5" y1="88.0" x2="564.5" y2="98.0"/></g>
+<text x="572.5" y="98" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">0.66</text>
+<text x="276" y="136" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Graph distance only (no telemetry)</text>
+<g><title>Graph distance only (no telemetry) MRR</title><rect x="290" y="122" width="146.3" height="18" rx="4" fill="#8c8a84"/></g>
+<g stroke="#0b0b0b" stroke-width="1.4"><title>Graph distance only (no telemetry) MRR: 95 % interval 0.3259–0.4496</title><line x1="413.8" y1="131.0" x2="460.8" y2="131.0"/><line x1="413.8" y1="126.0" x2="413.8" y2="136.0"/><line x1="460.8" y1="126.0" x2="460.8" y2="136.0"/></g>
+<text x="468.8" y="136" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">0.39</text>
+<text x="276" y="174" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Telemetry ranking, no graph</text>
+<g><title>Telemetry ranking, no graph MRR</title><rect x="290" y="160" width="213.0" height="18" rx="4" fill="#8c8a84"/></g>
+<g stroke="#0b0b0b" stroke-width="1.4"><title>Telemetry ranking, no graph MRR: 95 % interval 0.502–0.6206</title><line x1="480.8" y1="169.0" x2="525.8" y2="169.0"/><line x1="480.8" y1="164.0" x2="480.8" y2="174.0"/><line x1="525.8" y1="164.0" x2="525.8" y2="174.0"/></g>
+<text x="533.8" y="174" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">0.56</text>
+<text x="276" y="212" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Vector RAG</text>
+<g><title>Vector RAG MRR</title><rect x="290" y="198" width="160.6" height="18" rx="4" fill="#8c8a84"/></g>
+<g stroke="#0b0b0b" stroke-width="1.4"><title>Vector RAG MRR: 95 % interval 0.3542–0.492</title><line x1="424.6" y1="207.0" x2="477.0" y2="207.0"/><line x1="424.6" y1="202.0" x2="424.6" y2="212.0"/><line x1="477.0" y1="202.0" x2="477.0" y2="212.0"/></g>
+<text x="485.0" y="212" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">0.42</text>
+<text x="276" y="250" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Recency</text>
+<g><title>Recency MRR</title><rect x="290" y="236" width="29.2" height="18" rx="4" fill="#8c8a84"/></g>
+<g stroke="#0b0b0b" stroke-width="1.4"><title>Recency MRR: 95 % interval 0.0674–0.0875</title><line x1="315.6" y1="245.0" x2="323.2" y2="245.0"/><line x1="315.6" y1="240.0" x2="315.6" y2="250.0"/><line x1="323.2" y1="240.0" x2="323.2" y2="250.0"/></g>
+<text x="331.2" y="250" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">0.08</text>
+<text x="24" y="302" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" fill="#77756f">1.00 = the true cause is ranked first every time. The pack&#x27;s ranking signal is the telemetry the graph holds; distance alone is weak.</text>
 </svg>

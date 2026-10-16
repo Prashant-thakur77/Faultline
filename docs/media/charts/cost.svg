@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 282" width="820" height="282" role="img" aria-label="The cost of a decision">
+<title>The cost of a decision</title>
+<rect x="0.5" y="0.5" width="819" height="281" rx="12" fill="#fcfcfb" stroke="#e7e6e2"/>
+<text x="24" y="34" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#0b0b0b">The cost of a decision</text>
+<text x="24" y="56" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" fill="#52514e">Model tokens per decision, median of the recorded LLM runs (one trial per scenario); log scale. The graph check itself uses no model.</text>
+<line x1="290.0" y1="76" x2="290.0" y2="224" stroke="#e7e6e2"/>
+<text x="290.0" y="235" text-anchor="middle" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10.5" fill="#77756f">100</text>
+<line x1="416.7" y1="76" x2="416.7" y2="224" stroke="#e7e6e2"/>
+<text x="416.7" y="235" text-anchor="middle" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10.5" fill="#77756f">1,000</text>
+<line x1="543.3" y1="76" x2="543.3" y2="224" stroke="#e7e6e2"/>
+<text x="543.3" y="235" text-anchor="middle" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10.5" fill="#77756f">10,000</text>
+<line x1="670.0" y1="76" x2="670.0" y2="224" stroke="#e7e6e2"/>
+<text x="670.0" y="235" text-anchor="middle" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10.5" fill="#77756f">100,000</text>
+<text x="276" y="98" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">FalkorDB proving &quot;no path&quot; (G2)</text>
+<text x="298.0" y="98" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">0 tokens · 0.053 ms engine time</text>
+<text x="276" y="136" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">LLM alone (A0)</text>
+<g><title>LLM alone: median 2,331 tokens per decision</title><rect x="290" y="122" width="173.2" height="18" rx="4" fill="#8c8a84"/></g>
+<text x="471.2" y="136" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">2,331 tokens</text>
+<text x="276" y="174" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">LLM + vector RAG (A1)</text>
+<g><title>LLM + vector RAG: median 3,714 tokens per decision</title><rect x="290" y="160" width="198.8" height="18" rx="4" fill="#8c8a84"/></g>
+<text x="496.8" y="174" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">3,714 tokens</text>
+<text x="276" y="212" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">LLM investigator + the graph gate (A3L)</text>
+<g><title>LLM investigator + the graph gate: median 51,128 tokens per decision</title><rect x="290" y="198" width="343.1" height="18" rx="4" fill="#8c8a84"/></g>
+<text x="641.1" y="212" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">51,128 tokens</text>
+<text x="24" y="264" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" fill="#77756f">Tokens from evals/results/llm_arms.json (claude-opus-5-5). The engine time is FalkorDB&#x27;s own p50 on acme.</text>
+</svg>

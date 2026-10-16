@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Faultline: proof charts</title>
 <!-- Demo-video proof beats (frontend/scripts/record_demo_video.py): one chart at a time, full screen, chosen by the URL
-     hash (#outcome, #false_blame, #ladder, #context_mrr, #vs_sql, #live). The SVGs under charts/ are byte-for-byte
+     hash (#outcome, #false_blame, #ladder, #context_mrr, #vs_sql, #live, #deep, #cost). The SVGs under charts/ are byte-for-byte
      copies of docs/media/charts/ (drawn from evals/results/latest.json by scripts/gen_charts.py); docs/ is the
      source and the recorder refuses to run when a copy differs.
      #llm is the language-model comparison: it has no numbers of its own. The recorder passes the values it read from
@@ -55,11 +55,13 @@
   // Only the known chart names; anything else, or a chart that fails to load, is said plainly (never a blank frame).
   var CHARTS = {
     outcome: "Right outcome on the scenario suite",
-    false_blame: "Confidently blaming the wrong change",
-    ladder: "Take FalkorDB's algorithms away and the answers get worse",
+    false_blame: "Blaming a change that did not cause it",
+    ladder: "Remove both path and flow checks and true causes are lost",
     context_mrr: "Is the true cause near the top of the agent's context?",
     vs_sql: "Same graph questions, same answers: FalkorDB and recursive SQL",
-    live: "The live deployment, measured over HTTPS"
+    live: "The live deployment, measured over HTTPS",
+    deep: "Faultline trades recall for safety",
+    cost: "The cost of a decision"
   };
   var fig = document.getElementById("fig"), img = document.getElementById("chart"), err = document.getElementById("err");
   var llm = document.getElementById("llm");

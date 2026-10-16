@@ -1,20 +1,25 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 260" width="760" height="260" role="img" aria-label="Confidently blaming the wrong change">
-<title>Confidently blaming the wrong change</title>
-<rect x="0.5" y="0.5" width="759" height="259" rx="12" fill="#fcfcfb" stroke="#e7e6e2"/>
-<text x="24" y="34" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#0b0b0b">Confidently blaming the wrong change</text>
-<text x="24" y="56" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" fill="#52514e">Share of scenarios with a true cause where the approach blamed a different change. Lower is better. Eval run_0033.</text>
-<line x1="250.0" y1="76" x2="250.0" y2="224" stroke="#e7e6e2"/>
-<line x1="470.0" y1="76" x2="470.0" y2="224" stroke="#e7e6e2"/>
-<line x1="690.0" y1="76" x2="690.0" y2="224" stroke="#e7e6e2"/>
-<text x="236" y="98" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">Faultline (graph + evidence gate)</text>
-<text x="258.0" y="98" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">0%</text>
-<text x="236" y="136" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Telemetry only</text>
-<g><title>Telemetry only: false_blame_rate = 0.2 over 8 trials</title><rect x="250" y="122" width="88.0" height="18" rx="4" fill="#8c8a84"/></g>
-<text x="346.0" y="136" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">20%</text>
-<text x="236" y="174" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Vector similarity only</text>
-<g><title>Vector similarity only: false_blame_rate = 0.6 over 24 trials</title><rect x="250" y="160" width="264.0" height="18" rx="4" fill="#8c8a84"/></g>
-<text x="522.0" y="174" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">60%</text>
-<text x="236" y="212" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Naive recency</text>
-<g><title>Naive recency: false_blame_rate = 1.0 over 8 trials</title><rect x="250" y="198" width="440.0" height="18" rx="4" fill="#8c8a84"/></g>
-<text x="698.0" y="212" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">100%</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 282" width="820" height="282" role="img" aria-label="Blaming a change that did not cause it">
+<title>Blaming a change that did not cause it</title>
+<rect x="0.5" y="0.5" width="819" height="281" rx="12" fill="#fcfcfb" stroke="#e7e6e2"/>
+<text x="24" y="34" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#0b0b0b">Blaming a change that did not cause it</text>
+<text x="24" y="56" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" fill="#52514e">Distinct scenarios where the approach blamed a wrong change, controls included. Lower is better. Whiskers: 95 % interval. Eval run_0033.</text>
+<line x1="290.0" y1="76" x2="290.0" y2="224" stroke="#e7e6e2"/>
+<line x1="480.0" y1="76" x2="480.0" y2="224" stroke="#e7e6e2"/>
+<line x1="670.0" y1="76" x2="670.0" y2="224" stroke="#e7e6e2"/>
+<text x="276" y="98" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">Faultline (graph + evidence gate)</text>
+<g stroke="#0b0b0b" stroke-width="1.4"><title>Faultline (graph + evidence gate): 0/8 scenarios: 95 % interval 0.0–0.3244</title><line x1="290.0" y1="93.0" x2="413.3" y2="93.0"/><line x1="290.0" y1="88.0" x2="290.0" y2="98.0"/><line x1="413.3" y1="88.0" x2="413.3" y2="98.0"/></g>
+<text x="421.3" y="98" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">0/8  (0–32 %)</text>
+<text x="276" y="136" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Telemetry only</text>
+<g><title>Telemetry only: 3/8 scenarios</title><rect x="290" y="122" width="142.5" height="18" rx="4" fill="#8c8a84"/></g>
+<g stroke="#0b0b0b" stroke-width="1.4"><title>Telemetry only: 3/8 scenarios: 95 % interval 0.1368–0.6943</title><line x1="342.0" y1="131.0" x2="553.8" y2="131.0"/><line x1="342.0" y1="126.0" x2="342.0" y2="136.0"/><line x1="553.8" y1="126.0" x2="553.8" y2="136.0"/></g>
+<text x="561.8" y="136" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">3/8  (14–69 %)</text>
+<text x="276" y="174" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Vector similarity only</text>
+<g><title>Vector similarity only: 5/8 scenarios</title><rect x="290" y="160" width="237.5" height="18" rx="4" fill="#8c8a84"/></g>
+<g stroke="#0b0b0b" stroke-width="1.4"><title>Vector similarity only: 5/8 scenarios: 95 % interval 0.3057–0.8632</title><line x1="406.2" y1="169.0" x2="618.0" y2="169.0"/><line x1="406.2" y1="164.0" x2="406.2" y2="174.0"/><line x1="618.0" y1="164.0" x2="618.0" y2="174.0"/></g>
+<text x="626.0" y="174" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">5/8  (31–86 %)</text>
+<text x="276" y="212" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Naive recency</text>
+<g><title>Naive recency: 7/8 scenarios</title><rect x="290" y="198" width="332.5" height="18" rx="4" fill="#8c8a84"/></g>
+<g stroke="#0b0b0b" stroke-width="1.4"><title>Naive recency: 7/8 scenarios: 95 % interval 0.5291–0.9776</title><line x1="491.1" y1="207.0" x2="661.5" y2="207.0"/><line x1="491.1" y1="202.0" x2="491.1" y2="212.0"/><line x1="661.5" y1="202.0" x2="661.5" y2="212.0"/></g>
+<text x="669.5" y="212" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">7/8  (53–98 %)</text>
+<text x="24" y="264" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" fill="#77756f">8 scenarios. Naive, vector and telemetry-only cannot say &quot;no change explains this&quot; by design.</text>
 </svg>

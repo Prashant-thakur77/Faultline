@@ -1,22 +1,26 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 282" width="760" height="282" role="img" aria-label="Take FalkorDB&#x27;s algorithms away and the answers get worse">
-<title>Take FalkorDB&#x27;s algorithms away and the answers get worse</title>
-<rect x="0.5" y="0.5" width="759" height="281" rx="12" fill="#fcfcfb" stroke="#e7e6e2"/>
-<text x="24" y="34" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#0b0b0b">Take FalkorDB&#x27;s algorithms away and the answers get worse</text>
-<text x="24" y="56" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" fill="#52514e">Correct verdicts on the 100 held-out gate-bench worlds, one capability removed at a time. Higher is better.</text>
-<line x1="250.0" y1="76" x2="250.0" y2="224" stroke="#e7e6e2"/>
-<line x1="470.0" y1="76" x2="470.0" y2="224" stroke="#e7e6e2"/>
-<line x1="690.0" y1="76" x2="690.0" y2="224" stroke="#e7e6e2"/>
-<text x="236" y="98" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">Full product (SPpaths + maxFlow)</text>
-<g><title>correct of 100</title><rect x="250" y="84" width="440.0" height="18" rx="4" fill="#2a78d6"/></g>
-<text x="698.0" y="98" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">100</text>
-<text x="236" y="136" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">algo.maxFlow removed</text>
-<g><title>correct of 100</title><rect x="250" y="122" width="352.0" height="18" rx="4" fill="#8c8a84"/></g>
-<text x="610.0" y="136" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">80</text>
-<text x="236" y="174" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">algo.SPpaths removed (connectivity only)</text>
-<g><title>correct of 100</title><rect x="250" y="160" width="334.4" height="18" rx="4" fill="#8c8a84"/></g>
-<text x="592.4" y="174" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">76</text>
-<text x="236" y="212" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Both removed</text>
-<g><title>correct of 100</title><rect x="250" y="198" width="246.4" height="18" rx="4" fill="#8c8a84"/></g>
-<text x="504.4" y="212" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">56</text>
-<text x="24" y="264" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" fill="#77756f">Every rung stays at zero confident wrong blames; what is lost is the ability to decide.</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 282" width="820" height="282" role="img" aria-label="Remove both path and flow checks and true causes are lost">
+<title>Remove both path and flow checks and true causes are lost</title>
+<rect x="0.5" y="0.5" width="819" height="281" rx="12" fill="#fcfcfb" stroke="#e7e6e2"/>
+<text x="24" y="34" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#0b0b0b">Remove both path and flow checks and true causes are lost</text>
+<text x="24" y="56" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" fill="#52514e">Right cause blamed, of the 65 gate-bench worlds (second seed) that have one, one capability removed at a time. Whiskers: 95 % interval.</text>
+<line x1="290.0" y1="76" x2="290.0" y2="224" stroke="#e7e6e2"/>
+<line x1="480.0" y1="76" x2="480.0" y2="224" stroke="#e7e6e2"/>
+<line x1="670.0" y1="76" x2="670.0" y2="224" stroke="#e7e6e2"/>
+<text x="276" y="98" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">Full product (SPpaths + maxFlow)</text>
+<g><title>Full product (SPpaths + maxFlow): 65/65 worlds</title><rect x="290" y="84" width="380.0" height="18" rx="4" fill="#2a78d6"/></g>
+<g stroke="#0b0b0b" stroke-width="1.4"><title>Full product (SPpaths + maxFlow): 65/65 worlds: 95 % interval 0.9442–1.0</title><line x1="648.8" y1="93.0" x2="670.0" y2="93.0"/><line x1="648.8" y1="88.0" x2="648.8" y2="98.0"/><line x1="670.0" y1="88.0" x2="670.0" y2="98.0"/></g>
+<text x="678.0" y="98" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">65/65  (94–100 %)</text>
+<text x="276" y="136" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">algo.maxFlow removed</text>
+<g><title>algo.maxFlow removed: 65/65 worlds</title><rect x="290" y="122" width="380.0" height="18" rx="4" fill="#8c8a84"/></g>
+<g stroke="#0b0b0b" stroke-width="1.4"><title>algo.maxFlow removed: 65/65 worlds: 95 % interval 0.9442–1.0</title><line x1="648.8" y1="131.0" x2="670.0" y2="131.0"/><line x1="648.8" y1="126.0" x2="648.8" y2="136.0"/><line x1="670.0" y1="126.0" x2="670.0" y2="136.0"/></g>
+<text x="678.0" y="136" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">65/65  (94–100 %)</text>
+<text x="276" y="174" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">algo.SPpaths → connectivity only</text>
+<g><title>algo.SPpaths → connectivity only: 65/65 worlds</title><rect x="290" y="160" width="380.0" height="18" rx="4" fill="#8c8a84"/></g>
+<g stroke="#0b0b0b" stroke-width="1.4"><title>algo.SPpaths → connectivity only: 65/65 worlds: 95 % interval 0.9442–1.0</title><line x1="648.8" y1="169.0" x2="670.0" y2="169.0"/><line x1="648.8" y1="164.0" x2="648.8" y2="174.0"/><line x1="670.0" y1="164.0" x2="670.0" y2="174.0"/></g>
+<text x="678.0" y="174" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">65/65  (94–100 %)</text>
+<text x="276" y="212" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Both removed</text>
+<g><title>Both removed: 43/65 worlds</title><rect x="290" y="198" width="251.4" height="18" rx="4" fill="#8c8a84"/></g>
+<g stroke="#0b0b0b" stroke-width="1.4"><title>Both removed: 43/65 worlds: 95 % interval 0.5404–0.7647</title><line x1="495.4" y1="207.0" x2="580.6" y2="207.0"/><line x1="495.4" y1="202.0" x2="495.4" y2="212.0"/><line x1="580.6" y1="202.0" x2="580.6" y2="212.0"/></g>
+<text x="588.6" y="212" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">43/65  (54–76 %)</text>
+<text x="24" y="264" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" fill="#77756f">Each algorithm backs up the other here (healthy look-alikes). Both removed: 42 of 100 worlds abstain; 0 confident wrong blames on every rung.</text>
 </svg>
