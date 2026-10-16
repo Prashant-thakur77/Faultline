@@ -1,0 +1,3466 @@
+{
+  "runs": [
+    {
+      "label": "keyword-router",
+      "at": "2026-10-16T15:15:59",
+      "reason": "baseline: the committed keyword router, scored once before the graph-native routing change",
+      "correct": 25,
+      "questions": 40,
+      "by_kind": {
+        "owner_now": [
+          2,
+          4
+        ],
+        "owner_at": [
+          2,
+          4
+        ],
+        "worked_on": [
+          3,
+          4
+        ],
+        "decisions_current": [
+          3,
+          5
+        ],
+        "decision_people": [
+          1,
+          3
+        ],
+        "missing_guardrails": [
+          1,
+          2
+        ],
+        "blast_radius": [
+          5,
+          5
+        ],
+        "oncall_notify": [
+          2,
+          3
+        ],
+        "as_of": [
+          1,
+          4
+        ],
+        "runbook": [
+          2,
+          2
+        ],
+        "knowledge_health": [
+          1,
+          2
+        ],
+        "unanswerable": [
+          2,
+          2
+        ]
+      },
+      "rows": [
+        {
+          "id": "H01",
+          "kind": "owner_now",
+          "ok": true,
+          "intent": "people",
+          "missing": [],
+          "cited": [
+            "fraud-detection",
+            "p-004",
+            "p-014",
+            "p-017",
+            "p-033",
+            "p-035",
+            "team-catalog",
+            "team-payments",
+            "team-platform"
+          ],
+          "ms": 54.8
+        },
+        {
+          "id": "H02",
+          "kind": "owner_now",
+          "ok": false,
+          "intent": "context",
+          "missing": [
+            "team-catalog"
+          ],
+          "cited": [
+            "shipping",
+            "team-storefront"
+          ],
+          "ms": 16.0
+        },
+        {
+          "id": "H03",
+          "kind": "owner_now",
+          "ok": false,
+          "intent": "people",
+          "missing": [
+            "team-catalog"
+          ],
+          "cited": [],
+          "ms": 25.8
+        },
+        {
+          "id": "H04",
+          "kind": "owner_now",
+          "ok": true,
+          "intent": "context",
+          "missing": [],
+          "cited": [
+            "ad",
+            "team-growth"
+          ],
+          "ms": 53.1
+        },
+        {
+          "id": "H05",
+          "kind": "owner_at",
+          "ok": false,
+          "intent": "people",
+          "missing": [
+            "team-storefront"
+          ],
+          "cited": [],
+          "ms": 72.9
+        },
+        {
+          "id": "H06",
+          "kind": "owner_at",
+          "ok": true,
+          "intent": "people",
+          "missing": [],
+          "cited": [
+            "fraud-detection",
+            "p-004",
+            "p-014",
+            "p-017",
+            "p-033",
+            "p-035",
+            "team-catalog",
+            "team-payments",
+            "team-platform"
+          ],
+          "ms": 23.8
+        },
+        {
+          "id": "H07",
+          "kind": "owner_at",
+          "ok": true,
+          "intent": "people",
+          "missing": [],
+          "cited": [
+            "fraud-detection",
+            "p-004",
+            "p-014",
+            "p-017",
+            "p-033",
+            "p-035",
+            "team-catalog",
+            "team-payments",
+            "team-platform"
+          ],
+          "ms": 6.7
+        },
+        {
+          "id": "H08",
+          "kind": "owner_at",
+          "ok": false,
+          "intent": "people",
+          "missing": [
+            "team-storefront"
+          ],
+          "cited": [],
+          "ms": 48.2
+        },
+        {
+          "id": "H09",
+          "kind": "worked_on",
+          "ok": true,
+          "intent": "people",
+          "missing": [],
+          "cited": [
+            "p-006",
+            "p-012",
+            "p-016",
+            "p-027",
+            "p-035",
+            "quote",
+            "team-catalog",
+            "team-storefront"
+          ],
+          "ms": 23.4
+        },
+        {
+          "id": "H10",
+          "kind": "worked_on",
+          "ok": true,
+          "intent": "people",
+          "missing": [],
+          "cited": [
+            "currency",
+            "p-027",
+            "p-028",
+            "p-032",
+            "p-034",
+            "p-038",
+            "team-payments",
+            "team-storefront"
+          ],
+          "ms": 15.0
+        },
+        {
+          "id": "H11",
+          "kind": "worked_on",
+          "ok": true,
+          "intent": "people",
+          "missing": [],
+          "cited": [
+            "p-004",
+            "p-017",
+            "p-030",
+            "p-034",
+            "p-036",
+            "payment",
+            "team-payments"
+          ],
+          "ms": 35.6
+        },
+        {
+          "id": "H12",
+          "kind": "worked_on",
+          "ok": false,
+          "intent": "people",
+          "missing": [
+            "p-015"
+          ],
+          "cited": [],
+          "ms": 42.9
+        },
+        {
+          "id": "H13",
+          "kind": "decisions_current",
+          "ok": true,
+          "intent": "decision",
+          "missing": [],
+          "cited": [
+            "ADR-009",
+            "ADR-021",
+            "p-006",
+            "p-016",
+            "p-025",
+            "product-catalog"
+          ],
+          "ms": 75.3
+        },
+        {
+          "id": "H14",
+          "kind": "decisions_current",
+          "ok": false,
+          "intent": "decision",
+          "missing": [
+            "ADR-009",
+            "ADR-021"
+          ],
+          "cited": [],
+          "ms": 34.5
+        },
+        {
+          "id": "H15",
+          "kind": "decisions_current",
+          "ok": true,
+          "intent": "decision",
+          "missing": [],
+          "cited": [
+            "ADR-004",
+            "email"
+          ],
+          "ms": 35.8
+        },
+        {
+          "id": "H16",
+          "kind": "decisions_current",
+          "ok": true,
+          "intent": "decision",
+          "missing": [],
+          "cited": [
+            "ADR-012",
+            "ADR-013",
+            "p-004",
+            "p-022",
+            "payment"
+          ],
+          "ms": 31.2
+        },
+        {
+          "id": "H17",
+          "kind": "decisions_current",
+          "ok": false,
+          "intent": "people",
+          "missing": [
+            "ADR-009",
+            "ADR-021"
+          ],
+          "cited": [
+            "p-012",
+            "p-015",
+            "p-016",
+            "p-025",
+            "p-035",
+            "product-catalog",
+            "team-catalog",
+            "team-data"
+          ],
+          "ms": 59.6
+        },
+        {
+          "id": "H18",
+          "kind": "decision_people",
+          "ok": false,
+          "intent": "people",
+          "missing": [
+            "ADR-021",
+            "p-006",
+            "p-016"
+          ],
+          "cited": [],
+          "ms": 53.4
+        },
+        {
+          "id": "H19",
+          "kind": "decision_people",
+          "ok": false,
+          "intent": "decision",
+          "missing": [
+            "p-019"
+          ],
+          "cited": [
+            "ADR-004",
+            "email"
+          ],
+          "ms": 20.2
+        },
+        {
+          "id": "H20",
+          "kind": "decision_people",
+          "ok": true,
+          "intent": "decision",
+          "missing": [],
+          "cited": [
+            "ADR-012",
+            "ADR-013",
+            "p-004",
+            "p-022",
+            "payment"
+          ],
+          "ms": 26.3
+        },
+        {
+          "id": "H21",
+          "kind": "missing_guardrails",
+          "ok": true,
+          "intent": "gaps",
+          "missing": [],
+          "cited": [
+            "cart",
+            "currency",
+            "frontend",
+            "frontend-proxy",
+            "quote",
+            "shipping"
+          ],
+          "ms": 5.0
+        },
+        {
+          "id": "H22",
+          "kind": "missing_guardrails",
+          "ok": false,
+          "intent": "context",
+          "missing": [
+            "cart",
+            "currency",
+            "frontend",
+            "frontend-proxy",
+            "shipping"
+          ],
+          "cited": [],
+          "ms": 21.9
+        },
+        {
+          "id": "H23",
+          "kind": "blast_radius",
+          "ok": true,
+          "intent": "blast",
+          "missing": [],
+          "cited": [
+            "agent",
+            "cart",
+            "chatbot",
+            "checkout",
+            "frontend",
+            "frontend-proxy",
+            "mcp"
+          ],
+          "ms": 29.7
+        },
+        {
+          "id": "H24",
+          "kind": "blast_radius",
+          "ok": true,
+          "intent": "blast",
+          "missing": [],
+          "cited": [
+            "accounting",
+            "agent",
+            "astronomy-db",
+            "chatbot",
+            "checkout",
+            "frontend",
+            "frontend-proxy",
+            "mcp",
+            "product-catalog",
+            "queue",
+            "recommendation"
+          ],
+          "ms": 15.5
+        },
+        {
+          "id": "H25",
+          "kind": "blast_radius",
+          "ok": true,
+          "intent": "blast",
+          "missing": [],
+          "cited": [
+            "agent",
+            "checkout",
+            "frontend",
+            "frontend-proxy",
+            "kpi.exec_revenue",
+            "marts.exec_revenue_metric",
+            "marts.fct_revenue",
+            "mcp",
+            "payment",
+            "raw.raw_orders",
+            "staging.stg_orders"
+          ],
+          "ms": 35.9
+        },
+        {
+          "id": "H26",
+          "kind": "blast_radius",
+          "ok": true,
+          "intent": "blast",
+          "missing": [],
+          "cited": [
+            "agent",
+            "chatbot",
+            "checkout",
+            "frontend",
+            "frontend-proxy",
+            "mcp",
+            "quote",
+            "shipping"
+          ],
+          "ms": 20.3
+        },
+        {
+          "id": "H27",
+          "kind": "blast_radius",
+          "ok": true,
+          "intent": "blast",
+          "missing": [],
+          "cited": [
+            "agent",
+            "chatbot",
+            "checkout",
+            "currency",
+            "frontend",
+            "frontend-proxy",
+            "mcp"
+          ],
+          "ms": 18.6
+        },
+        {
+          "id": "H28",
+          "kind": "oncall_notify",
+          "ok": true,
+          "intent": "people",
+          "missing": [],
+          "cited": [
+            "p-004",
+            "p-017",
+            "p-030",
+            "p-034",
+            "p-036",
+            "payment",
+            "team-payments"
+          ],
+          "ms": 48.5
+        },
+        {
+          "id": "H29",
+          "kind": "oncall_notify",
+          "ok": true,
+          "intent": "people",
+          "missing": [],
+          "cited": [
+            "p-012",
+            "p-015",
+            "p-016",
+            "p-025",
+            "p-035",
+            "product-catalog",
+            "team-catalog",
+            "team-data"
+          ],
+          "ms": 15.5
+        },
+        {
+          "id": "H30",
+          "kind": "oncall_notify",
+          "ok": false,
+          "intent": "context",
+          "missing": [
+            "team-checkout"
+          ],
+          "cited": [
+            "cache",
+            "team-storefront"
+          ],
+          "ms": 26.0
+        },
+        {
+          "id": "H31",
+          "kind": "as_of",
+          "ok": true,
+          "intent": "asof",
+          "missing": [],
+          "cited": [
+            "ADR-009",
+            "astronomy-db",
+            "team-catalog"
+          ],
+          "ms": 21.2
+        },
+        {
+          "id": "H32",
+          "kind": "as_of",
+          "ok": false,
+          "intent": "decision",
+          "missing": [
+            "rb-catalog-lock",
+            "team-catalog"
+          ],
+          "cited": [
+            "ADR-009",
+            "ADR-021",
+            "p-006",
+            "p-016",
+            "p-025",
+            "product-catalog"
+          ],
+          "ms": 21.7
+        },
+        {
+          "id": "H33",
+          "kind": "as_of",
+          "ok": false,
+          "intent": "asof",
+          "missing": [
+            "team-payments"
+          ],
+          "cited": [],
+          "ms": 34.7
+        },
+        {
+          "id": "H34",
+          "kind": "as_of",
+          "ok": false,
+          "intent": "context",
+          "missing": [
+            "p-030",
+            "team-payments"
+          ],
+          "cited": [
+            "fraud-detection",
+            "team-platform"
+          ],
+          "ms": 25.1
+        },
+        {
+          "id": "H35",
+          "kind": "runbook",
+          "ok": true,
+          "intent": "context",
+          "missing": [],
+          "cited": [
+            "ADR-021",
+            "product-catalog",
+            "rb-catalog-lock",
+            "team-catalog"
+          ],
+          "ms": 14.9
+        },
+        {
+          "id": "H36",
+          "kind": "runbook",
+          "ok": true,
+          "intent": "context",
+          "missing": [],
+          "cited": [
+            "accounting",
+            "rb-kafka-lag",
+            "team-platform"
+          ],
+          "ms": 33.5
+        },
+        {
+          "id": "H37",
+          "kind": "knowledge_health",
+          "ok": false,
+          "intent": "decision",
+          "missing": [
+            "ADR-004",
+            "p-019"
+          ],
+          "cited": [],
+          "ms": 93.4
+        },
+        {
+          "id": "H38",
+          "kind": "knowledge_health",
+          "ok": true,
+          "intent": "knowledge",
+          "missing": [],
+          "cited": [
+            "accounting",
+            "ad",
+            "fraud-detection",
+            "p-004",
+            "p-007",
+            "p-017",
+            "p-027",
+            "p-028",
+            "p-030",
+            "queue",
+            "rb-kafka-lag",
+            "recommendation",
+            "team-growth",
+            "team-payments",
+            "team-platform",
+            "team-storefront"
+          ],
+          "ms": 13.9
+        },
+        {
+          "id": "H39",
+          "kind": "unanswerable",
+          "ok": true,
+          "intent": "people",
+          "missing": [],
+          "cited": [],
+          "ms": 26.3
+        },
+        {
+          "id": "H40",
+          "kind": "unanswerable",
+          "ok": true,
+          "intent": "decision",
+          "missing": [],
+          "cited": [],
+          "ms": 54.3
+        }
+      ],
+      "set": "1"
+    },
+    {
+      "label": "graph-intents",
+      "at": "2026-10-16T15:40:53",
+      "reason": "the graph-native router (IntentExemplar nodes, Q-BRAIN-INTENT), scored once on the blind set after development",
+      "correct": 23,
+      "questions": 40,
+      "by_kind": {
+        "owner_now": [
+          2,
+          4
+        ],
+        "owner_at": [
+          2,
+          4
+        ],
+        "worked_on": [
+          3,
+          4
+        ],
+        "decisions_current": [
+          3,
+          5
+        ],
+        "decision_people": [
+          0,
+          3
+        ],
+        "missing_guardrails": [
+          2,
+          2
+        ],
+        "blast_radius": [
+          5,
+          5
+        ],
+        "oncall_notify": [
+          2,
+          3
+        ],
+        "as_of": [
+          2,
+          4
+        ],
+        "runbook": [
+          0,
+          2
+        ],
+        "knowledge_health": [
+          0,
+          2
+        ],
+        "unanswerable": [
+          2,
+          2
+        ]
+      },
+      "rows": [
+        {
+          "id": "H01",
+          "kind": "owner_now",
+          "ok": true,
+          "intent": "owner_then",
+          "missing": [],
+          "cited": [
+            "fraud-detection",
+            "team-payments",
+            "team-platform"
+          ],
+          "ms": 416.8
+        },
+        {
+          "id": "H02",
+          "kind": "owner_now",
+          "ok": false,
+          "intent": "context",
+          "missing": [
+            "team-catalog"
+          ],
+          "cited": [
+            "shipping",
+            "team-storefront"
+          ],
+          "ms": 16.4
+        },
+        {
+          "id": "H03",
+          "kind": "owner_now",
+          "ok": false,
+          "intent": "owner_then",
+          "missing": [
+            "team-catalog"
+          ],
+          "cited": [],
+          "ms": 18.0
+        },
+        {
+          "id": "H04",
+          "kind": "owner_now",
+          "ok": true,
+          "intent": "context",
+          "missing": [],
+          "cited": [
+            "ad",
+            "team-growth"
+          ],
+          "ms": 31.3
+        },
+        {
+          "id": "H05",
+          "kind": "owner_at",
+          "ok": false,
+          "intent": "owner_then",
+          "missing": [
+            "team-storefront"
+          ],
+          "cited": [],
+          "ms": 29.2
+        },
+        {
+          "id": "H06",
+          "kind": "owner_at",
+          "ok": true,
+          "intent": "owner_then",
+          "missing": [],
+          "cited": [
+            "fraud-detection",
+            "p-004",
+            "p-017",
+            "p-030",
+            "p-036",
+            "team-payments",
+            "team-platform"
+          ],
+          "ms": 17.7
+        },
+        {
+          "id": "H07",
+          "kind": "owner_at",
+          "ok": true,
+          "intent": "owner_then",
+          "missing": [],
+          "cited": [
+            "fraud-detection",
+            "team-payments",
+            "team-platform"
+          ],
+          "ms": 9.3
+        },
+        {
+          "id": "H08",
+          "kind": "owner_at",
+          "ok": false,
+          "intent": "owner_then",
+          "missing": [
+            "team-storefront"
+          ],
+          "cited": [],
+          "ms": 27.3
+        },
+        {
+          "id": "H09",
+          "kind": "worked_on",
+          "ok": true,
+          "intent": "people",
+          "missing": [],
+          "cited": [
+            "p-006",
+            "p-012",
+            "p-016",
+            "p-027",
+            "p-035",
+            "quote",
+            "team-catalog",
+            "team-storefront"
+          ],
+          "ms": 17.0
+        },
+        {
+          "id": "H10",
+          "kind": "worked_on",
+          "ok": true,
+          "intent": "people",
+          "missing": [],
+          "cited": [
+            "currency",
+            "p-027",
+            "p-028",
+            "p-032",
+            "p-034",
+            "p-038",
+            "team-payments",
+            "team-storefront"
+          ],
+          "ms": 13.0
+        },
+        {
+          "id": "H11",
+          "kind": "worked_on",
+          "ok": true,
+          "intent": "people",
+          "missing": [],
+          "cited": [
+            "p-004",
+            "p-017",
+            "p-030",
+            "p-034",
+            "p-036",
+            "payment",
+            "team-payments"
+          ],
+          "ms": 21.9
+        },
+        {
+          "id": "H12",
+          "kind": "worked_on",
+          "ok": false,
+          "intent": "gaps",
+          "missing": [
+            "p-015"
+          ],
+          "cited": [
+            "cart",
+            "currency",
+            "frontend",
+            "frontend-proxy",
+            "quote",
+            "shipping"
+          ],
+          "ms": 8.8
+        },
+        {
+          "id": "H13",
+          "kind": "decisions_current",
+          "ok": false,
+          "intent": "blast",
+          "missing": [
+            "ADR-009",
+            "ADR-021"
+          ],
+          "cited": [
+            "agent",
+            "chatbot",
+            "checkout",
+            "frontend",
+            "frontend-proxy",
+            "mcp",
+            "product-catalog",
+            "recommendation"
+          ],
+          "ms": 37.5
+        },
+        {
+          "id": "H14",
+          "kind": "decisions_current",
+          "ok": false,
+          "intent": "decision",
+          "missing": [
+            "ADR-009",
+            "ADR-021"
+          ],
+          "cited": [],
+          "ms": 16.6
+        },
+        {
+          "id": "H15",
+          "kind": "decisions_current",
+          "ok": true,
+          "intent": "decision",
+          "missing": [],
+          "cited": [
+            "ADR-004",
+            "email"
+          ],
+          "ms": 22.6
+        },
+        {
+          "id": "H16",
+          "kind": "decisions_current",
+          "ok": true,
+          "intent": "decision",
+          "missing": [],
+          "cited": [
+            "ADR-012",
+            "ADR-013",
+            "p-004",
+            "p-022",
+            "payment"
+          ],
+          "ms": 18.8
+        },
+        {
+          "id": "H17",
+          "kind": "decisions_current",
+          "ok": true,
+          "intent": "decision",
+          "missing": [],
+          "cited": [
+            "ADR-009",
+            "ADR-021",
+            "p-006",
+            "p-016",
+            "p-025",
+            "product-catalog"
+          ],
+          "ms": 38.4
+        },
+        {
+          "id": "H18",
+          "kind": "decision_people",
+          "ok": false,
+          "intent": "people",
+          "missing": [
+            "ADR-021",
+            "p-006"
+          ],
+          "cited": [
+            "p-012",
+            "p-015",
+            "p-016",
+            "p-025",
+            "p-035",
+            "product-catalog",
+            "team-catalog",
+            "team-data"
+          ],
+          "ms": 46.1
+        },
+        {
+          "id": "H19",
+          "kind": "decision_people",
+          "ok": false,
+          "intent": "decision",
+          "missing": [
+            "p-019"
+          ],
+          "cited": [
+            "ADR-004",
+            "email"
+          ],
+          "ms": 20.8
+        },
+        {
+          "id": "H20",
+          "kind": "decision_people",
+          "ok": false,
+          "intent": "people",
+          "missing": [
+            "ADR-013",
+            "p-022"
+          ],
+          "cited": [
+            "p-004",
+            "p-017",
+            "p-030",
+            "p-034",
+            "p-036",
+            "payment",
+            "team-payments"
+          ],
+          "ms": 14.8
+        },
+        {
+          "id": "H21",
+          "kind": "missing_guardrails",
+          "ok": true,
+          "intent": "gaps",
+          "missing": [],
+          "cited": [
+            "cart",
+            "currency",
+            "frontend",
+            "frontend-proxy",
+            "quote",
+            "shipping"
+          ],
+          "ms": 8.7
+        },
+        {
+          "id": "H22",
+          "kind": "missing_guardrails",
+          "ok": true,
+          "intent": "gaps",
+          "missing": [],
+          "cited": [
+            "cart",
+            "currency",
+            "frontend",
+            "frontend-proxy",
+            "quote",
+            "shipping"
+          ],
+          "ms": 8.4
+        },
+        {
+          "id": "H23",
+          "kind": "blast_radius",
+          "ok": true,
+          "intent": "blast",
+          "missing": [],
+          "cited": [
+            "agent",
+            "cart",
+            "chatbot",
+            "checkout",
+            "frontend",
+            "frontend-proxy",
+            "mcp"
+          ],
+          "ms": 17.4
+        },
+        {
+          "id": "H24",
+          "kind": "blast_radius",
+          "ok": true,
+          "intent": "blast",
+          "missing": [],
+          "cited": [
+            "accounting",
+            "agent",
+            "astronomy-db",
+            "chatbot",
+            "checkout",
+            "frontend",
+            "frontend-proxy",
+            "mcp",
+            "product-catalog",
+            "queue",
+            "recommendation"
+          ],
+          "ms": 11.8
+        },
+        {
+          "id": "H25",
+          "kind": "blast_radius",
+          "ok": true,
+          "intent": "blast",
+          "missing": [],
+          "cited": [
+            "agent",
+            "checkout",
+            "frontend",
+            "frontend-proxy",
+            "kpi.exec_revenue",
+            "marts.exec_revenue_metric",
+            "marts.fct_revenue",
+            "mcp",
+            "payment",
+            "raw.raw_orders",
+            "staging.stg_orders"
+          ],
+          "ms": 20.0
+        },
+        {
+          "id": "H26",
+          "kind": "blast_radius",
+          "ok": true,
+          "intent": "blast",
+          "missing": [],
+          "cited": [
+            "agent",
+            "chatbot",
+            "checkout",
+            "frontend",
+            "frontend-proxy",
+            "mcp",
+            "quote",
+            "shipping"
+          ],
+          "ms": 14.6
+        },
+        {
+          "id": "H27",
+          "kind": "blast_radius",
+          "ok": true,
+          "intent": "blast",
+          "missing": [],
+          "cited": [
+            "agent",
+            "chatbot",
+            "checkout",
+            "currency",
+            "frontend",
+            "frontend-proxy",
+            "mcp"
+          ],
+          "ms": 17.3
+        },
+        {
+          "id": "H28",
+          "kind": "oncall_notify",
+          "ok": true,
+          "intent": "people",
+          "missing": [],
+          "cited": [
+            "p-004",
+            "p-017",
+            "p-030",
+            "p-034",
+            "p-036",
+            "payment",
+            "team-payments"
+          ],
+          "ms": 23.6
+        },
+        {
+          "id": "H29",
+          "kind": "oncall_notify",
+          "ok": true,
+          "intent": "people",
+          "missing": [],
+          "cited": [
+            "p-012",
+            "p-015",
+            "p-016",
+            "p-025",
+            "p-035",
+            "product-catalog",
+            "team-catalog",
+            "team-data"
+          ],
+          "ms": 13.8
+        },
+        {
+          "id": "H30",
+          "kind": "oncall_notify",
+          "ok": false,
+          "intent": "context",
+          "missing": [
+            "team-checkout"
+          ],
+          "cited": [
+            "cache",
+            "team-storefront"
+          ],
+          "ms": 17.6
+        },
+        {
+          "id": "H31",
+          "kind": "as_of",
+          "ok": true,
+          "intent": "asof",
+          "missing": [],
+          "cited": [
+            "ADR-009",
+            "astronomy-db",
+            "team-catalog"
+          ],
+          "ms": 14.4
+        },
+        {
+          "id": "H32",
+          "kind": "as_of",
+          "ok": false,
+          "intent": "knowledge",
+          "missing": [
+            "ADR-021",
+            "p-016",
+            "rb-catalog-lock",
+            "team-catalog"
+          ],
+          "cited": [
+            "accounting",
+            "ad",
+            "fraud-detection",
+            "p-004",
+            "p-007",
+            "p-017",
+            "p-027",
+            "p-028",
+            "p-030",
+            "queue",
+            "rb-kafka-lag",
+            "recommendation",
+            "team-growth",
+            "team-payments",
+            "team-platform",
+            "team-storefront"
+          ],
+          "ms": 12.4
+        },
+        {
+          "id": "H33",
+          "kind": "as_of",
+          "ok": false,
+          "intent": "decision",
+          "missing": [
+            "team-payments"
+          ],
+          "cited": [
+            "ADR-012",
+            "ADR-013",
+            "p-004",
+            "p-022",
+            "payment"
+          ],
+          "ms": 25.0
+        },
+        {
+          "id": "H34",
+          "kind": "as_of",
+          "ok": true,
+          "intent": "asof",
+          "missing": [],
+          "cited": [
+            "fraud-detection",
+            "p-030",
+            "team-payments"
+          ],
+          "ms": 14.7
+        },
+        {
+          "id": "H35",
+          "kind": "runbook",
+          "ok": false,
+          "intent": "knowledge",
+          "missing": [
+            "rb-catalog-lock"
+          ],
+          "cited": [
+            "accounting",
+            "ad",
+            "fraud-detection",
+            "p-004",
+            "p-007",
+            "p-017",
+            "p-027",
+            "p-028",
+            "p-030",
+            "queue",
+            "rb-kafka-lag",
+            "recommendation",
+            "team-growth",
+            "team-payments",
+            "team-platform",
+            "team-storefront"
+          ],
+          "ms": 11.0
+        },
+        {
+          "id": "H36",
+          "kind": "runbook",
+          "ok": false,
+          "intent": "obligations",
+          "missing": [
+            "rb-kafka-lag"
+          ],
+          "cited": [
+            "accounting",
+            "checkout",
+            "cust-cygnus-club",
+            "cust-lyra-labs",
+            "cust-orion-optics",
+            "cust-vega-schools",
+            "frontend",
+            "frontend-proxy",
+            "queue",
+            "slo-accounting",
+            "slo-checkout",
+            "slo-frontend",
+            "slo-frontend-proxy"
+          ],
+          "ms": 19.7
+        },
+        {
+          "id": "H37",
+          "kind": "knowledge_health",
+          "ok": false,
+          "intent": "decision",
+          "missing": [
+            "ADR-004",
+            "p-019"
+          ],
+          "cited": [],
+          "ms": 33.4
+        },
+        {
+          "id": "H38",
+          "kind": "knowledge_health",
+          "ok": false,
+          "intent": "gaps",
+          "missing": [
+            "ad",
+            "fraud-detection"
+          ],
+          "cited": [
+            "cart",
+            "currency",
+            "frontend",
+            "frontend-proxy",
+            "quote",
+            "shipping"
+          ],
+          "ms": 9.0
+        },
+        {
+          "id": "H39",
+          "kind": "unanswerable",
+          "ok": true,
+          "intent": "owner_then",
+          "missing": [],
+          "cited": [],
+          "ms": 14.0
+        },
+        {
+          "id": "H40",
+          "kind": "unanswerable",
+          "ok": true,
+          "intent": "decision",
+          "missing": [],
+          "cited": [],
+          "ms": 24.6
+        }
+      ],
+      "set": "1"
+    },
+    {
+      "set": "2",
+      "label": "keyword-router",
+      "at": "2026-10-16T15:45:30",
+      "reason": "set 2 baseline: the committed keyword router, scored once",
+      "correct": 19,
+      "questions": 40,
+      "by_kind": {
+        "people_who_worked_on": [
+          2,
+          5
+        ],
+        "owner": [
+          3,
+          4
+        ],
+        "decisions": [
+          2,
+          4
+        ],
+        "decision_people": [
+          1,
+          4
+        ],
+        "missing_guardrails": [
+          0,
+          3
+        ],
+        "blast_radius": [
+          3,
+          5
+        ],
+        "owner_at": [
+          2,
+          3
+        ],
+        "beliefs_at": [
+          1,
+          3
+        ],
+        "knowledge_health": [
+          1,
+          3
+        ],
+        "runbook": [
+          1,
+          3
+        ],
+        "unanswerable": [
+          3,
+          3
+        ]
+      },
+      "rows": [
+        {
+          "id": "B01",
+          "kind": "people_who_worked_on",
+          "ok": true,
+          "intent": "people",
+          "missing": [],
+          "cited": [
+            "p-010",
+            "p-013",
+            "p-020",
+            "p-031",
+            "p-035",
+            "recommendation",
+            "team-catalog",
+            "team-growth"
+          ],
+          "ms": 65.3
+        },
+        {
+          "id": "B02",
+          "kind": "people_who_worked_on",
+          "ok": false,
+          "intent": "context",
+          "missing": [
+            "p-028",
+            "p-038"
+          ],
+          "cited": [
+            "cart",
+            "team-storefront"
+          ],
+          "ms": 56.5
+        },
+        {
+          "id": "B03",
+          "kind": "people_who_worked_on",
+          "ok": false,
+          "intent": "people",
+          "missing": [
+            "p-035"
+          ],
+          "cited": [
+            "p-007",
+            "p-027",
+            "p-028",
+            "p-032",
+            "p-038",
+            "shipping",
+            "team-storefront"
+          ],
+          "ms": 22.7
+        },
+        {
+          "id": "B04",
+          "kind": "people_who_worked_on",
+          "ok": true,
+          "intent": "people",
+          "missing": [],
+          "cited": [
+            "currency",
+            "p-027",
+            "p-028",
+            "p-032",
+            "p-034",
+            "p-038",
+            "team-payments",
+            "team-storefront"
+          ],
+          "ms": 32.8
+        },
+        {
+          "id": "B05",
+          "kind": "people_who_worked_on",
+          "ok": false,
+          "intent": "context",
+          "missing": [
+            "p-019",
+            "p-037"
+          ],
+          "cited": [
+            "email",
+            "team-checkout"
+          ],
+          "ms": 38.3
+        },
+        {
+          "id": "B06",
+          "kind": "owner",
+          "ok": true,
+          "intent": "context",
+          "missing": [],
+          "cited": [
+            "fraud-detection",
+            "team-platform"
+          ],
+          "ms": 31.6
+        },
+        {
+          "id": "B07",
+          "kind": "owner",
+          "ok": false,
+          "intent": "people",
+          "missing": [
+            "team-checkout"
+          ],
+          "cited": [
+            "queue"
+          ],
+          "ms": 20.5
+        },
+        {
+          "id": "B08",
+          "kind": "owner",
+          "ok": true,
+          "intent": "context",
+          "missing": [],
+          "cited": [
+            "image-provider",
+            "team-storefront"
+          ],
+          "ms": 62.1
+        },
+        {
+          "id": "B09",
+          "kind": "owner",
+          "ok": true,
+          "intent": "context",
+          "missing": [],
+          "cited": [
+            "ad",
+            "team-growth"
+          ],
+          "ms": 60.1
+        },
+        {
+          "id": "B10",
+          "kind": "decisions",
+          "ok": false,
+          "intent": "context",
+          "missing": [
+            "ADR-009"
+          ],
+          "cited": [
+            "ADR-021",
+            "product-catalog",
+            "rb-catalog-lock",
+            "team-catalog"
+          ],
+          "ms": 72.4
+        },
+        {
+          "id": "B11",
+          "kind": "decisions",
+          "ok": true,
+          "intent": "decision",
+          "missing": [],
+          "cited": [
+            "ADR-004",
+            "checkout",
+            "p-019"
+          ],
+          "ms": 38.8
+        },
+        {
+          "id": "B12",
+          "kind": "decisions",
+          "ok": true,
+          "intent": "context",
+          "missing": [],
+          "cited": [
+            "ADR-012",
+            "ADR-013",
+            "payment",
+            "rb-payment-errors",
+            "team-payments"
+          ],
+          "ms": 28.5
+        },
+        {
+          "id": "B13",
+          "kind": "decisions",
+          "ok": false,
+          "intent": "context",
+          "missing": [
+            "ADR-009"
+          ],
+          "cited": [
+            "ADR-021",
+            "product-catalog",
+            "rb-catalog-lock",
+            "team-catalog"
+          ],
+          "ms": 54.8
+        },
+        {
+          "id": "B14",
+          "kind": "decision_people",
+          "ok": false,
+          "intent": "people",
+          "missing": [
+            "ADR-021",
+            "p-006"
+          ],
+          "cited": [
+            "p-012",
+            "p-015",
+            "p-016",
+            "p-025",
+            "p-035",
+            "product-catalog",
+            "team-catalog",
+            "team-data"
+          ],
+          "ms": 43.8
+        },
+        {
+          "id": "B15",
+          "kind": "decision_people",
+          "ok": false,
+          "intent": "decision",
+          "missing": [
+            "p-019"
+          ],
+          "cited": [
+            "ADR-004",
+            "email"
+          ],
+          "ms": 15.3
+        },
+        {
+          "id": "B16",
+          "kind": "decision_people",
+          "ok": true,
+          "intent": "decision",
+          "missing": [],
+          "cited": [
+            "ADR-009",
+            "ADR-021",
+            "p-006",
+            "p-016",
+            "p-025",
+            "product-catalog"
+          ],
+          "ms": 40.9
+        },
+        {
+          "id": "B17",
+          "kind": "decision_people",
+          "ok": false,
+          "intent": "people",
+          "missing": [
+            "ADR-012",
+            "p-022"
+          ],
+          "cited": [
+            "p-004",
+            "p-017",
+            "p-030",
+            "p-034",
+            "p-036",
+            "payment",
+            "team-payments"
+          ],
+          "ms": 18.1
+        },
+        {
+          "id": "B18",
+          "kind": "missing_guardrails",
+          "ok": false,
+          "intent": "context",
+          "missing": [
+            "cart",
+            "currency",
+            "frontend",
+            "frontend-proxy",
+            "quote",
+            "shipping"
+          ],
+          "cited": [],
+          "ms": 16.1
+        },
+        {
+          "id": "B19",
+          "kind": "missing_guardrails",
+          "ok": false,
+          "intent": "context",
+          "missing": [
+            "cart",
+            "currency",
+            "frontend",
+            "frontend-proxy",
+            "quote",
+            "shipping"
+          ],
+          "cited": [],
+          "ms": 30.4
+        },
+        {
+          "id": "B20",
+          "kind": "missing_guardrails",
+          "ok": false,
+          "intent": "context",
+          "missing": [
+            "cart",
+            "currency",
+            "frontend",
+            "frontend-proxy",
+            "shipping"
+          ],
+          "cited": [],
+          "ms": 9.6
+        },
+        {
+          "id": "B21",
+          "kind": "blast_radius",
+          "ok": true,
+          "intent": "blast",
+          "missing": [],
+          "cited": [
+            "agent",
+            "cache",
+            "cart",
+            "chatbot",
+            "checkout",
+            "frontend",
+            "frontend-proxy",
+            "mcp"
+          ],
+          "ms": 23.6
+        },
+        {
+          "id": "B22",
+          "kind": "blast_radius",
+          "ok": false,
+          "intent": "context",
+          "missing": [
+            "accounting",
+            "checkout",
+            "frontend"
+          ],
+          "cited": [
+            "ADR-021",
+            "product-catalog",
+            "rb-catalog-lock",
+            "team-catalog"
+          ],
+          "ms": 43.0
+        },
+        {
+          "id": "B23",
+          "kind": "blast_radius",
+          "ok": false,
+          "intent": "context",
+          "missing": [
+            "checkout"
+          ],
+          "cited": [
+            "shipping",
+            "team-storefront"
+          ],
+          "ms": 14.5
+        },
+        {
+          "id": "B24",
+          "kind": "blast_radius",
+          "ok": true,
+          "intent": "blast",
+          "missing": [],
+          "cited": [
+            "agent",
+            "checkout",
+            "frontend",
+            "frontend-proxy",
+            "kpi.exec_revenue",
+            "marts.exec_revenue_metric",
+            "marts.fct_revenue",
+            "mcp",
+            "payment",
+            "raw.raw_orders",
+            "staging.stg_orders"
+          ],
+          "ms": 24.6
+        },
+        {
+          "id": "B25",
+          "kind": "blast_radius",
+          "ok": true,
+          "intent": "blast",
+          "missing": [],
+          "cited": [
+            "agent",
+            "chatbot",
+            "frontend-proxy",
+            "mcp"
+          ],
+          "ms": 9.3
+        },
+        {
+          "id": "B26",
+          "kind": "owner_at",
+          "ok": true,
+          "intent": "owner_then",
+          "missing": [],
+          "cited": [
+            "fraud-detection",
+            "p-004",
+            "p-017",
+            "p-030",
+            "p-036",
+            "team-payments",
+            "team-platform"
+          ],
+          "ms": 4.6
+        },
+        {
+          "id": "B27",
+          "kind": "owner_at",
+          "ok": false,
+          "intent": "context",
+          "missing": [
+            "team-storefront"
+          ],
+          "cited": [],
+          "ms": 7.8
+        },
+        {
+          "id": "B28",
+          "kind": "owner_at",
+          "ok": true,
+          "intent": "owner_then",
+          "missing": [],
+          "cited": [
+            "fraud-detection",
+            "team-payments",
+            "team-platform"
+          ],
+          "ms": 4.7
+        },
+        {
+          "id": "B29",
+          "kind": "beliefs_at",
+          "ok": false,
+          "intent": "asof",
+          "missing": [
+            "ADR-009"
+          ],
+          "cited": [],
+          "ms": 27.3
+        },
+        {
+          "id": "B30",
+          "kind": "beliefs_at",
+          "ok": false,
+          "intent": "decision",
+          "missing": [
+            "rb-catalog-lock"
+          ],
+          "cited": [
+            "ADR-009",
+            "ADR-021",
+            "p-006",
+            "p-016",
+            "p-025",
+            "product-catalog"
+          ],
+          "ms": 13.2
+        },
+        {
+          "id": "B31",
+          "kind": "beliefs_at",
+          "ok": true,
+          "intent": "decision",
+          "missing": [],
+          "cited": [
+            "ADR-004",
+            "checkout",
+            "p-019"
+          ],
+          "ms": 11.3
+        },
+        {
+          "id": "B32",
+          "kind": "knowledge_health",
+          "ok": false,
+          "intent": "decision",
+          "missing": [
+            "ADR-004",
+            "p-019"
+          ],
+          "cited": [],
+          "ms": 38.0
+        },
+        {
+          "id": "B33",
+          "kind": "knowledge_health",
+          "ok": false,
+          "intent": "context",
+          "missing": [
+            "ad",
+            "fraud-detection"
+          ],
+          "cited": [],
+          "ms": 50.5
+        },
+        {
+          "id": "B34",
+          "kind": "knowledge_health",
+          "ok": true,
+          "intent": "knowledge",
+          "missing": [],
+          "cited": [
+            "accounting",
+            "ad",
+            "fraud-detection",
+            "p-004",
+            "p-007",
+            "p-017",
+            "p-027",
+            "p-028",
+            "p-030",
+            "queue",
+            "rb-kafka-lag",
+            "recommendation",
+            "team-growth",
+            "team-payments",
+            "team-platform",
+            "team-storefront"
+          ],
+          "ms": 5.9
+        },
+        {
+          "id": "B35",
+          "kind": "runbook",
+          "ok": false,
+          "intent": "context",
+          "missing": [
+            "rb-recs-cache"
+          ],
+          "cited": [
+            "cache",
+            "team-storefront"
+          ],
+          "ms": 12.5
+        },
+        {
+          "id": "B36",
+          "kind": "runbook",
+          "ok": false,
+          "intent": "context",
+          "missing": [
+            "rb-kafka-lag"
+          ],
+          "cited": [
+            "queue",
+            "team-checkout"
+          ],
+          "ms": 17.4
+        },
+        {
+          "id": "B37",
+          "kind": "runbook",
+          "ok": true,
+          "intent": "context",
+          "missing": [],
+          "cited": [
+            "ADR-004",
+            "checkout",
+            "rb-checkout-degraded",
+            "team-checkout"
+          ],
+          "ms": 9.1
+        },
+        {
+          "id": "B38",
+          "kind": "unanswerable",
+          "ok": true,
+          "intent": "decision",
+          "missing": [],
+          "cited": [],
+          "ms": 10.7
+        },
+        {
+          "id": "B39",
+          "kind": "unanswerable",
+          "ok": true,
+          "intent": "people",
+          "missing": [],
+          "cited": [],
+          "ms": 28.1
+        },
+        {
+          "id": "B40",
+          "kind": "unanswerable",
+          "ok": true,
+          "intent": "people",
+          "missing": [],
+          "cited": [],
+          "ms": 19.3
+        }
+      ]
+    },
+    {
+      "set": "2",
+      "label": "hybrid",
+      "at": "2026-10-16T15:45:47",
+      "reason": "set 2: the pre-registered hybrid (keyword first, graph fallback), scored once",
+      "correct": 24,
+      "questions": 40,
+      "by_kind": {
+        "people_who_worked_on": [
+          3,
+          5
+        ],
+        "owner": [
+          3,
+          4
+        ],
+        "decisions": [
+          2,
+          4
+        ],
+        "decision_people": [
+          1,
+          4
+        ],
+        "missing_guardrails": [
+          3,
+          3
+        ],
+        "blast_radius": [
+          4,
+          5
+        ],
+        "owner_at": [
+          2,
+          3
+        ],
+        "beliefs_at": [
+          1,
+          3
+        ],
+        "knowledge_health": [
+          2,
+          3
+        ],
+        "runbook": [
+          0,
+          3
+        ],
+        "unanswerable": [
+          3,
+          3
+        ]
+      },
+      "rows": [
+        {
+          "id": "B01",
+          "kind": "people_who_worked_on",
+          "ok": true,
+          "intent": "people",
+          "missing": [],
+          "cited": [
+            "p-010",
+            "p-013",
+            "p-020",
+            "p-031",
+            "p-035",
+            "recommendation",
+            "team-catalog",
+            "team-growth"
+          ],
+          "ms": 66.5
+        },
+        {
+          "id": "B02",
+          "kind": "people_who_worked_on",
+          "ok": false,
+          "intent": "owner_then",
+          "missing": [
+            "p-028",
+            "p-038"
+          ],
+          "cited": [
+            "cart",
+            "team-storefront"
+          ],
+          "ms": 412.0
+        },
+        {
+          "id": "B03",
+          "kind": "people_who_worked_on",
+          "ok": false,
+          "intent": "people",
+          "missing": [
+            "p-035"
+          ],
+          "cited": [
+            "p-007",
+            "p-027",
+            "p-028",
+            "p-032",
+            "p-038",
+            "shipping",
+            "team-storefront"
+          ],
+          "ms": 13.9
+        },
+        {
+          "id": "B04",
+          "kind": "people_who_worked_on",
+          "ok": true,
+          "intent": "people",
+          "missing": [],
+          "cited": [
+            "currency",
+            "p-027",
+            "p-028",
+            "p-032",
+            "p-034",
+            "p-038",
+            "team-payments",
+            "team-storefront"
+          ],
+          "ms": 15.6
+        },
+        {
+          "id": "B05",
+          "kind": "people_who_worked_on",
+          "ok": true,
+          "intent": "people",
+          "missing": [],
+          "cited": [
+            "email",
+            "p-005",
+            "p-019",
+            "p-022",
+            "p-037",
+            "p-039",
+            "team-assistant",
+            "team-checkout"
+          ],
+          "ms": 22.8
+        },
+        {
+          "id": "B06",
+          "kind": "owner",
+          "ok": true,
+          "intent": "context",
+          "missing": [],
+          "cited": [
+            "fraud-detection",
+            "team-platform"
+          ],
+          "ms": 23.3
+        },
+        {
+          "id": "B07",
+          "kind": "owner",
+          "ok": false,
+          "intent": "people",
+          "missing": [
+            "team-checkout"
+          ],
+          "cited": [
+            "queue"
+          ],
+          "ms": 11.1
+        },
+        {
+          "id": "B08",
+          "kind": "owner",
+          "ok": true,
+          "intent": "owner_then",
+          "missing": [],
+          "cited": [
+            "image-provider",
+            "team-storefront"
+          ],
+          "ms": 35.6
+        },
+        {
+          "id": "B09",
+          "kind": "owner",
+          "ok": true,
+          "intent": "owner_then",
+          "missing": [],
+          "cited": [
+            "ad",
+            "team-growth",
+            "team-storefront"
+          ],
+          "ms": 28.1
+        },
+        {
+          "id": "B10",
+          "kind": "decisions",
+          "ok": false,
+          "intent": "knowledge",
+          "missing": [
+            "ADR-009",
+            "ADR-021"
+          ],
+          "cited": [
+            "accounting",
+            "ad",
+            "fraud-detection",
+            "p-004",
+            "p-007",
+            "p-017",
+            "p-027",
+            "p-028",
+            "p-030",
+            "queue",
+            "rb-kafka-lag",
+            "recommendation",
+            "team-growth",
+            "team-payments",
+            "team-platform",
+            "team-storefront"
+          ],
+          "ms": 12.6
+        },
+        {
+          "id": "B11",
+          "kind": "decisions",
+          "ok": true,
+          "intent": "decision",
+          "missing": [],
+          "cited": [
+            "ADR-004",
+            "checkout",
+            "p-019"
+          ],
+          "ms": 15.5
+        },
+        {
+          "id": "B12",
+          "kind": "decisions",
+          "ok": false,
+          "intent": "people",
+          "missing": [
+            "ADR-013"
+          ],
+          "cited": [
+            "p-004",
+            "p-017",
+            "p-030",
+            "p-034",
+            "p-036",
+            "payment",
+            "team-payments"
+          ],
+          "ms": 22.5
+        },
+        {
+          "id": "B13",
+          "kind": "decisions",
+          "ok": true,
+          "intent": "decision",
+          "missing": [],
+          "cited": [
+            "ADR-009",
+            "ADR-021",
+            "p-006",
+            "p-016",
+            "p-025",
+            "product-catalog"
+          ],
+          "ms": 36.6
+        },
+        {
+          "id": "B14",
+          "kind": "decision_people",
+          "ok": false,
+          "intent": "people",
+          "missing": [
+            "ADR-021",
+            "p-006"
+          ],
+          "cited": [
+            "p-012",
+            "p-015",
+            "p-016",
+            "p-025",
+            "p-035",
+            "product-catalog",
+            "team-catalog",
+            "team-data"
+          ],
+          "ms": 42.9
+        },
+        {
+          "id": "B15",
+          "kind": "decision_people",
+          "ok": false,
+          "intent": "decision",
+          "missing": [
+            "p-019"
+          ],
+          "cited": [
+            "ADR-004",
+            "email"
+          ],
+          "ms": 16.1
+        },
+        {
+          "id": "B16",
+          "kind": "decision_people",
+          "ok": true,
+          "intent": "decision",
+          "missing": [],
+          "cited": [
+            "ADR-009",
+            "ADR-021",
+            "p-006",
+            "p-016",
+            "p-025",
+            "product-catalog"
+          ],
+          "ms": 38.5
+        },
+        {
+          "id": "B17",
+          "kind": "decision_people",
+          "ok": false,
+          "intent": "people",
+          "missing": [
+            "ADR-012",
+            "p-022"
+          ],
+          "cited": [
+            "p-004",
+            "p-017",
+            "p-030",
+            "p-034",
+            "p-036",
+            "payment",
+            "team-payments"
+          ],
+          "ms": 16.8
+        },
+        {
+          "id": "B18",
+          "kind": "missing_guardrails",
+          "ok": true,
+          "intent": "gaps",
+          "missing": [],
+          "cited": [
+            "cart",
+            "currency",
+            "frontend",
+            "frontend-proxy",
+            "quote",
+            "shipping"
+          ],
+          "ms": 9.4
+        },
+        {
+          "id": "B19",
+          "kind": "missing_guardrails",
+          "ok": true,
+          "intent": "gaps",
+          "missing": [],
+          "cited": [
+            "cart",
+            "currency",
+            "frontend",
+            "frontend-proxy",
+            "quote",
+            "shipping"
+          ],
+          "ms": 8.8
+        },
+        {
+          "id": "B20",
+          "kind": "missing_guardrails",
+          "ok": true,
+          "intent": "gaps",
+          "missing": [],
+          "cited": [
+            "cart",
+            "currency",
+            "frontend",
+            "frontend-proxy",
+            "quote",
+            "shipping"
+          ],
+          "ms": 9.1
+        },
+        {
+          "id": "B21",
+          "kind": "blast_radius",
+          "ok": true,
+          "intent": "blast",
+          "missing": [],
+          "cited": [
+            "agent",
+            "cache",
+            "cart",
+            "chatbot",
+            "checkout",
+            "frontend",
+            "frontend-proxy",
+            "mcp"
+          ],
+          "ms": 14.3
+        },
+        {
+          "id": "B22",
+          "kind": "blast_radius",
+          "ok": false,
+          "intent": "blast",
+          "missing": [
+            "accounting"
+          ],
+          "cited": [
+            "agent",
+            "chatbot",
+            "checkout",
+            "frontend",
+            "frontend-proxy",
+            "mcp",
+            "product-catalog",
+            "recommendation"
+          ],
+          "ms": 32.2
+        },
+        {
+          "id": "B23",
+          "kind": "blast_radius",
+          "ok": true,
+          "intent": "blast",
+          "missing": [],
+          "cited": [
+            "agent",
+            "chatbot",
+            "checkout",
+            "frontend",
+            "frontend-proxy",
+            "mcp",
+            "shipping"
+          ],
+          "ms": 24.2
+        },
+        {
+          "id": "B24",
+          "kind": "blast_radius",
+          "ok": true,
+          "intent": "blast",
+          "missing": [],
+          "cited": [
+            "agent",
+            "checkout",
+            "frontend",
+            "frontend-proxy",
+            "kpi.exec_revenue",
+            "marts.exec_revenue_metric",
+            "marts.fct_revenue",
+            "mcp",
+            "payment",
+            "raw.raw_orders",
+            "staging.stg_orders"
+          ],
+          "ms": 23.0
+        },
+        {
+          "id": "B25",
+          "kind": "blast_radius",
+          "ok": true,
+          "intent": "blast",
+          "missing": [],
+          "cited": [
+            "agent",
+            "chatbot",
+            "frontend-proxy",
+            "mcp"
+          ],
+          "ms": 8.7
+        },
+        {
+          "id": "B26",
+          "kind": "owner_at",
+          "ok": true,
+          "intent": "owner_then",
+          "missing": [],
+          "cited": [
+            "fraud-detection",
+            "p-004",
+            "p-017",
+            "p-030",
+            "p-036",
+            "team-payments",
+            "team-platform"
+          ],
+          "ms": 4.0
+        },
+        {
+          "id": "B27",
+          "kind": "owner_at",
+          "ok": false,
+          "intent": "owner_then",
+          "missing": [
+            "team-storefront"
+          ],
+          "cited": [],
+          "ms": 15.3
+        },
+        {
+          "id": "B28",
+          "kind": "owner_at",
+          "ok": true,
+          "intent": "owner_then",
+          "missing": [],
+          "cited": [
+            "fraud-detection",
+            "team-payments",
+            "team-platform"
+          ],
+          "ms": 5.7
+        },
+        {
+          "id": "B29",
+          "kind": "beliefs_at",
+          "ok": false,
+          "intent": "asof",
+          "missing": [
+            "ADR-009"
+          ],
+          "cited": [],
+          "ms": 28.1
+        },
+        {
+          "id": "B30",
+          "kind": "beliefs_at",
+          "ok": false,
+          "intent": "decision",
+          "missing": [
+            "rb-catalog-lock"
+          ],
+          "cited": [
+            "ADR-009",
+            "ADR-021",
+            "p-006",
+            "p-016",
+            "p-025",
+            "product-catalog"
+          ],
+          "ms": 12.9
+        },
+        {
+          "id": "B31",
+          "kind": "beliefs_at",
+          "ok": true,
+          "intent": "decision",
+          "missing": [],
+          "cited": [
+            "ADR-004",
+            "checkout",
+            "p-019"
+          ],
+          "ms": 11.4
+        },
+        {
+          "id": "B32",
+          "kind": "knowledge_health",
+          "ok": false,
+          "intent": "decision",
+          "missing": [
+            "ADR-004",
+            "p-019"
+          ],
+          "cited": [],
+          "ms": 39.5
+        },
+        {
+          "id": "B33",
+          "kind": "knowledge_health",
+          "ok": true,
+          "intent": "knowledge",
+          "missing": [],
+          "cited": [
+            "accounting",
+            "ad",
+            "fraud-detection",
+            "p-004",
+            "p-007",
+            "p-017",
+            "p-027",
+            "p-028",
+            "p-030",
+            "queue",
+            "rb-kafka-lag",
+            "recommendation",
+            "team-growth",
+            "team-payments",
+            "team-platform",
+            "team-storefront"
+          ],
+          "ms": 13.0
+        },
+        {
+          "id": "B34",
+          "kind": "knowledge_health",
+          "ok": true,
+          "intent": "knowledge",
+          "missing": [],
+          "cited": [
+            "accounting",
+            "ad",
+            "fraud-detection",
+            "p-004",
+            "p-007",
+            "p-017",
+            "p-027",
+            "p-028",
+            "p-030",
+            "queue",
+            "rb-kafka-lag",
+            "recommendation",
+            "team-growth",
+            "team-payments",
+            "team-platform",
+            "team-storefront"
+          ],
+          "ms": 5.3
+        },
+        {
+          "id": "B35",
+          "kind": "runbook",
+          "ok": false,
+          "intent": "gaps",
+          "missing": [
+            "rb-recs-cache"
+          ],
+          "cited": [
+            "cart",
+            "currency",
+            "frontend",
+            "frontend-proxy",
+            "quote",
+            "shipping"
+          ],
+          "ms": 8.8
+        },
+        {
+          "id": "B36",
+          "kind": "runbook",
+          "ok": false,
+          "intent": "blast",
+          "missing": [
+            "rb-kafka-lag"
+          ],
+          "cited": [
+            "accounting",
+            "agent",
+            "chatbot",
+            "checkout",
+            "fraud-detection",
+            "frontend",
+            "frontend-proxy",
+            "mcp",
+            "queue"
+          ],
+          "ms": 26.4
+        },
+        {
+          "id": "B37",
+          "kind": "runbook",
+          "ok": false,
+          "intent": "knowledge",
+          "missing": [
+            "rb-checkout-degraded"
+          ],
+          "cited": [
+            "accounting",
+            "ad",
+            "fraud-detection",
+            "p-004",
+            "p-007",
+            "p-017",
+            "p-027",
+            "p-028",
+            "p-030",
+            "queue",
+            "rb-kafka-lag",
+            "recommendation",
+            "team-growth",
+            "team-payments",
+            "team-platform",
+            "team-storefront"
+          ],
+          "ms": 11.2
+        },
+        {
+          "id": "B38",
+          "kind": "unanswerable",
+          "ok": true,
+          "intent": "decision",
+          "missing": [],
+          "cited": [],
+          "ms": 10.9
+        },
+        {
+          "id": "B39",
+          "kind": "unanswerable",
+          "ok": true,
+          "intent": "people",
+          "missing": [],
+          "cited": [],
+          "ms": 24.2
+        },
+        {
+          "id": "B40",
+          "kind": "unanswerable",
+          "ok": true,
+          "intent": "people",
+          "missing": [],
+          "cited": [],
+          "ms": 19.5
+        }
+      ]
+    },
+    {
+      "set": "1",
+      "label": "hybrid",
+      "at": "2026-10-16T15:46:20",
+      "reason": "set 1, post hoc: set 1 informed the hybrid's design, so this is not a blind score",
+      "correct": 25,
+      "questions": 40,
+      "by_kind": {
+        "owner_now": [
+          2,
+          4
+        ],
+        "owner_at": [
+          2,
+          4
+        ],
+        "worked_on": [
+          3,
+          4
+        ],
+        "decisions_current": [
+          3,
+          5
+        ],
+        "decision_people": [
+          1,
+          3
+        ],
+        "missing_guardrails": [
+          2,
+          2
+        ],
+        "blast_radius": [
+          5,
+          5
+        ],
+        "oncall_notify": [
+          2,
+          3
+        ],
+        "as_of": [
+          2,
+          4
+        ],
+        "runbook": [
+          0,
+          2
+        ],
+        "knowledge_health": [
+          1,
+          2
+        ],
+        "unanswerable": [
+          2,
+          2
+        ]
+      },
+      "rows": [
+        {
+          "id": "H01",
+          "kind": "owner_now",
+          "ok": true,
+          "intent": "people",
+          "missing": [],
+          "cited": [
+            "fraud-detection",
+            "p-004",
+            "p-014",
+            "p-017",
+            "p-033",
+            "p-035",
+            "team-catalog",
+            "team-payments",
+            "team-platform"
+          ],
+          "ms": 45.1
+        },
+        {
+          "id": "H02",
+          "kind": "owner_now",
+          "ok": false,
+          "intent": "context",
+          "missing": [
+            "team-catalog"
+          ],
+          "cited": [
+            "shipping",
+            "team-storefront"
+          ],
+          "ms": 377.7
+        },
+        {
+          "id": "H03",
+          "kind": "owner_now",
+          "ok": false,
+          "intent": "people",
+          "missing": [
+            "team-catalog"
+          ],
+          "cited": [],
+          "ms": 10.5
+        },
+        {
+          "id": "H04",
+          "kind": "owner_now",
+          "ok": true,
+          "intent": "context",
+          "missing": [],
+          "cited": [
+            "ad",
+            "team-growth"
+          ],
+          "ms": 30.3
+        },
+        {
+          "id": "H05",
+          "kind": "owner_at",
+          "ok": false,
+          "intent": "people",
+          "missing": [
+            "team-storefront"
+          ],
+          "cited": [],
+          "ms": 28.7
+        },
+        {
+          "id": "H06",
+          "kind": "owner_at",
+          "ok": true,
+          "intent": "people",
+          "missing": [],
+          "cited": [
+            "fraud-detection",
+            "p-004",
+            "p-014",
+            "p-017",
+            "p-033",
+            "p-035",
+            "team-catalog",
+            "team-payments",
+            "team-platform"
+          ],
+          "ms": 11.0
+        },
+        {
+          "id": "H07",
+          "kind": "owner_at",
+          "ok": true,
+          "intent": "people",
+          "missing": [],
+          "cited": [
+            "fraud-detection",
+            "p-004",
+            "p-014",
+            "p-017",
+            "p-033",
+            "p-035",
+            "team-catalog",
+            "team-payments",
+            "team-platform"
+          ],
+          "ms": 3.6
+        },
+        {
+          "id": "H08",
+          "kind": "owner_at",
+          "ok": false,
+          "intent": "people",
+          "missing": [
+            "team-storefront"
+          ],
+          "cited": [],
+          "ms": 22.2
+        },
+        {
+          "id": "H09",
+          "kind": "worked_on",
+          "ok": true,
+          "intent": "people",
+          "missing": [],
+          "cited": [
+            "p-006",
+            "p-012",
+            "p-016",
+            "p-027",
+            "p-035",
+            "quote",
+            "team-catalog",
+            "team-storefront"
+          ],
+          "ms": 10.2
+        },
+        {
+          "id": "H10",
+          "kind": "worked_on",
+          "ok": true,
+          "intent": "people",
+          "missing": [],
+          "cited": [
+            "currency",
+            "p-027",
+            "p-028",
+            "p-032",
+            "p-034",
+            "p-038",
+            "team-payments",
+            "team-storefront"
+          ],
+          "ms": 6.2
+        },
+        {
+          "id": "H11",
+          "kind": "worked_on",
+          "ok": true,
+          "intent": "people",
+          "missing": [],
+          "cited": [
+            "p-004",
+            "p-017",
+            "p-030",
+            "p-034",
+            "p-036",
+            "payment",
+            "team-payments"
+          ],
+          "ms": 15.2
+        },
+        {
+          "id": "H12",
+          "kind": "worked_on",
+          "ok": false,
+          "intent": "people",
+          "missing": [
+            "p-015"
+          ],
+          "cited": [],
+          "ms": 18.7
+        },
+        {
+          "id": "H13",
+          "kind": "decisions_current",
+          "ok": true,
+          "intent": "decision",
+          "missing": [],
+          "cited": [
+            "ADR-009",
+            "ADR-021",
+            "p-006",
+            "p-016",
+            "p-025",
+            "product-catalog"
+          ],
+          "ms": 29.4
+        },
+        {
+          "id": "H14",
+          "kind": "decisions_current",
+          "ok": false,
+          "intent": "decision",
+          "missing": [
+            "ADR-009",
+            "ADR-021"
+          ],
+          "cited": [],
+          "ms": 12.4
+        },
+        {
+          "id": "H15",
+          "kind": "decisions_current",
+          "ok": true,
+          "intent": "decision",
+          "missing": [],
+          "cited": [
+            "ADR-004",
+            "email"
+          ],
+          "ms": 13.2
+        },
+        {
+          "id": "H16",
+          "kind": "decisions_current",
+          "ok": true,
+          "intent": "decision",
+          "missing": [],
+          "cited": [
+            "ADR-012",
+            "ADR-013",
+            "p-004",
+            "p-022",
+            "payment"
+          ],
+          "ms": 10.6
+        },
+        {
+          "id": "H17",
+          "kind": "decisions_current",
+          "ok": false,
+          "intent": "people",
+          "missing": [
+            "ADR-009",
+            "ADR-021"
+          ],
+          "cited": [
+            "p-012",
+            "p-015",
+            "p-016",
+            "p-025",
+            "p-035",
+            "product-catalog",
+            "team-catalog",
+            "team-data"
+          ],
+          "ms": 39.9
+        },
+        {
+          "id": "H18",
+          "kind": "decision_people",
+          "ok": false,
+          "intent": "people",
+          "missing": [
+            "ADR-021",
+            "p-006",
+            "p-016"
+          ],
+          "cited": [],
+          "ms": 41.3
+        },
+        {
+          "id": "H19",
+          "kind": "decision_people",
+          "ok": false,
+          "intent": "decision",
+          "missing": [
+            "p-019"
+          ],
+          "cited": [
+            "ADR-004",
+            "email"
+          ],
+          "ms": 13.6
+        },
+        {
+          "id": "H20",
+          "kind": "decision_people",
+          "ok": true,
+          "intent": "decision",
+          "missing": [],
+          "cited": [
+            "ADR-012",
+            "ADR-013",
+            "p-004",
+            "p-022",
+            "payment"
+          ],
+          "ms": 11.1
+        },
+        {
+          "id": "H21",
+          "kind": "missing_guardrails",
+          "ok": true,
+          "intent": "gaps",
+          "missing": [],
+          "cited": [
+            "cart",
+            "currency",
+            "frontend",
+            "frontend-proxy",
+            "quote",
+            "shipping"
+          ],
+          "ms": 1.9
+        },
+        {
+          "id": "H22",
+          "kind": "missing_guardrails",
+          "ok": true,
+          "intent": "gaps",
+          "missing": [],
+          "cited": [
+            "cart",
+            "currency",
+            "frontend",
+            "frontend-proxy",
+            "quote",
+            "shipping"
+          ],
+          "ms": 8.8
+        },
+        {
+          "id": "H23",
+          "kind": "blast_radius",
+          "ok": true,
+          "intent": "blast",
+          "missing": [],
+          "cited": [
+            "agent",
+            "cart",
+            "chatbot",
+            "checkout",
+            "frontend",
+            "frontend-proxy",
+            "mcp"
+          ],
+          "ms": 11.8
+        },
+        {
+          "id": "H24",
+          "kind": "blast_radius",
+          "ok": true,
+          "intent": "blast",
+          "missing": [],
+          "cited": [
+            "accounting",
+            "agent",
+            "astronomy-db",
+            "chatbot",
+            "checkout",
+            "frontend",
+            "frontend-proxy",
+            "mcp",
+            "product-catalog",
+            "queue",
+            "recommendation"
+          ],
+          "ms": 5.1
+        },
+        {
+          "id": "H25",
+          "kind": "blast_radius",
+          "ok": true,
+          "intent": "blast",
+          "missing": [],
+          "cited": [
+            "agent",
+            "checkout",
+            "frontend",
+            "frontend-proxy",
+            "kpi.exec_revenue",
+            "marts.exec_revenue_metric",
+            "marts.fct_revenue",
+            "mcp",
+            "payment",
+            "raw.raw_orders",
+            "staging.stg_orders"
+          ],
+          "ms": 13.4
+        },
+        {
+          "id": "H26",
+          "kind": "blast_radius",
+          "ok": true,
+          "intent": "blast",
+          "missing": [],
+          "cited": [
+            "agent",
+            "chatbot",
+            "checkout",
+            "frontend",
+            "frontend-proxy",
+            "mcp",
+            "quote",
+            "shipping"
+          ],
+          "ms": 7.3
+        },
+        {
+          "id": "H27",
+          "kind": "blast_radius",
+          "ok": true,
+          "intent": "blast",
+          "missing": [],
+          "cited": [
+            "agent",
+            "chatbot",
+            "checkout",
+            "currency",
+            "frontend",
+            "frontend-proxy",
+            "mcp"
+          ],
+          "ms": 9.4
+        },
+        {
+          "id": "H28",
+          "kind": "oncall_notify",
+          "ok": true,
+          "intent": "people",
+          "missing": [],
+          "cited": [
+            "p-004",
+            "p-017",
+            "p-030",
+            "p-034",
+            "p-036",
+            "payment",
+            "team-payments"
+          ],
+          "ms": 20.7
+        },
+        {
+          "id": "H29",
+          "kind": "oncall_notify",
+          "ok": true,
+          "intent": "people",
+          "missing": [],
+          "cited": [
+            "p-012",
+            "p-015",
+            "p-016",
+            "p-025",
+            "p-035",
+            "product-catalog",
+            "team-catalog",
+            "team-data"
+          ],
+          "ms": 6.5
+        },
+        {
+          "id": "H30",
+          "kind": "oncall_notify",
+          "ok": false,
+          "intent": "context",
+          "missing": [
+            "team-checkout"
+          ],
+          "cited": [
+            "cache",
+            "team-storefront"
+          ],
+          "ms": 18.0
+        },
+        {
+          "id": "H31",
+          "kind": "as_of",
+          "ok": true,
+          "intent": "asof",
+          "missing": [],
+          "cited": [
+            "ADR-009",
+            "astronomy-db",
+            "team-catalog"
+          ],
+          "ms": 7.8
+        },
+        {
+          "id": "H32",
+          "kind": "as_of",
+          "ok": false,
+          "intent": "decision",
+          "missing": [
+            "rb-catalog-lock",
+            "team-catalog"
+          ],
+          "cited": [
+            "ADR-009",
+            "ADR-021",
+            "p-006",
+            "p-016",
+            "p-025",
+            "product-catalog"
+          ],
+          "ms": 7.8
+        },
+        {
+          "id": "H33",
+          "kind": "as_of",
+          "ok": false,
+          "intent": "asof",
+          "missing": [
+            "team-payments"
+          ],
+          "cited": [],
+          "ms": 11.9
+        },
+        {
+          "id": "H34",
+          "kind": "as_of",
+          "ok": true,
+          "intent": "asof",
+          "missing": [],
+          "cited": [
+            "fraud-detection",
+            "p-030",
+            "team-payments"
+          ],
+          "ms": 14.3
+        },
+        {
+          "id": "H35",
+          "kind": "runbook",
+          "ok": false,
+          "intent": "knowledge",
+          "missing": [
+            "rb-catalog-lock"
+          ],
+          "cited": [
+            "accounting",
+            "ad",
+            "fraud-detection",
+            "p-004",
+            "p-007",
+            "p-017",
+            "p-027",
+            "p-028",
+            "p-030",
+            "queue",
+            "rb-kafka-lag",
+            "recommendation",
+            "team-growth",
+            "team-payments",
+            "team-platform",
+            "team-storefront"
+          ],
+          "ms": 11.6
+        },
+        {
+          "id": "H36",
+          "kind": "runbook",
+          "ok": false,
+          "intent": "obligations",
+          "missing": [
+            "rb-kafka-lag"
+          ],
+          "cited": [
+            "accounting",
+            "checkout",
+            "cust-cygnus-club",
+            "cust-lyra-labs",
+            "cust-orion-optics",
+            "cust-vega-schools",
+            "frontend",
+            "frontend-proxy",
+            "queue",
+            "slo-accounting",
+            "slo-checkout",
+            "slo-frontend",
+            "slo-frontend-proxy"
+          ],
+          "ms": 19.4
+        },
+        {
+          "id": "H37",
+          "kind": "knowledge_health",
+          "ok": false,
+          "intent": "decision",
+          "missing": [
+            "ADR-004",
+            "p-019"
+          ],
+          "cited": [],
+          "ms": 33.9
+        },
+        {
+          "id": "H38",
+          "kind": "knowledge_health",
+          "ok": true,
+          "intent": "knowledge",
+          "missing": [],
+          "cited": [
+            "accounting",
+            "ad",
+            "fraud-detection",
+            "p-004",
+            "p-007",
+            "p-017",
+            "p-027",
+            "p-028",
+            "p-030",
+            "queue",
+            "rb-kafka-lag",
+            "recommendation",
+            "team-growth",
+            "team-payments",
+            "team-platform",
+            "team-storefront"
+          ],
+          "ms": 4.3
+        },
+        {
+          "id": "H39",
+          "kind": "unanswerable",
+          "ok": true,
+          "intent": "people",
+          "missing": [],
+          "cited": [],
+          "ms": 9.8
+        },
+        {
+          "id": "H40",
+          "kind": "unanswerable",
+          "ok": true,
+          "intent": "decision",
+          "missing": [],
+          "cited": [],
+          "ms": 19.2
+        }
+      ]
+    }
+  ]
+}

@@ -434,6 +434,15 @@ def side_markdown(s: dict) -> list[str]:
               f"({s.get('brain_para.intent_correct')} routed to the expected intent; {s.get('brain_para.cites_ok')} with "
               f"every expected citation whatever the intent label), citation precision "
               f"{s.get('brain_para.citation_precision_mean')}."]
+    if s.get("brain_blind.s2.hybrid.questions"):
+        L += ["", "## Company brain on blind sets (written by agents that never saw the router)", "",
+              "| Router | Set 1 | Set 2 |", "|---|---|---|"]
+        for lab, name in (("keyword_router", "keyword (before)"), ("graph_intents", "graph-native only"), ("hybrid", "hybrid (shipped)")):
+            cells = [_kn(s, f"brain_blind.s{n}.{lab}.correct") if s.get(f"brain_blind.s{n}.{lab}.questions") else "not scored"
+                     for n in ("1", "2")]
+            L.append(f"| {name} | " + " | ".join(cells) + " |")
+        L += ["", "Set 1 informed the hybrid's design (it is no longer blind for the hybrid); set 2 was written before the "
+              "hybrid was scored, under the pre-registered rule in evals/PREREGISTRATION.md."]
     return L
 
 
@@ -594,6 +603,11 @@ def side_summaries(s: dict) -> dict:
                       "unanswerable"):
                 k[f"{name}.{m}"] = x.get(m)
             k.update(wilson_keys(f"{name}.correct", x["correct"], x["questions"]))
+    bh = _side("brain_heldout.json")   # blind sets: each router version scored once per set (evals/brain_heldout.py)
+    for r in (bh or {}).get("runs", []):
+        q = f"brain_blind.s{r.get('set', '1')}.{r['label'].replace('-', '_')}"
+        k[f"{q}.correct"], k[f"{q}.questions"] = r["correct"], r["questions"]
+        k.update(wilson_keys(f"{q}.correct", r["correct"], r["questions"]))
     return k
 
 

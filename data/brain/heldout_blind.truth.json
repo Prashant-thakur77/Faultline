@@ -1,0 +1,413 @@
+{
+  "written": "2026-10-16T09:33:35+00:00",
+  "author": "blind subagent (never saw the router)",
+  "tenant": "acme",
+  "questions": [
+    {
+      "id": "H01",
+      "question": "who owns fraud detection these days?",
+      "kind": "owner_now",
+      "expect_ids": [
+        "team-platform"
+      ],
+      "notes": "(:Team)-[:OWNS]->(fraud-detection) = team-platform; OWNED_AT moved from team-payments to team-platform on 2026-08-06."
+    },
+    {
+      "id": "H02",
+      "question": "which team is on the hook for the shipping quote calculator?",
+      "kind": "owner_now",
+      "expect_ids": [
+        "team-catalog"
+      ],
+      "notes": "Component named indirectly: 'shipping quote calculator' is the name of service quote (otel-demo.yaml). OWNS -> team-catalog."
+    },
+    {
+      "id": "H03",
+      "question": "whos the owner of astronmy db",
+      "kind": "owner_now",
+      "expect_ids": [
+        "team-catalog"
+      ],
+      "notes": "Typo for astronomy-db (Datastore 'postgres product database'). OWNS -> team-catalog."
+    },
+    {
+      "id": "H04",
+      "question": "Ads are acting up, which team do I go to for ad serving now?",
+      "kind": "owner_now",
+      "expect_ids": [
+        "team-growth"
+      ],
+      "notes": "ad: OWNED_AT team-storefront until 2026-08-31, team-growth since (to=null). Current owner team-growth."
+    },
+    {
+      "id": "H05",
+      "question": "Back in mid July 2026 (say the 15th), who had ownership of the ad service?",
+      "kind": "owner_at",
+      "expect_ids": [
+        "team-storefront"
+      ],
+      "notes": "OWNED_AT(ad): team-storefront 2025-09-10..2026-08-31, team-growth after. 2026-07-15 = 1784073600000 -> team-storefront. team-growth is the current owner (may also be cited)."
+    },
+    {
+      "id": "H06",
+      "question": "During inc-h006 which team actually owned fraud-detection, and who from that team knows it?",
+      "kind": "owner_at",
+      "expect_ids": [
+        "team-payments",
+        "p-004",
+        "p-017"
+      ],
+      "notes": "inc-h006 onset 1784292660000 (2026-07-17) < hand-over 1785974400000 -> team-payments. owner_at tool knew_it_then: p-004 (4 commits), p-017 (3), p-030 (1), p-036 (1); the top two are required. team-platform owns it now."
+    },
+    {
+      "id": "H07",
+      "question": "fraud detection owner on 1 Sep 2026?",
+      "kind": "owner_at",
+      "expect_ids": [
+        "team-platform"
+      ],
+      "notes": "2026-09-01 = 1788220800000 >= 1785974400000 (team-platform from 2026-08-06)."
+    },
+    {
+      "id": "H08",
+      "question": "when inc-h010 hit, who was responsible for ads?",
+      "kind": "owner_at",
+      "expect_ids": [
+        "team-storefront"
+      ],
+      "notes": "inc-h010 onset 1784741340000 (2026-07-22) < 1788134400000 -> team-storefront (owner_at tool: owner_then team-storefront, owner_now team-growth; knew_it_then p-027, p-028, p-007, p-032, p-038)."
+    },
+    {
+      "id": "H09",
+      "question": "who's actually touched the quote service code?",
+      "kind": "worked_on",
+      "expect_ids": [
+        "p-035",
+        "p-006",
+        "p-016"
+      ],
+      "notes": "COMMITTED->quote: p-035 25, p-006 2, p-016 2, p-012 1, p-027 1. Required = top 3 by commits (Q-BRAIN-WHO order: commits desc, id)."
+    },
+    {
+      "id": "H10",
+      "question": "Who knows the currency conversion service best?",
+      "kind": "worked_on",
+      "expect_ids": [
+        "p-032",
+        "p-038",
+        "p-027"
+      ],
+      "notes": "COMMITTED->currency: p-032 19 (active=false, left 2026-10-03, valid_to 1791046800000), p-038 6, p-027 3, p-028 1, p-034 1. Top 3 required; an answer may flag p-032 as no longer active."
+    },
+    {
+      "id": "H11",
+      "question": "ppl who worked on payments svc?",
+      "kind": "worked_on",
+      "expect_ids": [
+        "p-017",
+        "p-036",
+        "p-030"
+      ],
+      "notes": "COMMITTED->payment: p-017 32, p-036 22, p-030 14, p-034 8, p-004 7, p-038 7. Top 3 required."
+    },
+    {
+      "id": "H12",
+      "question": "who has been working on the fct_revenue model?",
+      "kind": "worked_on",
+      "expect_ids": [
+        "p-015"
+      ],
+      "notes": "fct_revenue.sql (Transform). COMMITTED: p-015 11, p-009 2, p-034 2, p-026 1, p-029 1. p-015 is the clear top contributor."
+    },
+    {
+      "id": "H13",
+      "question": "what's our rule for catalog db schema migrations, and is it still the current one?",
+      "kind": "decisions_current",
+      "expect_ids": [
+        "ADR-021",
+        "ADR-009"
+      ],
+      "notes": "Decisions CONSTRAINS product-catalog/astronomy-db: ADR-021 'online migrations' active (head), ADR-021 SUPERSEDES ADR-009 'off-peak' (superseded). Both cited, ADR-021 as current."
+    },
+    {
+      "id": "H14",
+      "question": "Is ADR-009 still in force?",
+      "kind": "decisions_current",
+      "expect_ids": [
+        "ADR-009",
+        "ADR-021"
+      ],
+      "notes": "ADR-009 status superseded; superseded by ADR-021 (SUPERSEDES at 1780444800000 = 2026-06-03)."
+    },
+    {
+      "id": "H15",
+      "question": "did we ever decide anything about the order confirmation email?",
+      "kind": "decisions_current",
+      "expect_ids": [
+        "ADR-004"
+      ],
+      "notes": "ADR-004 'Order confirmation email is best-effort', active, CONSTRAINS checkout (not email); findable by title. Nothing supersedes it."
+    },
+    {
+      "id": "H16",
+      "question": "what decisions constrain payment and are they still current?",
+      "kind": "decisions_current",
+      "expect_ids": [
+        "ADR-012",
+        "ADR-013"
+      ],
+      "notes": "CONSTRAINS->payment: ADR-012 (timeout <= 2000 ms) and ADR-013 (>= 2 retries), both active, nothing supersedes them."
+    },
+    {
+      "id": "H17",
+      "question": "any ADRs on the postgres product database I should know before changing it?",
+      "kind": "decisions_current",
+      "expect_ids": [
+        "ADR-021",
+        "ADR-009"
+      ],
+      "notes": "'postgres product database' = astronomy-db. decisions_about(astronomy-db): ADR-021 active, ADR-009 superseded by ADR-021."
+    },
+    {
+      "id": "H18",
+      "question": "who made the call on online migrations for the catalog db, and are they still around?",
+      "kind": "decision_people",
+      "expect_ids": [
+        "ADR-021",
+        "p-006",
+        "p-016"
+      ],
+      "notes": "(:Person)-[:DECIDED]->ADR-021: p-006 Florin Ashcombe, p-016 Pavel Kingsbarrow; both active and on team-catalog (owning team)."
+    },
+    {
+      "id": "H19",
+      "question": "who decided that the confirmation email is best effort? are they still here?",
+      "kind": "decision_people",
+      "expect_ids": [
+        "ADR-004",
+        "p-019"
+      ],
+      "notes": "DECIDED->ADR-004: p-019 Soren Orrinwood, active=false (left team-checkout 1784480400000 = 2026-07-19). Answer should say they are gone."
+    },
+    {
+      "id": "H20",
+      "question": "who's behind the payment retries rule, still on the team?",
+      "kind": "decision_people",
+      "expect_ids": [
+        "ADR-013",
+        "p-004",
+        "p-022"
+      ],
+      "notes": "DECIDED->ADR-013: p-004 Dorian Marrowby (active, team-payments = owning team), p-022 Vesna Hollowell (active, team-checkout, not owning team)."
+    },
+    {
+      "id": "H21",
+      "question": "which money-path services have no runbook or no owner?",
+      "kind": "missing_guardrails",
+      "expect_ids": [
+        "cart",
+        "currency",
+        "frontend",
+        "frontend-proxy",
+        "shipping",
+        "quote"
+      ],
+      "notes": "Service revenue_path=true minus OWNS / current RUNBOOK_FOR: all have owners; no direct runbook for cart, currency, frontend, frontend-proxy, shipping (tier 1), quote (tier 2). Checked with missing_guardrails tool."
+    },
+    {
+      "id": "H22",
+      "question": "any tier-1 revenue services we have zero runbooks for?",
+      "kind": "missing_guardrails",
+      "expect_ids": [
+        "cart",
+        "currency",
+        "frontend",
+        "frontend-proxy",
+        "shipping"
+      ],
+      "notes": "Same set difference restricted to tier 1 (quote is tier 2, so it may appear but is not required)."
+    },
+    {
+      "id": "H23",
+      "question": "if the cart cache (valkey) dies what goes down with it?",
+      "kind": "blast_radius",
+      "expect_ids": [
+        "cart",
+        "checkout",
+        "frontend"
+      ],
+      "notes": "'valkey cart cache' = cache. algo.BFS PROPAGATES_TO from cache: cart (1 hop), checkout, frontend (2), frontend-proxy, agent, mcp (3), chatbot (4)."
+    },
+    {
+      "id": "H24",
+      "question": "what breaks if astronomy-db goes down?",
+      "kind": "blast_radius",
+      "expect_ids": [
+        "product-catalog",
+        "accounting",
+        "checkout",
+        "frontend",
+        "queue",
+        "recommendation"
+      ],
+      "notes": "BFS from astronomy-db: product-catalog, accounting (1 hop); checkout, frontend, queue, recommendation (2); frontend-proxy, agent, mcp (3); chatbot (4)."
+    },
+    {
+      "id": "H25",
+      "question": "blast radius of payment falling over?",
+      "kind": "blast_radius",
+      "expect_ids": [
+        "checkout",
+        "raw.raw_orders",
+        "frontend",
+        "staging.stg_orders"
+      ],
+      "notes": "BFS from payment crosses into lineage via EMITS-derived edge: checkout, raw.raw_orders (1); frontend, staging.stg_orders (2); frontend-proxy, marts.fct_revenue (3); marts.exec_revenue_metric (4); kpi.exec_revenue (5); dash.exec_morning (6); plus agent/mcp/chatbot."
+    },
+    {
+      "id": "H26",
+      "question": "if the quote svc is down, who/what is affected downstream?",
+      "kind": "blast_radius",
+      "expect_ids": [
+        "shipping",
+        "checkout",
+        "frontend"
+      ],
+      "notes": "BFS from quote: shipping (1); checkout, frontend (2); frontend-proxy, agent, mcp (3); chatbot (4)."
+    },
+    {
+      "id": "H27",
+      "question": "what depends on currency conversion, i.e. what fails if it does?",
+      "kind": "blast_radius",
+      "expect_ids": [
+        "checkout",
+        "frontend",
+        "frontend-proxy"
+      ],
+      "notes": "BFS from currency: checkout, frontend (1); frontend-proxy, agent, mcp (2); chatbot (3). agent/mcp are tier 3, not required."
+    },
+    {
+      "id": "H28",
+      "question": "who's on call for payments right now?",
+      "kind": "oncall_notify",
+      "expect_ids": [
+        "team-payments",
+        "p-030"
+      ],
+      "notes": "ON_CALL(team-payments) week 1791936000000..1792540800000 (2026-10-14..21) = p-030. Valid only if 'now' is in that week (true for wall clock 2026-10-16 and for Meta.seeded_at 2026-10-14)."
+    },
+    {
+      "id": "H29",
+      "question": "I need to page someone about the product catalog, who is it?",
+      "kind": "oncall_notify",
+      "expect_ids": [
+        "team-catalog",
+        "p-035"
+      ],
+      "notes": "product-catalog OWNS team-catalog; ON_CALL team-catalog in week 2026-10-14..21 = p-035. Time dependent as above."
+    },
+    {
+      "id": "H30",
+      "question": "cache is flapping, which teams should get a heads up?",
+      "kind": "oncall_notify",
+      "expect_ids": [
+        "team-storefront",
+        "team-checkout"
+      ],
+      "notes": "notify_set(cache, now=2026-10-16): team-storefront (owns cart, frontend, frontend-proxy; on call p-028), team-checkout (checkout; p-005), team-assistant (chatbot/agent/mcp, tier 3, not required). People are time dependent so only teams required."
+    },
+    {
+      "id": "H31",
+      "question": "what did we believe about astronomy-db as of 2026-01-15?",
+      "kind": "as_of",
+      "expect_ids": [
+        "team-catalog",
+        "ADR-009"
+      ],
+      "notes": "beliefs_at(astronomy-db, 1768435200000): owner team-catalog, decisions in force [ADR-009] (ADR-021 not decided until 2026-06-03, must NOT be cited as in force), no on-call (rota starts 2026-06-17), no runbook."
+    },
+    {
+      "id": "H32",
+      "question": "state of product catalog on july 1 2026 - owner, oncall, decisions, runbooks?",
+      "kind": "as_of",
+      "expect_ids": [
+        "team-catalog",
+        "p-016",
+        "ADR-021",
+        "rb-catalog-lock"
+      ],
+      "notes": "beliefs_at(product-catalog, 1782864000000): owner team-catalog, on call p-016, decisions [ADR-021] (ADR-009 superseded 2026-06-03), runbooks [rb-catalog-lock] (valid_from 2026-06-05)."
+    },
+    {
+      "id": "H33",
+      "question": "As of March 1st 2026 what did we have on record for payment?",
+      "kind": "as_of",
+      "expect_ids": [
+        "team-payments"
+      ],
+      "notes": "beliefs_at(payment, 1772323200000): owner team-payments only. ADR-012/ADR-013 decided 2026-03-12 and rb-payment-errors valid_from 2026-04-02, so none of them may be cited as in force at that date; no on-call yet."
+    },
+    {
+      "id": "H34",
+      "question": "what was true about fraud-detection when inc-h002 happened?",
+      "kind": "as_of",
+      "expect_ids": [
+        "team-payments",
+        "p-030"
+      ],
+      "notes": "inc-h002 onset 1782915120000 (2026-07-01): OWNED_AT team-payments (hand-over to team-platform 2026-08-06); ON_CALL team-payments at that instant = p-030; no decisions or runbooks on fraud-detection."
+    },
+    {
+      "id": "H35",
+      "question": "is there a runbook for product catalog being slow?",
+      "kind": "runbook",
+      "expect_ids": [
+        "rb-catalog-lock"
+      ],
+      "notes": "RUNBOOK_FOR product-catalog and sym-latency-product-catalog: rb-catalog-lock (human). Derived rb-derived-e5b43bfd48 (flip productCatalogLockContention) also covers the symptom; optional."
+    },
+    {
+      "id": "H36",
+      "question": "got a playbook for accounting consumer lag?",
+      "kind": "runbook",
+      "expect_ids": [
+        "rb-kafka-lag"
+      ],
+      "notes": "rb-kafka-lag 'Order queue consumer lag' RUNBOOK_FOR accounting and sym-lag-queue. Derived rb-derived-73947d9c45 covers sym-lag-queue; optional."
+    },
+    {
+      "id": "H37",
+      "question": "are there active decisions where everyone who made them has left?",
+      "kind": "knowledge_health",
+      "expect_ids": [
+        "ADR-004",
+        "p-019"
+      ],
+      "notes": "Active decisions with all DECIDED people inactive: ADR-004 (only decider p-019, active=false). ADR-009 deciders also all left (p-025) but it is superseded, not active. ADR-012/013/021 have active deciders."
+    },
+    {
+      "id": "H38",
+      "question": "which services changed hands and still have no runbook since the handover?",
+      "kind": "knowledge_health",
+      "expect_ids": [
+        "ad",
+        "fraud-detection"
+      ],
+      "notes": "OWNED_AT with a closed period: ad (team-storefront -> team-growth 2026-08-31) and fraud-detection (team-payments -> team-platform 2026-08-06). Neither has any Runbook RUNBOOK_FOR it (count 0)."
+    },
+    {
+      "id": "H39",
+      "question": "who owns the billing-gateway service?",
+      "kind": "unanswerable",
+      "expect_ids": [],
+      "notes": "No node billing-gateway (or anything named billing) in tenant_acme; the honest answer is that the graph does not know. Expect no citations."
+    },
+    {
+      "id": "H40",
+      "question": "what did we decide about GDPR data retention for customer records?",
+      "kind": "unanswerable",
+      "expect_ids": [],
+      "notes": "The 5 Decision nodes are ADR-004/009/012/013/021 (email, catalog migrations, payment timeout/retries); none is about data retention. Expect a decline with no citations."
+    }
+  ]
+}

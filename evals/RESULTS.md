@@ -164,7 +164,17 @@ TR ranks every change in the window by its measured excess, with no graph. Rerun
 
 ## Company brain on paraphrased questions (not a blind set)
 
-Original wording: 33/33 (90–100 %) correct, citation precision 0.3118. Paraphrased: 17/33 (35–68 %) correct (18 routed to the expected intent; 22 with every expected citation whatever the intent label), citation precision 0.2983.
+Original wording: 33/33 (90–100 %) correct, citation precision 0.3118. Paraphrased: 30/33 (76–97 %) correct (30 routed to the expected intent; 30 with every expected citation whatever the intent label), citation precision 0.2935.
+
+## Company brain on blind sets (written by agents that never saw the router)
+
+| Router | Set 1 | Set 2 |
+|---|---|---|
+| keyword (before) | 25/40 (47–76 %) | 19/40 (33–62 %) |
+| graph-native only | 23/40 (42–71 %) | not scored |
+| hybrid (shipped) | 25/40 (47–76 %) | 24/40 (45–74 %) |
+
+Set 1 informed the hybrid's design (it is no longer blind for the hybrid); set 2 was written before the hybrid was scored, under the pre-registered rule in evals/PREREGISTRATION.md.
 
 ## Product checks
 
