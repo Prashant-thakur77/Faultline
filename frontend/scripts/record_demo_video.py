@@ -768,7 +768,8 @@ def record(a: argparse.Namespace, work: Path, segs: list[Seg], llm: dict, issue:
 
         # ---------------- run: the hero incident, live from the launcher
         d.begin("run")
-        d.glide(page.locator("#run"), "start", 900)
+        d.go(f"{ui}/?tenant={a.tenant}#run")   # the launcher lives on the home page
+        d.glide(page.locator("#run"), "start", 600)
         d.click(run_btn)
         page.wait_for_url(re.compile(rf"/incidents/inc-{a.scenario.lower()}-"), timeout=90_000)
         d.reapply()
@@ -884,8 +885,10 @@ def record(a: argparse.Namespace, work: Path, segs: list[Seg], llm: dict, issue:
                 raise fail(f"could not enter the approver key ({type(e).__name__}; value not shown)") from None
         d.at_word("opens a real pull request", lead=0.8)
         d.click(L.plan.get_by_role("button", name="Approve this exact action"))
+        d.show(L.plan, "start")   # keep the plan card in view while GitHub merges (the room re-flows around it)
         big = L.plan.locator("[data-verdict]").first
         expect(big).to_be_visible(timeout=240_000 if key else 60_000)
+        d.show(big, "center")
         status = L.plan.get_by_role("status").filter(has_text=re.compile(r"write-back verified \d+\/\d+"))
         expect(status).to_be_visible(timeout=240_000 if key else 60_000)
         verdict = big.get_attribute("data-verdict")
@@ -899,7 +902,7 @@ def record(a: argparse.Namespace, work: Path, segs: list[Seg], llm: dict, issue:
             raise fail(f"APPLIED without a second channel on the page: {chan!r}")
         facts.update(verdict=verdict, writeback=wb.group(1))
         d.at_word("Applied", lead=0.2)
-        d.show(L.plan.get_by_role("list", name="Action path after approval"), "center")
+        d.show(big, "center")
         d.flash(big)
         d.at_word("writes the decision back", lead=0.2)
         d.show(status, "center")
@@ -1007,8 +1010,9 @@ def find_offset(webm: Path, marks: dict[str, float]) -> float:
     if est < 0:
         raise fail(f"the video is shorter than the take ({est:.2f} s); frames were lost")
     ff = shutil.which("ffmpeg") or "/usr/bin/ffmpeg"
-    lo = max(0.0, est + marks["sync"] - 4)
-    r = subprocess.run([ff, "-v", "error", "-ss", f"{lo:.3f}", "-t", "8", "-i", str(webm), "-vf",
+    # search from the start: the end estimate can be seconds off (frames flushed after close, GPU start-up)
+    lo, span = 0.0, max(8.0, est + marks["sync"] + 6)
+    r = subprocess.run([ff, "-v", "error", "-ss", f"{lo:.3f}", "-t", f"{span:.3f}", "-i", str(webm), "-vf",
                         "crop=24:24:4:4,signalstats,metadata=print:key=lavfi.signalstats.YAVG:file=-", "-f", "null", "-"],
                        capture_output=True, text=True)
     t = None
@@ -1170,7 +1174,9 @@ def reencode(meta_path: Path, out: Path, gif: bool) -> int:
     webm, ndir = Path(m["webm"]), Path(m.get("narration") or ROOT / "tmp" / "narration")
     segs, _, _ = load_narration(ndir)
     d = SimpleNamespace(actual={k: float(v) for k, v in m["segments"].items()}, offset=float(m["offset_s"]))
-    if "closed" not in m.get("marks", {}):  # takes recorded before end alignment: align on the end now
+    if "sync" in m.get("marks", {}) and "closed" in m["marks"]:   # find the sync marker again (the search improves)
+        d.offset = find_offset(webm, m["marks"])
+    elif "closed" not in m.get("marks", {}):  # takes recorded before end alignment: align on the end now
         d.offset = webm_duration(webm) - float(m["length_s"])
         print(f"re-aligned the trim on the video's end: offset {d.offset:.3f} s (was {m['offset_s']})")
     last = segs[-1]
