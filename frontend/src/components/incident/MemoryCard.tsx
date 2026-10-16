@@ -7,6 +7,7 @@ import { useTenant } from "@/lib/tenant";
 import type { FixHistoryRow, PlanResponse, Verdict } from "@/lib/types";
 import { StatusChip } from "@/components/StatusChip";
 import { PlanPending, TemplateButton } from "./ContainmentCard";
+import { ViaFalkor } from "@/components/cypher/ViaFalkor";
 import { Section } from "./Section";
 
 export const FIX_KIND_TEXT: Record<string, string> = {
@@ -59,10 +60,10 @@ export function MemoryCard({
     <Section
       id="memory"
       title="Memory"
-      aside={
+      via={
         mem ? (
-          <>
-            <TemplateButton
+          <span className="inline-flex flex-wrap items-center gap-1">
+            <ViaFalkor
               template="Q-MEM-4"
               label="recalled precedents"
               onOpen={() => onOpenTemplate("Q-MEM-4", "recalled precedents", "plan memory (GET /plan)", `${mem.recalled.length} recalled`)}
@@ -72,7 +73,7 @@ export function MemoryCard({
               label="fix history"
               onOpen={() => onOpenTemplate("Q-MEM-5", "fix history of the precedents", "plan memory (GET /plan)", `${mem.fix_history.length} fix kinds`)}
             />
-          </>
+          </span>
         ) : null
       }
     >

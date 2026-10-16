@@ -55,7 +55,7 @@ export function ContradictionsCard({
         >
           G8: {g8.check.detail || "the cause violates no active decision"}
           {g8.check.template ? (
-            <span className="ml-1 rounded bg-violet-500/15 px-1 font-mono text-[11px] text-violet-200">
+            <span className="ml-1 font-mono text-[11px] text-[var(--fl-subtle)]">
               {g8.check.template}
             </span>
           ) : null}
@@ -129,7 +129,7 @@ export function ContradictionsCard({
                     </StatusChip>
                   ) : null}
                   {g8?.check.template ? (
-                    <span className="ml-auto rounded bg-violet-500/15 px-1 font-mono text-[10px] text-violet-200">
+                    <span className="ml-auto font-mono text-[10px] text-[var(--fl-subtle)]">
                       {g8.check.template}
                     </span>
                   ) : null}

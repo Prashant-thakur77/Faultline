@@ -52,7 +52,7 @@ export function ProvenanceHeader({ titleId, descId, template, onOpenQuery }: Pro
       <button
         type="button"
         onClick={onOpenQuery}
-        className="mt-2 inline-flex min-h-7 items-center gap-1.5 rounded-md border border-violet-400/30 bg-violet-500/10 px-2 font-mono text-[11px] text-violet-200 outline-none transition-colors hover:border-violet-300/50 hover:bg-violet-500/20 focus-visible:ring-2 focus-visible:ring-sky-400"
+        className="mt-2 inline-flex min-h-7 items-center gap-1.5 rounded-md px-2 font-mono text-[11px] text-zinc-400 hover:text-zinc-100 hover:bg-white/[0.05] outline-none transition-colors focus-visible:ring-2 focus-visible:ring-sky-400"
       >
         <Code2 aria-hidden className="size-3.5" />
         {template}
@@ -398,7 +398,7 @@ function CallCard({
       >
         <span className="block font-mono text-[12px] text-zinc-100">{node.label}</span>
         <span className="mt-0.5 flex flex-wrap items-center gap-x-1.5 font-mono text-[11px]">
-          <span className="text-violet-200 [overflow-wrap:anywhere]">{node.template ?? "no template"}</span>
+          <span className="text-zinc-400 [overflow-wrap:anywhere]">{node.template ?? "no template"}</span>
           <span className="text-zinc-400">{fmtMs(node.ms)}</span>
         </span>
         <span className="sr-only">
@@ -455,7 +455,7 @@ function EvidenceCard({
         </span>
       ) : null}
       <span className="mt-1 flex flex-wrap items-center gap-1.5">
-        <span className="rounded bg-violet-500/15 px-1 font-mono text-[10px] text-violet-200 [overflow-wrap:anywhere]">
+        <span className="font-mono text-[10px] text-[var(--fl-subtle)] [overflow-wrap:anywhere]">
           {node.template ?? "no template"}
         </span>
         {!produced ? <span className="text-[10px] text-amber-200">no producing call recorded</span> : null}

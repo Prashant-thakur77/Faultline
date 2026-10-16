@@ -3,6 +3,8 @@
 import { AlarmClock, BellRing, CircleHelp, Clock, Users } from "lucide-react";
 import type { IncidentView, Obligations } from "@/lib/types";
 import { StatusChip } from "@/components/StatusChip";
+import { QUERY_ID_CLS } from "@/components/cypher/ViaFalkor";
+import { Disclosure } from "@/components/ui/Disclosure";
 import { Section } from "./Section";
 
 /** "~42 min" / "~3.5 h" / "~2.0 days"; "no breach projected" (display only: the server computed the minutes). */
@@ -70,13 +72,13 @@ export function ObligationsCard({ view, mode, onOpenEvidence }: { view: Incident
 
 export function ObligationsBody({ o, onOpenEvidence }: { o: Obligations; onOpenEvidence?: (id: string) => void }) {
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       <dl className="grid grid-cols-2 gap-2 text-xs">
-        <div className="rounded-md border border-zinc-800 bg-zinc-950/50 p-2">
+        <div className="rounded-lg bg-white/[0.03] px-3 py-2.5">
           <dt className="flex items-center gap-1 text-zinc-400">
             <AlarmClock aria-hidden className="size-3.5" /> time to SLO breach
           </dt>
-          <dd className="mt-0.5 font-mono text-sm text-zinc-50">{fmtBreach(o.breach?.breach_in_min)}</dd>
+          <dd className="mt-1 font-mono text-lg leading-tight text-zinc-50">{fmtBreach(o.breach?.breach_in_min)}</dd>
           {o.breach ? (
             <dd className="text-[11px] text-zinc-300">
               <span className="font-mono">{o.breach.slo}</span> on <span className="font-mono">{o.breach.service}</span>
@@ -84,15 +86,15 @@ export function ObligationsBody({ o, onOpenEvidence }: { o: Obligations; onOpenE
           ) : null}
           {o.page_within_min !== null ? <dd className="text-[11px] text-zinc-400">paging line: {o.page_within_min.toFixed(0)} min</dd> : null}
         </div>
-        <div className="rounded-md border border-zinc-800 bg-zinc-950/50 p-2">
+        <div className="rounded-lg bg-white/[0.03] px-3 py-2.5">
           <dt className="flex items-center gap-1 text-zinc-400">
             <Users aria-hidden className="size-3.5" /> customers reached
           </dt>
-          <dd className="mt-0.5 font-mono text-sm text-zinc-50">{o.customers_reached}</dd>
+          <dd className="mt-1 font-mono text-lg leading-tight text-zinc-50">{o.customers_reached}</dd>
           <dd className="text-[11px] text-zinc-300">{o.revenue_at_risk.toLocaleString("en-US", { maximumFractionDigits: 0 })} MRR at risk</dd>
         </div>
       </dl>
-      <p className="text-xs break-words text-zinc-300">
+      <p className="text-xs leading-relaxed break-words text-zinc-400">
         {o.reason}.
         {o.evidence_id && onOpenEvidence ? (
           <>
@@ -100,7 +102,7 @@ export function ObligationsBody({ o, onOpenEvidence }: { o: Obligations; onOpenE
             <button
               type="button"
               onClick={() => onOpenEvidence(o.evidence_id!)}
-              className="inline-flex min-h-6 items-center rounded bg-violet-500/15 px-1 font-mono text-[11px] text-violet-200 outline-none hover:bg-violet-500/25 focus-visible:ring-2 focus-visible:ring-violet-300"
+              className={QUERY_ID_CLS}
               aria-label={`Evidence ${o.evidence_id}: open the obligation clock's queries`}
             >
               {o.evidence_id}
@@ -108,6 +110,15 @@ export function ObligationsBody({ o, onOpenEvidence }: { o: Obligations; onOpenE
           </>
         ) : null}
       </p>
+      <Disclosure
+        size="xs"
+        summary={
+          <>
+            SLOs on the failure path
+            <span className="text-[var(--fl-subtle)]"> · {o.slos.length}</span>
+          </>
+        }
+      >
       {o.slos.length ? (
         <table className="w-full text-left text-xs">
           <caption className="sr-only">SLOs on the failing component and its blast radius, most burning first</caption>
@@ -123,7 +134,7 @@ export function ObligationsBody({ o, onOpenEvidence }: { o: Obligations; onOpenE
             {o.slos.slice(0, 8).map((s) => {
               const st = SLO_STATUS[s.status] ?? { tone: "na" as const, text: s.status };
               return (
-                <tr key={`${s.slo}:${s.service}`} className="border-t border-zinc-800 align-top">
+                <tr key={`${s.slo}:${s.service}`} className="border-t border-white/[0.06] align-top">
                   <td className="py-1 pr-2">
                     <span className="font-mono text-zinc-100">{s.slo}</span>
                     <span className="block text-[11px] text-zinc-400">{s.service}</span>
@@ -143,12 +154,13 @@ export function ObligationsBody({ o, onOpenEvidence }: { o: Obligations; onOpenE
         <p className="text-xs text-zinc-300">No SLO covers the failing component or its blast radius.</p>
       )}
       {o.slos.length > 8 ? <p className="text-[11px] text-zinc-400">+{o.slos.length - 8} more SLOs (in the report).</p> : null}
+      </Disclosure>
       {o.customers.length ? (
-        <details className="text-xs text-zinc-300">
-          <summary className="cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-sky-400">
-            {o.customers.length} customer{o.customers.length === 1 ? "" : "s"} reached, with the nearest failure path
-          </summary>
-          <ul className="mt-1 space-y-0.5">
+        <Disclosure
+          size="xs"
+          summary={`${o.customers.length} customer${o.customers.length === 1 ? "" : "s"} reached, with the nearest failure path`}
+        >
+          <ul className="space-y-0.5 text-xs text-zinc-300">
             {o.customers.map((c) => (
               <li key={c.customer} className="text-[11px]">
                 <span className="font-mono text-zinc-100">{c.customer}</span> {c.name ?? ""} ·{" "}
@@ -156,7 +168,7 @@ export function ObligationsBody({ o, onOpenEvidence }: { o: Obligations; onOpenE
               </li>
             ))}
           </ul>
-        </details>
+        </Disclosure>
       ) : null}
     </div>
   );

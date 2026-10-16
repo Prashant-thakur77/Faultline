@@ -31,6 +31,7 @@ import { CHECK_STATE_TEXT, checkState, originText, sortChecks, type CheckState, 
 import type { Crew, CrewCall, CrewMember, CrewStep, GateCheck, GateRun } from "@/lib/types";
 import { StatusChip } from "@/components/StatusChip";
 import { cn } from "@/lib/utils";
+import { Disclosure } from "@/components/ui/Disclosure";
 import { Section } from "./Section";
 
 /** Calls shown per lane before "show all" (the rest stay one click away, never dropped). */
@@ -101,24 +102,24 @@ function Board({ crew, gateRuns, onOpenCall, onOpenCheck, onOpenQuery }: CrewBoa
       id="crew"
       title="Crew"
       aside={
-        <span className="text-[11px] text-zinc-400">
+        <span className="text-xs text-[var(--fl-subtle)]">
           {crewCount} steps · {specCount} specialists
         </span>
       }
     >
-      <p className="mb-3 text-xs leading-relaxed text-zinc-300">
+      <p className="mb-4 text-xs leading-relaxed text-zinc-400">
         Every step below is a record in FalkorDB (
         {onOpenQuery ? (
           <button
             type="button"
             onClick={() => onOpenQuery(crew.template)}
-            className="rounded font-mono text-violet-200 underline decoration-violet-300/40 underline-offset-2 outline-none hover:decoration-violet-200 focus-visible:ring-2 focus-visible:ring-sky-400"
+            className="rounded font-mono text-zinc-200 underline decoration-zinc-500 underline-offset-2 outline-none hover:decoration-zinc-200 focus-visible:ring-2 focus-visible:ring-sky-400"
           >
             {crew.template}
             <span className="sr-only"> (open the Cypher panel)</span>
           </button>
         ) : (
-          <span className="font-mono text-violet-200">{crew.template}</span>
+          <span className="font-mono text-zinc-200">{crew.template}</span>
         )}
         ): who claimed it, what it ran, and who it handed to.
       </p>
@@ -194,7 +195,7 @@ function Lane({
   return (
     <article
       aria-labelledby={hid}
-      className="rounded-xl border border-[var(--fl-line)] bg-white/[0.015] p-3 transition-colors hover:border-white/[0.14]"
+      className="rounded-xl bg-white/[0.02] px-4 py-3 ring-1 ring-white/[0.05] transition-colors hover:ring-white/[0.1]"
     >
       <LaneHeader
         hid={hid}
@@ -206,26 +207,41 @@ function Lane({
       />
       {member?.job ? <p className="mt-0.5 text-xs text-zinc-400">{member.job}</p> : null}
       {step.summary ? <p className="mt-1.5 text-sm break-words text-zinc-100">{step.summary}</p> : null}
+      <Disclosure
+        className="mt-2"
+        size="xs"
+        summary={
+          <>
+            What it ran
+            <span className="text-[var(--fl-subtle)]">
+              {" "}
+              · {step.calls.length} graph call{step.calls.length === 1 ? "" : "s"}
+              {lane.specialists.length ? ` · ${lane.specialists.length} specialists` : ""}
+              {isGate && gateRuns.length ? ` · ${gateRuns.length} gate runs` : ""}
+            </span>
+          </>
+        }
+      >
       <Meta step={step} member={member} />
-      <CallList step={step} label={name} onOpenCall={onOpenCall} />
+        <CallList step={step} label={name} onOpenCall={onOpenCall} />
 
-      {lane.specialists.length ? (
-        <div className="mt-3">
-          <p className="mb-1.5 text-[11px] text-zinc-400">
-            Dispatched {lane.specialists.length} specialist{lane.specialists.length === 1 ? "" : "s"} in parallel
-          </p>
-          <SpecialistGrid specs={lane.specialists} t0={t0} reduced={reduced} onOpenCall={onOpenCall} />
-          {lane.handsTo.length ? (
-            <p className="mt-1.5 flex items-center gap-1 text-[11px] text-zinc-400">
-              <ArrowDown aria-hidden className="size-3.5 shrink-0" />
-              their reports converge; hands to <span className="text-zinc-200">{lane.handsTo.join(", ")}</span>
+        {lane.specialists.length ? (
+          <div className="mt-3">
+            <p className="mb-1.5 text-[11px] text-zinc-400">
+              Dispatched {lane.specialists.length} specialist{lane.specialists.length === 1 ? "" : "s"} in parallel
             </p>
-          ) : null}
-        </div>
-      ) : null}
+            <SpecialistGrid specs={lane.specialists} t0={t0} reduced={reduced} onOpenCall={onOpenCall} />
+            {lane.handsTo.length ? (
+              <p className="mt-1.5 flex items-center gap-1 text-[11px] text-zinc-400">
+                <ArrowDown aria-hidden className="size-3.5 shrink-0" />
+                their reports converge; hands to <span className="text-zinc-200">{lane.handsTo.join(", ")}</span>
+              </p>
+            ) : null}
+          </div>
+        ) : null}
 
-      {isGate ? <GateRuns runs={gateRuns} onOpenCheck={onOpenCheck} /> : null}
-
+        {isGate ? <GateRuns runs={gateRuns} onOpenCheck={onOpenCheck} /> : null}
+      </Disclosure>
       {lane.handsTo.length && !lane.specialists.length ? (
         <p className="mt-2 flex items-center gap-1 text-[11px] text-zinc-400">
           <ArrowDown aria-hidden className="size-3.5 shrink-0" />
@@ -343,7 +359,7 @@ function CallList({
               className="inline-flex max-w-full flex-wrap items-center gap-x-1.5 rounded-md border border-white/[0.08] bg-white/[0.03] px-1.5 py-0.5 text-left font-mono text-[11px] leading-4 text-zinc-300 outline-none transition-colors hover:border-white/[0.2] hover:bg-white/[0.06] focus-visible:ring-2 focus-visible:ring-sky-400"
             >
               <span className="text-zinc-100">{c.tool}</span>
-              <span className="text-violet-200 [overflow-wrap:anywhere]">{c.template ?? "no template"}</span>
+              <span className="text-zinc-400 [overflow-wrap:anywhere]">{c.template ?? "no template"}</span>
               <span className="text-zinc-400">{fmtMs(c.ms)}</span>
               <span className="sr-only">. Open the Cypher panel{c.template ? ` for ${c.template}` : ""}.</span>
             </button>
@@ -584,7 +600,7 @@ function CheckButton({
         </span>
         {check.detail ? <> {check.detail}</> : null}
         {check.template ? (
-          <span className="ml-1 rounded bg-violet-500/15 px-1 font-mono text-[10px] text-violet-200">{check.template}</span>
+          <span className="ml-1 font-mono text-[10px] text-[var(--fl-subtle)]">{check.template}</span>
         ) : null}
         <span className="sr-only"> Open the Cypher panel.</span>
       </span>

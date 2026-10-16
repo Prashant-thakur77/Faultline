@@ -8,6 +8,7 @@ import { sortTimeline, timelineFromView } from "@/hooks/useIncident";
 import { fmtMs } from "@/lib/format";
 import { blastAt, describeEvent, loadReplay, planAt, ReplayError, viewAt, type ReplayBundle } from "@/lib/replay";
 import { Button } from "@/components/ui/button";
+import { Disclosure } from "@/components/ui/Disclosure";
 import { StatusChip } from "@/components/StatusChip";
 import { IncidentRoomLayout, type NotRecorded } from "@/components/incident/IncidentRoomLayout";
 import { cn } from "@/lib/utils";
@@ -63,8 +64,9 @@ export function ReplayRoom({ name }: { name: string }) {
 function Player({ bundle }: { bundle: ReplayBundle }) {
   const reduced = useReducedMotion();
   const total = bundle.events.length;
-  const [cursor, setCursor] = useState(0);
-  const [playing, setPlaying] = useState(true);
+  // Open on the finished room (the verdict, the proof and the plan): the story first, the playback on demand.
+  const [cursor, setCursor] = useState(total);
+  const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState<(typeof SPEEDS)[number]>(1);
   const isPlaying = playing && !reduced && cursor < total;
 
@@ -90,17 +92,26 @@ function Player({ bundle }: { bundle: ReplayBundle }) {
       : `The run's own graph (${bundle.graph.graph}), exported with the recording`
     : null;
 
+  const atEnd = cursor >= total;
   const controls = (
-    <div className="border-b border-sky-500/40 bg-sky-950/40 px-4 py-2">
+    <div className="border-b border-white/[0.06] bg-white/[0.015] px-4 py-2.5 sm:px-6">
       <div className="mx-auto flex max-w-[1920px] flex-wrap items-center gap-x-3 gap-y-2">
         <StatusChip tone="info" icon={Film}>
-          Recorded run · static files
+          Recorded run · static files · no API key
         </StatusChip>
+        <Button
+          size="sm"
+          onClick={() => {
+            setCursor(0);
+            setPlaying(!reduced);
+          }}
+          className="rounded-full"
+        >
+          <SkipBack aria-hidden />
+          {reduced ? "Step from the start" : "Play from the start"}
+        </Button>
         <div role="group" aria-label="Playback" className="flex items-center gap-1">
-          <Button size="icon-sm" variant="outline" onClick={() => setCursor(0)} aria-label="Restart">
-            <SkipBack aria-hidden />
-          </Button>
-          <Button size="icon-sm" variant="outline" onClick={() => {
+          <Button size="icon-sm" variant="ghost" onClick={() => {
               setPlaying(false); // stepping is manual, like the slider: do not resume playback
               setCursor((c) => Math.max(0, c - 1));
             }}
@@ -109,30 +120,32 @@ function Player({ bundle }: { bundle: ReplayBundle }) {
             <StepBack aria-hidden />
           </Button>
           <Button
-            size="sm"
+            size="icon-sm"
+            variant="ghost"
             onClick={() => {
-              if (cursor >= total) setCursor(0);
+              if (atEnd) setCursor(0);
               setPlaying((p) => !(p && cursor < total));
             }}
-            disabled={reduced && cursor >= total}
+            disabled={reduced}
+            aria-label={isPlaying ? "Pause" : atEnd ? "Play again" : "Play"}
+            title={reduced ? "Reduced motion is on: step with the buttons or the slider" : undefined}
           >
             {isPlaying ? <Pause aria-hidden /> : <Play aria-hidden />}
-            {isPlaying ? "Pause" : cursor >= total ? "Play again" : "Play"}
           </Button>
-          <Button size="icon-sm" variant="outline" onClick={() => {
+          <Button size="icon-sm" variant="ghost" onClick={() => {
               setPlaying(false);
               setCursor((c) => Math.min(total, c + 1));
             }}
-            disabled={cursor >= total}
+            disabled={atEnd}
             aria-label="Next event">
             <StepForward aria-hidden />
           </Button>
-          <Button size="icon-sm" variant="outline" onClick={() => setCursor(total)} disabled={cursor >= total} aria-label="Jump to the end">
+          <Button size="icon-sm" variant="ghost" onClick={() => { setPlaying(false); setCursor(total); }} disabled={atEnd} aria-label="Jump to the end">
             <SkipForward aria-hidden />
           </Button>
         </div>
-        <div role="radiogroup" aria-label="Playback speed" className="flex items-center gap-0.5">
-          <FastForward aria-hidden className="mr-1 size-3.5 text-zinc-400" />
+        <div role="radiogroup" aria-label="Playback speed" className="flex items-center gap-0.5 rounded-full bg-white/[0.04] p-0.5 ring-1 ring-white/[0.06]">
+          <FastForward aria-hidden className="mx-1 size-3.5 text-[var(--fl-subtle)]" />
           {SPEEDS.map((s) => (
             <button
               key={s}
@@ -141,17 +154,17 @@ function Player({ bundle }: { bundle: ReplayBundle }) {
               aria-checked={speed === s}
               onClick={() => setSpeed(s)}
               className={cn(
-                "rounded px-1.5 py-0.5 font-mono text-xs outline-none focus-visible:ring-2 focus-visible:ring-sky-400",
-                speed === s ? "bg-sky-500/30 font-semibold text-sky-50" : "text-zinc-300 hover:bg-zinc-800",
+                "rounded-full px-1.5 py-0.5 font-mono text-[11px] outline-none transition-colors focus-visible:ring-2 focus-visible:ring-sky-400",
+                speed === s ? "bg-white/[0.1] text-zinc-50" : "text-zinc-400 hover:text-zinc-100",
               )}
             >
               {s}×
             </button>
           ))}
         </div>
-        <label className="flex min-w-[220px] flex-1 items-center gap-2 text-xs text-zinc-300">
+        <label className="flex min-w-[220px] flex-1 items-center gap-2 text-xs text-zinc-400">
           <span className="whitespace-nowrap">
-            Event <span className="font-mono text-zinc-50">{cursor}</span> / {total}
+            Event <span className="font-mono text-zinc-100">{cursor}</span> / {total}
           </span>
           <input
             type="range"
@@ -162,18 +175,20 @@ function Player({ bundle }: { bundle: ReplayBundle }) {
               setPlaying(false);
               setCursor(Number(e.target.value));
             }}
-            className="w-full accent-sky-400"
+            className="w-full accent-zinc-300"
             aria-valuetext={`event ${cursor} of ${total}${cursor ? `: ${announcement}` : ""}`}
           />
         </label>
-        <p className="w-full text-[11px] text-zinc-400">
-          1× = one recorded event every {BASE_MS / 1000} s; the recorded run took {fmtMs(span)} end to end.
-          {reduced ? " Reduced motion is on: playback is manual (use the step buttons or the slider)." : ""} Hypotheses and
-          the report appear when the gate decides (the export has no timestamps for them); the plan, the action and its
-          verdict appear as their stages play.
-          {bundle.templates ? "" : " This recording has no template snapshot, so Cypher text is unavailable."}
-          {rec ? ` Recorded ${rec.scenario} through ${rec.final_stage} with ${rec.github} GitHub (${rec.investigator}).` : ""}
-        </p>
+        <Disclosure size="xs" defaultOpen={false} summary="About this recording" className="w-full">
+          <p className="max-w-4xl text-[11px] leading-relaxed text-zinc-400">
+            1× = one recorded event every {BASE_MS / 1000} s; the recorded run took {fmtMs(span)} end to end.
+            {reduced ? " Reduced motion is on: playback is manual (use the step buttons or the slider)." : ""} Hypotheses and
+            the report appear when the gate decides (the export has no timestamps for them); the plan, the action and its
+            verdict appear as their stages play.
+            {bundle.templates ? "" : " This recording has no template snapshot, so Cypher text is unavailable."}
+            {rec ? ` Recorded ${rec.scenario} through ${rec.final_stage} with ${rec.github} GitHub (${rec.investigator}).` : ""}
+          </p>
+        </Disclosure>
       </div>
     </div>
   );

@@ -10,6 +10,7 @@ import type { Hypothesis, IncidentView, ToolCallRow } from "@/lib/types";
 import { StatusChip } from "@/components/StatusChip";
 import { EvidenceChip, uniq } from "./EvidenceChip";
 import { NaiveContrast } from "./NaiveContrast";
+import { ViaFalkor } from "@/components/cypher/ViaFalkor";
 import { Section } from "./Section";
 
 const STATUS_ORDER = { confirmed: 0, open: 1, unresolved: 2, eliminated: 3 } as const;
@@ -24,11 +25,14 @@ export function HypothesesCard({
   onOpenToolCall,
   onOpenEvidence,
   mode = "live",
+  onOpenTemplate,
 }: {
   view: IncidentView;
   onOpenToolCall: (tc: ToolCallRow) => void;
   onOpenEvidence: (id: string) => void;
   mode?: "live" | "replay";
+  /** Opens a template in the Cypher panel (the room's actions; offline-aware in replay). */
+  onOpenTemplate?: (template: string, title: string, origin: string) => void;
 }) {
   const [lens, setLens] = useState<"faultline" | "naive">("faultline");
   const tenant = useTenant();
@@ -46,29 +50,17 @@ export function HypothesesCard({
   const maxScore = Math.max(1, ...hyps.map((h) => h.score ?? 0));
 
   return (
-    <Section id="suspects" title="Blast radius & suspects">
-      {blastOnce.length ? (
-        <ul className="mb-3 space-y-1">
-          {blastOnce.map((t) => (
-            <li key={`${t.id}:${t.at}`} className="flex items-center gap-2 text-xs">
-              <Radar aria-hidden className="size-3.5 text-amber-300" />
-              <span className="font-mono text-zinc-200">{t.tool}</span>
-              <span className="text-zinc-300">{t.summary}</span>
-              {t.template ? (
-                <button
-                  type="button"
-                  onClick={() => onOpenToolCall(t)}
-                  className="ml-auto inline-flex min-h-6 items-center rounded bg-violet-500/15 px-1 font-mono text-[11px] text-violet-200 outline-none hover:bg-violet-500/25 focus-visible:ring-2 focus-visible:ring-violet-300"
-                  aria-label={`${t.template}: open the Cypher panel for ${t.tool}`}
-                >
-                  {t.template}
-                </button>
-              ) : null}
-            </li>
-          ))}
-        </ul>
-      ) : null}
-      <div role="group" aria-label="Suspects view" className="mb-2 flex w-fit overflow-hidden rounded-md border border-zinc-700">
+    <Section
+      id="suspects"
+      title="Suspects"
+      aside={hyps.length ? <span className="text-xs text-[var(--fl-subtle)]">{hyps.length} ranked</span> : null}
+      via={
+        onOpenTemplate ? (
+          <ViaFalkor template="Q-HYP-1" label="the suspects" onOpen={() => onOpenTemplate("Q-HYP-1", "suspects of this incident", "suspects card")} />
+        ) : null
+      }
+    >
+      <div role="group" aria-label="Suspects view" className="mb-3 flex w-fit rounded-full bg-white/[0.04] p-0.5 ring-1 ring-white/[0.06]">
         <LensButton active={lens === "faultline"} onClick={() => setLens("faultline")} icon={Scale} text="Faultline (gate)" />
         <LensButton active={lens === "naive"} onClick={() => setLens("naive")} icon={Clock3} text="Naive recency" />
       </div>
@@ -105,12 +97,25 @@ export function HypothesesCard({
             : "No hypotheses recorded yet for this incident."}
         </p>
       ) : (
-        <ul className="space-y-2">
+        <ul className="divide-y divide-white/[0.06]">
           {hyps.map((h) => (
             <HypothesisRow key={h.id} h={h} maxScore={maxScore} onOpenEvidence={onOpenEvidence} />
           ))}
         </ul>
       )}
+      {blastOnce.length ? (
+        <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1 border-t border-white/[0.06] pt-3" aria-label="Scope queries">
+          {blastOnce.map((t) => (
+            <li key={`${t.id}:${t.at}`} className="flex items-center gap-1.5 text-xs text-zinc-400">
+              <Radar aria-hidden className="size-3.5 text-[var(--fl-subtle)]" />
+              <span>
+                {t.tool.replaceAll("_", " ")}: <span className="text-zinc-300">{t.summary}</span>
+              </span>
+              {t.template ? <ViaFalkor compact template={t.template} label={t.tool} onOpen={() => onOpenToolCall(t)} /> : null}
+            </li>
+          ))}
+        </ul>
+      ) : null}
     </Section>
   );
 }
@@ -127,26 +132,30 @@ function HypothesisRow({
   const meta = HYP_META[h.status] ?? { tone: "na" as const, text: h.status };
   const score = h.score ?? 0;
   const pct = Math.max(0, Math.min(100, (score / maxScore) * 100));
+  const cause = h.status === "confirmed";
   return (
-    <li className="rounded-md border border-zinc-800 bg-zinc-950/50 p-2">
+    <li className="py-3 first:pt-0 last:pb-0">
       <div className="flex flex-wrap items-center gap-2">
-        <span className="font-mono text-sm text-zinc-50">{h.cause}</span>
+        <span className={cn("font-mono text-sm", cause ? "font-semibold text-zinc-50" : h.status === "eliminated" ? "text-zinc-400" : "text-zinc-100")}>
+          {h.cause}
+        </span>
         <StatusChip tone={meta.tone}>{meta.text}</StatusChip>
-        <span className="rounded border border-zinc-600 px-1 text-[11px] text-zinc-300" title="who proposed this hypothesis">
+        <span className="text-[11px] text-[var(--fl-subtle)]" title="who proposed this hypothesis">
           origin: {h.origin}
         </span>
-      </div>
-      <div className="mt-1.5 flex items-center gap-2">
-        <div className="h-1.5 flex-1 overflow-hidden rounded bg-zinc-800" aria-hidden>
-          <div className="h-full rounded bg-sky-400" style={{ width: `${pct}%` }} />
-        </div>
-        <span className="font-mono text-[11px] text-zinc-300">
-          score {h.score === null ? "–" : score.toFixed(2)}
+        <span className="ml-auto flex items-center gap-2">
+          <span className="h-1 w-16 overflow-hidden rounded-full bg-white/[0.06]" aria-hidden>
+            <span
+              className={cn("block h-full rounded-full", cause ? "bg-[var(--fl-ember)]" : "bg-zinc-500")}
+              style={{ width: `${pct}%` }}
+            />
+          </span>
+          <span className="font-mono text-[11px] text-zinc-400">score {h.score === null ? "\u2013" : score.toFixed(2)}</span>
         </span>
       </div>
-      {h.reason ? <p className="mt-1 text-xs break-words text-zinc-300">{h.reason}</p> : null}
+      {h.reason ? <p className="mt-1 text-xs leading-relaxed break-words text-zinc-400">{h.reason}</p> : null}
       {h.supports.length || h.refutes.length ? (
-        <div className="mt-1 flex flex-wrap gap-1">
+        <div className="mt-1 -ml-1 flex flex-wrap gap-x-1">
           {uniq(h.supports).map((e) => (
             <EvidenceChip key={`s-${e}`} id={e} relation="supports" onOpen={onOpenEvidence} />
           ))}
@@ -166,8 +175,8 @@ function LensButton({ active, onClick, icon: Icon, text }: { active: boolean; on
       aria-pressed={active}
       onClick={onClick}
       className={cn(
-        "inline-flex min-h-7 items-center gap-1 px-2 py-1 text-xs font-medium outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-inset",
-        active ? "bg-sky-500/20 text-sky-100" : "text-zinc-300 hover:bg-zinc-800",
+        "inline-flex min-h-7 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-sky-400",
+        active ? "bg-white/[0.1] text-zinc-50" : "text-zinc-400 hover:text-zinc-100",
       )}
     >
       <Icon aria-hidden className="size-3.5" />

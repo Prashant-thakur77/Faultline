@@ -5,6 +5,7 @@ import { abstentionOf, gateCode, outcomeMeta, type Abstention } from "@/lib/gate
 import type { IncidentView } from "@/lib/types";
 import { StatusChip } from "@/components/StatusChip";
 import { EvidenceChip, uniq } from "./EvidenceChip";
+import { Disclosure } from "@/components/ui/Disclosure";
 import { Section } from "./Section";
 
 /** Root cause: outcome, the proven mechanism, proven claims (solid) and inferred claims (dashed). */
@@ -43,29 +44,29 @@ export function RootCauseCard({
         </StatusChip>
       }
     >
-      <p className="text-xs text-zinc-300">
-        {abstain ? "no cause accepted: no change explains the symptom" : m.meaning}.
-      </p>
       {r.cause_id ? (
-        <div className="mt-2">
-          <p className="text-xs text-zinc-400">Cause</p>
-          <p className="font-mono text-base font-semibold text-red-300">{r.cause_id}</p>
-          {whyAction ? <div className="mt-2">{whyAction}</div> : null}
+        <div>
+          <p className="text-xs text-[var(--fl-subtle)]">Cause</p>
+          <p className="mt-0.5 font-mono text-2xl font-semibold tracking-tight text-[var(--fl-ember)]">{r.cause_id}</p>
+          <p className="mt-1 text-xs text-zinc-400">{m.meaning}.</p>
+          {whyAction ? <div className="mt-3">{whyAction}</div> : null}
         </div>
       ) : abstain ? (
         <AbstainBlock a={abstain} onOpenNode={onOpenNode} />
       ) : r.outcome === "NO_INCIDENT" ? (
-        <p className="mt-2 text-sm text-zinc-200">
+        <p className="text-sm text-zinc-200">
           Nothing to blame: the measurements are back in band (N1) and no change in the window reaches an anomalous node
           (N2). Both are proven below.
         </p>
       ) : (
-        <p className="mt-2 text-sm text-zinc-300">No cause was accepted for this incident.</p>
+        <p className="text-sm text-zinc-300">
+          {abstain ? "No cause accepted: no change explains the symptom." : `No cause was accepted for this incident. ${m.meaning}.`}
+        </p>
       )}
 
       {r.mechanism.length ? (
-        <div className="mt-2">
-          <p className="mb-1 text-xs text-zinc-400">Mechanism (G2 chain)</p>
+        <div className="mt-4">
+          <p className="mb-1.5 text-xs text-[var(--fl-subtle)]">Mechanism (the G2 path)</p>
           <ol className="flex flex-wrap items-center gap-1" aria-label="Mechanism chain">
             {r.mechanism.map((id, i) => (
               <li key={id} className="flex items-center gap-1">
@@ -74,8 +75,8 @@ export function RootCauseCard({
                   type="button"
                   onClick={() => onOpenNode(id)}
                   className={
-                    "inline-flex min-h-6 items-center rounded border px-1 font-mono text-[11px] outline-none hover:bg-zinc-800 focus-visible:ring-2 focus-visible:ring-sky-400 " +
-                    (i === 0 ? "border-red-400 text-red-200" : "border-amber-400/60 text-amber-100")
+                    "inline-flex min-h-7 items-center rounded-md px-2 font-mono text-xs outline-none transition-colors hover:bg-white/[0.08] focus-visible:ring-2 focus-visible:ring-sky-400 " +
+                    (i === 0 ? "bg-[color-mix(in_oklch,var(--fl-ember)_16%,transparent)] text-orange-100" : "bg-white/[0.05] text-zinc-100")
                   }
                 >
                   {id}
@@ -86,61 +87,66 @@ export function RootCauseCard({
         </div>
       ) : null}
 
-      <div className="mt-3">
-        <h3 className="mb-1 text-xs font-semibold tracking-wide text-zinc-300 uppercase">
-          Proven <span className="font-normal normal-case text-zinc-400">(solid: a gate check passed)</span>
-        </h3>
-        {r.proven.length ? (
-          <ul className="space-y-1.5">
+      {r.proven.length ? (
+        <Disclosure
+          className="mt-4 border-t border-white/[0.06] pt-3"
+          summary={
+            <>
+              <span className="text-emerald-300" aria-hidden>
+                ✓{" "}
+              </span>
+              Proven by {r.proven.length} gate check{r.proven.length === 1 ? "" : "s"}
+            </>
+          }
+        >
+          <ul className="space-y-2" aria-label="Proven claims (a gate check passed)">
             {r.proven.map((p, i) => (
-              <li key={i} className="rounded-md border border-solid border-emerald-500/50 bg-emerald-500/5 p-2">
-                <div className="flex items-start gap-2">
-                  <span className="shrink-0 rounded bg-emerald-500/15 px-1 font-mono text-[11px] text-emerald-200">
-                    {gateCode(p.check)}
-                  </span>
-                  <p className="text-xs break-words text-zinc-100">{p.claim}</p>
+              <li key={i} className="flex items-start gap-2.5">
+                <span className="mt-px w-8 shrink-0 font-mono text-[11px] text-emerald-300">{gateCode(p.check)}</span>
+                <div className="min-w-0">
+                  <p className="text-xs break-words text-zinc-200">{p.claim}</p>
+                  {p.evidence_ids.length ? (
+                    <div className="-ml-1 flex flex-wrap gap-x-1">
+                      {uniq(p.evidence_ids).map((e) => (
+                        <EvidenceChip key={e} id={e} onOpen={onOpenEvidence} />
+                      ))}
+                    </div>
+                  ) : null}
                 </div>
-                {p.evidence_ids.length ? (
-                  <div className="mt-1 flex flex-wrap gap-1 pl-8">
-                    {uniq(p.evidence_ids).map((e) => (
-                      <EvidenceChip key={e} id={e} onOpen={onOpenEvidence} />
-                    ))}
-                  </div>
-                ) : null}
               </li>
             ))}
           </ul>
-        ) : (
-          <p className="text-xs text-zinc-300">No proven claims in this report.</p>
-        )}
-      </div>
+        </Disclosure>
+      ) : (
+        <p className="mt-4 text-xs text-zinc-400">No proven claims in this report.</p>
+      )}
 
-      <div className="mt-3">
-        <h3 className="mb-1 text-xs font-semibold tracking-wide text-zinc-300 uppercase">
-          Inferred <span className="font-normal normal-case text-zinc-400">(dashed: not proven by a gate check)</span>
-        </h3>
-        {r.inferred.length ? (
+      {r.inferred.length ? (
+        <div className="mt-4">
+          <h3 className="mb-1.5 text-xs font-medium text-zinc-400">
+            Inferred <span className="font-normal text-[var(--fl-subtle)]">(dashed: not proven by a gate check)</span>
+          </h3>
           <ul className="space-y-1.5">
             {r.inferred.map((p, i) => {
               // Q-COUPLE-1: a G2-rejected suspect whose history says it co-fails with a symptom; not a claim.
               const missingEdge = /^possible missing edge\b/i.test(p.claim);
               return (
-                <li key={i} className="rounded-md border border-dashed border-amber-400/60 p-2">
+                <li key={i} className="rounded-lg border border-dashed border-amber-400/50 px-3 py-2">
                   {missingEdge ? (
                     <StatusChip tone="warn" icon={Unlink} className="mb-1">
                       possible missing edge: confirm and add it
                     </StatusChip>
                   ) : null}
                   <p className="text-xs break-words text-zinc-100">{p.claim}</p>
-                  <p className="mt-0.5 text-[11px] text-zinc-400">basis: {p.basis}</p>
+                  <p className="mt-0.5 text-[11px] text-[var(--fl-subtle)]">basis: {p.basis}</p>
                 </li>
               );
             })}
           </ul>
-        ) : (
-          <p className="text-xs text-zinc-300">None: the report states nothing beyond what the gate proved.</p>
-        )}
-      </div>
+        </div>
+      ) : (
+        <p className="mt-2 text-xs text-[var(--fl-subtle)]">Nothing inferred: the report states only what the gate proved.</p>
+      )}
     </Section>
   );
 }

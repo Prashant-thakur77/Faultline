@@ -4,8 +4,9 @@ import { Megaphone, PhoneCall, TriangleAlert } from "lucide-react";
 import { fmtValue } from "@/lib/format";
 import type { PlanItem, PlanResponse } from "@/lib/types";
 import { StatusChip } from "@/components/StatusChip";
-import { PlanPending, TemplateButton } from "./ContainmentCard";
+import { PlanPending } from "./ContainmentCard";
 import { FieldAbsent } from "./ReportBits";
+import { ViaFalkor } from "@/components/cypher/ViaFalkor";
 import { Section } from "./Section";
 
 /**
@@ -34,13 +35,13 @@ export function NotifyCard({
     <Section
       id="notify"
       title="Notify (who to tell)"
+      via={item ? <ViaFalkor template={item.template} label="the notify list" onOpen={() => onOpenPlanItem(item, "who to notify")} /> : null}
       aside={
         item ? (
           <>
             <StatusChip tone="info" icon={Megaphone}>
               {rows.length} team{rows.length === 1 ? "" : "s"}
             </StatusChip>
-            <TemplateButton template={item.template} label="the notify list" onOpen={() => onOpenPlanItem(item, "who to notify")} />
           </>
         ) : null
       }

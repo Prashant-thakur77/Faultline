@@ -4,8 +4,9 @@ import { ArrowRightLeft, History, UserRound } from "lucide-react";
 import { fmtTime } from "@/lib/format";
 import type { IncidentView, PlanItem, PlanResponse } from "@/lib/types";
 import { StatusChip } from "@/components/StatusChip";
-import { PlanPending, TemplateButton } from "./ContainmentCard";
+import { PlanPending } from "./ContainmentCard";
 import { FieldAbsent } from "./ReportBits";
+import { ViaFalkor } from "@/components/cypher/ViaFalkor";
 import { Section } from "./Section";
 import type { IncidentActions } from "./useIncidentActions";
 
@@ -124,6 +125,7 @@ export function OwnershipCard({
     <Section
       id="ownership"
       title="Ownership when the change shipped"
+      via={known ? <ViaFalkor template={item?.template ?? tc?.template ?? "Q-OWN-AT"} label="ownership over time" onOpen={open} /> : null}
       aside={
         known ? (
           <>
@@ -136,7 +138,6 @@ export function OwnershipCard({
             ) : (
               <StatusChip tone="na">no owner then</StatusChip>
             )}
-            <TemplateButton template={item?.template ?? tc?.template ?? "Q-OWN-AT"} label="ownership over time" onOpen={open} />
           </>
         ) : null
       }

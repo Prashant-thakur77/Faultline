@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Film } from "lucide-react";
+import { ArrowRight, Film } from "lucide-react";
 import { BASE_PATH, type ReplayManifest } from "@/lib/replay";
 import { outcomeMeta } from "@/lib/gate";
 import type { Outcome } from "@/lib/types";
@@ -23,16 +23,11 @@ export function ReplayIndex() {
   }, []);
 
   return (
-    <div className="mx-auto w-full max-w-3xl space-y-4 p-4">
-      <section className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
-        <h1 className="flex items-center gap-2 text-lg font-semibold text-zinc-50">
-          <Film aria-hidden className="size-5 text-sky-300" /> Recorded runs
-        </h1>
-        <p className="mt-1 text-sm text-zinc-300">
-          These replays play runs exported from the graph (examples/&lt;run&gt;/) as static files. They need no API key and
-          no backend.
-        </p>
-      </section>
+    <div className="mx-auto w-full max-w-[1000px] space-y-4 px-5 py-8 sm:px-8">
+      <p className="flex items-center gap-2 text-sm text-zinc-400">
+        <Film aria-hidden className="size-4 text-[var(--fl-subtle)]" />
+        Exported from FalkorDB (examples/&lt;run&gt;/) as static files: no API key, no backend.
+      </p>
       {error ? (
         <p role="alert" className="rounded-md border border-red-500/50 bg-red-500/10 p-3 text-sm text-red-100">
           Could not list the recorded runs: {error}
@@ -44,23 +39,36 @@ export function ReplayIndex() {
       ) : runs.length === 0 ? (
         <p className="text-sm text-zinc-300">No recorded runs are bundled with this build.</p>
       ) : (
-        <ul className="space-y-2">
+        <ul className="grid gap-4 sm:grid-cols-2">
           {runs.map((r) => {
             const m = outcomeMeta(r.outcome as Outcome);
             return (
-              <li key={r.name} className="rounded-lg border border-zinc-800 bg-zinc-900 p-3">
-                <div className="flex flex-wrap items-center gap-2">
-                  <Link
-                    href={`/replay/${encodeURIComponent(r.name)}`}
-                    className="rounded font-mono text-sm font-semibold text-sky-300 underline outline-none focus-visible:ring-2 focus-visible:ring-sky-400"
-                  >
-                    {r.name}
-                  </Link>
-                  <StatusChip tone={m.tone}>{m.text}</StatusChip>
-                  <span className="text-xs text-zinc-400">
-                    {r.incident} · cause <span className="font-mono text-zinc-200">{r.cause ?? "–"}</span> · {r.events} events
+              <li key={r.name}>
+                <Link
+                  href={`/replay/${encodeURIComponent(r.name)}`}
+                  className="fl-card fl-press group flex h-full flex-col gap-3 rounded-2xl px-5 py-5 outline-none focus-visible:ring-2 focus-visible:ring-sky-400"
+                >
+                  <span className="flex flex-wrap items-center gap-2">
+                    <span className="font-mono text-xs text-[var(--fl-subtle)]">{r.recorded?.scenario ?? r.name}</span>
+                    <StatusChip tone={m.tone}>{m.text}</StatusChip>
                   </span>
-                </div>
+                  <span className="text-lg font-[560] tracking-[-0.01em] text-zinc-50">
+                    {r.cause ? (
+                      <>
+                        Cause <span className="font-mono text-[var(--fl-ember)]">{r.cause}</span>
+                      </>
+                    ) : (
+                      r.name
+                    )}
+                  </span>
+                  <span className="text-xs text-[var(--fl-subtle)]">
+                    <span className="font-mono">{r.name}</span> · {r.incident} · {r.events} events
+                    {r.recorded ? ` · ended ${r.recorded.final_stage.toLowerCase()}` : ""}
+                  </span>
+                  <span className="mt-auto inline-flex items-center gap-1 text-sm text-zinc-200 group-hover:text-white">
+                    Watch the run <ArrowRight aria-hidden className="size-4 transition-transform group-hover:translate-x-0.5" />
+                  </span>
+                </Link>
               </li>
             );
           })}

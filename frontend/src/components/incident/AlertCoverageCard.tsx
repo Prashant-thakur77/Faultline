@@ -3,8 +3,8 @@
 import { BellOff, BellRing } from "lucide-react";
 import type { IncidentView } from "@/lib/types";
 import { StatusChip } from "@/components/StatusChip";
-import { TemplateButton } from "./ContainmentCard";
 import { FieldAbsent, fmtLag, NodeButton } from "./ReportBits";
+import { ViaFalkor } from "@/components/cypher/ViaFalkor";
 import { Section } from "./Section";
 import type { IncidentActions } from "./useIncidentActions";
 
@@ -53,11 +53,11 @@ export function AlertCoverageCard({
     <Section
       id="alerts"
       title="Why alerts missed it"
+      via={hops.length ? <ViaFalkor template={tc?.template ?? "Q-CHAIN-MON"} label="alert coverage along the chain" onOpen={open} /> : null}
       aside={
         hops.length ? (
           <>
             {chip}
-            <TemplateButton template={tc?.template ?? "Q-CHAIN-MON"} label="alert coverage along the chain" onOpen={open} />
           </>
         ) : null
       }

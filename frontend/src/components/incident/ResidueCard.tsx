@@ -3,8 +3,8 @@
 import { CircleAlert, Info, Scale } from "lucide-react";
 import type { IncidentView } from "@/lib/types";
 import { StatusChip } from "@/components/StatusChip";
-import { TemplateButton } from "./ContainmentCard";
 import { FieldAbsent, NodeButton } from "./ReportBits";
+import { ViaFalkor } from "@/components/cypher/ViaFalkor";
 import { Section } from "./Section";
 import type { IncidentActions } from "./useIncidentActions";
 
@@ -33,6 +33,7 @@ export function ResidueCard({ view, mode, actions }: { view: IncidentView; mode:
     <Section
       id="residue"
       title="Residue check"
+      via={has ? <ViaFalkor template={tc?.template ?? "Q-RESIDUE-1"} label="the residue check" onOpen={open} /> : null}
       aside={
         has ? (
           <>
@@ -47,7 +48,6 @@ export function ResidueCard({ view, mode, actions }: { view: IncidentView; mode:
                 explains {k} of {n}
               </StatusChip>
             )}
-            <TemplateButton template={tc?.template ?? "Q-RESIDUE-1"} label="the residue check" onOpen={open} />
           </>
         ) : null
       }

@@ -15,6 +15,7 @@ import type { GateCheck, GateRun } from "@/lib/types";
 import { StatusChip, TONE_CLASS } from "@/components/StatusChip";
 import { cn } from "@/lib/utils";
 import { EvidenceChip, uniq } from "./EvidenceChip";
+import { Disclosure } from "@/components/ui/Disclosure";
 import { Section } from "./Section";
 
 const STATE_ICON: Record<CheckState, LucideIcon> = {
@@ -58,27 +59,23 @@ export function GateChecklist({
   const byId = new Map(runs.map((r) => [r.id, r]));
   const ordered = [...runs].sort((a, b) => a.at - b.at || a.id.localeCompare(b.id));
   return (
-    <Section id="gate" title="Evidence gate" aside={<span className="text-[11px] text-zinc-400">{runs.length} gate runs</span>}>
-      <p className="mb-2 text-[11px] leading-relaxed text-zinc-300">
-        {GATE_LEGEND.map(([code, text], i) => (
-          <span key={code}>
-            {i ? <span aria-hidden className="text-zinc-400"> · </span> : null}
-            <abbr title={text} className="font-mono font-semibold text-zinc-100 no-underline">
-              {code}
-            </abbr>{" "}
-            {text}
-            {i < GATE_LEGEND.length - 1 ? <span className="sr-only">;</span> : null}
-          </span>
-        ))}
+    <Section
+      id="gate"
+      title="Evidence gate"
+      aside={<span className="text-xs text-[var(--fl-subtle)]">{runs.length} gate run{runs.length === 1 ? "" : "s"}</span>}
+    >
+      <p className="mb-4 text-xs leading-relaxed text-zinc-400">
+        Deterministic checks decide; the model only proposes. Every check below is a read-only query; open one for its
+        Cypher.
       </p>
       {rejections.length ? (
-        <div className="mb-3 space-y-2">
-          <h3 className="text-xs font-semibold text-zinc-300">Rejected suspects</h3>
+        <div className="mb-5">
+          <h3 className="mb-2 text-xs font-medium text-zinc-400">Rejected suspects</h3>
           <ul className="space-y-2">
             {rejections.map((r) => (
-              <li key={`${r.gateRunId}:${r.cause}`} className="rounded-md border border-red-500/50 bg-red-500/10 p-2">
+              <li key={`${r.gateRunId}:${r.cause}`} className="rounded-lg bg-red-500/[0.07] px-3 py-2.5">
                 <div className="flex flex-wrap items-center gap-2">
-                  <Ban aria-hidden className="size-4 text-red-300" />
+                  <Ban aria-hidden className="size-4 text-red-400" />
                   {r.cause === "NO_INCIDENT" ? (
                     <>
                       <span className="text-sm text-zinc-50">&ldquo;No incident&rdquo; hypothesis</span>
@@ -86,7 +83,7 @@ export function GateChecklist({
                     </>
                   ) : (
                     <>
-                      <span className="font-mono text-sm text-zinc-50 line-through decoration-red-300/70">{r.cause}</span>
+                      <span className="font-mono text-sm text-zinc-200 line-through decoration-red-400/70">{r.cause}</span>
                       <StatusChip tone="fail">rejected</StatusChip>
                     </>
                   )}
@@ -98,20 +95,18 @@ export function GateChecklist({
                       key={i}
                       type="button"
                       onClick={() => onOpenCheck(run, f.check!)}
-                      className="mt-1 block w-full rounded text-left text-sm text-red-100 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-red-300"
+                      className="mt-1 block w-full rounded text-left text-[13px] leading-relaxed text-zinc-200 outline-none hover:text-white focus-visible:ring-2 focus-visible:ring-red-300"
                     >
-                      <strong className="font-semibold">Rejected by {originText(r.origin)}:</strong>{" "}
+                      <strong className="font-medium text-red-200">Rejected by {originText(r.origin)}:</strong>{" "}
                       <span className="break-words">{f.text}</span>
                       {f.check.template ? (
-                        <span className="ml-1 rounded bg-violet-500/20 px-1 font-mono text-[11px] text-violet-200">
-                          {f.check.template}
-                        </span>
+                        <span className="ml-1.5 font-mono text-[11px] text-[var(--fl-subtle)]">{f.check.template}</span>
                       ) : null}
                       <span className="sr-only"> Open the Cypher panel for {f.check.name}.</span>
                     </button>
                   ) : (
-                    <p key={i} className="mt-1 text-sm break-words text-red-100">
-                      <strong className="font-semibold">Rejected by {originText(r.origin)}:</strong> {f.text}
+                    <p key={i} className="mt-1 text-[13px] break-words text-zinc-200">
+                      <strong className="font-medium text-red-200">Rejected by {originText(r.origin)}:</strong> {f.text}
                     </p>
                   );
                 })}
@@ -124,12 +119,30 @@ export function GateChecklist({
       {ordered.length === 0 ? (
         <p className="text-sm text-zinc-300">No gate run recorded yet: the gate runs once suspects are investigated.</p>
       ) : (
-        <ol className="space-y-3">
-          {ordered.map((run) => (
-            <GateRunBlock key={run.id} run={run} onOpenCheck={onOpenCheck} onOpenEvidence={onOpenEvidence} />
-          ))}
-        </ol>
+        <>
+          <h3 className="mb-1 text-xs font-medium text-zinc-400">Gate runs, in order</h3>
+          <ol className="divide-y divide-white/[0.06]">
+            {ordered.map((run) => (
+              <GateRunBlock key={run.id} run={run} onOpenCheck={onOpenCheck} onOpenEvidence={onOpenEvidence} />
+            ))}
+          </ol>
+        </>
       )}
+
+      <Disclosure className="mt-3 border-t border-white/[0.06] pt-3" size="xs" summary="What G1–G8 check" defaultOpen={false}>
+        <dl className="grid grid-cols-[max-content_minmax(0,1fr)] gap-x-3 gap-y-1 text-xs">
+          {GATE_LEGEND.map(([code, text]) => (
+            <div key={code} className="contents">
+              <dt className="font-mono text-zinc-200">
+                <abbr title={text} className="no-underline">
+                  {code}
+                </abbr>
+              </dt>
+              <dd className="text-zinc-400">{text}</dd>
+            </div>
+          ))}
+        </dl>
+      </Disclosure>
     </Section>
   );
 }
@@ -155,23 +168,23 @@ function GateRunBlock({
   const v = verdict(run);
   const missing = missingGates(run);
   return (
-    <li className={cn("rounded-md border p-2", run.passed ? "border-zinc-700" : "border-red-500/40")}>
+    <li className="py-3 last:pb-0">
       <div className="mb-1.5 flex flex-wrap items-center gap-2">
-        <span className="font-mono text-sm text-zinc-50">{run.cause}</span>
+        <span className={cn("font-mono text-sm", run.passed ? "text-zinc-50" : "text-zinc-400")}>{run.cause}</span>
         <StatusChip tone={v.tone} icon={v.icon}>
           {v.text}
         </StatusChip>
-        <span className="text-[11px] text-zinc-400">
+        <span className="text-[11px] text-[var(--fl-subtle)]">
           {originText(run.origin)} · attempt {run.attempt}
         </span>
       </div>
-      <ul className="space-y-1" aria-label={`Checks for ${run.cause} (${originText(run.origin)})`}>
+      <ul className="space-y-0.5" aria-label={`Checks for ${run.cause} (${originText(run.origin)})`}>
         {sortChecks(run.checks).map((c, i) => (
           <CheckRow key={`${c.name}:${i}`} run={run} check={c} onOpen={onOpenCheck} onOpenEvidence={onOpenEvidence} />
         ))}
       </ul>
       {missing.length ? (
-        <p className="mt-1.5 flex items-center gap-1 text-[11px] text-zinc-400">
+        <p className="mt-1.5 flex items-center gap-1 text-[11px] text-[var(--fl-subtle)]">
           <CircleMinus aria-hidden className="size-3" />
           Not recorded in this gate run: {missing.join(", ")}
         </p>
@@ -196,7 +209,7 @@ function CheckRow({
   const tone = CHECK_STATE_TONE[s];
   const flow = parseFlow(check.detail);
   return (
-    <li className="rounded border border-transparent hover:border-zinc-700">
+    <li className="rounded-md transition-colors hover:bg-white/[0.03]">
       <button
         type="button"
         onClick={() => onOpen(run, check)}
@@ -204,7 +217,7 @@ function CheckRow({
       >
         {/* Accessible name from content (WCAG 2.5.3, label in name): "G2 path: pass. <template> <detail>
             Open the Cypher panel." The visual order keeps the status chip in the left column. */}
-        <span className={cn("mt-0.5 inline-flex w-[5.6rem] shrink-0 items-center gap-1 rounded border px-1 text-[11px] font-medium", TONE_CLASS[tone])}>
+        <span className={cn("mt-0.5 inline-flex w-[5.6rem] shrink-0 items-center gap-1 rounded border px-1 text-[11px] font-medium", TONE_CLASS[tone], "border-transparent")}>
           <Icon aria-hidden className="size-3.5" />
           <span aria-hidden>{STATE_GLYPH[s]}</span>
           <span className="sr-only">{check.name}: </span>
@@ -213,21 +226,21 @@ function CheckRow({
         </span>
         <span className="min-w-0 flex-1">
           <span className="flex flex-wrap items-center gap-1.5">
-            <span aria-hidden className="text-xs font-semibold text-zinc-50">{check.name}</span>
+            <span aria-hidden className="text-xs font-medium text-zinc-100">{check.name}</span>
             {check.downgrade_only ? (
-              <span aria-hidden className="rounded border border-zinc-600 px-1 text-[10px] text-zinc-300">downgrade-only</span>
+              <span aria-hidden className="text-[10px] text-[var(--fl-subtle)]">downgrade-only</span>
             ) : null}
             {check.template ? (
-              <span className="rounded bg-violet-500/15 px-1 font-mono text-[10px] text-violet-200">{check.template}</span>
+              <span className="font-mono text-[10px] text-[var(--fl-subtle)]">{check.template}</span>
             ) : null}
           </span>
-          <span className="block text-xs break-words text-zinc-300">{check.detail}</span>
+          <span className="block text-xs break-words text-zinc-400">{check.detail}</span>
           {flow ? <FlowBar {...flow} /> : null}
           <span className="sr-only"> Open the Cypher panel{check.template ? ` for ${check.template}` : ""}.</span>
         </span>
       </button>
       {check.evidence_ids.length ? (
-        <div className="flex flex-wrap gap-1 pb-1 pl-[6.6rem]">
+        <div className="flex flex-wrap gap-x-1 pb-1 pl-[6.4rem]">
           {uniq(check.evidence_ids).map((e) => (
             <EvidenceChip key={e} id={e} onOpen={onOpenEvidence} />
           ))}
@@ -251,9 +264,9 @@ function FlowBar({ flow, needed, ok }: { flow: number; needed: number; ok: boole
   const scale = Math.max(1, flow, needed);
   return (
     <span className="mt-1 block" aria-hidden>
-      <span className="relative block h-2 overflow-hidden rounded bg-zinc-800">
+      <span className="relative block h-1.5 overflow-hidden rounded bg-white/[0.06]">
         <span
-          className={cn("absolute inset-y-0 left-0 rounded", ok ? "bg-emerald-400" : "bg-red-400")}
+          className={cn("absolute inset-y-0 left-0 rounded", ok ? "bg-emerald-400/80" : "bg-red-400/80")}
           style={{ width: `${(flow / scale) * 100}%` }}
         />
         <span className="absolute inset-y-0 w-0.5 bg-zinc-100" style={{ left: `${(needed / scale) * 100}%` }} />

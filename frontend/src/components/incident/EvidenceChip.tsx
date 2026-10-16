@@ -18,16 +18,15 @@ export function EvidenceChip({
       type="button"
       onClick={() => onOpen(id)}
       className={cn(
-        "inline-flex min-h-6 items-center gap-1 rounded border px-1 font-mono text-[11px] leading-4 outline-none hover:bg-zinc-800 focus-visible:ring-2 focus-visible:ring-sky-400",
-        relation === "refutes"
-          ? "border-red-500/40 text-red-200"
-          : relation === "supports"
-            ? "border-emerald-500/40 text-emerald-200"
-            : "border-sky-500/40 text-sky-200",
+        "inline-flex min-h-6 items-center gap-1 rounded px-1 font-mono text-[11px] leading-4 text-zinc-400 outline-none transition-colors hover:bg-white/[0.05] hover:text-zinc-100 focus-visible:ring-2 focus-visible:ring-sky-400",
       )}
       aria-label={`${relation ? `${relation} ` : ""}evidence ${id}: open details`}
     >
-      {relation ? <span aria-hidden>{relation === "refutes" ? "✗" : "✓"}</span> : null}
+      {relation ? (
+        <span aria-hidden className={relation === "refutes" ? "text-red-400" : "text-emerald-400"}>
+          {relation === "refutes" ? "✗" : "✓"}
+        </span>
+      ) : null}
       {id}
     </button>
   );

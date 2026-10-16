@@ -1,5 +1,6 @@
 import { Ban, Gauge, Scissors, Siren, Waves } from "lucide-react";
 import { fmtValue } from "@/lib/format";
+import { Disclosure } from "@/components/ui/Disclosure";
 import { CUT_STYLE, EDGE_STYLE, NODE_MAX, NODE_MIN, type GraphMode } from "./GraphView";
 
 /** Legend: every encoding in the graph view has a line/shape sample, an icon and words. */
@@ -15,7 +16,52 @@ export function GraphLegend({
   /** Overrides the ripple-mode wording (preflight: changed / impacted). */
   rippleText?: { cause: [string, string]; blast: [string, string] } | null;
 }) {
+  const key = (
+    <ul className="flex flex-wrap items-center gap-x-4 gap-y-1.5" aria-label="Key">
+      <li className="flex items-center gap-1.5">
+        <span className="flex items-center gap-0.5 rounded border border-red-400 bg-red-700 px-1 text-[9px] font-bold text-white">
+          <Siren aria-hidden className="size-2.5" /> {rippleText?.cause[0] ?? "CAUSE"}
+        </span>
+        {mode === "path" ? "cause" : (rippleText?.cause[0] ?? "cause").toLowerCase()}
+      </li>
+      {mode === "path" ? (
+        <li className="flex items-center gap-1.5">
+          <svg width="22" height="8" aria-hidden>
+            <line x1="0" y1="4" x2="22" y2="4" stroke="#f87171" strokeWidth={3.4} />
+          </svg>
+          proof path
+        </li>
+      ) : (
+        <li className="flex items-center gap-1.5">
+          <span className="flex items-center gap-0.5 rounded border border-amber-300 bg-amber-300 px-1 text-[9px] font-bold text-zinc-950">
+            <Waves aria-hidden className="size-2.5" /> {rippleText?.blast[0] ?? "BLAST"}
+          </span>
+          {(rippleText?.blast[0] ?? "blast radius").toLowerCase()}
+        </li>
+      )}
+      {mode === "path" ? (
+        <li className="flex items-center gap-1.5">
+          <span className="flex items-center gap-0.5 rounded border border-zinc-400 bg-zinc-700 px-1 text-[9px] font-bold text-zinc-50">
+            <Ban aria-hidden className="size-2.5" /> REJECTED
+          </span>
+          ruled out
+        </li>
+      ) : null}
+      <li className="flex items-center gap-1.5">
+        <span className="flex items-center gap-0.5 rounded border border-amber-300 bg-amber-400 px-1 text-[9px] font-bold text-zinc-950">
+          <Gauge aria-hidden className="size-2.5" /> SYMPTOM
+        </span>
+        alerting
+      </li>
+      {hasCut ? (
+        <li className="flex items-center gap-1.5">
+          <Scissors aria-hidden className="size-3 text-red-300" /> min-cut
+        </li>
+      ) : null}
+    </ul>
+  );
   return (
+    <Disclosure size="xs" defaultOpen={false} summary="Full legend" actions={<span className="text-xs text-zinc-400">{key}</span>}>
     <div className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-zinc-300" aria-label="Graph legend">
       <ul className="flex flex-wrap gap-x-4 gap-y-1.5" aria-label="Edge kinds">
         {Object.entries(EDGE_STYLE).map(([k, s]) => (
@@ -115,5 +161,6 @@ export function GraphLegend({
         <li>Shapes: rounded box = service, square dashed box = data asset, pill = change.</li>
       </ul>
     </div>
+    </Disclosure>
   );
 }

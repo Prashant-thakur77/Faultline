@@ -71,7 +71,7 @@ export function WhyBelieveButton({
         onClick={() => setOpen(true)}
         className={cn(cls, "border-white/[0.12] bg-white/[0.03] text-zinc-100 hover:border-white/[0.22] hover:bg-white/[0.06]")}
       >
-        <GitFork aria-hidden className="size-3.5 text-violet-300" />
+        <GitFork aria-hidden className="size-3.5 text-zinc-400" />
         Why do you believe this?
       </button>
       <ProvenanceSheet open={open} onClose={close} view={view} actions={actions} />

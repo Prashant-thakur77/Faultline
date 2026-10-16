@@ -48,6 +48,8 @@ import type {
   WhoFixesRow,
 } from "@/lib/types";
 import { Button } from "@/components/ui/button";
+import { QUERY_ID_CLS } from "@/components/cypher/ViaFalkor";
+import { Disclosure } from "@/components/ui/Disclosure";
 import { StatusChip } from "@/components/StatusChip";
 import { cn } from "@/lib/utils";
 import { PlanPending } from "./ContainmentCard";
@@ -349,7 +351,7 @@ function StepHeading({
   done: boolean;
 }) {
   return (
-    <h3 className="flex items-center gap-2 text-xs font-semibold tracking-wide text-zinc-200 uppercase">
+    <h3 className="flex items-center gap-2 text-[13px] font-medium text-zinc-100">
       <span
         className={cn(
           "inline-flex size-5 items-center justify-center rounded-full border text-[11px]",
@@ -362,7 +364,7 @@ function StepHeading({
       </span>
       Step {n} of 2: {title}
       {done ? (
-        <span className="font-normal normal-case text-emerald-300">(done)</span>
+        <span className="font-normal text-emerald-300">(done)</span>
       ) : null}
     </h3>
   );
@@ -428,10 +430,10 @@ function RemedyNote({
 }) {
   if (!remedy || !remedy.note) return null;
   return (
-    <p className="mb-2 flex flex-wrap items-start gap-1.5 text-xs text-zinc-300">
+    <p className="mb-3 flex flex-wrap items-start gap-1.5 text-xs text-zinc-400">
       <History
         aria-hidden
-        className="mt-0.5 size-3.5 shrink-0 text-violet-300"
+        className="mt-0.5 size-3.5 shrink-0 text-[var(--fl-subtle)]"
       />
       <span className="min-w-0 flex-1">
         <span className="font-semibold text-zinc-100">Order:</span>{" "}
@@ -444,7 +446,7 @@ function RemedyNote({
         <button
           type="button"
           onClick={onOpen}
-          className="inline-flex min-h-6 items-center rounded bg-violet-500/15 px-1 font-mono text-[11px] text-violet-200 outline-none hover:bg-violet-500/25 focus-visible:ring-2 focus-visible:ring-violet-300"
+          className={QUERY_ID_CLS}
           aria-label="Q-REM-1: open the Cypher panel for the learned remediation ordering"
         >
           Q-REM-1
@@ -482,19 +484,19 @@ function OptionList({
           <li
             key={o.id}
             className={cn(
-              "rounded-md border p-2",
+              "rounded-lg px-3 py-2.5",
               !o.enabled
-                ? "border-dashed border-zinc-700 bg-zinc-900/40 text-zinc-400"
+                ? "border border-dashed border-white/[0.08] text-zinc-400"
                 : isChosen
-                  ? "border-sky-400 bg-sky-500/10"
-                  : "border-zinc-700",
+                  ? "bg-sky-500/[0.07] ring-1 ring-sky-400/60"
+                  : "bg-white/[0.02] ring-1 ring-white/[0.06]",
             )}
           >
             <div className="flex flex-wrap items-center gap-2">
               {!o.enabled ? (
-                <Ban aria-hidden className="size-3.5 text-zinc-500" />
+                <Ban aria-hidden className="size-3.5 text-[var(--fl-subtle)]" />
               ) : null}
-              <span className="rounded border border-zinc-600 px-1 text-[10px] tracking-wide text-zinc-300 uppercase">
+              <span className="text-[10px] font-medium tracking-wider text-[var(--fl-subtle)] uppercase">
                 {KIND_TEXT[o.kind] ?? o.kind}
               </span>
               <span
@@ -555,24 +557,43 @@ function OptionList({
                 </Button>
               ) : null}
             </div>
-            {o.enabled && history.some((h) => h.kind === o.kind) ? (
+            {(o.enabled && history.some((h) => h.kind === o.kind)) || fut ? (
               <div
-                className="mt-1 flex flex-wrap gap-1"
-                aria-label="Memory: this fix kind on recalled precedents"
+                role="group"
+                className="mt-1.5 flex flex-wrap gap-1"
+                aria-label="Predicted outcome and how this fix kind fared on recalled precedents"
               >
-                {history
-                  .filter((h) => h.kind === o.kind)
-                  .map((h) => (
-                    <FixHistoryChip key={`${h.kind}:${h.verdict}`} row={h} />
-                  ))}
+                {fut ? (
+                  <StatusChip
+                    tone={FUTURE_TEXT[fut.predicted]?.tone ?? "na"}
+                    icon={Telescope}
+                    title={`its own GRAPH.COPY branch (${fut.key}), Q-FUTURE-1`}
+                  >
+                    {FUTURE_TEXT[fut.predicted]?.text ??
+                      `predicted: ${fut.predicted}`}
+                  </StatusChip>
+                ) : null}
+                {o.enabled
+                  ? history
+                      .filter((h) => h.kind === o.kind)
+                      .map((h) => (
+                        <FixHistoryChip key={`${h.kind}:${h.verdict}`} row={h} />
+                      ))
+                  : null}
               </div>
             ) : null}
-            {why.base || why.learned || fut ? (
-              <div id={descId} className="mt-1 space-y-0.5">
+            {why.base || why.learned || fut || (o.enabled && o.preview && Object.keys(o.preview).length) ? (
+              <Disclosure
+                className="mt-1.5"
+                size="xs"
+                summary={o.enabled ? "Why and details" : "Why it is not offered"}
+                defaultOpen={!o.enabled ? true : undefined}
+              >
+              <div id={descId} className="space-y-1">
                 {why.base ? (
                   <p
                     className={cn(
-                      "text-xs break-words",
+                      "text-xs leading-relaxed break-words",
                       o.enabled ? "text-zinc-300" : "text-zinc-400",
                     )}
                   >
@@ -580,46 +601,33 @@ function OptionList({
                   </p>
                 ) : null}
                 {fut ? (
-                  <p className="flex flex-wrap items-start gap-1.5 text-xs break-words text-zinc-200">
-                    <StatusChip
-                      tone={FUTURE_TEXT[fut.predicted]?.tone ?? "na"}
-                      icon={Telescope}
-                      title={`its own GRAPH.COPY branch (${fut.key}), Q-FUTURE-1`}
-                    >
-                      {FUTURE_TEXT[fut.predicted]?.text ??
-                        `predicted: ${fut.predicted}`}
-                    </StatusChip>
-                    <span className="min-w-0 flex-1">
-                      {fut.line}
-                      {fut.exposed.length
-                        ? `; leaves ${fut.exposed.join(", ")} exposed`
-                        : ""}
-                    </span>
+                  <p className="text-xs leading-relaxed break-words text-zinc-400">
+                    {fut.line}
+                    {fut.exposed.length
+                      ? `; leaves ${fut.exposed.join(", ")} exposed`
+                      : ""}
                   </p>
                 ) : null}
                 {why.learned ? (
-                  <p className="flex flex-wrap items-start gap-1.5 text-xs break-words text-violet-100">
-                    <StatusChip
-                      tone="info"
-                      icon={History}
-                      className="border-violet-400/50 bg-violet-500/10 text-violet-200"
-                    >
+                  <p className="flex flex-wrap items-start gap-1.5 text-xs break-words text-zinc-300">
+                    <StatusChip tone="na" icon={History}>
                       learned order{ratio ? ` ${ratio}` : ""}
                     </StatusChip>
                     <span className="min-w-0 flex-1">{why.learned}</span>
                   </p>
                 ) : null}
+                {o.enabled && o.preview && Object.keys(o.preview).length ? (
+                  <p className="font-mono text-[11px] break-all text-[var(--fl-subtle)]">
+                    {Object.entries(o.preview)
+                      .map(
+                        ([k, v]) =>
+                          `${k}: ${typeof v === "string" ? v : Array.isArray(v) ? v.join(", ") : JSON.stringify(v)}`,
+                      )
+                      .join(" · ")}
+                  </p>
+                ) : null}
               </div>
-            ) : null}
-            {o.enabled && o.preview && Object.keys(o.preview).length ? (
-              <p className="mt-0.5 font-mono text-[11px] break-all text-zinc-400">
-                {Object.entries(o.preview)
-                  .map(
-                    ([k, v]) =>
-                      `${k}: ${typeof v === "string" ? v : Array.isArray(v) ? v.join(", ") : JSON.stringify(v)}`,
-                  )
-                  .join(" · ")}
-              </p>
+              </Disclosure>
             ) : null}
             {chooseErr?.id === o.id ? (
               <p role="alert" className="mt-1 text-xs text-red-300">
@@ -1300,7 +1308,7 @@ function ActionOutcome({
               ) : (
                 <CircleDashed
                   aria-hidden
-                  className="mt-0.5 size-4 shrink-0 text-zinc-500"
+                  className="mt-0.5 size-4 shrink-0 text-[var(--fl-subtle)]"
                 />
               )}
               <span className="min-w-0">
@@ -1382,7 +1390,7 @@ function ActionOutcome({
             <p className="flex flex-wrap items-center gap-1.5 text-xs">
               <GitPullRequest
                 aria-hidden
-                className="size-3.5 text-violet-300"
+                className="size-3.5 text-zinc-400"
               />
               <span className="text-zinc-400">PR</span>
               {ref.simulated ? (

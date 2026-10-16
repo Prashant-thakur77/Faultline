@@ -53,7 +53,7 @@ export function EvidenceTable({
                     </button>
                     <p className="font-mono text-[11px] text-zinc-300">{e.kind}</p>
                     {e.template ? (
-                      <p className="font-mono text-[10px] text-violet-200">{e.template}</p>
+                      <p className="font-mono text-[10px] text-[var(--fl-subtle)]">{e.template}</p>
                     ) : null}
                   </td>
                   <td className="py-1.5 pr-2">
