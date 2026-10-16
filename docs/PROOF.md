@@ -111,22 +111,26 @@ Both answer in milliseconds at this size, so this is not a speed claim: the poin
 
 ## With a language model in the loop
 
-The same model (`claude-opus-5-5`), three ways ([evals/llm_arms.py](../evals/llm_arms.py); one trial per scenario, graded by the same grader as every other arm):
+The same model (`claude-opus-5-5`), three ways ([evals/llm_arms.py](../evals/llm_arms.py), prompt v2; A0 and A1 three trials per scenario, A3L one; graded by the same grader as every other arm):
 
-| Approach | Scenarios | Right verdict (95 % interval) | Right where there is no cause to blame |
-|---|---|---|---|
-| LLM reads the alert, raw service telemetry and the change list (A0) | <!-- claim:arm.A0.trials -->8<!-- /claim --> | <!-- claim:arm.A0.outcome_correct.k -->6<!-- /claim -->/<!-- claim:arm.A0.outcome_correct.n -->8<!-- /claim --> (<!-- claim:arm.A0.outcome_correct.ci_lo -->41%<!-- /claim -->–<!-- claim:arm.A0.outcome_correct.ci_hi -->93%<!-- /claim -->) | <!-- claim:arm.A0.scen.abstention.k -->1<!-- /claim --> of <!-- claim:arm.A0.scen.abstention.n -->3<!-- /claim --> |
-| Same, plus vector-RAG over runbooks, postmortems and ADRs (A1) | <!-- claim:arm.A1.trials -->8<!-- /claim --> | <!-- claim:arm.A1.outcome_correct.k -->6<!-- /claim -->/<!-- claim:arm.A1.outcome_correct.n -->8<!-- /claim --> | <!-- claim:arm.A1.scen.abstention.k -->1<!-- /claim --> of <!-- claim:arm.A1.scen.abstention.n -->3<!-- /claim --> |
-| Faultline with the model as investigator; the graph gate decides (A3L) | <!-- claim:arm.A3L.trials -->4<!-- /claim --> | <!-- claim:arm.A3L.outcome_correct.k -->4<!-- /claim -->/<!-- claim:arm.A3L.outcome_correct.n -->4<!-- /claim --> (<!-- claim:arm.A3L.outcome_correct.ci_lo -->51%<!-- /claim -->–<!-- claim:arm.A3L.outcome_correct.ci_hi -->100%<!-- /claim -->) | <!-- claim:arm.A3L.scen.abstention.k -->2<!-- /claim --> of <!-- claim:arm.A3L.scen.abstention.n -->2<!-- /claim --> |
+| Approach | Trials | Right verdict (95 % interval) | Right where there is no cause to blame | Median tokens per decision |
+|---|---|---|---|---|
+| LLM reads the alert, per-minute telemetry, the change list and (data incidents) the warehouse evidence (A0) | <!-- claim:arm.A0.trials -->24<!-- /claim --> | <!-- claim:arm.A0.outcome_correct.k -->23<!-- /claim -->/<!-- claim:arm.A0.outcome_correct.n -->24<!-- /claim --> (<!-- claim:arm.A0.outcome_correct.ci_lo -->80%<!-- /claim -->–<!-- claim:arm.A0.outcome_correct.ci_hi -->99%<!-- /claim -->) | <!-- claim:arm.A0.scen.abstention.k -->3<!-- /claim --> of <!-- claim:arm.A0.scen.abstention.n -->3<!-- /claim --> | <!-- claim:arm.A0.tokens_median -->2522<!-- /claim --> |
+| Same, plus vector-RAG over runbooks, postmortems and ADRs (A1) | <!-- claim:arm.A1.trials -->24<!-- /claim --> | <!-- claim:arm.A1.outcome_correct.k -->23<!-- /claim -->/<!-- claim:arm.A1.outcome_correct.n -->24<!-- /claim --> | <!-- claim:arm.A1.scen.abstention.k -->3<!-- /claim --> of <!-- claim:arm.A1.scen.abstention.n -->3<!-- /claim --> | <!-- claim:arm.A1.tokens_median -->3809<!-- /claim --> |
+| Faultline with the model as investigator; the graph gate decides (A3L) | <!-- claim:arm.A3L.trials -->8<!-- /claim --> | <!-- claim:arm.A3L.outcome_correct.k -->8<!-- /claim -->/<!-- claim:arm.A3L.outcome_correct.n -->8<!-- /claim --> (<!-- claim:arm.A3L.outcome_correct.ci_lo -->68%<!-- /claim -->–<!-- claim:arm.A3L.outcome_correct.ci_hi -->100%<!-- /claim -->) | <!-- claim:arm.A3L.scen.abstention.k -->3<!-- /claim --> of <!-- claim:arm.A3L.scen.abstention.n -->3<!-- /claim --> | <!-- claim:arm.A3L.tokens_median -->38353<!-- /claim --> |
 
-A strong model named the cause in all <!-- claim:arm.A0.scen.false_blame.n -->5<!-- /claim --> scenarios that have one. **Both of its misses are partly our test's fault, so read them with care:**
+**Read this plainly: on our 8 hand-written scenarios, a strong model given good evidence is as accurate as the gate.** It named the cause in all <!-- claim:arm.A0.scen.false_blame.n -->5<!-- /claim --> scenarios that have one and blamed no innocent change (<!-- claim:arm.A0.scen.wrong_blame.k -->0<!-- /claim --> wrong blames); its one miss in each arm was a single "not confident" on S3b. What the graph contributes on these scenarios is everything around the verdict:
+- **A proof, not an opinion.** The verdict is a causal path (`algo.SPpaths`) and a flow bound (`algo.maxFlow`) anyone can re-run read-only; the model's "why" is a sentence.
+- **Cost and speed.** A no-path proof takes <!-- claim:perf.acme.shortest_causal_path.falkordb_engine_p50 -->0.053<!-- /claim --> ms of engine time and no tokens.
+- **Determinism.** The gate gives the same answer on every run; the model changed its verdict on S3b across trials.
+- **The action loop.** Only the product proposes a bounded containment, binds approval to a plan hash, acts and verifies.
 
-- **S12 could not be answered.** Its right answer is "an incident that no listed change explains, starting at currency". The prompt (version 1) offered only "a change id or none".
-- **The data control (S4D) starved the model.** It saw the alert, "revenue feels slightly off" and the one deploy in the window, but none of the warehouse evidence (row counts against baseline, invariant results) that the product reads before it declares "no incident". It blamed the deploy.
+The adversarial deep bench, where the measured gap is (telemetry heuristics blame 55 innocent changes in 140 worlds), has not been run with an LLM: at this model's prices that is a separate spend. <!-- noclaim: 55 and 140 are tagged in the scorecard above -->
+
+**An earlier version of this test was unfair to the model**, and the numbers above are from the fixed rerun. Version 1 offered only "a change id or none", so S12's right answer (an incident no listed change explains) could not be given; and on the data control (S4D) the model saw none of the warehouse evidence the product reads. Version 2 fixes both.
 
 ![The cost of a decision](media/charts/cost.svg)
 
-A corrected prompt (version 2: the answer can name an unexplained incident's origin, and data scenarios carry the warehouse evidence) is in `evals/llm_arms.py`, but it has not been run: it needs a new spend approval. A3L agrees with the keyless product on its 4 scenarios because the same deterministic gate decides; it shows the model drives the tools without breaking the loop, not the model's accuracy. Total spend for the recorded comparison was about one US dollar. <!-- noclaim: approximate spend, not a measured result -->
 
 ## Context for agents
 

@@ -17,9 +17,9 @@ False blame is measured on the scenarios with a true cause only (the controls an
 | A3 | graph + memory (the product) | 1.0 | 1.0 | 0.0 | 1.0 | 1.0 | 15 | 1.0 | 1.0 |
 | A3-noG5 | the product with the max-flow sufficiency check (G5) switched off | 0.8 | 0.8 | 0.0 | 1.0 | 0.875 | 12 | 1.0 | 0.6 |
 | A4 | FalkorDB off (the run cannot start: fails closed) | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0 | — | — |
-| A0 | LLM only (claude-opus-5-5, one trial): alert, raw service error rates, the change list (prompt v1: a change id or none; no data-plane evidence) | 1.0 | — | 0.0 | 0.3333 | 0.75 | 6 | — | — |
-| A1 | A0 plus vector-RAG context over runbooks, postmortems, ADRs and a text topology (prompt v1) | 1.0 | — | 0.0 | 0.3333 | 0.75 | 6 | — | — |
-| A3L | the product with the LLM investigator (claude-opus-5-5, one trial); the same gate decides | 1.0 | 1.0 | 0.0 | 1.0 | 1.0 | 2 | 1.0 | 1.0 |
+| A0 | LLM only (claude-opus-5-5, one trial): alert, raw service error rates, the change list (prompt v1: a change id or none; no data-plane evidence) | 0.9333 | — | 0.0 | 1.0 | 0.9583 | 14 | — | — |
+| A1 | A0 plus vector-RAG context over runbooks, postmortems, ADRs and a text topology (prompt v1) | 0.9333 | — | 0.0 | 1.0 | 0.9583 | 14 | — | — |
+| A3L | the product with the LLM investigator (claude-opus-5-5, one trial); the same gate decides | 1.0 | 1.0 | 0.0 | 1.0 | 1.0 | 5 | 1.0 | 1.0 |
 
 ## Per scenario (outcome correct rate)
 
@@ -27,12 +27,12 @@ False blame is measured on the scenarios with a true cause only (the controls an
 |---|---|---|---|---|---|---|---|---|---|---|
 | S1 | 0.0 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 | 0.0 | 1.0 | 1.0 | 1.0 |
 | S2 | 0.0 | 0.0 | 1.0 | 1.0 | 1.0 | 0.0 | 0.0 | 1.0 | 1.0 | 1.0 |
-| S3 | 0.0 | 0.0 | 1.0 | 1.0 | 1.0 | 1.0 | 0.0 | 1.0 | 1.0 | None |
-| S4D | 0.0 | 0.0 | 0.0 | 1.0 | 1.0 | 1.0 | 0.0 | 0.0 | 0.0 | 1.0 |
-| S4S | 0.0 | 0.0 | 0.0 | 1.0 | 1.0 | 1.0 | 0.0 | 1.0 | 1.0 | None |
-| S12 | 0.0 | 0.0 | 0.0 | 1.0 | 1.0 | 1.0 | 0.0 | 0.0 | 0.0 | 1.0 |
-| S1b | 0.0 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 | 0.0 | 1.0 | 1.0 | None |
-| S3b | 0.0 | 0.0 | 1.0 | 1.0 | 1.0 | 1.0 | 0.0 | 1.0 | 1.0 | None |
+| S3 | 0.0 | 0.0 | 1.0 | 1.0 | 1.0 | 1.0 | 0.0 | 1.0 | 1.0 | 1.0 |
+| S4D | 0.0 | 0.0 | 0.0 | 1.0 | 1.0 | 1.0 | 0.0 | 1.0 | 1.0 | 1.0 |
+| S4S | 0.0 | 0.0 | 0.0 | 1.0 | 1.0 | 1.0 | 0.0 | 1.0 | 1.0 | 1.0 |
+| S12 | 0.0 | 0.0 | 0.0 | 1.0 | 1.0 | 1.0 | 0.0 | 1.0 | 1.0 | 1.0 |
+| S1b | 0.0 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 | 0.0 | 1.0 | 1.0 | 1.0 |
+| S3b | 0.0 | 0.0 | 1.0 | 1.0 | 1.0 | 1.0 | 0.0 | 0.6667 | 0.6667 | 1.0 |
 
 ## Per distinct scenario, with 95 % intervals (M18 audit)
 
@@ -47,9 +47,9 @@ Each scenario counts once (its identical trials are one case). Strict: a tie bet
 | A3 | 8 | 8/8 (68–100 %) | 8/8 (68–100 %) | 0/8 (0–32 %) | 3/3 (44–100 %) |
 | A3-noG5 | 8 | 7/8 (53–98 %) | 7/8 (53–98 %) | 0/8 (0–32 %) | 3/3 (44–100 %) |
 | A4 | 8 | 0/8 (0–32 %) | 0/8 (0–32 %) | 0/8 (0–32 %) | 0/3 (0–56 %) |
-| A0 | 8 | 6/8 (41–93 %) | 6/8 (41–93 %) | 1/8 (2–47 %) | 1/3 (6–79 %) |
-| A1 | 8 | 6/8 (41–93 %) | 6/8 (41–93 %) | 1/8 (2–47 %) | 1/3 (6–79 %) |
-| A3L | 4 | 4/4 (51–100 %) | 4/4 (51–100 %) | 0/4 (0–49 %) | 2/2 (34–100 %) |
+| A0 | 8 | 7/8 (53–98 %) | 7/8 (53–98 %) | 0/8 (0–32 %) | 3/3 (44–100 %) |
+| A1 | 8 | 7/8 (53–98 %) | 7/8 (53–98 %) | 0/8 (0–32 %) | 3/3 (44–100 %) |
+| A3L | 8 | 8/8 (68–100 %) | 8/8 (68–100 %) | 0/8 (0–32 %) | 3/3 (44–100 %) |
 
 Look-alikes rejected by any gate, per scenario with a look-alike: A3 5/5, A3-noG5 4/5 (the strict column above requires the gate the truth file names, so A3-noG5's S1 look-alike, rejected by G4 origin, counts as not rejected there).
 

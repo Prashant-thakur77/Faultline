@@ -6,16 +6,58 @@
       "trial": 1,
       "outcome": "CONFIRMED",
       "cause": "D-pay-417",
-      "why": "Payment errors jumped from about 0.007 to 0.41 right after D-pay-417 removed retries (retries=0), and checkout errors rose to the same ~0.41 at the same minute, with smaller rises in frontend, frontend-proxy, mcp, agent and chatbot; the recommendation rise started a minute earlier, stayed small at 0",
+      "inferred": null,
+      "why": "Payment errors jumped from about 0.007 to 0.41 at the same minute D-pay-417 landed, and that deploy set payment retries to 0; checkout (0.407) and frontend errors rose in step, while the earlier small recommendation rise to 0.03 cannot account for the checkout failures.",
       "top1": 1.0,
       "outcome_correct": true,
       "false_blame": false,
       "abstention_correct": null,
+      "prompt_version": 2,
       "usage": {
-        "input_tokens": 2336,
-        "output_tokens": 150
+        "input_tokens": 2428,
+        "output_tokens": 291
       },
-      "seconds": 3.6,
+      "seconds": 5.01,
+      "tool_calls": 0
+    },
+    {
+      "scenario": "S1",
+      "arm": "A0",
+      "trial": 2,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-417",
+      "inferred": null,
+      "why": "Payment errors jumped from about 0.007 to 0.41 at onset, right after D-pay-417 set retries to 0 and changed the client timeout, and the errors propagate up through checkout (0.407) to frontend and frontend-proxy. Email shows no change, and the recommendation rise is small and separate.",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 2428,
+        "output_tokens": 135
+      },
+      "seconds": 2.97,
+      "tool_calls": 0
+    },
+    {
+      "scenario": "S1",
+      "arm": "A0",
+      "trial": 3,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-417",
+      "inferred": null,
+      "why": "Payment errors jumped from ~0.007 to 0.41 right after D-pay-417 dropped retries to 0, and checkout (0.407) and the frontend path inherit those failures. Recommendation's small rise is separate and too small to explain this.",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 2428,
+        "output_tokens": 115
+      },
+      "seconds": 2.93,
       "tool_calls": 0
     },
     {
@@ -24,16 +66,58 @@
       "trial": 1,
       "outcome": "CONFIRMED",
       "cause": "D-pay-417",
-      "why": "Payment errors jumped from about 0.007 to 0.41 exactly 3 minutes before onset, when D-pay-417 dropped payment client retries to 0, and checkout (0.407) and its upstream callers spiked in lockstep. The recommendation change (D-rec-12) only nudged its own small error rate, and email failures do not fa",
+      "inferred": null,
+      "why": "Payment's error rate jumped to about 0.41 in the same minute D-pay-417 shipped (retries dropped to 0, timeout changed), and checkout's errors (about 0.41) rose with it on the synchronous charge path, spilling into frontend; D-rec-12 only moved recommendation, which is not on the checkout path.",
       "top1": 1.0,
       "outcome_correct": true,
       "false_blame": false,
       "abstention_correct": null,
+      "prompt_version": 2,
       "usage": {
-        "input_tokens": 3603,
-        "output_tokens": 219
+        "input_tokens": 3695,
+        "output_tokens": 365
       },
-      "seconds": 6.96,
+      "seconds": 7.79,
+      "tool_calls": 0
+    },
+    {
+      "scenario": "S1",
+      "arm": "A1",
+      "trial": 2,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-417",
+      "inferred": null,
+      "why": "Payment errors jumped from about 0.007 to 0.41 at the same minute D-pay-417 rolled out (dropping retries and changing the client timeout), and checkout errors (0.41) and then frontend errors rose in lockstep with it. Checkout calls payment synchronously, while the recommendation and email changes do",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 3695,
+        "output_tokens": 389
+      },
+      "seconds": 8.19,
+      "tool_calls": 0
+    },
+    {
+      "scenario": "S1",
+      "arm": "A1",
+      "trial": 3,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-417",
+      "inferred": null,
+      "why": "Payment's error rate jumped from about 0.007 to 0.41 in the same minute as checkout's (0.407), right after D-pay-417 dropped payment client retries to 0 and raised the timeout to 5000 ms; frontend's errors follow downstream, while the small earlier recommendation rise is not on checkout's synchronou",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 3695,
+        "output_tokens": 324
+      },
+      "seconds": 7.18,
       "tool_calls": 0
     },
     {
@@ -42,16 +126,58 @@
       "trial": 1,
       "outcome": "CONFIRMED",
       "cause": "D-cutover-1",
-      "why": "Moving order capture to cloudpay_v2 most plausibly double-counts or drops orders in the revenue pipeline, which would cause a sudden jump in the executive revenue KPI, whereas pausing the FX feed would more likely leave stale rates and only small drift; the error-rate telemetry is empty, so this res",
+      "inferred": null,
+      "why": "From 2026-08-07, revenue and AOV are exactly 100x baseline while order counts are unchanged, which points to amounts arriving in cents after order capture moved to cloudpay_v2; a paused FX feed would leave rates stale, not produce an exact 100x unit shift.",
       "top1": 1.0,
       "outcome_correct": true,
       "false_blame": false,
       "abstention_correct": null,
+      "prompt_version": 2,
       "usage": {
-        "input_tokens": 273,
-        "output_tokens": 360
+        "input_tokens": 1671,
+        "output_tokens": 208
       },
-      "seconds": 6.78,
+      "seconds": 5.39,
+      "tool_calls": 0
+    },
+    {
+      "scenario": "S2",
+      "arm": "A0",
+      "trial": 2,
+      "outcome": "CONFIRMED",
+      "cause": "D-cutover-1",
+      "inferred": null,
+      "why": "Starting 2026-08-07, revenue and AOV are exactly 100x baseline while order counts are unchanged, which points to the cloudpay_v2 capture cutover recording amounts in cents instead of dollars; a paused FX feed would give stale-rate drift, not an exact 100x factor.",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 1671,
+        "output_tokens": 226
+      },
+      "seconds": 5.68,
+      "tool_calls": 0
+    },
+    {
+      "scenario": "S2",
+      "arm": "A0",
+      "trial": 3,
+      "outcome": "CONFIRMED",
+      "cause": "D-cutover-1",
+      "inferred": null,
+      "why": "From 2026-08-07, revenue and AOV are exactly 100x baseline while order counts are unchanged, which points to a cents-vs-dollars unit change: amounts captured via cloudpay_v2 are most likely reported in minor units, whereas a paused FX feed would cause stale-rate drift rather than an exact 100x facto",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 1671,
+        "output_tokens": 234
+      },
+      "seconds": 5.44,
       "tool_calls": 0
     },
     {
@@ -60,16 +186,58 @@
       "trial": 1,
       "outcome": "CONFIRMED",
       "cause": "D-cutover-1",
-      "why": "Moving order capture to cloudpay_v2 changes the source of the order and amount data that feeds kpi.exec_revenue, which can plausibly cause a jump through duplicated or missing orders or a unit change, whereas pausing the FX feed would only leave rates slightly stale (with no error-rate data, this in",
+      "inferred": null,
+      "why": "From 2026-08-07, the onset day, revenue and AOV are exactly 100x baseline while order counts are unchanged, which points to the cloudpay_v2 capture cutover writing amounts in cents rather than dollars; a paused FX feed would give stale rates, not an exact 100x jump.",
       "top1": 1.0,
       "outcome_correct": true,
       "false_blame": false,
       "abstention_correct": null,
+      "prompt_version": 2,
       "usage": {
-        "input_tokens": 1125,
-        "output_tokens": 304
+        "input_tokens": 2738,
+        "output_tokens": 257
       },
-      "seconds": 8.43,
+      "seconds": 8.57,
+      "tool_calls": 0
+    },
+    {
+      "scenario": "S2",
+      "arm": "A1",
+      "trial": 2,
+      "outcome": "CONFIRMED",
+      "cause": "D-cutover-1",
+      "inferred": null,
+      "why": "Starting 2026-08-07, revenue and AOV are exactly 100x baseline while order counts are unchanged, which points to a cents-vs-dollars unit change from the order-capture move to cloudpay_v2 (a paused FX feed would give stale rates, not an exact 100x).",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 2738,
+        "output_tokens": 248
+      },
+      "seconds": 8.27,
+      "tool_calls": 0
+    },
+    {
+      "scenario": "S2",
+      "arm": "A1",
+      "trial": 3,
+      "outcome": "CONFIRMED",
+      "cause": "D-cutover-1",
+      "inferred": null,
+      "why": "From 2026-08-07 onward, revenue and AOV are exactly 100x baseline while order counts are unchanged, which points to a cents-vs-dollars unit change from the cloudpay_v2 order-capture cutover rather than the FX feed pause, since stale FX rates would not give an exact 100x across all days.",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 2738,
+        "output_tokens": 272
+      },
+      "seconds": 8.63,
       "tool_calls": 0
     },
     {
@@ -78,16 +246,58 @@
       "trial": 1,
       "outcome": "CONFIRMED",
       "cause": "D-pgcfg-3",
-      "why": "Lowering max_connections on astronomy-db fits the data: astronomy-db's error rate jumped to 0.22 at onset, and so did its dependents (product-catalog, accounting, queue, recommendation, checkout and upstream services), while cart's error rate stayed flat, which rules out D-cart-9.",
+      "inferred": null,
+      "why": "astronomy-db errors jumped from ~0.003 to 0.220 shortly after its config lowered max_connections, and its dependents (product-catalog, accounting, queue, checkout, recommendation, then frontend) rose in step while cart stayed flat, ruling out D-cart-9.",
       "top1": 1.0,
       "outcome_correct": true,
       "false_blame": false,
       "abstention_correct": null,
+      "prompt_version": 2,
       "usage": {
-        "input_tokens": 2214,
-        "output_tokens": 125
+        "input_tokens": 2306,
+        "output_tokens": 271
       },
-      "seconds": 2.83,
+      "seconds": 5.31,
+      "tool_calls": 0
+    },
+    {
+      "scenario": "S3",
+      "arm": "A0",
+      "trial": 2,
+      "outcome": "CONFIRMED",
+      "cause": "D-pgcfg-3",
+      "inferred": null,
+      "why": "At onset astronomy-db errors jumped from about 0.003 to 0.22, matching its dependents (product-catalog, accounting, queue, checkout, recommendation) after the lowered max_connections config change, while cart, the only other changed service, stayed flat.",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 2306,
+        "output_tokens": 287
+      },
+      "seconds": 6.18,
+      "tool_calls": 0
+    },
+    {
+      "scenario": "S3",
+      "arm": "A0",
+      "trial": 3,
+      "outcome": "CONFIRMED",
+      "cause": "D-pgcfg-3",
+      "inferred": null,
+      "why": "Errors on astronomy-db and every service that depends on it (product-catalog, recommendation, checkout, accounting, frontend) jumped to about 0.22 at the same minute as the postgres config change lowering max_connections, while cart and its new deploy stayed at baseline.",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 2306,
+        "output_tokens": 388
+      },
+      "seconds": 7.1,
       "tool_calls": 0
     },
     {
@@ -96,70 +306,238 @@
       "trial": 1,
       "outcome": "CONFIRMED",
       "cause": "D-pgcfg-3",
-      "why": "The astronomy-db config change (lower max_connections, higher lock_timeout) came 6m before onset, and errors jumped at the same minute on astronomy-db and everything that calls it synchronously (product-catalog, accounting, frontend, checkout, recommendation), while cart, where D-cart-9 deployed, st",
+      "inferred": null,
+      "why": "The astronomy-db postgres config change (lower max_connections, higher lock_timeout) landed 6 minutes before onset; at onset astronomy-db errors jumped to 0.22 and the same step appeared in its synchronous callers (product-catalog, accounting) and their downstreams, while cart, whose serializer depl",
       "top1": 1.0,
       "outcome_correct": true,
       "false_blame": false,
       "abstention_correct": null,
+      "prompt_version": 2,
       "usage": {
-        "input_tokens": 3466,
+        "input_tokens": 3558,
+        "output_tokens": 160
+      },
+      "seconds": 5.77,
+      "tool_calls": 0
+    },
+    {
+      "scenario": "S3",
+      "arm": "A1",
+      "trial": 2,
+      "outcome": "CONFIRMED",
+      "cause": "D-pgcfg-3",
+      "inferred": null,
+      "why": "Six minutes after the postgres config change lowered max_connections and raised lock_timeout, astronomy-db errors jumped to 0.22 at onset and spread to its synchronous callers (product-catalog, accounting, then checkout, recommendation, frontend and others), while cart, where D-cart-9 was deployed, ",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 3558,
+        "output_tokens": 153
+      },
+      "seconds": 5.7,
+      "tool_calls": 0
+    },
+    {
+      "scenario": "S3",
+      "arm": "A1",
+      "trial": 3,
+      "outcome": "CONFIRMED",
+      "cause": "D-pgcfg-3",
+      "inferred": null,
+      "why": "The postgres config change on astronomy-db (lower max_connections, higher lock_timeout) landed 6 minutes before onset, when astronomy-db errors jumped to 0.22 and spread to product-catalog and its callers; cart is unaffected, which rules out D-cart-9.",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 3558,
         "output_tokens": 134
       },
-      "seconds": 5.51,
+      "seconds": 5.55,
       "tool_calls": 0
     },
     {
       "scenario": "S4D",
       "arm": "A0",
       "trial": 1,
-      "outcome": "CONFIRMED",
-      "cause": "D-cutover-1",
-      "why": "The kpi_dip on exec_revenue fired after order capture moved to cloudpay_v2 40 minutes before onset, and with no error-rate data to check, this payment cutover is the only change that plausibly affects revenue, which fits a silent capture or recording gap rather than visible errors.",
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "inferred": null,
+      "why": "Every day of marts.fct_revenue matches the healthy baseline exactly (ratio 1.0 for revenue, orders and AOV) and all 32 pipeline invariants passed, so the dip is normal day-to-day variation and the cloudpay_v2 cutover had no visible effect.",
       "top1": null,
-      "outcome_correct": false,
-      "false_blame": true,
-      "abstention_correct": false,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "prompt_version": 2,
       "usage": {
-        "input_tokens": 217,
-        "output_tokens": 261
+        "input_tokens": 1012,
+        "output_tokens": 123
       },
-      "seconds": 5.49,
+      "seconds": 5.41,
+      "tool_calls": 0
+    },
+    {
+      "scenario": "S4D",
+      "arm": "A0",
+      "trial": 2,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "inferred": null,
+      "why": "Every day of marts.fct_revenue exactly matches the healthy baseline (ratio 1.0 for revenue, orders and AOV), all 32 pipeline invariants passed, and no errors were recorded, so the KPI dip reflects normal daily variation and the cloudpay_v2 cutover caused no measurable harm.",
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 1012,
+        "output_tokens": 135
+      },
+      "seconds": 5.52,
+      "tool_calls": 0
+    },
+    {
+      "scenario": "S4D",
+      "arm": "A0",
+      "trial": 3,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "inferred": null,
+      "why": "Revenue, orders and AOV in marts.fct_revenue match the healthy baseline exactly (ratio 1.0) every day, and all 32 pipeline invariants passed, so the dip reflects normal daily variation rather than an incident, and the cloudpay_v2 cutover shows no data impact.",
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 1012,
+        "output_tokens": 127
+      },
+      "seconds": 5.99,
       "tool_calls": 0
     },
     {
       "scenario": "S4D",
       "arm": "A1",
       "trial": 1,
-      "outcome": "CONFIRMED",
-      "cause": "D-cutover-1",
-      "why": "The only change in the window is the payment data cutover 40 minutes before onset, which moved order capture to cloudpay_v2 and could leave revenue rows missing from the revenue KPI pipeline; the error-rate series is empty and the past incidents cited involve unrelated transform deploys, so this att",
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "inferred": null,
+      "why": "Every day of marts.fct_revenue matches its healthy baseline exactly (ratio 1.0 for revenue, orders and AOV), all 32 pipeline invariants pass and no error rates are recorded, so the kpi_dip alert and the 'feels off' report have no supporting evidence, and the cloudpay_v2 cutover shows no data impact.",
       "top1": null,
-      "outcome_correct": false,
-      "false_blame": true,
-      "abstention_correct": false,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "prompt_version": 2,
       "usage": {
-        "input_tokens": 1271,
-        "output_tokens": 271
+        "input_tokens": 2058,
+        "output_tokens": 145
       },
       "seconds": 7.71,
       "tool_calls": 0
     },
     {
+      "scenario": "S4D",
+      "arm": "A1",
+      "trial": 2,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "inferred": null,
+      "why": "Every day of marts.fct_revenue exactly matches the healthy baseline (ratio 1.0 for revenue, orders and AOV) and all 32 pipeline invariants pass, so the kpi_dip alert reflects normal day-to-day variation, not an incident caused by the cloudpay_v2 cutover.",
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 2058,
+        "output_tokens": 132
+      },
+      "seconds": 7.69,
+      "tool_calls": 0
+    },
+    {
+      "scenario": "S4D",
+      "arm": "A1",
+      "trial": 3,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "inferred": null,
+      "why": "Every day of marts.fct_revenue matches its healthy baseline exactly (ratio 1.0 for revenue, orders and AOV), all 32 pipeline invariants pass, and no error rate was recorded, so nothing points to the cloudpay_v2 cutover or anything else being wrong.",
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 2058,
+        "output_tokens": 125
+      },
+      "seconds": 7.34,
+      "tool_calls": 0
+    },
+    {
       "scenario": "S4S",
       "arm": "A0",
       "trial": 1,
       "outcome": "NO_INCIDENT",
       "cause": null,
-      "why": "Checkout's error rate stays flat at its usual 0.004\u20130.009 through onset (0.006), no other service shows a deviation, and the only change was a copy change on ad, so the telemetry shows no real incident and the alert looks spurious.",
+      "inferred": null,
+      "why": "Checkout's error rate sits at 0.006 at onset, inside its normal 0.004\u20130.009 range, and no other service shows an anomaly, so the alert is a false positive. The ad copy deploy did not change any metrics.",
       "top1": null,
       "outcome_correct": true,
       "false_blame": false,
       "abstention_correct": true,
+      "prompt_version": 2,
       "usage": {
-        "input_tokens": 2167,
-        "output_tokens": 93
+        "input_tokens": 2259,
+        "output_tokens": 101
       },
-      "seconds": 3.29,
+      "seconds": 2.66,
+      "tool_calls": 0
+    },
+    {
+      "scenario": "S4S",
+      "arm": "A0",
+      "trial": 2,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "inferred": null,
+      "why": "Checkout's error rate (0.006 at onset) is within its normal 0.004-0.009 range, all other services are flat at baseline, and customers report no impact, so the alert is spurious and the ad copy change is unrelated.",
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 2259,
+        "output_tokens": 100
+      },
+      "seconds": 2.53,
+      "tool_calls": 0
+    },
+    {
+      "scenario": "S4S",
+      "arm": "A0",
+      "trial": 3,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "inferred": null,
+      "why": "Checkout's error rate (0.006 at onset) is within its normal 0.004-0.009 range, and every other service is flat at baseline, so the alert looks spurious; the ad copy-change deploy had no effect on ad's error rate.",
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 2259,
+        "output_tokens": 104
+      },
+      "seconds": 2.46,
       "tool_calls": 0
     },
     {
@@ -168,52 +546,178 @@
       "trial": 1,
       "outcome": "NO_INCIDENT",
       "cause": null,
-      "why": "Checkout's error rate at onset (0.006) is within its normal 0.004-0.009 baseline, as is every other service, so the alert looks spurious; the only change, D-ad-5, is a copy change on ad, which is not on checkout's call path and shows no error movement.",
+      "inferred": null,
+      "why": "Checkout's error rate is flat at its usual ~0.006 baseline, and every other service is also at baseline with no rise at onset; the ad copy-change deploy shows no effect, so the alert looks spurious, which matches customers not complaining.",
       "top1": null,
       "outcome_correct": true,
       "false_blame": false,
       "abstention_correct": true,
+      "prompt_version": 2,
       "usage": {
-        "input_tokens": 3611,
-        "output_tokens": 103
+        "input_tokens": 3703,
+        "output_tokens": 106
       },
-      "seconds": 5.49,
+      "seconds": 7.27,
+      "tool_calls": 0
+    },
+    {
+      "scenario": "S4S",
+      "arm": "A1",
+      "trial": 2,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "inferred": null,
+      "why": "Checkout's error rate at onset (0.006) is within its normal 0.004-0.009 range, every other service is flat too, customers report no impact, and the ad copy-change deploy has no effect on checkout, so the alert looks spurious.",
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 3703,
+        "output_tokens": 104
+      },
+      "seconds": 5.62,
+      "tool_calls": 0
+    },
+    {
+      "scenario": "S4S",
+      "arm": "A1",
+      "trial": 3,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "inferred": null,
+      "why": "Checkout's error rate is flat at its ~0.006 baseline at onset, as are all its dependencies, and the only change (an ad copy deploy) has no path to checkout, so the alert looks spurious and matches the lack of customer complaints.",
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 3703,
+        "output_tokens": 106
+      },
+      "seconds": 10.18,
       "tool_calls": 0
     },
     {
       "scenario": "S12",
       "arm": "A0",
       "trial": 1,
-      "outcome": "NO_INCIDENT",
+      "outcome": "NOT_CONFIDENT",
       "cause": null,
-      "why": "An incident is clearly underway: currency jumped to a flat 0.300 error rate at onset and is the likely root, with checkout, frontend, agent, chatbot, mcp and frontend-proxy failing downstream, but no changes were recorded in the window, so no change can be named as the cause.",
+      "inferred": "currency",
+      "why": "Currency jumped to a flat 30% error rate at onset and its callers (checkout, frontend, proxy, mcp, agent, chatbot) rose with it, while no listed change explains it.",
       "top1": null,
-      "outcome_correct": false,
+      "outcome_correct": true,
       "false_blame": false,
-      "abstention_correct": false,
+      "abstention_correct": true,
+      "prompt_version": 2,
       "usage": {
-        "input_tokens": 2134,
-        "output_tokens": 197
+        "input_tokens": 2226,
+        "output_tokens": 229
       },
-      "seconds": 4.26,
+      "seconds": 5.0,
+      "tool_calls": 0
+    },
+    {
+      "scenario": "S12",
+      "arm": "A0",
+      "trial": 2,
+      "outcome": "NOT_CONFIDENT",
+      "cause": null,
+      "inferred": "currency",
+      "why": "Currency's error rate jumped from about 0.005 to a flat 0.300 at onset, the highest of any service, and checkout (0.298), frontend, frontend-proxy, agent, chatbot and mcp rose at the same minute, which fits failures spreading from currency to the services that call it; no change was listed in the wi",
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 2226,
+        "output_tokens": 200
+      },
+      "seconds": 4.48,
+      "tool_calls": 0
+    },
+    {
+      "scenario": "S12",
+      "arm": "A0",
+      "trial": 3,
+      "outcome": "NOT_CONFIDENT",
+      "cause": null,
+      "inferred": "currency",
+      "why": "Currency's error rate jumped from about 0.005 to a flat 0.300 at onset, matching checkout's rise to about 0.30, and the smaller rises in frontend, frontend-proxy, mcp, agent and chatbot look like this failure spreading upstream; with no changes in the window, the failure most likely started in curre",
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 2226,
+        "output_tokens": 196
+      },
+      "seconds": 4.82,
       "tool_calls": 0
     },
     {
       "scenario": "S12",
       "arm": "A1",
       "trial": 1,
-      "outcome": "NO_INCIDENT",
+      "outcome": "NOT_CONFIDENT",
       "cause": null,
-      "why": "Currency's error rate jumped to 0.300 at onset and checkout calls it synchronously, which explains checkout's matching 0.298\u20130.300 errors, but no change is listed in the window, so there is no change to blame and currency itself needs investigation.",
+      "inferred": "currency",
+      "why": "Currency errors jumped to 0.30 and checkout, a synchronous caller, rose to the same rate while its other dependencies stayed healthy, with no listed change to explain it.",
       "top1": null,
-      "outcome_correct": false,
+      "outcome_correct": true,
       "false_blame": false,
-      "abstention_correct": false,
+      "abstention_correct": true,
+      "prompt_version": 2,
       "usage": {
-        "input_tokens": 3578,
-        "output_tokens": 96
+        "input_tokens": 3670,
+        "output_tokens": 315
       },
-      "seconds": 5.46,
+      "seconds": 8.38,
+      "tool_calls": 0
+    },
+    {
+      "scenario": "S12",
+      "arm": "A1",
+      "trial": 2,
+      "outcome": "NOT_CONFIDENT",
+      "cause": null,
+      "inferred": "currency",
+      "why": "Currency's error rate jumped to 0.300 at the same minute checkout's jumped to ~0.298, and checkout calls currency synchronously, while payment and checkout's other dependencies stayed flat; frontend, proxy, mcp, agent and chatbot rose downstream, and no listed change explains the currency failure.",
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 3670,
+        "output_tokens": 134
+      },
+      "seconds": 5.37,
+      "tool_calls": 0
+    },
+    {
+      "scenario": "S12",
+      "arm": "A1",
+      "trial": 3,
+      "outcome": "NOT_CONFIDENT",
+      "cause": null,
+      "inferred": "currency",
+      "why": "Currency's error rate jumped to exactly 0.300 at the same minute checkout rose to about 0.30. Checkout calls currency synchronously, so its errors propagate. The frontend, proxy, mcp, agent and chatbot errors are downstream of this, payment and the other dependencies stayed at baseline, and no liste",
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 3670,
+        "output_tokens": 141
+      },
+      "seconds": 5.6,
       "tool_calls": 0
     },
     {
@@ -222,34 +726,118 @@
       "trial": 1,
       "outcome": "CONFIRMED",
       "cause": "D-pay-421",
-      "why": "Payment errors jumped from ~0.007 to 0.330 right after the payment deploy that moved the charge client to the new card SDK, and checkout plus its upstream callers (frontend, proxy, agent, chatbot, mcp) rose at the same moment; ad errors stayed flat, so D-ad-3 is unrelated.",
+      "inferred": null,
+      "why": "Payment errors jumped from about 0.007 to 0.33 one minute after the D-pay-421 card SDK deploy. Checkout's errors match that exactly, and frontend, proxy, mcp, agent and chatbot rose only slightly downstream, while the ad service touched by D-ad-3 stayed flat.",
       "top1": 1.0,
       "outcome_correct": true,
       "false_blame": false,
       "abstention_correct": null,
+      "prompt_version": 2,
       "usage": {
-        "input_tokens": 2201,
+        "input_tokens": 2293,
+        "output_tokens": 255
+      },
+      "seconds": 4.15,
+      "tool_calls": 0
+    },
+    {
+      "scenario": "S1b",
+      "arm": "A0",
+      "trial": 2,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-421",
+      "inferred": null,
+      "why": "About a minute after the payment deploy moved charges to the new card SDK, payment errors jumped from about 0.007 to 0.33, and its callers (checkout, frontend, frontend-proxy, agent, chatbot, mcp) rose at the same moment, while ad stayed flat after its deploy.",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 2293,
+        "output_tokens": 278
+      },
+      "seconds": 4.6,
+      "tool_calls": 0
+    },
+    {
+      "scenario": "S1b",
+      "arm": "A0",
+      "trial": 3,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-421",
+      "inferred": null,
+      "why": "Payment's error rate jumped from ~0.007 to 0.33 exactly when D-pay-421 (new card SDK in the charge client) deployed 4 minutes before onset, and checkout plus its upstream callers (frontend, frontend-proxy, mcp, agent, chatbot) rose in lockstep, while ad (D-ad-3) stayed flat.",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 2293,
+        "output_tokens": 229
+      },
+      "seconds": 3.89,
+      "tool_calls": 0
+    },
+    {
+      "scenario": "S1b",
+      "arm": "A1",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-421",
+      "inferred": null,
+      "why": "Payment errors jumped from about 0.007 to 0.33 at onset, 4 minutes after the payment card SDK deploy, and checkout rose to the same level through its synchronous call to payment. Frontend, proxy, mcp, agent and chatbot show smaller downstream rises, and the ad deploy shows no effect.",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 3737,
+        "output_tokens": 141
+      },
+      "seconds": 6.67,
+      "tool_calls": 0
+    },
+    {
+      "scenario": "S1b",
+      "arm": "A1",
+      "trial": 2,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-421",
+      "inferred": null,
+      "why": "Payment errors jumped from about 0.007 to 0.33 four minutes after D-pay-421 moved the charge client to the new card SDK, and checkout errors rose in lockstep through its synchronous call to payment, while the ad deploy shows no error change.",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 3737,
+        "output_tokens": 118
+      },
+      "seconds": 6.79,
+      "tool_calls": 0
+    },
+    {
+      "scenario": "S1b",
+      "arm": "A1",
+      "trial": 3,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-421",
+      "inferred": null,
+      "why": "Payment's error rate jumped from about 0.007 to 0.33 at onset, 4 minutes after D-pay-421 moved its charge client to the new card SDK, and checkout (which calls payment synchronously) rose to the same level at the same minute, while the ad deploy shows no effect.",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 3737,
         "output_tokens": 129
       },
-      "seconds": 2.75,
-      "tool_calls": 0
-    },
-    {
-      "scenario": "S1b",
-      "arm": "A1",
-      "trial": 1,
-      "outcome": "CONFIRMED",
-      "cause": "D-pay-421",
-      "why": "Four minutes after the payment deploy that moved the charge client to the new card SDK, payment errors jumped from about 0.007 to 0.33, and checkout, which calls payment synchronously, rose in lockstep to about 0.33. The ad deploy left ad's error rate flat.",
-      "top1": 1.0,
-      "outcome_correct": true,
-      "false_blame": false,
-      "abstention_correct": null,
-      "usage": {
-        "input_tokens": 3645,
-        "output_tokens": 112
-      },
-      "seconds": 5.09,
+      "seconds": 6.36,
       "tool_calls": 0
     },
     {
@@ -258,34 +846,118 @@
       "trial": 1,
       "outcome": "CONFIRMED",
       "cause": "D-pgcfg-4",
-      "why": "The astronomy-db connection pool was shrunk 5 minutes before onset, and astronomy-db errors jumped to 0.200 at the same moment as product-catalog and its dependents (queue, accounting, recommendation, checkout, frontend), while ad, the only other changed service, stayed flat.",
+      "inferred": null,
+      "why": "Shortly after the connection pool on astronomy-db was shrunk, astronomy-db errors jumped to 0.20 at the same onset minute as its dependents (product-catalog, queue, accounting, recommendation, checkout, frontend), so the database is the most upstream failure, while the ad deploy left ad's error rate",
       "top1": 1.0,
       "outcome_correct": true,
       "false_blame": false,
       "abstention_correct": null,
+      "prompt_version": 2,
       "usage": {
-        "input_tokens": 2212,
-        "output_tokens": 121
+        "input_tokens": 2304,
+        "output_tokens": 361
       },
-      "seconds": 2.81,
+      "seconds": 5.37,
+      "tool_calls": 0
+    },
+    {
+      "scenario": "S3b",
+      "arm": "A0",
+      "trial": 2,
+      "outcome": "CONFIRMED",
+      "cause": "D-pgcfg-4",
+      "inferred": null,
+      "why": "About 5 minutes after the connection-pool shrink on astronomy-db, astronomy-db itself and the services that depend on it (product-catalog, accounting, queue, checkout, recommendation, then frontend, agent and others upstream) all jumped together to roughly 20% errors, while the ad deploy shows no er",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 2304,
+        "output_tokens": 498
+      },
+      "seconds": 6.51,
+      "tool_calls": 0
+    },
+    {
+      "scenario": "S3b",
+      "arm": "A0",
+      "trial": 3,
+      "outcome": "NOT_CONFIDENT",
+      "cause": null,
+      "inferred": "astronomy-db",
+      "why": "astronomy-db's error rate jumped to a flat 0.200 at onset, together with its dependents (product-catalog, accounting, checkout, recommendation, and the frontend tier), but D-pgcfg-4 only touched the reporting replica that product pages don't depend on, and the 'erroring again' report points to a rec",
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": null,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 2304,
+        "output_tokens": 654
+      },
+      "seconds": 7.88,
       "tool_calls": 0
     },
     {
       "scenario": "S3b",
       "arm": "A1",
       "trial": 1,
+      "outcome": "NOT_CONFIDENT",
+      "cause": null,
+      "inferred": "astronomy-db",
+      "why": "astronomy-db's error rate jumped to 0.200 at onset together with its synchronous callers (product-catalog, accounting, recommendation, checkout, frontend), so the fault most likely started there; D-pgcfg-4 only shrank the pool for the reporting replica and landed 5 minutes before the abrupt onset, s",
+      "top1": 0.0,
+      "outcome_correct": false,
+      "false_blame": false,
+      "abstention_correct": null,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 3712,
+        "output_tokens": 516
+      },
+      "seconds": 8.83,
+      "tool_calls": 0
+    },
+    {
+      "scenario": "S3b",
+      "arm": "A1",
+      "trial": 2,
       "outcome": "CONFIRMED",
       "cause": "D-pgcfg-4",
-      "why": "astronomy-db errors jumped to 0.20 at onset, right after its connection pool was shrunk five minutes earlier, and the errors spread through its synchronous callers (product-catalog, accounting) to frontend, checkout and recommendation, while the ad deploy left ad's error rate flat.",
+      "inferred": null,
+      "why": "The astronomy-db connection-pool shrink landed about 5 minutes before the last sample, right when astronomy-db and its synchronous callers (product-catalog, accounting) jumped from about 0.003 to 0.2 errors and the failures spread downstream, while ad's deploy left ad's errors flat.",
       "top1": 1.0,
       "outcome_correct": true,
       "false_blame": false,
       "abstention_correct": null,
+      "prompt_version": 2,
       "usage": {
-        "input_tokens": 3620,
-        "output_tokens": 120
+        "input_tokens": 3712,
+        "output_tokens": 524
       },
-      "seconds": 5.55,
+      "seconds": 9.66,
+      "tool_calls": 0
+    },
+    {
+      "scenario": "S3b",
+      "arm": "A1",
+      "trial": 3,
+      "outcome": "CONFIRMED",
+      "cause": "D-pgcfg-4",
+      "inferred": null,
+      "why": "astronomy-db and its synchronous callers (product-catalog, accounting) began erroring together at about 0.20 roughly a minute after the astronomy-db connection-pool config change, though that change is described as scoped to the reporting replica, so the link rests on timing and component; the ad de",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "prompt_version": 2,
+      "usage": {
+        "input_tokens": 3712,
+        "output_tokens": 651
+      },
+      "seconds": 11.13,
       "tool_calls": 0
     },
     {
@@ -300,16 +972,16 @@
       "abstention_correct": null,
       "distractors_rejected": true,
       "grounded": true,
-      "tool_calls": 42,
+      "tool_calls": 44,
       "gate_attempts": 1,
       "precedents": 5,
-      "seconds": 23.82,
+      "seconds": 29.99,
       "error": null,
       "confident": true,
       "usage": {
-        "input_tokens": 29821,
-        "output_tokens": 1838,
-        "turns": 4
+        "input_tokens": 45026,
+        "output_tokens": 2477,
+        "turns": 5
       },
       "sweep": [
         {
@@ -406,16 +1078,16 @@
       "abstention_correct": null,
       "distractors_rejected": true,
       "grounded": true,
-      "tool_calls": 39,
+      "tool_calls": 42,
       "gate_attempts": 1,
       "precedents": 5,
-      "seconds": 31.42,
+      "seconds": 47.56,
       "error": null,
       "confident": true,
       "usage": {
-        "input_tokens": 48187,
-        "output_tokens": 2941,
-        "turns": 6
+        "input_tokens": 71120,
+        "output_tokens": 3510,
+        "turns": 8
       },
       "sweep": [
         {
@@ -497,6 +1169,93 @@
       "target_correct": null
     },
     {
+      "scenario": "S3",
+      "arm": "A3L",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-pgcfg-3",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 21,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 21.7,
+      "error": null,
+      "confident": true,
+      "usage": {
+        "input_tokens": 20543,
+        "output_tokens": 1687,
+        "turns": 5
+      },
+      "sweep": [
+        {
+          "change": "D-pgcfg-3",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.1743 (observed 0.2178 \u00d7 0.8)"
+        },
+        {
+          "change": "D-cart-9",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pgcfg-3",
+        "astronomy-db",
+        "product-catalog"
+      ],
+      "detail": {
+        "blast": [
+          "accounting",
+          "agent",
+          "chatbot",
+          "checkout",
+          "frontend",
+          "frontend-proxy",
+          "mcp",
+          "product-catalog",
+          "queue",
+          "recommendation"
+        ],
+        "who_top3": [
+          "p-012",
+          "p-035",
+          "p-006"
+        ],
+        "violations": [],
+        "options": [
+          {
+            "kind": "rollback_deploy",
+            "target": "D-pgcfg-3",
+            "enabled": true
+          },
+          {
+            "kind": "open_issue",
+            "target": "D-pgcfg-3",
+            "enabled": true
+          },
+          {
+            "kind": "flip_flag",
+            "target": "frontend",
+            "enabled": false,
+            "cuts": null
+          }
+        ],
+        "gate_ran": true
+      },
+      "blast_precision": 1.0,
+      "blast_recall": 1.0,
+      "path_contains_ok": true,
+      "violates_ok": true,
+      "responder_top3": true,
+      "fix_offered": true,
+      "target_correct": true
+    },
+    {
       "scenario": "S4D",
       "arm": "A3L",
       "trial": 1,
@@ -508,22 +1267,61 @@
       "abstention_correct": true,
       "distractors_rejected": null,
       "grounded": true,
-      "tool_calls": 26,
+      "tool_calls": 29,
       "gate_attempts": 0,
       "precedents": 0,
-      "seconds": 13.08,
+      "seconds": 17.67,
       "error": null,
       "confident": false,
       "usage": {
-        "input_tokens": 29719,
-        "output_tokens": 975,
-        "turns": 4
+        "input_tokens": 36900,
+        "output_tokens": 1453,
+        "turns": 5
       },
       "sweep": [],
       "chain": [],
       "detail": {
         "blast": [
           "dash.exec_morning"
+        ],
+        "who_top3": [],
+        "violations": [],
+        "options": [],
+        "gate_ran": false
+      }
+    },
+    {
+      "scenario": "S4S",
+      "arm": "A3L",
+      "trial": 1,
+      "outcome": "NO_INCIDENT",
+      "cause": null,
+      "top1": null,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": true,
+      "distractors_rejected": null,
+      "grounded": true,
+      "tool_calls": 13,
+      "gate_attempts": 0,
+      "precedents": 5,
+      "seconds": 6.1,
+      "error": null,
+      "confident": false,
+      "usage": {
+        "input_tokens": 7325,
+        "output_tokens": 510,
+        "turns": 2
+      },
+      "sweep": [],
+      "chain": [],
+      "detail": {
+        "blast": [
+          "agent",
+          "chatbot",
+          "frontend",
+          "frontend-proxy",
+          "mcp"
         ],
         "who_top3": [],
         "violations": [],
@@ -543,15 +1341,15 @@
       "abstention_correct": true,
       "distractors_rejected": null,
       "grounded": null,
-      "tool_calls": 25,
+      "tool_calls": 27,
       "gate_attempts": 0,
       "precedents": 5,
-      "seconds": 31.61,
+      "seconds": 35.09,
       "error": null,
       "confident": false,
       "usage": {
-        "input_tokens": 88043,
-        "output_tokens": 2876,
+        "input_tokens": 88544,
+        "output_tokens": 3251,
         "turns": 9
       },
       "sweep": [],
@@ -574,7 +1372,7 @@
         "options": [
           {
             "kind": "open_issue",
-            "target": "inc-s12-4d21831b",
+            "target": "inc-s12-59708944",
             "enabled": true
           },
           {
@@ -586,6 +1384,191 @@
         ],
         "gate_ran": false
       }
+    },
+    {
+      "scenario": "S1b",
+      "arm": "A3L",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-pay-421",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 21,
+      "gate_attempts": 1,
+      "precedents": 5,
+      "seconds": 16.86,
+      "error": null,
+      "confident": true,
+      "usage": {
+        "input_tokens": 21974,
+        "output_tokens": 1232,
+        "turns": 4
+      },
+      "sweep": [
+        {
+          "change": "D-pay-421",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.1950 (observed 0.2437 \u00d7 0.8)"
+        },
+        {
+          "change": "D-ad-3",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pay-421",
+        "payment",
+        "checkout"
+      ],
+      "detail": {
+        "blast": [
+          "agent",
+          "chatbot",
+          "checkout",
+          "dash.exec_morning",
+          "frontend",
+          "frontend-proxy",
+          "kpi.exec_revenue",
+          "marts.exec_revenue_metric",
+          "marts.fct_revenue",
+          "mcp",
+          "raw.raw_orders",
+          "staging.stg_orders"
+        ],
+        "who_top3": [
+          "p-017",
+          "p-030",
+          "p-036"
+        ],
+        "violations": [],
+        "options": [
+          {
+            "kind": "rollback_deploy",
+            "target": "D-pay-421",
+            "enabled": true
+          },
+          {
+            "kind": "flip_flag",
+            "target": "paymentGate",
+            "enabled": true,
+            "cuts": [
+              "payment",
+              "checkout"
+            ]
+          },
+          {
+            "kind": "open_issue",
+            "target": "D-pay-421",
+            "enabled": true
+          },
+          {
+            "kind": "flip_flag",
+            "target": "raw.raw_orders",
+            "enabled": false,
+            "cuts": null
+          }
+        ],
+        "gate_ran": true
+      },
+      "blast_precision": 1.0,
+      "blast_recall": 1.0,
+      "path_contains_ok": true,
+      "violates_ok": true,
+      "responder_top3": true,
+      "fix_offered": true,
+      "target_correct": true
+    },
+    {
+      "scenario": "S3b",
+      "arm": "A3L",
+      "trial": 1,
+      "outcome": "CONFIRMED",
+      "cause": "D-pgcfg-4",
+      "top1": 1.0,
+      "outcome_correct": true,
+      "false_blame": false,
+      "abstention_correct": null,
+      "distractors_rejected": true,
+      "grounded": true,
+      "tool_calls": 21,
+      "gate_attempts": 1,
+      "precedents": 0,
+      "seconds": 27.52,
+      "error": null,
+      "confident": true,
+      "usage": {
+        "input_tokens": 20840,
+        "output_tokens": 1785,
+        "turns": 5
+      },
+      "sweep": [
+        {
+          "change": "D-pgcfg-4",
+          "status": "candidate",
+          "reason": "G5: max flow 1.0000 \u2265 needed 0.1582 (observed 0.1978 \u00d7 0.8)"
+        },
+        {
+          "change": "D-ad-7",
+          "status": "eliminated",
+          "reason": "G2: no path to any primary symptom (no path, no claim)"
+        }
+      ],
+      "chain": [
+        "D-pgcfg-4",
+        "astronomy-db",
+        "product-catalog"
+      ],
+      "detail": {
+        "blast": [
+          "accounting",
+          "agent",
+          "chatbot",
+          "checkout",
+          "frontend",
+          "frontend-proxy",
+          "mcp",
+          "product-catalog",
+          "queue",
+          "recommendation"
+        ],
+        "who_top3": [
+          "p-012",
+          "p-035",
+          "p-006"
+        ],
+        "violations": [],
+        "options": [
+          {
+            "kind": "rollback_deploy",
+            "target": "D-pgcfg-4",
+            "enabled": true
+          },
+          {
+            "kind": "open_issue",
+            "target": "D-pgcfg-4",
+            "enabled": true
+          },
+          {
+            "kind": "flip_flag",
+            "target": "frontend",
+            "enabled": false,
+            "cuts": null
+          }
+        ],
+        "gate_ran": true
+      },
+      "blast_precision": 1.0,
+      "blast_recall": 1.0,
+      "path_contains_ok": true,
+      "violates_ok": true,
+      "responder_top3": true,
+      "fix_offered": true,
+      "target_correct": true
     }
   ],
   "arms": [
@@ -605,5 +1588,5 @@
   ],
   "model": "claude-opus-5-5",
   "started": "2026-10-16T01:46:17",
-  "finished": "2026-10-16T01:49:33"
+  "finished": "2026-10-16T16:02:55"
 }
