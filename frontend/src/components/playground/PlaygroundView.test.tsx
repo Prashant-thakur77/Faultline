@@ -32,7 +32,8 @@ describe("PlaygroundView: break the graph", () => {
         <PlaygroundView />
       </CypherPanelProvider>,
     );
-    expect(await screen.findByText("Remove the call a → b")).toBeTruthy();
+    // the radio's name starts with the option title (the recorder picks options this way)
+    expect(await screen.findByRole("radio", { name: /^Remove the call a → b/ })).toBeTruthy();
     expect(screen.getByText(/G4 still holds/)).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Break it" }));
     await waitFor(() => expect(screen.getByText("2 decision(s) changed")).toBeTruthy());

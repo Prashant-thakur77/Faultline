@@ -30,8 +30,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const status = useStatus(tenant, !STATIC_SITE);
   const path = usePathname();
   const home = path === "/";
-  // home closes with its own full footer; the incident room and the replay player are fixed panes, with no page to end
-  const footer = !home && !/^\/(incidents|replay)\/[^/]+/.test(path ?? "");
+  // home closes with its own full footer; every other page ends with the quiet one. The incident room and the replay
+  // player are fixed panes on desktop (their columns scroll inside), so they keep exactly the viewport and the
+  // footer sits below them, one scroll further.
+  const pane = /^\/(incidents|replay)\/[^/]+/.test(path ?? "");
   return (
     <StatusCtx.Provider value={status}>
       <TooltipProvider delay={200}>
@@ -57,13 +59,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <FailBanner />
             {STATIC_SITE ? null : <BudgetBanner status={status.status} />}
             <main id="main" tabIndex={-1} className="flex min-h-0 flex-1 flex-col outline-none lg:overflow-y-auto">
-              {footer ? (
+              {home ? children : (
                 <>
-                  {/* the page keeps its own height (never shrunk under the footer), then the footer follows it */}
-                  <div className="flex shrink-0 grow flex-col">{children}</div>
+                  {/* the page keeps its own height (never shrunk under the footer), then the footer follows it;
+                      a fixed pane keeps exactly the viewport on desktop */}
+                  <div className={pane ? "flex min-h-0 flex-col lg:h-full lg:shrink-0" : "flex shrink-0 grow flex-col"}>{children}</div>
                   <div className="shrink-0"><SiteFooter compact /></div>
                 </>
-              ) : children}
+              )}
             </main>
           </div>
         </CypherPanelProvider>

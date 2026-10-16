@@ -43,10 +43,14 @@ const COMPACT_LINKS: Item[] = [
   ...COLUMNS[3].items.slice(0, 1),
 ];
 
+/** The product pages' footer links: dim until hovered or focused (--fl-subtle is AA for small text on the page). */
+const quietCls = "rounded text-[var(--fl-subtle)] outline-none transition-colors duration-150 hover:text-zinc-200 focus-visible:text-zinc-200 focus-visible:ring-2 focus-visible:ring-sky-400";
+
 const linkCls = "rounded text-[var(--fl-muted)] outline-none transition-colors duration-150 hover:text-zinc-50 focus-visible:ring-2 focus-visible:ring-sky-400";
 
 /** The close (a centred call to action with a copyable keyless check), the site map, and a giant wordmark.
- *  `compact` (every page but home) is one dark row: the mark, the pages, the evidence and the licence. */
+ *  `compact` (every page but home) is one quiet dark row (the mark, the pages, the evidence and the licence) over a
+ *  faint echo of the home wordmark. */
 export function SiteFooter({ compact = false }: { compact?: boolean }) {
   const cmd = (REPO_URL ? `git clone ${REPO_URL}.git && cd Faultline\n` : "") + "make setup && make judge-check";
   return (
@@ -75,22 +79,31 @@ export function SiteFooter({ compact = false }: { compact?: boolean }) {
       </section>}
 
       {compact ? (
-        <div className="mt-16 border-t border-white/[0.06]">
-          <div className="mx-auto flex max-w-[1400px] flex-wrap items-center gap-x-6 gap-y-3 px-5 py-6 text-[13px] sm:px-8">
+        <div className="mt-12 border-t border-white/[0.04]">
+          <div className="mx-auto flex max-w-[1400px] flex-wrap items-center gap-x-6 gap-y-2 px-5 pt-4 pb-2 text-[12.5px] sm:px-8">
             <span className="flex items-center gap-2">
-              <FaultlineMark className="size-5" />
-              <span className="font-[590] tracking-tight text-zinc-200">Faultline</span>
+              <FaultlineMark className="size-4 opacity-70" />
+              <span className="font-[590] tracking-tight text-[var(--fl-subtle)]">Faultline</span>
             </span>
-            <nav aria-label="Site" className="flex flex-wrap gap-x-5 gap-y-2">
+            <nav aria-label="Site" className="flex flex-wrap gap-x-4 gap-y-1.5">
               {COMPACT_LINKS.map((it) =>
                 it.route ? (
-                  <Link key={it.label} href={it.route} className={linkCls}>{it.label}</Link>
+                  <Link key={it.label} href={it.route} className={quietCls}>{it.label}</Link>
                 ) : it.href ? (
-                  <a key={it.label} href={it.href} className={linkCls} rel="noreferrer" target="_blank">{it.label}</a>
+                  <a key={it.label} href={it.href} className={quietCls} rel="noreferrer" target="_blank">{it.label}</a>
                 ) : null,
               )}
             </nav>
             <span className="text-xs text-[var(--fl-subtle)] sm:ml-auto">On a FalkorDB context graph · synthetic and public data · Apache-2.0</span>
+          </div>
+          {/* the home close's wordmark, as texture: about a third of its size, ~5 % white, decorative (SVG text, so it
+              is not body text for contrast checks) */}
+          <div className="mx-auto max-w-[1400px] overflow-hidden px-5 sm:px-8" aria-hidden>
+            <svg viewBox="0 0 1000 200" className="block h-auto w-[min(42vw,440px)] select-none" focusable="false">
+              <text x="0" y="188" textLength="1000" lengthAdjust="spacingAndGlyphs" className="font-hero" fontSize="241" fill="rgb(255 255 255 / 0.05)">
+                Faultline
+              </text>
+            </svg>
           </div>
         </div>
       ) : (
