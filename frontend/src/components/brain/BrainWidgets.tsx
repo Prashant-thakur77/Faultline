@@ -61,7 +61,7 @@ function QueryChip({ template, params, title, origin }: { template: string; para
     <button
       type="button"
       onClick={() => panel.open({ template, title, origin, recordedParams: params, ctx: {}, tenant })}
-      className="inline-flex min-h-6 items-center rounded bg-violet-500/15 px-1 font-mono text-[11px] text-violet-200 outline-none hover:bg-violet-500/25 focus-visible:ring-2 focus-visible:ring-violet-300"
+      className="inline-flex min-h-6 items-center rounded px-1 font-mono text-[11px] whitespace-nowrap text-zinc-400 outline-none transition-colors hover:bg-white/[0.05] hover:text-zinc-100 focus-visible:ring-2 focus-visible:ring-sky-400"
       aria-label={`${template}: open the Cypher panel for ${title}`}
     >
       {template}
@@ -71,10 +71,10 @@ function QueryChip({ template, params, title, origin }: { template: string; para
 
 function Card({ id, icon: Icon, title, aside, children }: { id: string; icon: LucideIcon; title: string; aside?: React.ReactNode; children: React.ReactNode }) {
   return (
-    <section aria-labelledby={`${id}-h`} className="min-w-0 space-y-2 rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
+    <section aria-labelledby={`${id}-h`} className="min-w-0 space-y-2 fl-card rounded-2xl px-5 py-4">
       <div className="flex flex-wrap items-center gap-2">
         <h2 id={`${id}-h`} className="flex items-center gap-1.5 text-sm font-semibold text-zinc-50">
-          <Icon aria-hidden className="size-4 text-violet-300" /> {title}
+          <Icon aria-hidden className="size-4 text-zinc-400" /> {title}
         </h2>
         {aside ? <div className="ml-auto flex flex-wrap items-center gap-1">{aside}</div> : null}
       </div>

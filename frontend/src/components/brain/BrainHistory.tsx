@@ -56,7 +56,7 @@ export function BrainHistory({
   const shown = (turns ?? []).slice(0, 12).reverse();
 
   return (
-    <section aria-labelledby="brain-history-h" className="space-y-2 rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
+    <section aria-labelledby="brain-history-h" className="space-y-2 fl-card rounded-2xl px-5 py-4">
       <div className="flex items-center gap-2">
         <h2 id="brain-history-h" className="flex items-center gap-1.5 text-sm font-semibold text-zinc-50">
           <History aria-hidden className="size-4 text-sky-300" /> History

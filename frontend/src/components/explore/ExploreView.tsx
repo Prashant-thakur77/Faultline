@@ -132,9 +132,9 @@ export function ExploreView({ tenant: urlTenant, focus }: { tenant: string | nul
             <Network aria-hidden className="size-5 text-sky-300" /> Explore (FalkorDB canvas)
           </h1>
           <p className="max-w-3xl text-sm text-zinc-300">
-            The live failure-flow graph (<code className="font-mono text-violet-300">PROPAGATES_TO</code>, from{" "}
-            <code className="font-mono text-violet-300">GET /api/graph</code>) drawn by FalkorDB&apos;s{" "}
-            <code className="font-mono text-violet-300">{CANVAS_PACKAGE}</code> web component. Free layouts for browsing;
+            The live failure-flow graph (<code className="font-mono text-zinc-200">PROPAGATES_TO</code>, from{" "}
+            <code className="font-mono text-zinc-200">GET /api/graph</code>) drawn by FalkorDB&apos;s{" "}
+            <code className="font-mono text-zinc-200">{CANVAS_PACKAGE}</code> web component. Free layouts for browsing;
             the incident room keeps its fixed layout. Click a node (or use the table) to open its Cypher.
           </p>
         </div>

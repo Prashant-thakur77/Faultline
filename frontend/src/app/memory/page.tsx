@@ -25,8 +25,9 @@ export default async function MemoryPage({ searchParams }: { searchParams: Promi
   return (
     <>
       <PageIntro eyebrow="Memory" title="The next incident starts" accent="warm" after=".">
-        Incident families (algo.labelPropagation), derived runbooks and recall by meaning (vector index plus shared
-        symptoms), all read from FalkorDB.
+        Past incidents are grouped into families by the graph (algo.labelPropagation), fixes that worked become runbooks,
+        and recall finds similar incidents by meaning. Memory can raise a prior or order the fixes; only a graph path
+        proves a cause.
       </PageIntro>
       <MemoryView key={incident ?? ""} initialIncident={incident} />
     </>

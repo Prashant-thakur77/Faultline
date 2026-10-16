@@ -23,7 +23,9 @@ import type { GraphResponse, PreflightRequest, PreflightResponse, PreflightVerdi
 import { useCypherPanel } from "@/components/cypher/CypherPanelContext";
 import { GraphLegend } from "@/components/incident/GraphLegend";
 import { GraphView, type RippleData } from "@/components/incident/GraphView";
-import { Section } from "@/components/incident/Section";
+import { Section, SectionFold } from "@/components/incident/Section";
+import { QUERY_ID_CLS, ViaFalkor } from "@/components/cypher/ViaFalkor";
+import { Disclosure, FoldProvider } from "@/components/ui/Disclosure";
 import { Button } from "@/components/ui/button";
 import { StatusChip } from "@/components/StatusChip";
 import { cn } from "@/lib/utils";
@@ -210,19 +212,15 @@ export function PreflightView({ focus = null, prRef = null }: { focus?: string |
   };
 
   return (
-    <div className="mx-auto grid w-full max-w-[1600px] grid-cols-1 gap-4 p-4 xl:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+    <FoldProvider>
+    <div className="mx-auto grid w-full max-w-[1400px] grid-cols-1 gap-5 px-5 py-6 sm:px-8 xl:grid-cols-[minmax(0,4fr)_minmax(0,7fr)]">
       <div className="space-y-4">
-        <section aria-labelledby="pf-h" className="space-y-3 rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
-          <h1 id="pf-h" className="flex items-center gap-2 text-lg font-semibold text-zinc-50">
-            <GitPullRequest aria-hidden className="size-5 text-violet-300" /> Preflight: the pre-deploy gate
-          </h1>
-          <p className="text-sm text-zinc-300">
-            The same graph that explains incidents scores a PR before it ships: what the change reaches, which revenue
-            path, which decisions it contradicts and who must review it. Weights come from weights.yaml; every term from a
-            FalkorDB query.
-          </p>
+        <section aria-labelledby="pf-h" className="fl-card space-y-4 rounded-2xl px-5 py-4">
+          <h2 id="pf-h" className="text-[15px] font-[560] tracking-[-0.01em] text-zinc-50">
+            Try an example pull request
+          </h2>
           {prRef || focus ? (
-            <p role="note" className="rounded-md border border-sky-500/40 bg-sky-500/10 p-2 text-xs text-sky-100">
+            <p role="note" className="rounded-lg bg-sky-500/10 px-3 py-2 text-xs text-sky-100">
               Opened from a PR comment{prRef ? <> for <span className="font-mono">{prRef}</span></> : null}
               {focus ? (
                 <>
@@ -233,28 +231,26 @@ export function PreflightView({ focus = null, prRef = null }: { focus?: string |
               {loadingPr ? ". Loading its latest recorded preflight…" : res?.req === null ? ". Showing its latest recorded preflight." : "."}
             </p>
           ) : null}
-          <div>
-            <h2 className="mb-1 text-xs font-semibold tracking-wide text-zinc-400 uppercase">Example PRs</h2>
-            <ul className="flex flex-col gap-1.5">
-              {EXAMPLES.map((ex) => (
-                <li key={ex.label}>
-                  <button
-                    type="button"
-                    disabled={busy}
-                    onClick={() => {
-                      setText(JSON.stringify(ex.body, null, 2));
-                      void run(ex.body);
-                    }}
-                    className="flex w-full items-center gap-2 rounded-md border border-zinc-700 px-2 py-1.5 text-left text-sm text-zinc-100 outline-none hover:bg-zinc-800 focus-visible:ring-2 focus-visible:ring-sky-400 disabled:opacity-60"
-                  >
-                    <GitPullRequest aria-hidden className="size-3.5 shrink-0 text-zinc-400" />
-                    <span className="flex-1">{ex.label}</span>
-                    <span className="text-[11px] text-zinc-400">{ex.expect}</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <ul className="flex flex-col gap-2" aria-label="Example PRs">
+            {EXAMPLES.map((ex) => (
+              <li key={ex.label}>
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => {
+                    setText(JSON.stringify(ex.body, null, 2));
+                    void run(ex.body);
+                  }}
+                  className="fl-press flex w-full items-center gap-3 rounded-xl bg-white/[0.03] px-3 py-2.5 text-left text-sm text-zinc-100 ring-1 ring-white/[0.06] outline-none transition-colors hover:bg-white/[0.06] hover:ring-white/[0.12] focus-visible:ring-2 focus-visible:ring-sky-400 disabled:opacity-60"
+                >
+                  <GitPullRequest aria-hidden className="size-4 shrink-0 text-[var(--fl-subtle)]" />
+                  <span className="flex-1">{ex.label}</span>
+                  <span className="text-[11px] text-[var(--fl-subtle)]">{ex.expect}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+          <Disclosure summary="Or paste your own PR (JSON)">
           <form
             className="space-y-2"
             onSubmit={(e) => {
@@ -262,7 +258,7 @@ export function PreflightView({ focus = null, prRef = null }: { focus?: string |
               if (parsed.ok && !busy) void run(parsed.value);
             }}
           >
-            <label htmlFor={editorId} className="text-xs font-semibold tracking-wide text-zinc-400 uppercase">
+            <label htmlFor={editorId} className="text-xs text-zinc-400">
               PR body (JSON, editable)
             </label>
             <textarea
@@ -273,7 +269,7 @@ export function PreflightView({ focus = null, prRef = null }: { focus?: string |
               rows={16}
               aria-invalid={!parsed.ok}
               aria-describedby={`${editorId}-help`}
-              className="w-full rounded-md border border-zinc-700 bg-zinc-950 p-2 font-mono text-[12px] text-zinc-100 outline-none focus-visible:ring-2 focus-visible:ring-sky-400"
+              className="w-full rounded-lg border border-white/[0.08] bg-black/40 p-3 font-mono text-[12px] text-zinc-100 outline-none focus-visible:ring-2 focus-visible:ring-sky-400"
             />
             <p id={`${editorId}-help`} className="text-xs text-zinc-400">
               {parsed.ok ? (
@@ -289,6 +285,7 @@ export function PreflightView({ focus = null, prRef = null }: { focus?: string |
               Run preflight
             </Button>
           </form>
+          </Disclosure>
         </section>
         {res ? <FactsAndEvidence r={res.r} req={res.req} missing={res.missing ?? null} /> : null}
       </div>
@@ -326,16 +323,18 @@ export function PreflightView({ focus = null, prRef = null }: { focus?: string |
             Assessed on a clean-room copy; not recorded (deep link unavailable).
           </p>
         ) : null}
-        {res ? <Verdict r={res.r} /> : !busy && !err && !loadingPr ? (
-          <p className="rounded-lg border border-dashed border-zinc-700 p-4 text-sm text-zinc-300">
-            Run an example PR or your own body. The verdict, its terms and the evidence appear here.
-          </p>
+        {res ? <Verdict r={res.r} req={res.req} /> : !busy && !err && !loadingPr ? (
+          <div className="fl-card rounded-2xl px-5 py-8 text-center">
+            <p className="text-[15px] text-zinc-200">Pick an example pull request to see its verdict.</p>
+            <p className="mt-1 text-sm text-[var(--fl-subtle)]">Block, review or allow, with every term read from FalkorDB.</p>
+          </div>
         ) : busy ? (
           <p className="text-sm text-zinc-300">Scoring the PR against the graph…</p>
         ) : null}
-        <PreflightGraph graph={graph} graphErr={graphErr} r={res?.r ?? null} focus={focus} />
         {res ? <Assessment r={res.r} /> : null}
+        <PreflightGraph graph={graph} graphErr={graphErr} r={res?.r ?? null} focus={focus} />
         {res ? (
+          <SectionFold>
           <Section
             id="pf-comment"
             title="PR comment preview"
@@ -347,36 +346,71 @@ export function PreflightView({ focus = null, prRef = null }: { focus?: string |
                 left to render it.
               </p>
             ) : res.r.comment ? (
-              <div className="rounded-md border border-zinc-700 bg-zinc-950 p-3">
+              <div className="rounded-lg bg-black/30 p-3 ring-1 ring-white/[0.06]">
                 <CommentPreview markdown={res.r.comment} />
               </div>
             ) : (
               <p className="text-sm text-zinc-300">An allow verdict posts no comment.</p>
             )}
           </Section>
+          </SectionFold>
         ) : null}
       </div>
     </div>
+    </FoldProvider>
   );
 }
 
-function Verdict({ r }: { r: PreflightResponse }) {
+/** Opens a preflight template in the Cypher panel: recorded params for the evidence's own template, derived otherwise. */
+function usePreflightOpener(r: PreflightResponse, req: PreflightRequest | null) {
+  const tenant = useTenant();
+  const panel = useCypherPanel();
+  const files = req
+    ? req.files.map((f) => `file:${f.path}`)
+    : [...new Set(r.facts.map((f) => f.file).filter((f): f is string => !!f))];
+  return (tid: string, what: string) => {
+    const exact = tid === r.evidence.template && r.evidence.params ? r.evidence.params : null;
+    panel.open({
+      template: tid,
+      title: `${tid} · preflight`,
+      origin: `preflight run ${r.run_id} (${r.pr})${tid === r.evidence.template ? ` → evidence ${r.evidence.evidence_id}` : ""}`,
+      detail: exact
+        ? `${what}. Params as recorded on the evidence.`
+        : `${what}. Params are derived from the PR the way the preflight engine builds them (not recorded for this query).`,
+      recordedParams: exact,
+      ctx: { pr: r.pr, files },
+      recorded: tid === r.evidence.template ? { ms: r.evidence.ms, rows: null, digest: r.evidence.digest } : null,
+      tenant: tenant,
+    });
+  };
+}
+
+function Verdict({ r, req }: { r: PreflightResponse; req: PreflightRequest | null }) {
   const m = VERDICT_META[r.verdict];
   const Icon = m.icon;
   const pct = (x: number) => `${Math.max(0, Math.min(1, x)) * 100}%`;
   const terms = Object.entries(r.terms).sort(([, a], [, b]) => b.weighted - a.weighted);
   const maxW = Math.max(0.0001, ...terms.map(([, t]) => t.weighted));
+  const open = usePreflightOpener(r, req);
+  const live = terms.filter(([, t]) => t.weighted !== 0);
+  const zero = terms.filter(([, t]) => t.weighted === 0);
+  const what = PREFLIGHT_TEMPLATES.find((t) => t.id === r.evidence.template)?.what ?? "the preflight's recorded evidence";
   return (
-    <Section id="pf-verdict" title="Verdict" aside={<span className="font-mono text-[11px] text-zinc-400">{r.pr} · {r.run_id} · {fmtMs(r.ms)}</span>}>
+    <Section
+      id="pf-verdict"
+      title="Verdict"
+      aside={<span className="font-mono text-[11px] text-[var(--fl-subtle)]">{r.pr} · {fmtMs(r.ms)}</span>}
+      via={r.evidence.template ? <ViaFalkor template={r.evidence.template} label={`the verdict (${what})`} onOpen={() => open(r.evidence.template, what)} /> : null}
+    >
       <div className="flex flex-wrap items-center gap-3">
-        <span className={cn("inline-flex items-center gap-2 rounded-lg border-2 px-3 py-1.5 text-xl font-bold tracking-wide", m.cls)} data-verdict={r.verdict}>
+        <span className={cn("inline-flex items-center gap-2 rounded-xl border-2 px-4 py-2 text-2xl font-bold tracking-wide", m.cls)} data-verdict={r.verdict}>
           <Icon aria-hidden className="size-6" />
           {m.text}
         </span>
-        <p className="text-sm text-zinc-300">{m.meaning}.</p>
+        <p className="text-[15px] text-zinc-300">{m.meaning}.</p>
       </div>
 
-      <div className="mt-3">
+      <div className="mt-4">
         <p className="mb-1 flex justify-between text-xs text-zinc-300">
           <span>
             risk <span className="font-mono font-semibold text-zinc-50">{fmtValue(r.risk)}</span>
@@ -404,12 +438,23 @@ function Verdict({ r }: { r: PreflightResponse }) {
 
       <ReversalCards reversals={r.reversals ?? []} />
 
-      <div className="mt-3 overflow-x-auto">
+      <Disclosure
+        className="mt-4 border-t border-white/[0.06] pt-3"
+        summary={
+          <>
+            How the score adds up
+            <span className="text-[var(--fl-subtle)]">
+              {" "}
+              · {live.length} term{live.length === 1 ? "" : "s"} contributed
+              {zero.length ? `, ${zero.length} at zero` : ""}
+            </span>
+          </>
+        }
+      >
+      <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
-          <caption className="mb-1 text-left text-xs font-semibold tracking-wide text-zinc-300 uppercase">
-            Risk terms (weighted contribution)
-          </caption>
-          <thead className="text-zinc-400">
+          <caption className="sr-only">Risk terms (weighted contribution), contributing terms first</caption>
+          <thead className="text-[var(--fl-subtle)]">
             <tr>
               <th scope="col" className="py-1 pr-2 font-medium">Term</th>
               <th scope="col" className="py-1 pr-2 font-medium">Value</th>
@@ -418,29 +463,37 @@ function Verdict({ r }: { r: PreflightResponse }) {
             </tr>
           </thead>
           <tbody>
-            {terms.map(([k, t]) => (
-              <tr key={k} className="border-t border-zinc-800 align-top">
-                <td className="py-1.5 pr-2 whitespace-nowrap text-zinc-100">{TERM_TEXT[k] ?? k}</td>
-                <td className="py-1.5 pr-2 font-mono text-zinc-200">{fmtValue(t.value)}</td>
+            {[...live, ...zero].map(([k, t]) => (
+              <tr key={k} className={cn("border-t border-white/[0.06] align-top", t.weighted === 0 && "text-[var(--fl-subtle)]")}>
+                <td className={cn("py-1.5 pr-2 whitespace-nowrap", t.weighted === 0 ? "text-zinc-400" : "text-zinc-100")}>{TERM_TEXT[k] ?? k}</td>
+                <td className="py-1.5 pr-2 font-mono text-zinc-300">{fmtValue(t.value)}</td>
                 <td className="py-1.5 pr-2">
                   <span className="flex items-center gap-1.5">
-                    <span className="font-mono text-zinc-50">+{fmtValue(t.weighted)}</span>
-                    <span className="h-1.5 w-14 rounded bg-zinc-800" aria-hidden>
-                      <span className="block h-full rounded bg-violet-400" style={{ width: `${(t.weighted / maxW) * 100}%` }} />
+                    <span className="font-mono text-zinc-100">+{fmtValue(t.weighted)}</span>
+                    <span className="h-1 w-14 rounded-full bg-white/[0.06]" aria-hidden>
+                      <span className="block h-full rounded-full bg-zinc-300" style={{ width: `${(t.weighted / maxW) * 100}%` }} />
                     </span>
                   </span>
                 </td>
-                <td className="py-1.5 break-words text-zinc-300">{t.why}</td>
+                <td className={cn("py-1.5 break-words", t.weighted === 0 ? "text-[var(--fl-subtle)]" : "text-zinc-300")}>{t.why}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+      </Disclosure>
 
       {r.would_change_if.length ? (
-        <div className="mt-3">
-          <h3 className="mb-1 text-xs font-semibold tracking-wide text-zinc-300 uppercase">Would change if</h3>
-          <ul className="space-y-1 text-xs">
+        <Disclosure
+          className="mt-2"
+          summary={
+            <>
+              What would change the verdict
+              <span className="text-[var(--fl-subtle)]"> · {r.would_change_if.length}</span>
+            </>
+          }
+        >
+          <ul className="space-y-1.5 text-xs">
             {r.would_change_if.map((w, i) => {
               const wm = VERDICT_META[w.verdict];
               const WIcon = wm.icon;
@@ -449,12 +502,12 @@ function Verdict({ r }: { r: PreflightResponse }) {
                   <span className={cn("inline-flex items-center gap-1 rounded border px-1 text-[10.5px] font-bold", wm.cls)}>
                     <WIcon aria-hidden className="size-3" /> {wm.text}
                   </span>
-                  <span className="min-w-0 flex-1 text-zinc-200">if {w.if.replace(/^if\s+/, "")}</span>
+                  <span className="min-w-0 flex-1 text-zinc-300">if {w.if.replace(/^if\s+/, "")}</span>
                 </li>
               );
             })}
           </ul>
-        </div>
+        </Disclosure>
       ) : null}
     </Section>
   );
@@ -664,26 +717,10 @@ function FactsAndEvidence({
 }) {
   const tenant = useTenant();
   const panel = useCypherPanel();
-  const files = req
-    ? req.files.map((f) => `file:${f.path}`)
-    : [...new Set(r.facts.map((f) => f.file).filter((f): f is string => !!f))];
-  const open = (tid: string, what: string) => {
-    const exact = tid === r.evidence.template && r.evidence.params ? r.evidence.params : null;
-    panel.open({
-      template: tid,
-      title: `${tid} · preflight`,
-      origin: `preflight run ${r.run_id} (${r.pr})${tid === r.evidence.template ? ` → evidence ${r.evidence.evidence_id}` : ""}`,
-      detail: exact
-        ? `${what}. Params as recorded on the evidence.`
-        : `${what}. Params are derived from the PR the way the preflight engine builds them (not recorded for this query).`,
-      recordedParams: exact,
-      ctx: { pr: r.pr, files },
-      recorded: tid === r.evidence.template ? { ms: r.evidence.ms, rows: null, digest: r.evidence.digest } : null,
-      tenant: tenant,
-    });
-  };
+  const open = usePreflightOpener(r, req);
   return (
-    <>
+    <SectionFold>
+    <div className="space-y-2">
       <Section id="pf-facts" title="Extracted facts" aside={<span className="text-[11px] text-zinc-400">{r.facts.length} facts</span>}>
         {missing?.has("facts") ? (
           <p className="text-sm text-zinc-300">Not in the recorded result (GET /api/preflight returns no facts).</p>
@@ -727,7 +764,7 @@ function FactsAndEvidence({
         ) : null}
       </Section>
 
-      <Section id="pf-evidence" title="Evidence (Cypher)">
+      <Section id="pf-evidence" title="Queries behind the verdict" aside={<span className="text-xs text-[var(--fl-subtle)]">{PREFLIGHT_TEMPLATES.length} queries</span>}>
         {missing?.has("template") && r.evidence.cypher ? (
           <p className="mb-2 text-xs">
             <button
@@ -747,7 +784,7 @@ function FactsAndEvidence({
                   },
                 })
               }
-              className="inline-flex min-h-6 items-center rounded bg-violet-500/15 px-1 font-mono text-[11px] text-violet-200 outline-none hover:bg-violet-500/25 focus-visible:ring-2 focus-visible:ring-violet-300"
+              className={QUERY_ID_CLS}
             >
               recorded Cypher of {r.evidence.evidence_id}
             </button>
@@ -765,14 +802,14 @@ function FactsAndEvidence({
           <dt className="text-zinc-400">engine</dt>
           <dd className="font-mono text-zinc-200">{fmtMs(r.evidence.ms)}</dd>
         </dl>
-        <h3 className="mt-2 mb-1 text-xs font-semibold tracking-wide text-zinc-300 uppercase">Queries behind the verdict</h3>
+        <h3 className="mt-3 mb-1 text-xs font-medium text-zinc-400">Templates</h3>
         <ul className="space-y-1 text-xs">
           {PREFLIGHT_TEMPLATES.map((t) => (
             <li key={t.id} className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => open(t.id, t.what)}
-                className="inline-flex min-h-6 shrink-0 items-center rounded bg-violet-500/15 whitespace-nowrap px-1 font-mono text-[11px] text-violet-200 outline-none hover:bg-violet-500/25 focus-visible:ring-2 focus-visible:ring-violet-300"
+                className={QUERY_ID_CLS}
                 aria-label={`${t.id}: open the Cypher panel (${t.what})`}
               >
                 {t.id}
@@ -783,7 +820,8 @@ function FactsAndEvidence({
           ))}
         </ul>
       </Section>
-    </>
+    </div>
+    </SectionFold>
   );
 }
 

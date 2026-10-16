@@ -50,7 +50,7 @@ function num(s: EvalSummaryState, k: string): number | null {
 export function ColdWarmCard() {
   const s = useEvalSummary();
   return (
-    <section aria-labelledby="coldwarm-h" className="space-y-2 rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
+    <section aria-labelledby="coldwarm-h" className="space-y-2 fl-card rounded-2xl px-5 py-4">
       <h2 id="coldwarm-h" className="text-sm font-semibold text-zinc-50">
         Cold vs warm (from the last eval)
       </h2>

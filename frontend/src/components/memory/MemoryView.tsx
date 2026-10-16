@@ -72,18 +72,12 @@ export function MemoryView({ initialIncident }: { initialIncident: string | null
   };
 
   return (
-    <div className="mx-auto w-full max-w-[1500px] space-y-4 p-4">
+    <div className="mx-auto w-full max-w-[1400px] space-y-5 px-5 py-6 sm:px-8">
       <header className="flex flex-wrap items-end gap-x-6 gap-y-2">
-        <div className="min-w-0 space-y-1">
-          <h1 className="flex items-center gap-2 text-lg font-semibold text-zinc-50">
-            <BrainCircuit aria-hidden className="size-5 text-violet-300" /> Memory
-          </h1>
-          <p className="max-w-3xl text-sm text-zinc-300">
-            What the graph remembers in <span className="font-mono">{data?.graph ?? tenantGraph(tenant)}</span>: incident families,
-            runbooks derived from past fixes, and what a given incident recalls. Memory may raise a prior or order the fixes; the
-            gate still needs a graph path.
-          </p>
-        </div>
+        <p className="flex min-w-0 items-center gap-2 text-sm text-zinc-400">
+          <BrainCircuit aria-hidden className="size-4 text-[var(--fl-subtle)]" />
+          Reading <span className="font-mono text-zinc-200">{data?.graph ?? tenantGraph(tenant)}</span>
+        </p>
         <form
           className="ml-auto flex flex-wrap items-end gap-2"
           onSubmit={(e) => {
@@ -167,7 +161,7 @@ function QueryButton({ template, onOpen, what }: { template: string; onOpen: () 
     <button
       type="button"
       onClick={onOpen}
-      className="inline-flex min-h-6 items-center rounded bg-violet-500/15 px-1 font-mono text-[11px] text-violet-200 outline-none hover:bg-violet-500/25 focus-visible:ring-2 focus-visible:ring-violet-300"
+      className="inline-flex min-h-6 items-center rounded px-1 font-mono text-[11px] whitespace-nowrap text-zinc-400 outline-none transition-colors hover:bg-white/[0.05] hover:text-zinc-100 focus-visible:ring-2 focus-visible:ring-sky-400"
       aria-label={`${template}: open the Cypher panel for ${what}`}
     >
       {template}
@@ -177,10 +171,10 @@ function QueryButton({ template, onOpen, what }: { template: string; onOpen: () 
 
 function Panel({ id, title, icon: Icon, aside, children }: { id: string; title: string; icon: typeof Users; aside?: React.ReactNode; children: React.ReactNode }) {
   return (
-    <section aria-labelledby={`${id}-h`} className="space-y-2 rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
+    <section aria-labelledby={`${id}-h`} className="space-y-2 fl-card rounded-2xl px-5 py-4">
       <div className="flex flex-wrap items-center gap-2">
         <h2 id={`${id}-h`} className="flex items-center gap-1.5 text-sm font-semibold text-zinc-50">
-          <Icon aria-hidden className="size-4 text-violet-300" /> {title}
+          <Icon aria-hidden className="size-4 text-zinc-400" /> {title}
         </h2>
         {aside ? <div className="ml-auto flex flex-wrap items-center gap-1">{aside}</div> : null}
       </div>

@@ -15,7 +15,8 @@ export default function BrainPage() {
   return (
     <>
       <PageIntro eyebrow="Company brain" title="Who owns, knows" accent="and decided" after=" what.">
-        Answered by read-only Cypher on the tenant graph; every id an answer cites was returned by a query of that question.
+        Ask in plain English. Answers come only from read-only queries on the tenant graph, and every id they cite was
+        returned by one.
       </PageIntro>
       <BrainView />
     </>

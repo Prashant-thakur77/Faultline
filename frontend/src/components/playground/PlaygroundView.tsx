@@ -237,7 +237,7 @@ export function PlaygroundView() {
                                 tenant,
                               })
                             }
-                            className="rounded bg-violet-500/15 px-1 font-mono text-[11px] text-violet-200 outline-none hover:bg-violet-500/25 focus-visible:ring-2 focus-visible:ring-violet-300"
+                            className="rounded px-1 font-mono text-[11px] text-zinc-400 outline-none hover:bg-white/[0.05] hover:text-zinc-100 focus-visible:ring-2 focus-visible:ring-sky-400"
                             aria-label={`${t}: open the Cypher that decides ${d.decision}`}
                           >
                             {t}

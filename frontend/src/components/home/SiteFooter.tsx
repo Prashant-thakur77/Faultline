@@ -36,10 +36,17 @@ const COLUMNS: { head: string; items: Item[] }[] = [
   ] },
 ];
 
+/** The one-row footer of the product pages: the pages and the evidence, nothing else. */
+const COMPACT_LINKS: Item[] = [
+  ...COLUMNS[0].items,
+  ...COLUMNS[1].items.slice(0, 1),
+  ...COLUMNS[3].items.slice(0, 1),
+];
+
 const linkCls = "rounded text-[var(--fl-muted)] outline-none transition-colors duration-150 hover:text-zinc-50 focus-visible:ring-2 focus-visible:ring-sky-400";
 
 /** The close (a centred call to action with a copyable keyless check), the site map, and a giant wordmark.
- *  `compact` (every page but home) keeps the site map and the white close, without the call to action. */
+ *  `compact` (every page but home) is one dark row: the mark, the pages, the evidence and the licence. */
 export function SiteFooter({ compact = false }: { compact?: boolean }) {
   const cmd = (REPO_URL ? `git clone ${REPO_URL}.git && cd Faultline\n` : "") + "make setup && make judge-check";
   return (
@@ -67,7 +74,27 @@ export function SiteFooter({ compact = false }: { compact?: boolean }) {
         </div>
       </section>}
 
-      <div className={compact ? "mt-16 border-t border-white/[0.06]" : "border-t border-white/[0.06]"}>
+      {compact ? (
+        <div className="mt-16 border-t border-white/[0.06]">
+          <div className="mx-auto flex max-w-[1400px] flex-wrap items-center gap-x-6 gap-y-3 px-5 py-6 text-[13px] sm:px-8">
+            <span className="flex items-center gap-2">
+              <FaultlineMark className="size-5" />
+              <span className="font-[590] tracking-tight text-zinc-200">Faultline</span>
+            </span>
+            <nav aria-label="Site" className="flex flex-wrap gap-x-5 gap-y-2">
+              {COMPACT_LINKS.map((it) =>
+                it.route ? (
+                  <Link key={it.label} href={it.route} className={linkCls}>{it.label}</Link>
+                ) : it.href ? (
+                  <a key={it.label} href={it.href} className={linkCls} rel="noreferrer" target="_blank">{it.label}</a>
+                ) : null,
+              )}
+            </nav>
+            <span className="text-xs text-[var(--fl-subtle)] sm:ml-auto">On a FalkorDB context graph · synthetic and public data · Apache-2.0</span>
+          </div>
+        </div>
+      ) : (
+      <div className="border-t border-white/[0.06]">
         <div className="mx-auto grid max-w-[1200px] gap-12 px-5 py-16 sm:px-8 lg:grid-cols-[1fr_3fr]">
           <div className="flex items-start gap-2">
             <FaultlineMark className="size-6" />
@@ -92,11 +119,14 @@ export function SiteFooter({ compact = false }: { compact?: boolean }) {
         </div>
       </div>
 
-      {/* the close in white: it rises over the dark page as it scrolls in */}
+      )}
+
+      {/* the close in white (home only): it rises over the dark page as it scrolls in */}
+      {compact ? null : (
       <div className="fl-rise fl-light relative mx-2 overflow-hidden rounded-t-[28px] bg-[#f4f4f2] text-zinc-950 sm:mx-3 sm:rounded-t-[40px]">
         <div className="mx-auto flex max-w-[1200px] flex-wrap items-end justify-between gap-6 px-5 pt-12 sm:px-8 sm:pt-16">
           <p className="font-hero max-w-[16ch] text-[clamp(1.9rem,4.4vw,3.4rem)] leading-[1.02]">
-            No path,<br /><span className="text-zinc-500">no claim.</span>
+            No path,<br /><span className="text-[var(--fl-subtle)]">no claim.</span>
           </p>
           <ul className="flex flex-wrap gap-x-6 gap-y-2 text-[14px] font-[510]">
             {[{ l: "Replay", r: "/replay" }, { l: "Brain", r: "/brain" }, { l: "Preflight", r: "/preflight" }, { l: "Memory", r: "/memory" }].map((x) => (
@@ -117,6 +147,7 @@ export function SiteFooter({ compact = false }: { compact?: boolean }) {
           <span>Synthetic and public data only · Apache-2.0</span>
         </div>
       </div>
+      )}
     </footer>
   );
 }

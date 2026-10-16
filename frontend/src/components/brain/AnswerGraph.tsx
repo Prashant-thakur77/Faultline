@@ -110,7 +110,7 @@ function AnswerGraphSection({ answer, ids, total }: { answer: BrainAnswer; ids: 
         <button
           type="button"
           onClick={() => openQuery()}
-          className="inline-flex min-h-6 items-center gap-1 rounded border border-violet-400/30 bg-violet-500/10 px-1.5 font-mono text-[11px] text-violet-200 outline-none transition-colors hover:border-violet-300/50 hover:bg-violet-500/20 focus-visible:ring-2 focus-visible:ring-sky-400"
+          className="inline-flex min-h-6 items-center gap-1 rounded px-1.5 font-mono text-[11px] text-zinc-400 hover:text-zinc-100 hover:bg-white/[0.05] outline-none transition-colors focus-visible:ring-2 focus-visible:ring-sky-400"
         >
           <Code2 aria-hidden className="size-3" />
           {data?.template ?? SUB_TEMPLATE}

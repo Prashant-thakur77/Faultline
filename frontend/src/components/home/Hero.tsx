@@ -141,8 +141,15 @@ function Numbers() {
   const two = (k: string) => (typeof v[k] === "number" ? (v[k] as number).toFixed(2) : get(k));   // shown rounded; exact in the title
   // each number says how to read it: two of them are zeros, and zero is the result we want
   const items: { big: string; unit: string; tag: string; good: string; text: React.ReactNode; exact?: string }[] = [
-    { big: get("deep.fresh.all.wrong_confident"), unit: "wrong blames", tag: "Accuracy", good: "lower is better",
-      text: <>confident wrong blames in {get("deep.fresh.all.cases")} fresh test worlds, five kinds of them adversarial</> },
+    // Safety, not accuracy: the honest trade (right causes, hand-offs to a human) is stated next to the zero.
+    { big: get("deep.fresh.all.wrong_confident"), unit: "confident wrong blames", tag: "Safety", good: "lower is better",
+      text: (
+        <>
+          confident wrong blames in {get("deep.fresh.all.cases")} generated test worlds built to trap it. The
+          trade: {get("deep.fresh.all.right_cause")}/{get("deep.fresh.all.cause_cases")} right causes ·{" "}
+          {get("deep.fresh.all.abstained")} of {get("deep.fresh.all.cases")} handed to a human
+        </>
+      ) },
     { big: get("arm.A4.confirmed_causes"), unit: "causes", tag: "Ablation", good: "zero by design",
       text: <>confirmed with FalkorDB switched off: without the graph, the agent cannot claim anything</> },
     { big: two("ctx.busy30.b1000.GA.mrr"), unit: "MRR", tag: "Ranking", good: "higher is better", exact: get("ctx.busy30.b1000.GA.mrr"),

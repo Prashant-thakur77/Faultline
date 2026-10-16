@@ -59,7 +59,7 @@ export function ForgetPanel() {
   };
 
   return (
-    <section aria-labelledby="forget-h" className="space-y-2 rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
+    <section aria-labelledby="forget-h" className="space-y-2 fl-card rounded-2xl px-5 py-4">
       <h2 id="forget-h" className="flex items-center gap-1.5 text-sm font-semibold text-zinc-50">
         <Eraser aria-hidden className="size-4 text-amber-300" /> Forget a document
       </h2>

@@ -12,7 +12,8 @@ export default async function PreflightPage({ searchParams }: { searchParams: Pr
   return (
     <>
       <PageIntro eyebrow="Preflight" title="Catch the risky change" accent="before" after=" it ships.">
-        A pull request scored against the graph: what it can break, who should review it, and which active decisions it contradicts.
+        Pick a pull request. Faultline scores it against the FalkorDB graph: what it would break, which decisions it
+        contradicts, and who must review it.
       </PageIntro>
       <PreflightView key={pr ?? ""} focus={focus} prRef={pr} />
     </>

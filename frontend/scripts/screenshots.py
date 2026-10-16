@@ -197,8 +197,10 @@ def main() -> int:
 
         page.goto(f"{a.ui}/replay/s1-hero")
         expect(page.get_by_text("Recorded run · static files")).to_be_visible()
-        # reduced motion makes playback manual: jump to the end (every recorded event applied)
-        page.get_by_role("button", name="Jump to the end").click()
+        # the player opens on the finished room (every recorded event applied); older builds opened at event 0
+        end = page.get_by_role("button", name="Jump to the end")
+        if end.is_enabled():
+            end.click()
         expect(page.get_by_text(re.compile(r"Event (\d+) / \1\b")).first).to_be_visible(timeout=30_000)
         settle(page)
         snap(page, "12-replay")

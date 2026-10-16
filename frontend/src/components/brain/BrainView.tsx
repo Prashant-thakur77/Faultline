@@ -3,7 +3,6 @@
 import { Fragment, useId, useState, useSyncExternalStore } from "react";
 import {
   ArrowDown,
-  BrainCircuit,
   CircleAlert,
   ExternalLink,
   HeartPulse,
@@ -22,6 +21,8 @@ import type { BrainAnswer, BrainStep, LlmMode } from "@/lib/types";
 import { useAppStatus } from "@/components/AppShell";
 import { useCypherPanel } from "@/components/cypher/CypherPanelContext";
 import { Button } from "@/components/ui/button";
+import { ViaFalkor } from "@/components/cypher/ViaFalkor";
+import { Disclosure, FoldProvider } from "@/components/ui/Disclosure";
 import { StatusChip } from "@/components/StatusChip";
 import { cn, safeHttpUrl } from "@/lib/utils";
 import { AnswerGraph } from "./AnswerGraph";
@@ -116,93 +117,85 @@ export function BrainView() {
     }
   };
 
+  const firstExamples = examples.now.slice(0, 4);
+  const moreExamples = [...examples.now.slice(4), ...examples.time];
   return (
-    <div className="mx-auto grid w-full max-w-[1400px] gap-4 p-4 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
-      <div className="space-y-4 self-start">
-        <section aria-labelledby="brain-ask-h" className="space-y-3 rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
-          <h1 id="brain-ask-h" className="flex items-center gap-2 text-lg font-semibold text-zinc-50">
-            <BrainCircuit aria-hidden className="size-5 text-violet-300" /> Company brain
-          </h1>
-          <p className="text-sm text-zinc-300">
-            Who owns, knows and decided what, answered from the tenant graph. Every id in the answer was seen by a graph
-            query of this question (citation guard).
-          </p>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              void ask(question);
+    <FoldProvider>
+    <div className="mx-auto w-full max-w-[1200px] space-y-6 px-5 py-6 sm:px-8">
+      <section aria-labelledby="brain-ask-h" className="fl-card mx-auto max-w-[880px] space-y-4 rounded-3xl px-5 py-5 sm:px-6">
+        <h2 id="brain-ask-h" className="sr-only">
+          Ask the company brain
+        </h2>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            void ask(question);
+          }}
+          className="space-y-3"
+        >
+          <label htmlFor={inputId} className="sr-only">
+            Question
+          </label>
+          <textarea
+            id={inputId}
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                void ask(question);
+              }
             }}
-            className="space-y-2"
-          >
-            <label htmlFor={inputId} className="text-xs text-zinc-400">
-              Question
-            </label>
-            <textarea
-              id={inputId}
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  void ask(question);
-                }
-              }}
-              rows={3}
-              maxLength={500}
-              placeholder={`e.g. ${examples.now[0]}`}
-              className="w-full rounded-md border border-zinc-700 bg-zinc-950 p-2 text-sm text-zinc-50 outline-none focus-visible:ring-2 focus-visible:ring-sky-400"
-            />
-            <div className="flex flex-wrap items-center gap-2">
-              <div role="radiogroup" aria-label="Answered by" className="flex overflow-hidden rounded-md border border-zinc-700 text-xs">
-                <button
-                  type="button"
-                  role="radio"
-                  aria-checked={effectiveLlm === "baseline"}
-                  onClick={() => setLlm("baseline")}
-                  className={cn(
-                    "px-2 py-1 outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-inset",
-                    effectiveLlm === "baseline" ? "bg-sky-500/20 text-sky-100" : "text-zinc-300 hover:bg-zinc-800",
-                  )}
-                >
-                  Baseline (no LLM)
-                </button>
-                <button
-                  type="button"
-                  role="radio"
-                  aria-checked={effectiveLlm === "anthropic"}
-                  aria-disabled={!llmConfigured || undefined}
-                  onClick={() => llmConfigured && setLlm("anthropic")}
-                  title={llmConfigured ? undefined : "ANTHROPIC_API_KEY is not configured on the server"}
-                  className={cn(
-                    "px-2 py-1 outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-inset",
-                    effectiveLlm === "anthropic" ? "bg-sky-500/20 text-sky-100" : "text-zinc-300 hover:bg-zinc-800",
-                    !llmConfigured && "text-zinc-500 hover:bg-transparent",
-                  )}
-                >
-                  Anthropic{llmConfigured ? "" : " (not configured)"}
-                </button>
-              </div>
-              <Button type="submit" className="ml-auto" disabled={busy || question.trim().length < 3}>
-                {busy ? <LoaderCircle aria-hidden className="motion-safe:animate-spin" /> : <Send aria-hidden />}
-                Ask
-              </Button>
-            </div>
-          </form>
-          <ExampleList title="Examples" questions={examples.now} icon={MessageSquareText} busy={busy} onAsk={(q) => void ask(q)} />
-          <ExampleList
-            title="Over time (ownership, as-of, history)"
-            questions={examples.time}
-            icon={History}
-            busy={busy}
-            onAsk={(q) => void ask(q)}
+            rows={2}
+            maxLength={500}
+            placeholder={`Ask anything, e.g. ${examples.now[0]}`}
+            className="w-full resize-none rounded-2xl bg-black/30 px-4 py-3 text-[15px] text-zinc-50 ring-1 ring-white/[0.08] outline-none placeholder:text-zinc-500 focus-visible:ring-2 focus-visible:ring-sky-400"
           />
-        </section>
-        <KnowledgeHealthPanel busy={busy} onCheck={() => void ask(KNOWLEDGE_HEALTH_QUESTION)} answer={answer} />
-        <BrainHistory user={user} refreshKey={answer?.run_id ?? ""} onAsk={(q) => void ask(q)} busy={busy} />
-        <ForgetPanel />
-      </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <div role="radiogroup" aria-label="Answered by" className="flex rounded-full bg-white/[0.04] p-0.5 text-xs ring-1 ring-white/[0.06]">
+              <button
+                type="button"
+                role="radio"
+                aria-checked={effectiveLlm === "baseline"}
+                onClick={() => setLlm("baseline")}
+                className={cn(
+                  "rounded-full px-2.5 py-1 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-sky-400",
+                  effectiveLlm === "baseline" ? "bg-white/[0.1] text-zinc-50" : "text-zinc-400 hover:text-zinc-100",
+                )}
+              >
+                Baseline (no LLM)
+              </button>
+              <button
+                type="button"
+                role="radio"
+                aria-checked={effectiveLlm === "anthropic"}
+                aria-disabled={!llmConfigured || undefined}
+                onClick={() => llmConfigured && setLlm("anthropic")}
+                title={llmConfigured ? undefined : "ANTHROPIC_API_KEY is not configured on the server"}
+                className={cn(
+                  "rounded-full px-2.5 py-1 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-sky-400",
+                  effectiveLlm === "anthropic" ? "bg-white/[0.1] text-zinc-50" : "text-zinc-400 hover:text-zinc-100",
+                  !llmConfigured && "text-zinc-600 hover:text-zinc-600",
+                )}
+              >
+                Anthropic{llmConfigured ? "" : " (not configured)"}
+              </button>
+            </div>
+            <Button type="submit" className="ml-auto rounded-full" disabled={busy || question.trim().length < 3}>
+              {busy ? <LoaderCircle aria-hidden className="motion-safe:animate-spin" /> : <Send aria-hidden />}
+              Ask
+            </Button>
+          </div>
+        </form>
+        <ExampleList title="Examples" questions={firstExamples} icon={MessageSquareText} busy={busy} onAsk={(q) => void ask(q)} />
+        {moreExamples.length ? (
+          <Disclosure size="xs" summary={`More examples, including over time (${moreExamples.length})`}>
+            <ExampleList title="More examples" questions={moreExamples} icon={History} busy={busy} onAsk={(q) => void ask(q)} />
+          </Disclosure>
+        ) : null}
+      </section>
 
-      <section aria-labelledby="brain-answer-h" aria-busy={busy} className="space-y-3 self-start">
+      <section aria-labelledby="brain-answer-h" aria-busy={busy} className="mx-auto max-w-[880px] space-y-3">
         <h2 id="brain-answer-h" className="sr-only">
           Answer
         </h2>
@@ -230,19 +223,23 @@ export function BrainView() {
             </div>
           ) : busy ? (
             <p className="text-sm text-zinc-300">Asking the graph…</p>
-          ) : !answer ? (
-            <p className="rounded-lg border border-dashed border-zinc-700 p-4 text-sm text-zinc-300">
-              Ask a question or pick an example. The answer, its citations and the graph queries behind it appear here.
-            </p>
-          ) : (
+          ) : answer ? (
             <AnswerView a={answer} />
-          )}
+          ) : null}
         </div>
       </section>
-      <div className="lg:col-span-2">
+
+      <div className="pt-2">
+        <h2 className="mb-3 text-[15px] font-[560] tracking-[-0.01em] text-zinc-50">Explore the brain</h2>
         <BrainWidgets />
       </div>
+      <div className="grid gap-4 lg:grid-cols-3">
+        <KnowledgeHealthPanel busy={busy} onCheck={() => void ask(KNOWLEDGE_HEALTH_QUESTION)} answer={answer} />
+        <BrainHistory user={user} refreshKey={answer?.run_id ?? ""} onAsk={(q) => void ask(q)} busy={busy} />
+        <ForgetPanel />
+      </div>
     </div>
+    </FoldProvider>
   );
 }
 
@@ -261,17 +258,17 @@ function ExampleList({
 }) {
   return (
     <div>
-      <h2 className="mb-1 text-xs font-semibold tracking-wide text-zinc-400 uppercase">{title}</h2>
-      <ul className="flex flex-col gap-1.5">
+      <h3 className="sr-only">{title}</h3>
+      <ul className="flex flex-wrap gap-2" aria-label={title}>
         {questions.map((q) => (
           <li key={q}>
             <button
               type="button"
               onClick={() => onAsk(q)}
               disabled={busy}
-              className="flex w-full items-start gap-1.5 rounded-md border border-zinc-700 px-2 py-1.5 text-left text-sm text-zinc-200 outline-none hover:bg-zinc-800 focus-visible:ring-2 focus-visible:ring-sky-400 disabled:opacity-60"
+              className="fl-press inline-flex items-start gap-1.5 rounded-full bg-white/[0.04] px-3 py-1.5 text-left text-[13px] text-zinc-300 ring-1 ring-white/[0.06] outline-none transition-colors hover:bg-white/[0.08] hover:text-zinc-50 focus-visible:ring-2 focus-visible:ring-sky-400 disabled:opacity-60"
             >
-              <Icon aria-hidden className="mt-0.5 size-3.5 shrink-0 text-zinc-400" />
+              <Icon aria-hidden className="mt-0.5 size-3.5 shrink-0 text-[var(--fl-subtle)]" />
               {q}
             </button>
           </li>
@@ -290,13 +287,13 @@ function ExampleList({
 function KnowledgeHealthPanel({ busy, onCheck, answer }: { busy: boolean; onCheck: () => void; answer: BrainAnswer | null }) {
   const last = answer && answer.question === KNOWLEDGE_HEALTH_QUESTION ? answer : null;
   return (
-    <section aria-labelledby="khealth-h" className="space-y-2 rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
+    <section aria-labelledby="khealth-h" className="fl-card space-y-2 rounded-2xl px-5 py-4">
       <h2 id="khealth-h" className="flex items-center gap-1.5 text-sm font-semibold text-zinc-50">
-        <HeartPulse aria-hidden className="size-4 text-amber-300" /> Knowledge health
+        <HeartPulse aria-hidden className="size-4 text-zinc-400" /> Knowledge health
       </h2>
       <p className="text-xs text-zinc-400">
-        Where the graph&apos;s knowledge may be out of date: stale runbooks and docs, ownership handovers with no fresh runbook,
-        and decisions that recent changes contradict. Answered from Cypher templates, cited and guarded like any question.
+        Stale runbooks and docs, handovers with no fresh runbook, and decisions that recent changes contradict. Asked like
+        any question: cited and guarded.
       </p>
       <div className="flex flex-wrap items-center gap-2">
         <Button type="button" size="sm" variant="outline" onClick={onCheck} disabled={busy}>
@@ -352,7 +349,7 @@ function AnswerView({ a }: { a: BrainAnswer }) {
   };
 
   return (
-    <article className="space-y-3 rounded-xl border border-zinc-800 bg-zinc-900 p-4">
+    <article className="fl-card space-y-4 rounded-2xl px-5 py-5 sm:px-6">
       <header className="space-y-2">
         <p className="text-xs text-zinc-400">
           Q: <span className="text-zinc-200">{a.question}</span>
@@ -367,14 +364,23 @@ function AnswerView({ a }: { a: BrainAnswer }) {
               citation guard ✗
             </StatusChip>
           )}
-          <StatusChip tone={a.tier === 3 ? "warn" : "info"} icon={a.tier === 3 ? Wand2 : undefined}>
-            {TIER_TEXT[a.tier] ?? `tier ${a.tier}`}
-          </StatusChip>
-          {a.tier === 3 ? <StatusChip tone="warn">text2cypher</StatusChip> : null}
-          <StatusChip tone="na">intent: {a.intent}</StatusChip>
-          <span className="text-[11px] text-zinc-400">
-            {a.answered_by} · {fmtMs(a.ms)} · <span className="font-mono">{a.run_id}</span>
+          {a.tier === 3 ? (
+            <StatusChip tone="warn" icon={Wand2}>
+              {TIER_TEXT[a.tier] ?? `tier ${a.tier}`} · text2cypher
+            </StatusChip>
+          ) : null}
+          <span className="text-[11px] text-[var(--fl-subtle)]">
+            {a.tier === 3 ? "" : `${TIER_TEXT[a.tier] ?? `tier ${a.tier}`} · `}intent: {a.intent} · {a.answered_by} · {fmtMs(a.ms)} ·{" "}
+            <span className="font-mono">{a.run_id}</span>
           </span>
+          {a.steps.length ? (
+            <ViaFalkor
+              className="ml-auto"
+              template={a.steps.map((st) => st.template).filter((t): t is string => !!t && t.startsWith("Q-")).join("+") || null}
+              label="the answer's graph steps"
+              onOpen={() => openStep(a.steps[a.steps.length - 1], a.steps.length - 1)}
+            />
+          ) : null}
         </div>
         {!a.guard.ok ? (
           <p role="alert" className="text-xs text-red-200">
@@ -390,7 +396,7 @@ function AnswerView({ a }: { a: BrainAnswer }) {
 
       {a.sources.length ? (
         <div>
-          <h3 className="mb-1 text-xs font-semibold tracking-wide text-zinc-400 uppercase">Sources</h3>
+          <h3 className="mb-1 text-xs font-medium text-zinc-400">Sources</h3>
           <ul className="space-y-0.5 text-xs">
             {a.sources.map((u) => (
               <li key={u}>
@@ -409,8 +415,18 @@ function AnswerView({ a }: { a: BrainAnswer }) {
         </div>
       ) : null}
 
-      <div>
-        <h3 className="mb-1 text-xs font-semibold tracking-wide text-zinc-400 uppercase">Via (graph steps, in order)</h3>
+      <Disclosure
+        className="border-t border-white/[0.06] pt-3"
+        summary={
+          <>
+            How it was answered
+            <span className="text-[var(--fl-subtle)]">
+              {" "}
+              · {a.steps.length} graph step{a.steps.length === 1 ? "" : "s"}, in order
+            </span>
+          </>
+        }
+      >
         {a.steps.length === 0 ? (
           <p className="text-xs text-zinc-300">No graph step was recorded for this answer.</p>
         ) : (
@@ -422,14 +438,14 @@ function AnswerView({ a }: { a: BrainAnswer }) {
                     <ArrowDown className="size-3" />
                   </li>
                 ) : null}
-                <li className={cn("rounded-md border px-2 py-1.5", s.error ? "border-red-500/50" : "border-zinc-700")}>
+                <li className={cn("rounded-lg px-3 py-2", s.error ? "bg-red-500/10 ring-1 ring-red-500/40" : "bg-white/[0.03]")}>
                   <div className="flex flex-wrap items-center gap-2 text-xs">
                     <span className="font-mono text-zinc-400">{i + 1}.</span>
                     <span className="font-mono font-semibold text-zinc-100">{s.tool}</span>
                     <button
                       type="button"
                       onClick={() => openStep(s, i)}
-                      className="inline-flex min-h-6 items-center rounded bg-violet-500/15 px-1 font-mono text-[11px] text-violet-200 outline-none hover:bg-violet-500/25 focus-visible:ring-2 focus-visible:ring-violet-300"
+                      className="inline-flex min-h-6 items-center rounded px-1 font-mono text-[11px] whitespace-nowrap text-zinc-400 outline-none transition-colors hover:bg-white/[0.05] hover:text-zinc-100 focus-visible:ring-2 focus-visible:ring-sky-400"
                       aria-label={`${s.template ?? "query"}: open the Cypher panel for step ${i + 1} (${s.tool})`}
                     >
                       {s.template ?? "query"}
@@ -450,7 +466,7 @@ function AnswerView({ a }: { a: BrainAnswer }) {
             ))}
           </ol>
         )}
-      </div>
+      </Disclosure>
     </article>
   );
 }
@@ -502,7 +518,7 @@ function Inline({ text, onOpenNode }: { text: string; onOpenNode: (id: string) =
               key={i}
               type="button"
               onClick={() => onOpenNode(id)}
-              className="mx-0.5 inline-flex items-center rounded border border-sky-500/50 bg-sky-500/10 px-1 align-baseline font-mono text-[12px] leading-5 text-sky-100 outline-none hover:bg-sky-500/20 focus-visible:ring-2 focus-visible:ring-sky-400"
+              className="mx-0.5 inline-flex items-center rounded-md bg-white/[0.07] px-1.5 align-baseline font-mono text-[12px] leading-5 text-zinc-100 ring-1 ring-white/[0.08] outline-none transition-colors hover:bg-white/[0.12] focus-visible:ring-2 focus-visible:ring-sky-400"
               aria-label={`${id}: open its graph context in the Cypher panel`}
             >
               {id}
