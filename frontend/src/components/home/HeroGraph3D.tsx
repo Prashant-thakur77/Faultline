@@ -290,14 +290,23 @@ function Scene({ still, control, place, data }: { still: boolean; control: React
   const group = useRef<THREE.Group>(null);
   const world = useRef<World | null>(null);
   const invalidate = useThree((st) => st.invalidate);
+  const get = useThree((st) => st.get);
   useEffect(() => {
     const { world: w, dispose } = buildWorld(data);
     const host = group.current;
+    let alive = true;
+    // compile every shader off the main thread first (KHR_parallel_shader_compile), then show the scene: compiling
+    // inside the first render blocks the page for ~100-250 ms, right as it opens
+    w.root.visible = false;
     host?.add(w.root);
     world.current = w;
-    invalidate();
-    return () => { host?.remove(w.root); dispose(); world.current = null; };
-  }, [invalidate, data]);
+    const { gl, scene, camera } = get();
+    w.root.visible = true;
+    const compiled = gl.compileAsync(scene, camera);
+    w.root.visible = false;
+    compiled.catch(() => undefined).then(() => { if (alive) { w.root.visible = true; invalidate(); } });
+    return () => { alive = false; host?.remove(w.root); dispose(); world.current = null; };
+  }, [invalidate, get, data]);
   useFrame((st, dt) => { if (world.current) tick(world.current, st, Math.min(dt, 0.05), still, control.current, place); });
   return <group ref={group} />;
 }
@@ -330,17 +339,13 @@ class Boundary extends Component<{ children: React.ReactNode }, { failed: boolea
   render() { return this.state.failed ? null : this.props.children; }
 }
 
+let webglOk: boolean | null = null;
+/** A feature check, not a probe: creating a throwaway context to test support costs ~150 ms of main thread on every
+ * visit (GPU context creation), a visible stall when the page opens. A context that then fails to start is caught
+ * by the Boundary, which renders nothing in its place. Checked once per session. */
 function webgl(): boolean {
-  try {
-    const c = document.createElement("canvas");
-    const ctx = c.getContext("webgl2") || c.getContext("webgl");
-    // release the probe now: left to the garbage collector, destroying it forces a GPU finish (~200 ms) at a random
-    // moment mid-animation
-    ctx?.getExtension("WEBGL_lose_context")?.loseContext();
-    return !!ctx;
-  } catch {
-    return false;
-  }
+  if (webglOk === null) webglOk = typeof window !== "undefined" && ("WebGL2RenderingContext" in window || "WebGLRenderingContext" in window);
+  return webglOk;
 }
 
 export default function HeroGraph3D() {

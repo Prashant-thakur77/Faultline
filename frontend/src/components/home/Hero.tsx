@@ -29,12 +29,13 @@ export function Hero() {
   useEffect(() => {
     if (!ready) return;
     const w = window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number; cancelIdleCallback?: (id: number) => void };
-    if (w.requestIdleCallback) {
-      const id = w.requestIdleCallback(() => setShow3d(true), { timeout: 1500 });
-      return () => w.cancelIdleCallback?.(id);
-    }
-    const t = setTimeout(() => setShow3d(true), 600);
-    return () => clearTimeout(t);
+    // after the route's slide-in (template.tsx, 0.42 s): starting WebGL during it makes the switch to this page stutter
+    let id: number | undefined;
+    const t = setTimeout(() => {
+      if (w.requestIdleCallback) id = w.requestIdleCallback(() => setShow3d(true), { timeout: 1200 });
+      else setShow3d(true);
+    }, 480);
+    return () => { clearTimeout(t); if (id !== undefined) w.cancelIdleCallback?.(id); };
   }, [ready]);
   // Reduced motion still passes a target (instant): hydration renders with motion on, and a motion element whose
   // `animate` disappears keeps its last value, which would leave the hero at opacity 0.
