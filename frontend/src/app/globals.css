@@ -428,7 +428,8 @@ html::-webkit-scrollbar, #main::-webkit-scrollbar { display: none; }
 
 /* the contour map drifts very slowly, like a survey map under a moving lamp */
 .fl-contours { animation: fl-contours 48s ease-in-out infinite alternate; }
-@keyframes fl-contours { from { transform: translate3d(-1.5%, -1%, 0) scale(1.02); } to { transform: translate3d(1.5%, 1.2%, 0) scale(1.06); } }
+/* translate only, at one fixed scale: a changing scale makes the browser re-rasterise the layer while it moves */
+@keyframes fl-contours { from { transform: translate3d(-1.5%, -1%, 0) scale(1.04); } to { transform: translate3d(1.5%, 1.2%, 0) scale(1.04); } }
 @media (prefers-reduced-motion: reduce) { .fl-contours { animation: none; } }
 
 /* desktop: <main> is the scroll column, the document itself never scrolls (absolutely positioned screen-reader text
