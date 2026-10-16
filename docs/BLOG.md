@@ -6,7 +6,9 @@
 
 It's the middle of the night. Checkout errors spike. Two deploys shipped in the same minute: one to the payment service and one to the email service. A third change, a recommendation cache tweak, went out a minute earlier.
 
-A language model asked which one did it will happily write a confident paragraph. A similarity search has nothing to separate them either: both are in the right time window and both sit near checkout. We measured the similarity part: ranking the changes by how close their descriptions' embeddings are to the incident's (cosine, inside FalkorDB) gets top-1 <!-- claim:arm.V.top1 -->0.4<!-- /claim --> across our scenarios. (We have not run an LLM-only arm.) Pick the most recent change, the classic heuristic, and you do worse: top-1 <!-- claim:arm.N.top1 -->0.1<!-- /claim -->, counting ties as a fraction.
+A similarity search has nothing to separate them: both are in the right time window and both sit near checkout. We measured it: ranking the changes by how close their descriptions' embeddings are to the incident's (cosine, inside FalkorDB) gets top-1 <!-- claim:arm.V.top1 -->0.4<!-- /claim --> across our scenarios. Pick the most recent change, the classic heuristic, and you do worse: top-1 <!-- claim:arm.N.top1 -->0.1<!-- /claim -->, counting ties as a fraction.
+
+A strong language model does better than either, and we measured that too. Given the alert, the raw telemetry and the change list, `claude-opus-5-5` names the right deploy in every one of our scenarios that has a cause. The trouble is the scenarios that don't: in a data control with no incident it confidently blames an innocent deploy, and it has no way to say "the evidence isn't there". Over our <!-- claim:arm.A0.trials -->8<!-- /claim --> scenarios that is <!-- claim:arm.A0.outcome_correct_rate -->75%<!-- /claim --> right. For an agent that is about to open a pull request against production, the case that matters is the one where it should not act.
 
 We built **Faultline**, an on-call agent with one rule: **no path, no claim.** It may not name a root cause until FalkorDB returns a causal path from the change to the symptom. The model can suggest; a read-only query decides.
 
@@ -97,18 +99,23 @@ We gave ourselves a test: if an algorithm's answer can change without a decision
 
 With FalkorDB switched off, the same agent confirms <!-- claim:arm.A4.confirmed_causes -->0<!-- /claim --> causes. It refuses rather than guesses. With the graph, top-1 is <!-- claim:arm.A3.top1 -->1.0<!-- /claim --> on our scenarios, with zero false blame and correct abstention on both controls.
 
-These are keyless runs with a deterministic investigator. We have not yet run the LLM-only and vector-RAG arms, so we make no claim about them.
+These are keyless runs with a deterministic investigator. We also ran the same model three ways, one trial per scenario: alone (<!-- claim:arm.A0.outcome_correct_rate -->75%<!-- /claim --> right), with vector-RAG over our runbooks, postmortems and ADRs (<!-- claim:arm.A1.outcome_correct_rate -->75%<!-- /claim -->), and as Faultline's investigator with the graph gate deciding (<!-- claim:arm.A3L.outcome_correct_rate -->100%<!-- /claim --> of the <!-- claim:arm.A3L.trials -->4<!-- /claim --> scenarios it ran, including the two it got wrong alone). The sample is small, so read it as a direction: the gate is what keeps a capable model from acting without proof.
+
+## It runs, on a real deployment and a real repository
+
+The demo is live, and we measured it from outside over HTTPS: the hero incident, run end to end <!-- claim:live.hero.n -->5<!-- /claim --> times, found the right cause <!-- claim:live.hero.cause_correct -->5<!-- /claim --> times and was verified APPLIED <!-- claim:live.hero.applied -->5<!-- /claim --> times, with a p50 of <!-- claim:live.hero.verdict_ms_p50 -->1584.4<!-- /claim --> ms from alert to verdict. With the real GitHub client switched on, the same flow opens, merges and verifies an actual pull request: the flag flips at `main` of a demo infrastructure repository, and the verdict is APPLIED only after `main` is re-read.
 
 ## FalkorDB notes from the trenches
 
-We pinned 6.0.2 by digest after running our engine smoke suite on both candidate versions. A few things we learned the hard way, all drafted as upstream issues:
+We pinned 6.0.2 by digest after running our engine smoke suite on both candidate versions. A few things we learned the hard way, each reduced to a minimal reproduction and checked against FalkorDB's issue tracker before filing:
 - `SSpaths`' `pathCount` is a global top-k, so a full result means "possibly truncated".
 - An `OPTIONAL MATCH` after an aggregating `WITH` returned no rows.
-- Aggregating `SSpaths` output together with a null property crashed the server. We aggregate per node first.
-- An unanchored pattern comprehension returned an empty list.
+- Aggregating `SSpaths` output together with a null property crashed the whole server, from a read-only query. It turned out to be a known bug; we added a smaller repro and two more triggers to [the thread](https://github.com/FalkorDB/FalkorDB/issues/3150). We aggregate per node first.
+- `algo.WCC` and `algo.pageRank` fail when the projected label set holds exactly one node, which happens naturally when a time window holds a single alert. Filed as [FalkorDB#3349](https://github.com/FalkorDB/FalkorDB/issues/3349); we add an anchor node until it is fixed.
 
 ## Try it
 
-- `make judge-check`: keyless, prints PASS.
-- The incident room at `/incidents`, the replay at `/replay/s1-hero`, the company brain at `/brain`, preflight at `/preflight`.
-- Query the same read-only tools over MCP: `docs/MCP.md`.
+- The live demo: [13-203-185-119.sslip.io](https://13-203-185-119.sslip.io) (keyless; press Re-arm to reset it).
+- The code: [github.com/Prashant-thakur77/Faultline](https://github.com/Prashant-thakur77/Faultline). `make setup && make judge-check` runs every check offline, with no API key, and prints PASS.
+- Every number in one place: [docs/PROOF.md](https://github.com/Prashant-thakur77/Faultline/blob/main/docs/PROOF.md).
+- Point your own agent at the hosted read-only MCP tools with the public demo key in [docs/MCP.md](https://github.com/Prashant-thakur77/Faultline/blob/main/docs/MCP.md), and ask for `causal_paths` from `recommendation` to `checkout`: no path, so no claim.
