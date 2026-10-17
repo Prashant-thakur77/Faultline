@@ -1,7 +1,7 @@
 """Live (M20 #2): FalkorDB's per-query memory cap stops a runaway query cleanly and the engine stays up.
 
 The cap (weights.yaml engine.query_mem_capacity_mb) is applied as scripts/configure_falkordb.py applies it. A guarded
-text2cypher query that tries to collect 50M integers is stopped by the ENGINE (GraphMemoryCapExceeded, never 0 rows);
+text2cypher query that tries to collect 50M eight-integer lists is stopped by the ENGINE (GraphMemoryCapExceeded, never 0 rows);
 afterwards the engine answers PING and a product template on the tenant graph still returns its rows."""
 
 import importlib.util
@@ -16,7 +16,9 @@ from faultline.graph.ro import RO
 
 pytestmark = pytest.mark.live
 ROOT = Path(__file__).resolve().parents[2]
-HOG = "UNWIND range(1, 50000000) AS x RETURN collect(x)[0] AS v"
+# eight integers per row: the cap is reached in a few million rows, well inside the guarded query's timeout even on a
+# slow CI runner (collecting single integers took about 2 s locally against a 3 s timeout, and timed out on CI)
+HOG = "UNWIND range(1, 50000000) AS x RETURN collect([x, x, x, x, x, x, x, x])[0] AS v"
 
 
 def _cap() -> int:
