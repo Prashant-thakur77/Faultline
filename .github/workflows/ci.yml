@@ -184,9 +184,10 @@ jobs:
         image: falkordb/falkordb@sha256:107455e862a824e45e8e9f5a7fbfdf5e00a08b14e13eae2577c72fd9e3f59ba6
         ports: ["6379:6379"]
         env:
-          # the same memory guard as deploy/docker-compose.yml: a full engine refuses writes instead of being killed
-          REDIS_ARGS: "--maxmemory 3500mb --maxmemory-policy noeviction"
-          FALKORDB_ARGS: "TIMEOUT_MAX 10000 TIMEOUT_DEFAULT 2000 RESULTSET_SIZE 100000 MAX_QUEUED_QUERIES 50"
+          # the same engine settings as deploy/docker-compose.yml: an AOF (the write-back waits for WAITAOF before VERIFY
+          # counts it; without one every write-back is UNKNOWN) and the memory guard (a full engine refuses writes)
+          REDIS_ARGS: "--appendonly yes --maxmemory 3500mb --maxmemory-policy noeviction"
+          FALKORDB_ARGS: "TIMEOUT_MAX 10000 TIMEOUT_DEFAULT 2000 RESULTSET_SIZE 100000 MAX_QUEUED_QUERIES 50 QUERY_MEM_CAPACITY 268435456"
         options: >-
           --health-cmd "redis-cli PING" --health-interval 5s --health-timeout 3s --health-retries 20
     env:
