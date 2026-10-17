@@ -1,0 +1,853 @@
+{
+  "started": "2026-10-17T15:37:36Z",
+  "reason": "first run (pre-registered, M21)",
+  "weights": {
+    "half_life_days": 14,
+    "w_pref": 0.5,
+    "pref_min_n": 3,
+    "w_ack": 1.0,
+    "w_approve": 1.0,
+    "w_fix": 1.0,
+    "resp_min_n": 2,
+    "resp_first_wave": 1,
+    "w_resp": 0.5,
+    "resp_sat": 2.0,
+    "contract_suggest_k": 2,
+    "forget_pages": 20
+  },
+  "phases": {
+    "choices": {
+      "cold": [
+        {
+          "scenario": "S1",
+          "incident": "inc-s1-b1f9ccdc",
+          "top": "rollback_deploy",
+          "verdict": [
+            false,
+            "D-pay-417"
+          ],
+          "learned": 0
+        },
+        {
+          "scenario": "S1",
+          "incident": "inc-s1-85d45701",
+          "top": "rollback_deploy",
+          "verdict": [
+            false,
+            "D-pay-417"
+          ],
+          "learned": 0
+        },
+        {
+          "scenario": "S1",
+          "incident": "inc-s1-cac386c8",
+          "top": "rollback_deploy",
+          "verdict": [
+            false,
+            "D-pay-417"
+          ],
+          "learned": 0
+        },
+        {
+          "scenario": "S1b",
+          "incident": "inc-s1b-d0445f9e",
+          "top": "rollback_deploy",
+          "verdict": [
+            false,
+            "D-pay-421"
+          ],
+          "learned": 0
+        },
+        {
+          "scenario": "S1b",
+          "incident": "inc-s1b-5f6d0726",
+          "top": "rollback_deploy",
+          "verdict": [
+            false,
+            "D-pay-421"
+          ],
+          "learned": 0
+        },
+        {
+          "scenario": "S1b",
+          "incident": "inc-s1b-e6722748",
+          "top": "rollback_deploy",
+          "verdict": [
+            false,
+            "D-pay-421"
+          ],
+          "learned": 0
+        }
+      ],
+      "learning": [
+        {
+          "plan": 1,
+          "scenario": "S1",
+          "incident": "inc-s1-58cdc016",
+          "top": "rollback_deploy",
+          "suggested": false,
+          "suggest_n": null,
+          "approve": 200,
+          "stage": "RESOLVED",
+          "learned": {
+            "learned": true,
+            "family": "payment",
+            "event": "le-e9f8423aeddd052f",
+            "kind": "approve",
+            "preferences": {
+              "family": "payment",
+              "preferences": 1,
+              "edges": 1
+            },
+            "responded": 1
+          }
+        },
+        {
+          "plan": 2,
+          "scenario": "S1b",
+          "incident": "inc-s1b-0b1a4e49",
+          "top": "rollback_deploy",
+          "suggested": false,
+          "suggest_n": null,
+          "approve": 200,
+          "stage": "RESOLVED",
+          "learned": {
+            "learned": true,
+            "family": "payment",
+            "event": "le-2f887832222dc677",
+            "kind": "approve",
+            "preferences": {
+              "family": "payment",
+              "preferences": 1,
+              "edges": 2
+            },
+            "responded": 3
+          }
+        },
+        {
+          "plan": 3,
+          "scenario": "S1",
+          "incident": "inc-s1-9130b48e",
+          "top": "rollback_deploy",
+          "suggested": true,
+          "suggest_n": 2,
+          "approve": 200,
+          "stage": "RESOLVED",
+          "learned": {
+            "learned": true,
+            "family": "payment",
+            "event": "le-2697369feafab62f",
+            "kind": "approve",
+            "preferences": {
+              "family": "payment",
+              "preferences": 1,
+              "edges": 3
+            },
+            "responded": 5
+          }
+        },
+        {
+          "plan": 4,
+          "scenario": "S1b",
+          "incident": "inc-s1b-fb590fe5",
+          "top": "flip_flag",
+          "suggested": true,
+          "suggest_n": 3,
+          "approve": 200,
+          "stage": "RESOLVED",
+          "learned": {
+            "learned": true,
+            "family": "payment",
+            "event": "le-5bf82f26e74bab8a",
+            "kind": "approve",
+            "preferences": {
+              "family": "payment",
+              "preferences": 1,
+              "edges": 4
+            },
+            "responded": 7
+          }
+        },
+        {
+          "plan": 5,
+          "scenario": "S1",
+          "incident": "inc-s1-faa15ec4",
+          "top": "flip_flag",
+          "suggested": true,
+          "suggest_n": 4,
+          "approve": 200,
+          "stage": "RESOLVED",
+          "learned": {
+            "learned": true,
+            "family": "payment",
+            "event": "le-e337822cf23d8d64",
+            "kind": "approve",
+            "preferences": {
+              "family": "payment",
+              "preferences": 1,
+              "edges": 5
+            },
+            "responded": 9
+          }
+        }
+      ],
+      "warm": [
+        {
+          "scenario": "S1",
+          "incident": "inc-s1-ddf63e04",
+          "top": "flip_flag",
+          "verdict": [
+            false,
+            "D-pay-417"
+          ],
+          "line": "learned: your team approved the flag flip 5 of the last 5 time(s) for payment; last just now",
+          "moved": [
+            "act-inc-s1-ddf63e04-1",
+            "act-inc-s1-ddf63e04-2"
+          ]
+        },
+        {
+          "scenario": "S1",
+          "incident": "inc-s1-adcf2eb9",
+          "top": "flip_flag",
+          "verdict": [
+            false,
+            "D-pay-417"
+          ],
+          "line": "learned: your team approved the flag flip 5 of the last 5 time(s) for payment; last just now",
+          "moved": [
+            "act-inc-s1-adcf2eb9-1",
+            "act-inc-s1-adcf2eb9-2"
+          ]
+        },
+        {
+          "scenario": "S1",
+          "incident": "inc-s1-97d6d9f7",
+          "top": "flip_flag",
+          "verdict": [
+            false,
+            "D-pay-417"
+          ],
+          "line": "learned: your team approved the flag flip 5 of the last 5 time(s) for payment; last just now",
+          "moved": [
+            "act-inc-s1-97d6d9f7-1",
+            "act-inc-s1-97d6d9f7-2"
+          ]
+        },
+        {
+          "scenario": "S1b",
+          "incident": "inc-s1b-cbc55cc0",
+          "top": "flip_flag",
+          "verdict": [
+            false,
+            "D-pay-421"
+          ],
+          "line": "learned: your team approved the flag flip 5 of the last 5 time(s) for payment; last just now",
+          "moved": [
+            "act-inc-s1b-cbc55cc0-1",
+            "act-inc-s1b-cbc55cc0-2"
+          ]
+        },
+        {
+          "scenario": "S1b",
+          "incident": "inc-s1b-6d9f80c4",
+          "top": "flip_flag",
+          "verdict": [
+            false,
+            "D-pay-421"
+          ],
+          "line": "learned: your team approved the flag flip 5 of the last 5 time(s) for payment; last just now",
+          "moved": [
+            "act-inc-s1b-6d9f80c4-1",
+            "act-inc-s1b-6d9f80c4-2"
+          ]
+        },
+        {
+          "scenario": "S1b",
+          "incident": "inc-s1b-65500cf0",
+          "top": "flip_flag",
+          "verdict": [
+            false,
+            "D-pay-421"
+          ],
+          "line": "learned: your team approved the flag flip 5 of the last 5 time(s) for payment; last just now",
+          "moved": [
+            "act-inc-s1b-65500cf0-1",
+            "act-inc-s1b-65500cf0-2"
+          ]
+        }
+      ]
+    },
+    "guidelines": {
+      "guideline": "gl-f128363195ac14de",
+      "incidents": [
+        "inc-s1-6d3704b0",
+        "inc-s1-c06120bd",
+        "inc-s1-a81bf7b7",
+        "inc-s1-7c8a1081"
+      ]
+    },
+    "forget": {
+      "dry_run": {
+        "n_events": 14,
+        "by_kind": {
+          "approve": 6,
+          "override": 1,
+          "reject": 1,
+          "verified": 6
+        },
+        "families": [
+          "payment"
+        ],
+        "guidelines": [
+          "gl-f128363195ac14de"
+        ]
+      },
+      "receipt": {
+        "events": 14,
+        "guidelines": 1,
+        "relationships": 36,
+        "events_left": 0,
+        "preferences_still_citing": 0,
+        "proof": {
+          "events_left": 0,
+          "preferences_still_citing": 0,
+          "verdict": "forgotten"
+        }
+      },
+      "receipt_in_audit": true
+    },
+    "routing": {
+      "incidents": [
+        {
+          "incident": "inc-s1-d9c53ad9",
+          "first_wave": [
+            "p-005",
+            "p-015",
+            "p-023",
+            "p-028",
+            "p-030"
+          ],
+          "learned_first": [],
+          "oncall_paged": true,
+          "ticks": 3,
+          "mtta_ms": 960003,
+          "plan_first_wave": []
+        },
+        {
+          "incident": "inc-s1-28a51cbe",
+          "first_wave": [
+            "p-005",
+            "p-015",
+            "p-023",
+            "p-028",
+            "p-030"
+          ],
+          "learned_first": [],
+          "oncall_paged": true,
+          "ticks": 3,
+          "mtta_ms": 960003,
+          "plan_first_wave": []
+        },
+        {
+          "incident": "inc-s1-08517c03",
+          "first_wave": [
+            "p-005",
+            "p-015",
+            "p-017",
+            "p-023",
+            "p-028",
+            "p-030"
+          ],
+          "learned_first": [
+            "p-017"
+          ],
+          "oncall_paged": true,
+          "ticks": 0,
+          "mtta_ms": 60000,
+          "plan_first_wave": [
+            "p-017"
+          ]
+        },
+        {
+          "incident": "inc-s1-4cb0f646",
+          "first_wave": [
+            "p-005",
+            "p-015",
+            "p-017",
+            "p-023",
+            "p-028",
+            "p-030"
+          ],
+          "learned_first": [
+            "p-017"
+          ],
+          "oncall_paged": true,
+          "ticks": 0,
+          "mtta_ms": 60000,
+          "plan_first_wave": [
+            "p-017"
+          ]
+        },
+        {
+          "incident": "inc-s1-6761c698",
+          "first_wave": [
+            "p-005",
+            "p-015",
+            "p-017",
+            "p-023",
+            "p-028",
+            "p-030"
+          ],
+          "learned_first": [
+            "p-017"
+          ],
+          "oncall_paged": true,
+          "ticks": 0,
+          "mtta_ms": 60000,
+          "plan_first_wave": [
+            "p-017"
+          ]
+        }
+      ],
+      "mtta_before_ms": 960003,
+      "mtta_after_ms": 60000,
+      "responder": {
+        "person": {
+          "id": "p-017",
+          "name": "Quinn Lindqvane"
+        },
+        "active": true,
+        "family": "payment",
+        "score": 5.00119139423854,
+        "n": 5,
+        "acks": 5,
+        "approvals": 0,
+        "fixes": 0,
+        "mtta_ms": 60000.0,
+        "last_at": 1792252463170,
+        "incidents": 5,
+        "events": [
+          "le-f2670e9a26ec7c4c",
+          "le-fb7d72543b92a963",
+          "le-b6a4e4eab3adc9ed",
+          "le-94c74d5f3e344fa5",
+          "le-f33d8e5e22721f59"
+        ]
+      }
+    },
+    "gaps": {
+      "asked": [
+        {
+          "question": "What did we decide about the quantum billing ledger?",
+          "kind": "gap",
+          "intent": "decision",
+          "gap": true
+        },
+        {
+          "question": "What did we decide about the quantum billing ledger?",
+          "kind": "gap",
+          "intent": "decision",
+          "gap": true
+        },
+        {
+          "question": "Who owns the hyperdrive service?",
+          "kind": "gap",
+          "intent": "people",
+          "gap": true
+        },
+        {
+          "question": "Who owns payment?",
+          "kind": "answered",
+          "intent": "people",
+          "gap": false
+        },
+        {
+          "question": "What is the weather in Paris tomorrow?",
+          "kind": "off-topic",
+          "intent": "none",
+          "gap": false
+        }
+      ],
+      "gaps": [
+        {
+          "text": "What did we decide about the quantum billing ledger?",
+          "n": 2,
+          "reason": "unanswered: No decision about that is documented in the graph.",
+          "owners": []
+        },
+        {
+          "text": "Who owns the hyperdrive service?",
+          "n": 1,
+          "reason": "unanswered: I could not find that component in the graph (no id or name match).",
+          "owners": []
+        }
+      ]
+    },
+    "recall": {
+      "pairs": [
+        {
+          "pair": "S1->S1b",
+          "warm_top_is_first": true,
+          "gate_identical": true,
+          "cold_prior": 0.7681,
+          "warm_prior": 0.8423
+        },
+        {
+          "pair": "S1->S1b",
+          "warm_top_is_first": true,
+          "gate_identical": true,
+          "cold_prior": 0.7681,
+          "warm_prior": 0.8423
+        },
+        {
+          "pair": "S1->S1b",
+          "warm_top_is_first": true,
+          "gate_identical": true,
+          "cold_prior": 0.7681,
+          "warm_prior": 0.8423
+        },
+        {
+          "pair": "S3->S3b",
+          "warm_top_is_first": true,
+          "gate_identical": true,
+          "cold_prior": 0.0,
+          "warm_prior": 0.9423
+        },
+        {
+          "pair": "S3->S3b",
+          "warm_top_is_first": true,
+          "gate_identical": true,
+          "cold_prior": 0.0,
+          "warm_prior": 0.9423
+        },
+        {
+          "pair": "S3->S3b",
+          "warm_top_is_first": true,
+          "gate_identical": true,
+          "cold_prior": 0.0,
+          "warm_prior": 0.9423
+        }
+      ],
+      "ages": {
+        "S1": {
+          "0.0": {
+            "top": "inc-h005",
+            "age_days": 92.5,
+            "set": [
+              "inc-h005",
+              "inc-h030",
+              "inc-h018",
+              "inc-h008",
+              "inc-h015"
+            ]
+          },
+          "0.2": {
+            "top": "inc-h039",
+            "age_days": 2.5,
+            "set": [
+              "inc-h039",
+              "inc-h037",
+              "inc-h030",
+              "inc-h027",
+              "inc-h005"
+            ]
+          },
+          "top_changed": true
+        },
+        "S1b": {
+          "0.0": {
+            "top": "inc-h037",
+            "age_days": 9.8,
+            "set": [
+              "inc-h037",
+              "inc-h015",
+              "inc-h039",
+              "inc-h005",
+              "inc-h027"
+            ]
+          },
+          "0.2": {
+            "top": "inc-h039",
+            "age_days": 2.6,
+            "set": [
+              "inc-h039",
+              "inc-h037",
+              "inc-h030",
+              "inc-h027",
+              "inc-h028"
+            ]
+          },
+          "top_changed": true
+        },
+        "S3": {
+          "0.0": {
+            "top": null,
+            "age_days": null,
+            "set": []
+          },
+          "0.2": {
+            "top": null,
+            "age_days": null,
+            "set": []
+          },
+          "top_changed": false
+        },
+        "S14": {
+          "0.0": {
+            "top": "inc-h030",
+            "age_days": 21.1,
+            "set": [
+              "inc-h030",
+              "inc-h005",
+              "inc-h015",
+              "inc-h008",
+              "inc-h028"
+            ]
+          },
+          "0.2": {
+            "top": "inc-h039",
+            "age_days": 3.1,
+            "set": [
+              "inc-h039",
+              "inc-h030",
+              "inc-h028",
+              "inc-h015",
+              "inc-h018"
+            ]
+          },
+          "top_changed": true
+        }
+      }
+    }
+  },
+  "steps": {
+    "1_cold_top_rollback": {
+      "pass": true,
+      "tops": [
+        "rollback_deploy",
+        "rollback_deploy",
+        "rollback_deploy",
+        "rollback_deploy",
+        "rollback_deploy",
+        "rollback_deploy"
+      ]
+    },
+    "1_learning_flips_after_min_n": {
+      "pass": true,
+      "tops": [
+        "rollback_deploy",
+        "rollback_deploy",
+        "rollback_deploy",
+        "flip_flag",
+        "flip_flag"
+      ],
+      "stages": [
+        "RESOLVED",
+        "RESOLVED",
+        "RESOLVED",
+        "RESOLVED",
+        "RESOLVED"
+      ]
+    },
+    "4_suggestion_after_k_never_before": {
+      "pass": true,
+      "suggested": [
+        false,
+        false,
+        true,
+        true,
+        true
+      ],
+      "n": [
+        null,
+        null,
+        2,
+        3,
+        4
+      ]
+    },
+    "1_warm_top_flag": {
+      "pass": true,
+      "tops": [
+        "flip_flag",
+        "flip_flag",
+        "flip_flag",
+        "flip_flag",
+        "flip_flag",
+        "flip_flag"
+      ],
+      "line": "learned: your team approved the flag flip 5 of the last 5 time(s) for payment; last just now"
+    },
+    "1_gate_verdicts_identical_cold_warm": {
+      "pass": true,
+      "cold": [
+        [
+          false,
+          "D-pay-417"
+        ],
+        [
+          false,
+          "D-pay-417"
+        ]
+      ],
+      "warm": [
+        [
+          false,
+          "D-pay-417"
+        ],
+        [
+          false,
+          "D-pay-417"
+        ]
+      ]
+    },
+    "2a_rejection_proposes_a_guideline": {
+      "pass": true,
+      "reject": 200,
+      "guideline": "gl-f128363195ac14de",
+      "status": "proposed"
+    },
+    "2b_shown_with_provenance_then_promoted": {
+      "pass": true,
+      "shown": "proposed",
+      "event": "le-f128363195ac14de",
+      "promote": 200
+    },
+    "2c_active_guideline_needs_override": {
+      "pass": true,
+      "top": "rollback_deploy",
+      "without": 409,
+      "with_override": 200,
+      "stage": "RESOLVED",
+      "override_events": 1
+    },
+    "2d_dismissed_is_gone": {
+      "pass": true,
+      "dismiss": 200,
+      "shown": null
+    },
+    "forget_reverts_and_receipts": {
+      "pass": true,
+      "events": 14,
+      "by_kind": {
+        "approve": 6,
+        "override": 1,
+        "reject": 1,
+        "verified": 6
+      },
+      "stale": 409,
+      "execute": 200,
+      "left": 0,
+      "top_after": "rollback_deploy"
+    },
+    "3_responder_paged_first_after_learning": {
+      "pass": true,
+      "waves": [
+        [
+          "p-005",
+          "p-015",
+          "p-023",
+          "p-028",
+          "p-030"
+        ],
+        [
+          "p-005",
+          "p-015",
+          "p-023",
+          "p-028",
+          "p-030"
+        ],
+        [
+          "p-005",
+          "p-015",
+          "p-017",
+          "p-023",
+          "p-028",
+          "p-030"
+        ],
+        [
+          "p-005",
+          "p-015",
+          "p-017",
+          "p-023",
+          "p-028",
+          "p-030"
+        ],
+        [
+          "p-005",
+          "p-015",
+          "p-017",
+          "p-023",
+          "p-028",
+          "p-030"
+        ]
+      ],
+      "mtta": [
+        960003,
+        960003,
+        60000,
+        60000,
+        60000
+      ]
+    },
+    "6_gaps_counted": {
+      "pass": true,
+      "gaps": [
+        [
+          "What did we decide about the quantum bil",
+          2
+        ],
+        [
+          "Who owns the hyperdrive service?",
+          1
+        ]
+      ],
+      "asked": [
+        true,
+        true,
+        true,
+        false,
+        false
+      ]
+    },
+    "5_recall_warm_top_is_recent_and_gate_unchanged": {
+      "pass": true,
+      "pairs": [
+        [
+          "S1->S1b",
+          true,
+          true
+        ],
+        [
+          "S1->S1b",
+          true,
+          true
+        ],
+        [
+          "S1->S1b",
+          true,
+          true
+        ],
+        [
+          "S3->S3b",
+          true,
+          true
+        ],
+        [
+          "S3->S3b",
+          true,
+          true
+        ],
+        [
+          "S3->S3b",
+          true,
+          true
+        ]
+      ]
+    }
+  },
+  "passed": 13,
+  "total": 13,
+  "seconds": 86.3
+}

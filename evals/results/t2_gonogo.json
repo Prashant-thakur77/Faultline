@@ -1,0 +1,121 @@
+{
+  "at": "2026-10-17T15:40:57Z",
+  "items": {
+    "cold_vs_warm": {
+      "green": true,
+      "scenarios": [
+        "S1",
+        "S1b"
+      ],
+      "n_per_scenario": 3,
+      "choices": {
+        "cold_top": [
+          "rollback_deploy",
+          "rollback_deploy",
+          "rollback_deploy",
+          "rollback_deploy",
+          "rollback_deploy",
+          "rollback_deploy"
+        ],
+        "warm_top": [
+          "flip_flag",
+          "flip_flag",
+          "flip_flag",
+          "flip_flag",
+          "flip_flag",
+          "flip_flag"
+        ]
+      },
+      "recall_pairs": [
+        "S1->S1b",
+        "S3->S3b"
+      ],
+      "recall_trials": 6,
+      "evidence": "evals/results/learning_night.json (steps 1_* and 5_*)",
+      "run": "2026-10-17T15:37:36Z"
+    },
+    "s13_concurrency": {
+      "green": true,
+      "workers": 16,
+      "rounds": 100,
+      "rounds_with_exactly_one_owner": 100,
+      "lost_updates": 0,
+      "ro_p95_ms_during_writes": 6.702,
+      "evidence": "evals/results/t2_concurrency.json"
+    },
+    "s7_isolation": {
+      "green": true,
+      "isolation_suite": {
+        "ok": true,
+        "passed": 34,
+        "failed": 0,
+        "skipped": 1
+      },
+      "through_ro_acl_users": {
+        "ok": true,
+        "summary": "...................................                                      [100%]"
+      },
+      "evidence": "pytest tests/isolation; scripts/acl_ephemeral.py tests/isolation"
+    },
+    "s10_forget_receipt": {
+      "green": true,
+      "local": {
+        "forget_receipt_suites": {
+          "ok": true,
+          "passed": 5,
+          "failed": 0,
+          "skipped": 0
+        },
+        "learned_influence_forget": {
+          "pass": true,
+          "events": 14,
+          "by_kind": {
+            "approve": 6,
+            "override": 1,
+            "reject": 1,
+            "verified": 6
+          },
+          "stale": 409,
+          "execute": 200,
+          "left": 0,
+          "top_after": "rollback_deploy"
+        }
+      },
+      "live_url": {
+        "url": "https://13-203-185-119.sslip.io",
+        "status": 200,
+        "status_error": null,
+        "forget_dry_run": {
+          "status": 200,
+          "dry_run": true,
+          "token": true,
+          "nodes": 2,
+          "vectors": 0,
+          "error": null
+        },
+        "learned_endpoint_status": 404,
+        "note": "read-only on the live URL: the forget dry run (no token) deletes nothing; an executed forget there writes a receipt to the live audit graph, so it is run locally"
+      },
+      "evidence": "tests/memory, tests/live/test_forget_flip.py, learning_night forget step, the live dry run"
+    },
+    "session_turns": {
+      "green": true,
+      "sessions": [
+        "sess-t2-evening",
+        "sess-t2-morning"
+      ],
+      "turns": 4,
+      "first_answer_cites": [
+        "p-004",
+        "p-017",
+        "p-030"
+      ],
+      "follow_up_resolved_from_history": true,
+      "follow_up": "People who have worked on [payment], most work first:\n- Quinn Lindqvane [p-017]: 32 commits, resolved 5 incident(s) there; [team-payments]\n- Juno Pellucid [p-03",
+      "evidence": "brain.ask twice (two sessions, one user) on a clean room, read back with Q-SESS-1 (fresh RO)"
+    }
+  },
+  "green": 5,
+  "total": 5,
+  "seconds": 25.7
+}

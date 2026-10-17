@@ -1,0 +1,32 @@
+{
+  "scenario": "S13",
+  "tenant": "acme",
+  "workers": 16,
+  "rounds": 100,
+  "readers": 4,
+  "rounds_with_exactly_one_owner": 100,
+  "max_claim_edges_per_task": 1,
+  "counter_expected": 1600,
+  "counter_actual": 1600,
+  "lost_updates": 0,
+  "write_errors": 0,
+  "read_errors": 0,
+  "claims_per_s": 569.7,
+  "storm_s": 2.81,
+  "ro_read_ms": {
+    "quiet": {
+      "n": 2011,
+      "p50": 1.489,
+      "p95": 2.443
+    },
+    "during_writes": {
+      "n": 3891,
+      "p50": 2.216,
+      "p95": 6.702,
+      "mean": 2.885
+    }
+  },
+  "engine": "FalkorDB (pinned; see backend/faultline/graph/algo/resolved.json)",
+  "sample_errors": [],
+  "passed": true
+}
