@@ -232,7 +232,7 @@ Public-safe: template ids (`Q-…`), writer ids (`W-…`), timings and flags onl
   "config": {"QUERY_MEM_CAPACITY": 268435456, "TIMEOUT_MAX": 10000, "TIMEOUT_DEFAULT": 2000,
              "MAX_QUEUED_QUERIES": 50, "CACHE_SIZE": 25, "MAX_INFO_QUERIES": 1000, "THREAD_COUNT": 20},
   "rooms_not_reported": 0,                                     // eval clean rooms beyond the 10 reported
-  "source": "GRAPH.MEMORY USAGE + the engine's telemetry{graph} stream (FalkorDB 6.0)",
+  "source": "GRAPH.MEMORY USAGE + the engine's telemetry{graph} stream (FalkorDB 6.0)",   // noclaim: example values
   "privacy": "template and writer ids, timings and flags only; no query text, no parameters",
   "graphs": {                                                  // tenant_, golden_, oncall_, audit_, up to 10 eval_<t>_*
     "tenant_acme": {
@@ -244,15 +244,15 @@ Public-safe: template ids (`Q-…`), writer ids (`W-…`), timings and flags onl
         "entries": 1000, "from": 1792245970, "to": 1792252973,  // stream window (epoch s); MAX_INFO_QUERIES keeps 1000
         "queries": [                                           // per id, most frequent first
           {"id": "Q-META-1", "kind": "template", "n": 58,
-           "total_ms_p50": 0.15, "total_ms_p95": 0.38, "wait_ms_p50": 0.015, "wait_ms_p95": 0.13,
-           "exec_ms_p50": 0.025, "exec_ms_p95": 0.053, "report_ms_p50": 0.10,
-           "cache_pct": 15.5, "writes": 0, "timeouts": 0},
+           "total_ms_p50": 0.15, "total_ms_p95": 0.38, "wait_ms_p50": 0.015, "wait_ms_p95": 0.13,   // noclaim: example values
+           "exec_ms_p50": 0.025, "exec_ms_p95": 0.053, "report_ms_p50": 0.10,   // noclaim: example values
+           "cache_pct": 15.5, "writes": 0, "timeouts": 0},   // noclaim: example values
           {"id": "W-STAGE", "kind": "write", "n": 12, "...": "same fields"}
         ],
-        "unmapped": {"n": 225, "total_ms_p50": 0.29, "...": "same fields, no id"},   // ad-hoc / dynamic queries: counted only
+        "unmapped": {"n": 225, "total_ms_p50": 0.29, "...": "same fields, no id"},   // ad-hoc / dynamic queries: counted only   // noclaim: example values
         "recent": [                                            // newest first, at most 20, mapped entries only
-          {"at": 1792252973, "id": "Q-ONCALL-NOW", "kind": "template", "total_ms": 0.94, "wait_ms": 0.07,
-           "exec_ms": 0.30, "report_ms": 0.57, "cache": false, "write": false, "timeout": false}
+          {"at": 1792252973, "id": "Q-ONCALL-NOW", "kind": "template", "total_ms": 0.94, "wait_ms": 0.07,   // noclaim: example values
+           "exec_ms": 0.30, "report_ms": 0.57, "cache": false, "write": false, "timeout": false}   // illustrative values (noclaim)
         ]
       }
     }
