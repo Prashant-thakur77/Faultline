@@ -135,7 +135,11 @@ export function ExploreView({ tenant: urlTenant, focus }: { tenant: string | nul
             The live failure-flow graph (<code className="font-mono text-zinc-200">PROPAGATES_TO</code>, from{" "}
             <code className="font-mono text-zinc-200">GET /api/graph</code>) drawn by FalkorDB&apos;s{" "}
             <code className="font-mono text-zinc-200">{CANVAS_PACKAGE}</code> web component. Free layouts for browsing;
-            the incident room keeps its fixed layout. Click a node (or use the table) to open its Cypher.
+            the incident room keeps its fixed layout. Click a node (or use the table) to open its Cypher.{" "}
+            <Link href="/engine" className="text-sky-300 underline-offset-2 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-sky-400">
+              Inside FalkorDB right now
+            </Link>
+            : memory per graph and every query&apos;s timings.
           </p>
         </div>
         <form

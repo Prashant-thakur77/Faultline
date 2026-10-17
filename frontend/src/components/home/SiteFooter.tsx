@@ -12,9 +12,11 @@ const file = (label: string, p: string): Item => ({ label, href: REPO_URL ? `${R
 const COLUMNS: { head: string; items: Item[] }[] = [
   { head: "Product", items: [
     { label: STATIC_SITE ? "Recorded incidents" : "Incidents", route: "/" },
+    { label: "On-call", route: "/oncall" },
     { label: "Preflight gate", route: "/preflight" },
     { label: "Company brain", route: "/brain" },
     { label: "Memory", route: "/memory" },
+    { label: "Inside FalkorDB", route: "/engine" },
     { label: "Replay", route: "/replay" },
   ] },
   { head: "Evidence", items: [
