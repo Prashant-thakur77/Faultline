@@ -19,7 +19,9 @@ def main() -> int:
     out = re.sub(r"\$\{(\w+)\}", lambda m: os.environ[m.group(1)], tpl)
     path = ROOT / "deploy/users.acl"
     path.write_text(out)
-    path.chmod(0o600)
+    # 0644, not 0600: the FalkorDB container runs as its own uid and must read it (0600 made the engine refuse to
+    # start on the live VM: "opening file ... Permission denied"); the VM has a single login user
+    path.chmod(0o644)
     print(f"wrote {path.relative_to(ROOT)} ({len(out.splitlines())} lines; values not shown)")
     return 0
 

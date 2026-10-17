@@ -17,7 +17,7 @@ from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = os.environ.get("UI_BASE", "http://localhost:3000")
-PAGES = ["/", "/preflight", "/memory", "/brain", "/explore", "/playground", "/replay"]
+PAGES = ["/", "/preflight", "/memory", "/brain", "/explore", "/playground", "/replay", "/oncall", "/engine"]
 CHROME = os.environ.get("UI_CHROME") or str(Path.home() / ".cache/ms-playwright/chromium-1243/chrome-linux64/chrome")
 OVERFLOW = """() => { const W = window.innerWidth; const bad = new Set();
   for (const e of document.querySelectorAll('main *')) { const r = e.getBoundingClientRect(); if (r.width === 0) continue;

@@ -25,6 +25,18 @@ NODE_LABELS = frozenset({
     # actions and coordination
     "Intent", "Action", "Approval", "Remediation", "Task", "Agent", "Session", "Turn",
     "Run", "StageEvent", "ToolCall", "ForgetReceipt", "Rearm", "Meta", "RunIndex", "LlmSpend",
+    # on-call (M19): a page to one person about one incident, a standing approval (contract) and its uses, a hand-off
+    "Page", "Contract", "ContractUse", "Handoff",
+    # the Telegram on-call bot: a processed update (idempotency), a typed-phrase consent waiting for its phrase, a chat
+    "BotUpdate", "BotProposal", "BotChat",
+    # public-mode paging safety: a per-channel hourly budget / per-recipient cooldown, and which graphs hold pages
+    "DeliveryBudget", "PageGraph",
+    # learning (M21, in the on-call home graph): a trusted operator action, the preference, guideline and knowledge gap
+    # recomputed from those events in Cypher (each derived node keeps DERIVED_FROM edges to its events)
+    "LearnEvent", "Preference", "Guideline", "KnowledgeGap",
+    # company rules as data (M20 #6): a change-freeze Policy (weekly wall-clock window, fixed UTC offset) the preflight
+    # gate evaluates in the engine with temporal accessors
+    "Policy",
 })
 
 REL_TYPES = frozenset({
@@ -46,6 +58,15 @@ REL_TYPES = frozenset({
     "OVERRIDES", "FOR_CHANGE",
     # learned edges (M15 #4): Incident → the EdgeProposal a verified fix produced
     "HAS_PROPOSAL",
+    # on-call (M19): Page → Person it PAGES (and FOR its Incident), Page → the Page it ESCALATED_TO, Person → the Page
+    # they ACKED; Incident → Person in its escalation order (ESCALATES_TO, from the algo.MSF tree); Contract → the
+    # Person who GRANTED it, the component it COVERS and each ContractUse it was USED_IN; Handoff FROM → TO a Person
+    "PAGES", "ESCALATED_TO", "ACKED", "ESCALATES_TO", "GRANTED_BY", "COVERS", "USED_IN", "FROM", "TO",
+    # learning (M21): Person -[:DID]-> LearnEvent; Person -[:RESPONDED {score, n, acks, approvals, fixes, mtta_ms,
+    # last_at}]-> the component of an incident family (recomputed from the person's ack/approve/verified events)
+    "DID", "RESPONDED",
+    # change freeze (M20 #6): Policy -[:FREEZES]-> the component it freezes (Person -[:DECIDED]-> Policy names who)
+    "FREEZES",
 })
 
 
@@ -87,6 +108,10 @@ RUNTIME_RELS = frozenset({
     "HAS_PROPOSAL",
     # scratch projection only (who_fixes builds it in scratch_<t>_*, never in the tenant graph)
     "KNOWS_ABOUT",
+    # on-call (M19): pages, acks, escalation order, standing contracts and hand-offs (graph/writes.py, W_PAGE_* etc.)
+    "PAGES", "ESCALATED_TO", "ACKED", "ESCALATES_TO", "GRANTED_BY", "COVERS", "USED_IN", "FROM", "TO",
+    # learning (M21, memory/learning.py → graph/writes.py W_LEARN_*): who did a learned action, who responds to a family
+    "DID", "RESPONDED",
 })
 
 # Declared in the graph model but with no writer yet. Listed explicitly so the drift check can tell

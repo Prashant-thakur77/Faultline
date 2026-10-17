@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import uuid
 
+from faultline.agent.weights import weights
 from faultline.graph import client as gclient
 from faultline.graph import copy as gcopy
 from faultline.graph import writes
@@ -38,7 +39,8 @@ def s8() -> dict:
         ro = RO("globex", graph)
         family = next(f["incidents"] for f in ro.run("Q-MEM-6", {"inc": ""}).rows
                       if any(i in f["incidents"] for i in [r["id"] for r in ro.run("Q-MEM-1", {
-                          "current": inc, "now": NOW, "half_life_ms": 30 * 86_400_000.0}).rows][:1]))
+                          "current": inc, "now": NOW, "half_life_ms": 30 * 86_400_000.0,
+                          "w_recency": float(weights()["memory"]["recall_recency_w"])}).rows][:1]))
         tok = context.bind("globex", run_id=run, graph=graph)
         try:
             rec = T.similar_incidents(incident_id=inc, now=NOW)

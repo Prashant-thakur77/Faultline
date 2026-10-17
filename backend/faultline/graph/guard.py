@@ -12,7 +12,10 @@ trip the checks. It rejects:
   `{.token_sha}`, `{user: …}`, `n['text']`, `'Turn' IN labels(n)`), and `properties(…)` (it would return them all).
   The rows that come back are filtered too (`redact_rows`): a whole Session/Turn node, a server-issued session id
   (`sess-…`) and a denied property never reach the caller, whatever the query looked like.
-It also caps or appends LIMIT ≤ 100. explain_check() then runs GRAPH.EXPLAIN through the read-only user and
+It also caps or appends LIMIT ≤ 100. check_functions() (M20 #7) then allows only the functions the ENGINE reports as
+built-ins (dbms.functions(), template Q-FUNCS, read once per process) plus a vetted few UDFs: any other loaded UDF
+(e.g. `flex.text.repeat('x', 1e9)`, bounded only by the engine's TIMEOUT_DEFAULT and JS heap) or unknown name is refused.
+explain_check() then runs GRAPH.EXPLAIN through the read-only user and
 rejects plans with a Cartesian product over two or more full scans. The query finally runs through RO.run_guarded
 (GRAPH.RO_QUERY, 3 s timeout, ACL read-only user). Three independent layers: guard, read-only command, ACL.
 """
@@ -43,9 +46,10 @@ class GuardError(ValueError):
 
 
 # private data no guarded query may read (brain sessions and turns are per user; a run token hash is a capability)
-DENY_LABELS = ("Session", "Turn")
+DENY_LABELS = ("Session", "Turn", "BotChat", "BotProposal", "BotUpdate", "DeliveryBudget")   # + the Telegram bot's state
 DENY_RELS = ("HAS_TURN",)
-DENY_PROPS = ("token_sha", "text", "refs", "user")
+DENY_PROPS = ("token_sha", "text", "refs", "user", "tg_chat", "tg_user", "tg_message_id", "tg_digest", "ack_tg_user",
+              "chat")
 _DENY_NAMES = {x.lower() for x in DENY_LABELS + DENY_RELS + DENY_PROPS}
 _LABEL_RE = re.compile(r":\s*`?(" + "|".join(DENY_LABELS + DENY_RELS) + r")\b", re.I)
 _PROP_RE = re.compile(r"\.\s*`?(" + "|".join(DENY_PROPS) + r")\b(?!\s*[.(])", re.I)
@@ -149,6 +153,60 @@ def guard(query: str, max_limit: int = MAX_LIMIT) -> str:
     return q
 
 
+# ---- M20 #7: the function allow-list, built from the engine's own catalogue -----------------------------------------
+# UDFs text2cypher may call: the two the product's own templates use (find_fuzzy, hidden_coupling); every other UDF is out
+VETTED_UDFS = ("flex.text.jaroWinkler", "flex.sim.jaccard")
+# syntax that looks like a call but is not a function of dbms.functions() (list predicates, path functions, CASE …)
+SYNTAX_FORMS = {"all", "any", "none", "single", "reduce", "shortestpath", "allshortestpaths", "exists"}
+_KEYWORDS = {"match", "optional", "where", "and", "or", "xor", "not", "in", "return", "with", "unwind", "call", "yield",
+             "order", "by", "limit", "skip", "as", "distinct", "case", "when", "then", "else", "end", "is", "null",
+             "contains", "starts", "ends", "asc", "desc", "ascending", "descending", "true", "false"}
+_FN_RE = re.compile(r"(`[^`]+`|[A-Za-z_]\w*(?:\s*\.\s*[A-Za-z_]\w*)*)\s*\(")
+_FUNCS: frozenset[str] | None = None
+
+
+def called_functions(masked: str) -> list[str]:
+    """Names called like functions in a query whose string literals are masked (procedure names after CALL and Cypher
+    keywords followed by a parenthesis are not function calls; backtick-quoted names are unquoted)."""
+    out = []
+    for m in _FN_RE.finditer(masked):
+        name = re.sub(r"\s+", "", m.group(1).strip("`"))
+        if re.search(r"\bCALL\s*$", masked[: m.start()], re.I) or name.lower() in _KEYWORDS:
+            continue
+        out.append(name)
+    return out
+
+
+def allowed_functions(fetch) -> frozenset[str]:
+    """The allow-list (lower-cased; built-in names are case-insensitive): every built-in the engine reports
+    (dbms.functions() where udf = false) plus the VETTED_UDFS the engine actually has loaded. `fetch()` returns the Q-FUNCS
+    row ({builtin, udfs}); it runs once per process (an engine that cannot be asked raises: text2cypher fails closed)."""
+    global _FUNCS
+    if _FUNCS is None:
+        row = fetch()
+        builtin = {str(n).lower() for n in row.get("builtin") or []}
+        loaded = {str(n) for n in row.get("udfs") or []}
+        if not builtin:
+            raise GuardError("the engine reported no built-in functions (dbms.functions); text2cypher is unavailable")
+        _FUNCS = frozenset(builtin | {u.lower() for u in VETTED_UDFS if u in loaded})
+    return _FUNCS
+
+
+def reset_functions_cache() -> None:
+    global _FUNCS
+    _FUNCS = None
+
+
+def check_functions(query: str, allowed: frozenset[str]) -> None:
+    """Refuse any called function outside `allowed` (strings masked first, so a name inside a literal never counts)."""
+    for name in called_functions(mask_strings(query)):
+        low = name.lower()
+        if low in SYNTAX_FORMS or low in allowed:
+            continue
+        raise GuardError(f"function {name} is not allowed (text2cypher may call the engine's built-in functions and "
+                         f"the vetted UDFs {', '.join(VETTED_UDFS)})")
+
+
 _SCAN = re.compile(r"(All Node Scan|Node By Label Scan)")
 
 
@@ -166,4 +224,5 @@ def check_plan(plan_lines: list[str]) -> None:
 
 
 __all__ = ["guard", "check_plan", "check_private", "check_params", "redact_rows", "GuardError", "MAX_LIMIT", "TIMEOUT_MS",
-           "DENY_LABELS", "DENY_PROPS", "DENY_RELS"]
+           "DENY_LABELS", "DENY_PROPS", "DENY_RELS", "check_functions", "allowed_functions", "called_functions",
+           "reset_functions_cache", "VETTED_UDFS"]

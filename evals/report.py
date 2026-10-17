@@ -340,6 +340,11 @@ def audit_markdown(out: dict, s: dict) -> list[str]:
                       f"({s.get(f'{name}.bystander_not_confident')} such cases) counts as wrong."]
     L += side_markdown(s)
     L += new_benches_markdown(s)
+    L += faultbench_otel_markdown(s)
+    L += oncall_markdown(s)
+    L += learn_markdown(s)
+    L += tenants_markdown(s)   # M20 Wave B
+    L += algo10k_markdown(s)
     return L
 
 
@@ -542,6 +547,13 @@ def side_summaries(s: dict) -> dict:
             k.update(_world_keys(prefix, wb))
     k.update(_seeds2_keys(sb))
     k.update(llm_deep_keys())
+    k.update(faultbench_otel_keys())
+    k.update(oncall_keys())
+    k.update(learn_keys())
+    k.update(tenants_keys())   # M20 Wave B
+    k.update(algo10k_keys())
+    k.update(t2_keys())
+    k.update(vector_recall_keys())
     rc = _side("robustness_curves.json")
     if rc:
         for knob, levels in rc["curves"].items():
@@ -716,6 +728,318 @@ def llm_deep_keys() -> dict:
         sp = sum(x.get("spent_usd", 0.0) for x in b.get("runs", []))
         k[f"{p}.cost_usd"] = round(sp, 2)
     return k
+
+
+OTEL_ARMS = (("faultline", "faultline"), ("faultline_prefix", "faultline_prefix"), ("t", "T"), ("tplus", "Tplus"), ("n", "N"))
+
+
+def faultbench_otel_keys(x: dict | None = None, dry: dict | None = None) -> dict:
+    """otel.* (PREREGISTRATION addendum 2026-10-16 23:00 IST): FaultBench-OTel, fault injection into the real
+    OpenTelemetry Demo with real telemetry (evals/faultbench_otel.py → evals/results/faultbench_otel.json). Right cause
+    over the detected fault windows; wrong blames and abstentions over every scored window (fault + control); blame-free
+    controls over the controls; each with its Wilson 95 % interval."""
+    x = _side("faultbench_otel.json") if x is None else x
+    dry = _side("faultbench_otel_llm_dryrun.json") if dry is None else dry
+    k: dict = {}
+    if dry:
+        k["otel.llm_dry.windows"], k["otel.llm_dry.est_usd"] = dry.get("n"), dry.get("est_usd")
+    if not x or not x.get("rows"):
+        return k
+    # windows set aside for an infrastructure failure: excluded rows still in place, plus earlier recordings moved aside
+    k["otel.excluded"] = sum(1 for r in x["rows"] if r.get("excluded")) + len(x.get("excluded_windows") or [])
+    rows = [r for r in x["rows"] if not r.get("excluded")]
+    scored = [r for r in rows if r.get("detected")]
+    faults = [r for r in scored if r["kind"] == "fault"]
+    ctl = [r for r in scored if r["kind"] == "control"]
+    k.update({"otel.demo": x.get("demo"), "otel.seed": x.get("seed"), "otel.windows": len(rows),
+              "otel.fault_windows": sum(r["kind"] == "fault" for r in rows), "otel.detected": len(faults),
+              "otel.controls": len(ctl), "otel.scored": len(scored),
+              "otel.faults": len({r["fault"] for r in rows if r["kind"] == "fault"})})
+    for arm, name in OTEL_ARMS:
+        p = f"otel.{name}"
+        rc = sum(r[arm]["right_cause"] for r in faults)
+        wr = sum(r[arm]["wrong"] for r in scored)
+        ab = sum(r[arm]["abstained"] for r in scored)
+        bf = sum(r[arm]["blame_free"] for r in ctl)
+        k.update({f"{p}.right_cause": rc, f"{p}.wrong": wr, f"{p}.abstained": ab, f"{p}.control_blame_free": bf,
+                  f"{p}.wrong_fault": sum(r[arm]["wrong"] for r in faults),
+                  f"{p}.wrong_control": sum(r[arm]["wrong"] for r in ctl)})
+        k.update(wilson_keys(f"{p}.right_cause", rc, len(faults)))
+        k.update(wilson_keys(f"{p}.wrong", wr, len(scored)))
+        k.update(wilson_keys(f"{p}.abstained", ab, len(scored)))
+        k.update(wilson_keys(f"{p}.control_blame_free", bf, len(ctl)))
+        if not arm.startswith("faultline"):
+            k[f"{p}.right_frac"] = round(sum(r[arm].get("right_frac", 0.0) for r in faults), 2)
+    for flag in sorted({r["fault"] for r in rows if r["kind"] == "fault"}):
+        rs = [r for r in rows if r["kind"] == "fault" and r["fault"] == flag]
+        d = [r for r in rs if r.get("detected")]
+        q = f"otel.fault.{flag}"
+        k[f"{q}.windows"], k[f"{q}.detected"] = len(rs), len(d)
+        for arm, name in OTEL_ARMS:
+            for m in ("right_cause", "wrong", "abstained"):
+                k[f"{q}.{name}.{m}"] = sum(r[arm][m] for r in d)
+    acc = [(r, c) for r in scored for c in r.get("accepted_nc") or []]   # accepted NOT_CONFIDENT: the cause or a bystander
+    k["otel.accepted_nc.cause"] = sum(1 for r, c in acc if c == r.get("cause"))
+    k["otel.accepted_nc.bystander"] = sum(1 for r, c in acc if c != r.get("cause"))
+    for arm in ("faultline", "faultline_prefix"):   # fault windows the product called NO_INCIDENT (a miss, not an abstention)
+        k[f"otel.{arm}.no_incident_fault"] = sum(r[arm]["no_incident"] for r in faults)
+    k["otel.restarts_seen"] = sum(1 for r in rows for h in (r.get("health") or {}).values() if h.get("restarts"))
+    return k
+
+
+def oncall_keys(x: dict | None = None) -> dict:
+    """oncall.* (PREREGISTRATION addendum 2026-10-17): the scripted on-call night (evals/oncall_night.py →
+    evals/results/oncall_night.json): each pre-registered step's pass flag, who was paged and woken, the escalation, the
+    contract's use, the negative cases that fired (expected 0), and MTTA / MTTR read back from the graph."""
+    x = _side("oncall_night.json") if x is None else x
+    if not x or not x.get("steps"):
+        return {}
+    st, inc = x["steps"], x.get("incidents") or {}
+    stats = x.get("stats") or {}
+    p = "oncall.night"
+    k: dict = {f"{p}.steps_passed": x.get("passed"), f"{p}.steps": x.get("total"),
+               f"{p}.negatives": x.get("negatives"), f"{p}.negatives_fired": x.get("negatives_fired"),
+               f"{p}.seconds": x.get("seconds"), f"{p}.channels": ",".join(x.get("channels") or []),
+               f"{p}.ack_window_min": x.get("ack_window_min"),
+               f"{p}.inc1.pages": (inc.get("1") or {}).get("pages"),
+               f"{p}.inc1.people_woken": len((inc.get("1") or {}).get("woken") or []),
+               f"{p}.escalations": (st.get("2_no_ack_escalates") or {}).get("escalations"),
+               f"{p}.inc2.people_woken": len((inc.get("2") or {}).get("woken") or []),
+               f"{p}.inc2.notices": (inc.get("2") or {}).get("notices"),
+               f"{p}.inc2.verdict": (inc.get("2") or {}).get("verdict"),
+               f"{p}.contract.uses": (st.get("5_same_fault_under_contract") or {}).get("uses"),
+               f"{p}.pages": stats.get("pages"), f"{p}.people_paged": stats.get("people_paged"),
+               f"{p}.handled_under_contract": stats.get("handled_under_contract"),
+               f"{p}.mtta_ms": stats.get("mtta_ms"), f"{p}.mttr_ms": stats.get("mttr_ms"),
+               f"{p}.mtta_matches_pages": stats.get("mtta_ms") is not None and stats.get("mtta_ms") == x.get("mtta_expected_ms"),
+               f"{p}.acked_incidents": stats.get("acked_incidents"), f"{p}.scripted_ack_ms": x.get("scripted_ack_ms")}
+    for name, v in st.items():
+        k[f"{p}.step.{name}"] = bool(v.get("pass"))
+    if x.get("earlier_runs"):
+        k[f"{p}.first_run.steps_passed"] = x["earlier_runs"][0]["passed"]
+        k[f"{p}.first_run.negatives_fired"] = x["earlier_runs"][0]["negatives_fired"]
+        k[f"{p}.runs"] = len(x["earlier_runs"]) + 1
+        k[f"{p}.runs_all_negatives_held"] = all(int(r.get("negatives_fired") or 0) == 0 for r in x["earlier_runs"]) \
+            and x.get("negatives_fired") == 0
+    return k
+
+
+def oncall_markdown(s: dict) -> list[str]:
+    p = "oncall.night"
+    if s.get(f"{p}.steps") is None:
+        return []
+    L = ["", "## On-call: a scripted on-call night (evals/oncall_night.py)", "",
+         "The real API in-process, the keyless investigator, clean rooms; the on-call home graph is its own copy of "
+         f"golden_acme. Delivery channels: {s[f'{p}.channels']} (none external configured). Pre-registered steps "
+         f"passed: {s[f'{p}.steps_passed']} of {s[f'{p}.steps']}; negative cases where a contract fired: "
+         f"{s[f'{p}.negatives_fired']} of {s[f'{p}.negatives']}.", "",
+         "| step | pass |", "|---|---|"]
+    for k in sorted(x for x in s if x.startswith(f"{p}.step.")):
+        L.append(f"| {k.removeprefix(f'{p}.step.')} | {'yes' if s[k] else 'NO'} |")
+    L += ["", f"Incident 1 paged {s[f'{p}.inc1.people_woken']} people (the failing component's owner on-call and the "
+              f"on-call of every team owning something in its blast radius), escalated {s[f'{p}.escalations']} time(s) "
+              f"after the {s[f'{p}.ack_window_min']}-minute urgent window, and stopped at the ack. The same fault again "
+              f"woke {s[f'{p}.inc2.people_woken']} people ({s[f'{p}.inc2.notices']} contract notices) and was verified "
+              f"{s[f'{p}.inc2.verdict']} under the contract. Over the night: {s[f'{p}.pages']} pages to "
+              f"{s[f'{p}.people_paged']} people; MTTA {s[f'{p}.mtta_ms']} ms over {s[f'{p}.acked_incidents']} acknowledged "
+              f"incident(s) (read back from the graph; equal to the mean computed from the pages the API returned = "
+              f"{s[f'{p}.mtta_matches_pages']}; incident 1's scripted acknowledgement was {s[f'{p}.scripted_ack_ms']} ms); "
+              f"MTTR {s[f'{p}.mttr_ms']} ms (in-process wall clock, not a production figure)."]
+    if s.get(f"{p}.first_run.steps_passed") is not None:
+        L += ["", f"This is run {s[f'{p}.runs']} (every run is kept in evals/results/oncall_night.json). The first passed "
+                  f"{s[f'{p}.first_run.steps_passed']} of {s[f'{p}.steps']} steps (its one failure a harness set-up "
+                  "check); the second passed every step before approval was made to count as the acknowledgement; the "
+                  "third passed every step but read the night's numbers from every graph of the tenant; the fourth read "
+                  "them from the night's own graphs; this one runs on the product after the security review's fixes "
+                  "(PREREGISTRATION amendments 1–4, 2026-10-17). No contract fired in a negative case in any run: "
+                  f"{s[f'{p}.runs_all_negatives_held']}."]
+    return L
+
+
+def learn_keys(x: dict | None = None) -> dict:
+    """learn.* (PREREGISTRATION addendum 2026-10-17, M21): the learning night (evals/learning_night.py →
+    evals/results/learning_night.json): each pre-registered step's pass flag; cold vs warm top option (Wilson 95 %);
+    where the plan's top changed and where the contract suggestion first appeared; guideline override codes; MTTA
+    before and after the responder was learned; what forgetting a person deleted; knowledge gaps; recency-aware recall."""
+    x = _side("learning_night.json") if x is None else x
+    if not x or not x.get("steps"):
+        return {}
+    st, ph = x["steps"], x.get("phases") or {}
+    ch, rt = ph.get("choices") or {}, ph.get("routing") or {}
+    cold, warm, plans = ch.get("cold") or [], ch.get("warm") or [], ch.get("learning") or []
+    k: dict = {"learn.night.steps_passed": x.get("passed"), "learn.night.steps": x.get("total"),
+               "learn.night.seconds": x.get("seconds"),
+               "learn.choices.scenarios": ",".join(sorted({c["scenario"] for c in cold})),
+               "learn.choices.cold_trials": len(cold), "learn.choices.warm_trials": len(warm),
+               "learn.choices.cold_top_rollback": sum(1 for c in cold if c["top"] == "rollback_deploy"),
+               "learn.choices.warm_top_flag": sum(1 for c in warm if c["top"] == "flip_flag"),
+               "learn.choices.learning_plans": len(plans),
+               "learn.choices.flip_at_plan": next((p["plan"] for p in plans if p["top"] == "flip_flag"), None),
+               "learn.choices.pref_min_n": (x.get("weights") or {}).get("pref_min_n"),
+               "learn.choices.why_line": (warm[0].get("line") if warm else None),
+               "learn.suggest.k": (x.get("weights") or {}).get("contract_suggest_k"),
+               "learn.suggest.first_at_plan": next((p["plan"] for p in plans if p["suggested"]), None),
+               "learn.suggest.before_k": sum(1 for p in plans if p["suggested"]
+                                             and p["plan"] <= int((x.get("weights") or {}).get("contract_suggest_k") or 0)),
+               "learn.routing.incidents": len(rt.get("incidents") or []),
+               "learn.routing.mtta_before_ms": rt.get("mtta_before_ms"), "learn.routing.mtta_after_ms": rt.get("mtta_after_ms"),
+               "learn.routing.mtta_before_min": round(rt["mtta_before_ms"] / 60_000, 1) if rt.get("mtta_before_ms") else None,
+               "learn.routing.mtta_after_min": round(rt["mtta_after_ms"] / 60_000, 1) if rt.get("mtta_after_ms") else None,
+               "learn.routing.first_wave_from": next((i for i, r in enumerate(rt.get("incidents") or [], 1)
+                                                      if r.get("learned_first")), None),
+               "learn.routing.oncall_paged_every_incident": all(r.get("oncall_paged") for r in rt.get("incidents") or []),
+               "learn.routing.resp_min_n": (x.get("weights") or {}).get("resp_min_n")}
+    k.update(wilson_keys("learn.choices.cold_top_rollback", k["learn.choices.cold_top_rollback"], len(cold)))
+    k.update(wilson_keys("learn.choices.warm_top_flag", k["learn.choices.warm_top_flag"], len(warm)))
+    fg = ph.get("forget") or {}
+    k.update({"learn.forget.events": (fg.get("dry_run") or {}).get("n_events"),
+              "learn.forget.events_left": (fg.get("receipt") or {}).get("events_left"),
+              "learn.forget.preferences_still_citing": (fg.get("receipt") or {}).get("preferences_still_citing"),
+              "learn.forget.receipt_in_audit": fg.get("receipt_in_audit"),
+              "learn.forget.top_after": (st.get("forget_reverts_and_receipts") or {}).get("top_after")})
+    gp = ph.get("gaps") or {}
+    k.update({"learn.gaps.count": len(gp.get("gaps") or []),
+              "learn.gaps.asked_max": max([int(g["n"]) for g in gp.get("gaps") or []] or [0]),
+              "learn.gaps.answered_not_gap": all(not q["gap"] for q in gp.get("asked") or [] if q["kind"] != "gap")})
+    rc = ph.get("recall") or {}
+    pairs = rc.get("pairs") or []
+    ages = rc.get("ages") or {}
+    with_prec = [v for v in ages.values() if v.get("0.0", {}).get("top")]
+    k.update({"learn.recall.trials": len(pairs), "learn.recall.warm_top_first": sum(1 for p in pairs if p["warm_top_is_first"]),
+              "learn.recall.gate_identical": sum(1 for p in pairs if p["gate_identical"]),
+              "learn.recall.pairs": ",".join(sorted({p["pair"] for p in pairs})),
+              "learn.recall.scenarios_with_precedents": len(with_prec),
+              "learn.recall.top_changed": sum(1 for v in with_prec if v.get("top_changed"))})
+    for sid, v in ages.items():
+        for wr, row in v.items():
+            if isinstance(row, dict) and row.get("age_days") is not None:
+                k[f"learn.recall.{sid.lower()}.w{wr.replace('.', '')}.top_age_days"] = row["age_days"]
+    for name, v in st.items():
+        k[f"learn.night.step.{name}"] = bool(v.get("pass"))
+    if x.get("earlier_runs"):
+        k["learn.night.runs"] = len(x["earlier_runs"]) + 1
+    return k
+
+
+def _vcfg(cfg: str) -> str:
+    """'10' → 'ef10'; 'm32_efc400_ef100' stays (claim keys never start with a digit)."""
+    return f"ef{cfg}" if cfg.isdigit() else cfg
+
+
+def vector_recall_keys(x: dict | None = None) -> dict:
+    """vector.* (M20 #3): evals/vector_recall.py → evals/results/vector_recall.json: the HNSW index's recall@10 against
+    an exact cosine scan, per set (seeded Incident / Postmortem / Runbook / IntentExemplar vectors of acme and globex, and
+    a 2,040-incident history) and per configuration (efRuntime 10…200 at M 16 / efConstruction 200; M 32 /
+    efConstruction 400), the minimum over sets, the default and the configuration chosen for schema.cypher."""
+    x = _side("vector_recall.json") if x is None else x
+    if not x or not x.get("sets"):
+        return {}
+    k: dict = {}
+    sets = x["sets"]
+    for name, st in sets.items():
+        k[f"vector.{name}.vectors"], k[f"vector.{name}.queries"] = st["vectors"], st["queries"]
+        for cfg, v in st["recall"].items():
+            k[f"vector.recall_at_10.{name}.{_vcfg(cfg)}"] = v
+    for cfg in x.get("configs") or []:
+        k[f"vector.recall_at_10.min.{_vcfg(cfg)}"] = min(s["recall"][cfg] for s in sets.values())
+    k["vector.recall_at_10.default"] = k.get(f"vector.recall_at_10.min.{_vcfg(str(x.get('default', '10')))}")
+    if x.get("chosen"):
+        k["vector.recall_at_10.tuned"] = k.get(f"vector.recall_at_10.min.{_vcfg(x['chosen'])}")
+        k["vector.chosen"] = _vcfg(x["chosen"])
+    sch = x.get("schema") or {}
+    if sch:
+        k["vector.schema"] = f"M {sch.get('M')}, efConstruction {sch.get('efConstruction')}, efRuntime {sch.get('efRuntime')}"
+    k["vector.sets"], k["vector.queries"] = len(sets), sum(s["queries"] for s in sets.values())
+    return k
+
+
+def t2_keys(x: dict | None = None) -> dict:
+    """t2.* : the T2 go/no-go checklist of WIN_PLAN §12.5 as run by evals/t2_gonogo.py (evals/results/t2_gonogo.json)."""
+    x = _side("t2_gonogo.json") if x is None else x
+    if not x or not x.get("items"):
+        return {}
+    it = x["items"]
+    k: dict = {"t2.green": x.get("green"), "t2.items": x.get("total")}
+    for name, v in it.items():
+        k[f"t2.{name}.green"] = bool(v.get("green"))
+    s13 = it.get("s13_concurrency") or {}
+    k.update({"t2.s13.rounds_one_owner": s13.get("rounds_with_exactly_one_owner"), "t2.s13.rounds": s13.get("rounds"),
+              "t2.s13.lost_updates": s13.get("lost_updates"), "t2.s13.workers": s13.get("workers")})
+    s7 = (it.get("s7_isolation") or {}).get("isolation_suite") or {}
+    k.update({"t2.s7.passed": s7.get("passed"), "t2.s7.failed": s7.get("failed"),
+              "t2.s7.acl_users_ok": ((it.get("s7_isolation") or {}).get("through_ro_acl_users") or {}).get("ok")})
+    live = ((it.get("s10_forget_receipt") or {}).get("live_url") or {})
+    k.update({"t2.s10.live_dry_run_status": (live.get("forget_dry_run") or {}).get("status"),
+              "t2.s10.live_learned_status": live.get("learned_endpoint_status"),
+              "t2.session.sessions": len((it.get("session_turns") or {}).get("sessions") or []),
+              "t2.session.turns": (it.get("session_turns") or {}).get("turns")})
+    return k
+
+
+def learn_markdown(s: dict) -> list[str]:
+    p = "learn.night"
+    if s.get(f"{p}.steps") is None:
+        return []
+    L = ["", "## Learning from the people who use it (M21, evals/learning_night.py)", "",
+         "The real API in-process, the keyless investigator, clean rooms, off the public demo (trusted runs); what is "
+         "learned lives in a fresh copy of golden_acme per phase. Pre-registered steps passed: "
+         f"{s[f'{p}.steps_passed']} of {s[f'{p}.steps']}.", "", "| step | pass |", "|---|---|"]
+    for key in sorted(x for x in s if x.startswith(f"{p}.step.")):
+        L.append(f"| {key.removeprefix(f'{p}.step.')} | {'yes' if s[key] else 'NO'} |")
+    L += ["", f"Choices ({s['learn.choices.scenarios']}, N = 3 each): the top option was the rollback in "
+              f"{s['learn.choices.cold_top_rollback']} of {s['learn.choices.cold_trials']} cold runs and the flag flip in "
+              f"{s['learn.choices.warm_top_flag']} of {s['learn.choices.warm_trials']} warm runs after the on-call approved "
+              f"the flag on {s['learn.choices.learning_plans']} incidents; the top changed on plan "
+              f"{s['learn.choices.flip_at_plan']} (after learn.pref_min_n = {s['learn.choices.pref_min_n']} choices). The "
+              f"standing-approval suggestion first appeared on plan {s['learn.suggest.first_at_plan']} (K = "
+              f"{s['learn.suggest.k']}; shown before K: {s['learn.suggest.before_k']}). Paging: the responder who answers was "
+              f"paged in the first wave from incident {s['learn.routing.first_wave_from']} on; MTTA "
+              f"{s['learn.routing.mtta_before_min']} min before → {s['learn.routing.mtta_after_min']} min after (scripted "
+              f"clock: a check of the mechanism, not a response-time claim); the rota on-call was paged on every incident: "
+              f"{s['learn.routing.oncall_paged_every_incident']}. Forgetting the on-call's influence deleted "
+              f"{s['learn.forget.events']} events, left {s['learn.forget.events_left']}, and the plan's top went back to "
+              f"{s['learn.forget.top_after']}. Knowledge gaps: {s['learn.gaps.count']}. Recall (S1→S1b, S3→S3b, N = 3): "
+              f"warm top precedent = the first incident in {s['learn.recall.warm_top_first']} of {s['learn.recall.trials']}, "
+              f"gate verdicts identical in {s['learn.recall.gate_identical']} of {s['learn.recall.trials']}."]
+    if s.get("t2.items"):
+        L += ["", f"T2 go/no-go (WIN_PLAN §12.5, evals/t2_gonogo.py): {s['t2.green']} of {s['t2.items']} green."]
+    return L
+
+
+def faultbench_otel_markdown(s: dict) -> list[str]:
+    if s.get("otel.scored") is None:
+        return []
+    L = ["", "## FaultBench-OTel: the real OpenTelemetry Demo, real telemetry (evals/faultbench_otel.py)", "",
+         f"Real services (OpenTelemetry Demo {s['otel.demo']}, trimmed to fit one laptop), real per-minute server error "
+         "rates from its span metrics in Prometheus, the demo's own flagd fault flags as causes, and our own decoy changes "
+         f"(a real harmless flag flip and recorded no-op deploys). {s['otel.faults']} faults, {s['otel.fault_windows']} "
+         f"fault windows ({s['otel.detected']} paged by the pre-registered page rule) and {s['otel.controls']} no-fault "
+         "control windows, one machine. Topology and failure-edge capacities from data/topology/otel-demo.yaml.", "",
+         "Faultline is the current product; *as registered* is the product before the zero-baseline fix this bench found "
+         "(PREREGISTRATION amendment 2026-10-16 23:45 IST), run on the same windows.", "",
+         "| arm | right cause (detected fault windows) | wrong blames (all scored windows) | abstained | missed as NO_INCIDENT | "
+         "blame-free controls |", "|---|---|---|---|---|---|"]
+    label = {"faultline": "Faultline", "faultline_prefix": "Faultline as registered", "T": "T", "Tplus": "T+",
+             "N": "N (recency)"}
+    for _, name in OTEL_ARMS:
+        p = f"otel.{name}"
+        L.append(f"| {label[name]} | {_kn(s, f'{p}.right_cause')} | {_kn(s, f'{p}.wrong')} | {_kn(s, f'{p}.abstained')} | "
+                 f"{s.get(f'{p}.no_incident_fault', '—')} | {_kn(s, f'{p}.control_blame_free')} |")
+    L += ["", "| fault | windows | paged | Faultline right / wrong / abstained | as registered | T | T+ | N |",
+          "|---|---|---|---|---|---|---|---|"]
+    for flag in sorted({k.split(".")[2] for k in s if k.startswith("otel.fault.") and k.endswith(".windows")}):
+        q = f"otel.fault.{flag}"
+        cell = lambda a: f"{s[f'{q}.{a}.right_cause']} / {s[f'{q}.{a}.wrong']} / {s[f'{q}.{a}.abstained']}"  # noqa: E731
+        L.append(f"| {flag} | {s[f'{q}.windows']} | {s[f'{q}.detected']} | {cell('faultline')} | "
+                 f"{cell('faultline_prefix')} | {cell('T')} | {cell('Tplus')} | {cell('N')} |")
+    if s.get("otel.accepted_nc.bystander") is not None:
+        L += ["", f"Runs that ended NOT_CONFIDENT having accepted a change without confidence (an abstention by outcome, "
+                  f"reported apart as on every bench): the true cause {s['otel.accepted_nc.cause']}, an innocent change "
+                  f"{s['otel.accepted_nc.bystander']}."]
+    if s.get("otel.llm_dry.est_usd") is not None:
+        L += ["", f"The LLM alone on these windows was built and estimated only (no API call): {s['otel.llm_dry.windows']} "
+                  f"windows, about ${s['otel.llm_dry.est_usd']} at list price."]
+    return L
 
 
 def new_benches_markdown(s: dict) -> list[str]:
@@ -1250,6 +1574,7 @@ def scale_summary(sc: dict) -> dict:
                     f"{p}.swept": r.get("swept"), f"{p}.ambient": (v.get("incident") or {}).get("ambient")})
         sw = v.get("sweep_ms") or {}
         out.update({f"{p}.sweep_ms_p50": sw.get("p50"), f"{p}.sweep_ms_p95": sw.get("p95")})
+        out.update(scale_tail_keys(p, v))
         for tid in SCALE_TEMPLATES:
             x = (v.get("templates") or {}).get(tid) or {}
             for kk in ("engine_ms_p50", "engine_ms_p95", "wall_ms_p50"):
@@ -1261,6 +1586,275 @@ def scale_summary(sc: dict) -> dict:
         if dom:
             out[f"{p}.dominant"] = dom["template"]
     return out
+
+
+def scale_tail_keys(p: str, v: dict) -> dict:
+    """M20: the gate path's tail per size (scale.<k>.tail.<tid>.engine_ms_p50/p95/p99/max, wall_ms_p50/p99) and bytes
+    per node-or-edge, both from GRAPH.MEMORY USAGE (engine-rounded MB) and from the settled used_memory growth."""
+    out: dict = {}
+    for tid, x in (v.get("tail") or {}).items():
+        q = f"{p}.tail.{tid}"
+        e, wl = x.get("engine_ms") or {}, x.get("wall_ms") or {}
+        out.update({f"{q}.engine_ms_{kk}": e[kk] for kk in ("p50", "p95", "p99", "max") if e.get(kk) is not None})
+        out.update({f"{q}.wall_ms_{kk}": wl[kk] for kk in ("p50", "p99") if wl.get(kk) is not None})
+        out[f"{q}.runs"] = e.get("n")
+        if x.get("errors"):
+            out[f"{q}.errors"] = x["errors"]
+    elems = (v.get("nodes") or 0) + (v.get("edges") or 0)
+    if elems and v.get("memory_mb"):
+        out[f"{p}.bytes_per_elem"] = round(float(v["memory_mb"]) * 2**20 / elems)
+    if elems and v.get("engine_used_mb_seed_delta"):
+        out[f"{p}.used_mb_seed_delta"] = v["engine_used_mb_seed_delta"]
+        out[f"{p}.used_bytes_per_elem"] = round(float(v["engine_used_mb_seed_delta"]) * 2**20 / elems)
+    return out
+
+
+SCALE_TAIL = ("Q-GATE-1", "Q-GATE-3", "Q-BLAST-1")
+
+
+def scale_tail_markdown(sc: dict) -> list[str]:
+    sizes = {k: v for k, v in (sc.get("sizes") or {}).items() if v.get("tail")}
+    if not sizes:
+        return []
+    L = ["", "### The gate path's tail at each size (M20; nearest-rank over the tail runs, engine-reported ms)", "",
+         "| size | services | bytes per node-or-edge (GRAPH.MEMORY USAGE / used_memory growth) | "
+         + " | ".join(f"{t} p50 / p95 / p99" for t in SCALE_TAIL) + " |", "|---|---|---|" + "---|" * len(SCALE_TAIL)]
+    for k, v in sizes.items():
+        p = f"scale.{k}"
+        s = scale_tail_keys(p, v)
+        mem = (_c(p + ".bytes_per_elem", s.get(p + ".bytes_per_elem")) + " / "
+               + (_c(p + ".used_bytes_per_elem", s[p + ".used_bytes_per_elem"]) if p + ".used_bytes_per_elem" in s else "—"))
+        cells = []
+        for tid in SCALE_TAIL:
+            q = f"{p}.tail.{tid}"
+            cells.append(" / ".join(_c(f"{q}.engine_ms_{kk}", s.get(f"{q}.engine_ms_{kk}")) for kk in ("p50", "p95", "p99"))
+                         if f"{q}.engine_ms_p50" in s else "—")
+        L.append(f"| {k} | {_c(p + '.services', v.get('services'))} | {mem} | " + " | ".join(cells) + " |")
+    L += ["", "Each read runs on every hero instance (the incident's own ids and the global hub's); the headline is the "
+          "slowest instance by p99. GRAPH.MEMORY USAGE is rounded to whole MB by the engine and leaves out part of the "
+          "index memory, so the used_memory growth across the seed is shown next to it (other work on a shared engine "
+          "can move it)."]
+    return L
+
+
+# ------------------------------------------------------------------ M20 Wave B: tenant density + concurrency, algo10k
+def tenants_keys(x: dict | None = None) -> dict:
+    """tenants.* (PREREGISTRATION addendum 2026-10-17 21:10 IST, amended about 21:30): tenant graphs on one engine (product
+    tenants = copies of golden_acme, small tenants = its failure-flow layer), MB per tenant, copy ms, ACL isolation,
+    and the gate step's throughput and latency at 1/8/32/64 parallel investigators (evals/tenants_bench.py)."""
+    x = _side("tenants_bench.json") if x is None else x
+    k: dict = {}
+    if not x or not (x.get("density") or {}).get("n"):
+        return k
+    d, iso, cfg = x["density"], x.get("isolation") or {}, x.get("config") or {}
+    k.update({"tenants.n": d["n"], "tenants.threads": cfg.get("THREAD_COUNT"), "tenants.max_queued": cfg.get("MAX_QUEUED_QUERIES"),
+              "tenants.maxmemory_mb": cfg.get("maxmemory_mb"), "tenants.cpus": (x.get("machine") or {}).get("cpus"),
+              "tenants.used_mb_at_n": round(float(d.get("used_mb_at_n") or 0), 1),
+              "tenants.concurrent_activity_steps": sum(1 for st in d.get("steps") or [] if st.get("concurrent_activity"))})
+    for kind, v in (d.get("kinds") or {}).items():
+        p = f"tenants.{kind}"
+        k.update({f"{p}.n": v["n"], f"{p}.source_nodes": v["source"]["nodes"], f"{p}.source_edges": v["source"]["edges"],
+                  f"{p}.graph_memory_usage_mb": v["source"].get("graph_memory_usage_mb")})
+        if v.get("mb_per_tenant") is not None:
+            k[f"{p}.mb_per_tenant"] = round(float(v["mb_per_tenant"]), 1)
+        if v.get("rss_mb_per_tenant") is not None:
+            k[f"{p}.rss_mb_per_tenant"] = round(float(v["rss_mb_per_tenant"]), 1)
+        for kk in ("p50", "p95", "p99"):
+            k[f"{p}.copy_ms_{kk}"] = (v.get("copy_ms") or {}).get(kk)
+        k[f"{p}.copy_raw_ms_p50"] = (v.get("copy_raw_ms") or {}).get("p50")
+    for st in d.get("stopped") or []:
+        k[f"tenants.{st['kind']}.stopped_before"] = st["before_total"]
+    ct, own, app = iso.get("cross_tenant") or {}, iso.get("own_graph") or {}, iso.get("app_layer") or {}
+    if ct:
+        k.update({"tenants.acl.users": iso.get("users"), "tenants.acl.cross.n": ct["probes"],
+                  "tenants.acl.cross.denied": ct["denied"], "tenants.acl.leaks": ct["leaks"],
+                  "tenants.acl.cross.other_errors": ct["other_errors"], "tenants.acl.own.ok": own.get("ok"),
+                  "tenants.acl.own.n": own.get("probes"), "tenants.acl.forbidden.denied": iso.get("forbidden_denied"),
+                  "tenants.acl.forbidden.allowed": iso.get("forbidden_allowed"), "tenants.acl.forbidden.n": iso.get("forbidden_probes"),
+                  "tenants.acl.app.refused": app.get("refused"), "tenants.acl.app.n": app.get("probes"),
+                  "tenants.acl.sample_intact": iso.get("sample_graphs_intact"), "tenants.acl.sample": iso.get("sample")})
+        k.update(wilson_keys("tenants.acl.leak", ct["leaks"], ct["probes"]))
+    pp = x.get("params") or {}
+    if pp:
+        k["tenants.pool.per_template"] = pp.get("per_template")
+        k["tenants.pool.gate1_with_path"] = pp.get("gate1_with_path")
+    for r in x.get("concurrency") or []:
+        p = f"tenants.c{r['investigators']}"
+        lm = r["latency_ms"]
+        k.update({f"{p}.qps": r["qps"], f"{p}.steps_per_s": r["steps_per_s"], f"{p}.queries": r["queries"],
+                  f"{p}.p50_ms": lm["p50"], f"{p}.p95_ms": lm["p95"], f"{p}.p99_ms": lm["p99"], f"{p}.max_ms": lm["max"],
+                  f"{p}.errors": r["error_total"], f"{p}.engine_cpu_cores": r["engine_cpu_cores"],
+                  f"{p}.client_cpu_max": r["client_cpu_cores_max"], f"{p}.processes": r["processes"]})
+        for tid, st in (r.get("per_template") or {}).items():
+            k[f"{p}.{tid}.p50_ms"], k[f"{p}.{tid}.p99_ms"] = st["p50"], st["p99"]
+    return k
+
+
+def tenants_markdown(s: dict) -> list[str]:
+    if not s.get("tenants.n"):
+        return []
+    L = ["", "## Tenant density, isolation and concurrent investigators (evals/tenants_bench.py, M20)", "",
+         f"One pinned engine (maxmemory {_c('tenants.maxmemory_mb', s.get('tenants.maxmemory_mb'))} MB, THREAD_COUNT "
+         f"{_c('tenants.threads', s.get('tenants.threads'))}, MAX_QUEUED_QUERIES {_c('tenants.max_queued', s.get('tenants.max_queued'))}"
+         f"), shared with the product's own graphs; clients on the same {_c('tenants.cpus', s.get('tenants.cpus'))}-core laptop. "
+         "MB per tenant is the settled growth of the engine's used_memory (GRAPH.MEMORY USAGE, shown for the source graph, "
+         "rounds to whole MB and leaves out most index memory).", "",
+         "| tenant kind | tenants | source graph (nodes / edges) | GRAPH.MEMORY USAGE of the source | MB per tenant (used_memory / RSS) | copy ms p50 / p95 / p99 | stopped before |",
+         "|---|---|---|---|---|---|---|"]
+    for kind, desc in (("product", "product (a copy of golden_acme)"), ("small", "small (golden_acme's failure-flow layer only)")):
+        p = f"tenants.{kind}"
+        if s.get(f"{p}.n") is None:
+            continue
+        L.append(f"| {desc} | {_c(p + '.n', s[p + '.n'])} | {_c(p + '.source_nodes', s.get(p + '.source_nodes'))} / "
+                 f"{_c(p + '.source_edges', s.get(p + '.source_edges'))} | {_c(p + '.graph_memory_usage_mb', s.get(p + '.graph_memory_usage_mb'))} MB | "
+                 f"{_c(p + '.mb_per_tenant', s.get(p + '.mb_per_tenant'))} / "
+                 + (_c(p + ".rss_mb_per_tenant", s[p + ".rss_mb_per_tenant"]) if p + ".rss_mb_per_tenant" in s else "—")
+                 + f" | {_c(p + '.copy_ms_p50', s.get(p + '.copy_ms_p50'))} / "
+                 f"{_c(p + '.copy_ms_p95', s.get(p + '.copy_ms_p95'))} / {_c(p + '.copy_ms_p99', s.get(p + '.copy_ms_p99'))} | "
+                 + (_c(p + ".stopped_before", s[p + ".stopped_before"]) + " (memory guard)" if s.get(p + ".stopped_before") else "—") + " |")
+    if s.get("tenants.acl.cross.n"):
+        L += ["", f"**Isolation** ({_c('tenants.acl.users', s.get('tenants.acl.users'))} ACL users, the shipped `ro_` rules): "
+              f"cross-tenant reads denied {_c('tenants.acl.cross.denied', s['tenants.acl.cross.denied'])}/"
+              f"{_c('tenants.acl.cross.n', s['tenants.acl.cross.n'])}, leaks {_c('tenants.acl.leaks', s['tenants.acl.leaks'])} "
+              f"(95 % upper bound on the leak rate {_c('tenants.acl.leak.ci_hi', s.get('tenants.acl.leak.ci_hi'))}); own-graph "
+              f"reads {_c('tenants.acl.own.ok', s.get('tenants.acl.own.ok'))}/{_c('tenants.acl.own.n', s.get('tenants.acl.own.n'))}; "
+              f"forbidden commands denied {_c('tenants.acl.forbidden.denied', s.get('tenants.acl.forbidden.denied'))}/"
+              f"{_c('tenants.acl.forbidden.n', s.get('tenants.acl.forbidden.n'))}; the RO wrapper refused "
+              f"{_c('tenants.acl.app.refused', s.get('tenants.acl.app.refused'))}/{_c('tenants.acl.app.n', s.get('tenants.acl.app.n'))} "
+              "cross-tenant handles before any engine call."]
+    lv = sorted({int(kk.split(".")[1][1:]) for kk in s if kk.startswith("tenants.c") and kk.endswith(".qps")
+                 and kk.split(".")[1][1:].isdigit()})
+    if lv:
+        L += ["", "| investigators | gate-step queries/s | p50 ms | p95 ms | p99 ms | max ms | errors | engine CPU cores | client CPU (max per process) |",
+              "|---|---|---|---|---|---|---|---|---|"]
+        for m in lv:
+            p = f"tenants.c{m}"
+            L.append(f"| {m} | {_c(p + '.qps', s[p + '.qps'])} | {_c(p + '.p50_ms', s[p + '.p50_ms'])} | "
+                     f"{_c(p + '.p95_ms', s[p + '.p95_ms'])} | {_c(p + '.p99_ms', s[p + '.p99_ms'])} | {_c(p + '.max_ms', s[p + '.max_ms'])} | "
+                     f"{_c(p + '.errors', s[p + '.errors'])} | {_c(p + '.engine_cpu_cores', s[p + '.engine_cpu_cores'])} | "
+                     f"{_c(p + '.client_cpu_max', s[p + '.client_cpu_max'])} |")
+        L += ["", "A gate step is Q-GATE-1 (algo.SPpaths), Q-GATE-3 (algo.maxFlow) and Q-BLAST-1 (algo.BFS) on a random tenant, "
+              "through the product's RO wrapper as that tenant's ACL user; latency is the client's wall time per read "
+              "(network, queueing, engine and the wrapper's parsing)."]
+    return L
+
+
+ALGO_ORDER = ("bfs", "sppaths", "sspaths", "pagerank", "betweenness", "harmonic", "wcc", "cdlp", "maxflow", "msf")
+
+
+def _algo_prefix(w: dict, counts: dict) -> str:
+    return f"algo10k.{w['procedure']}" + (f".{w['tag']}" if counts.get(w["procedure"], 0) > 1 else "")
+
+
+def algo10k_keys(x: dict | None = None) -> dict:
+    """algo10k.* (PREREGISTRATION addendum 2026-10-17 21:10 IST): all 10 algo.* procedures at 10k services, and an
+    eval-only NetworkX comparator on the same extracted input (evals/algo10k.py → evals/results/algo10k.json)."""
+    x = _side("algo10k.json") if x is None else x
+    if not x or not x.get("workloads"):
+        return {}
+    ws = x["workloads"]
+    counts: dict = {}
+    for w in ws:
+        counts[w["procedure"]] = counts.get(w["procedure"], 0) + 1
+    comp = [w for w in ws if w.get("equal") is not None]
+    k: dict = {"algo10k.services": x.get("services"), "algo10k.nodes": (x.get("graph") or {}).get("nodes"),
+               "algo10k.edges": (x.get("graph") or {}).get("edges"), "algo10k.runs": x.get("runs"),
+               "algo10k.networkx": x.get("networkx"), "algo10k.procedures": len(counts), "algo10k.workloads": len(ws),
+               "algo10k.comparable": len(comp), "algo10k.same": sum(1 for w in comp if w["equal"]),
+               "algo10k.same_projection": sum(1 for w in comp if w.get("equal_on_projection")),
+               "algo10k.errors": sum(1 for w in ws if (w.get("falkor") or {}).get("error"))}
+    faster = []
+    for w in ws:
+        p = _algo_prefix(w, counts)
+        f = w.get("falkor") or {}
+        e, wl = f.get("engine_ms") or {}, f.get("wall_ms") or {}
+        k.update({f"{p}.falkor_ms_{kk}": e.get(kk) for kk in ("p50", "p95", "p99")})
+        k[f"{p}.falkor_wall_ms_p50"] = wl.get("p50")
+        if f.get("error"):
+            k[f"{p}.error"] = True
+        pr = w.get("falkor_projection") or {}
+        if pr:
+            k[f"{p}.proj_ms_p50"] = (pr.get("engine_ms") or {}).get("p50")
+            k[f"{p}.proj_wall_ms_p50"] = (pr.get("wall_ms") or {}).get("p50")
+        k[f"{p}.equal"] = w.get("equal")
+        if w.get("equal_on_projection") is not None:
+            k[f"{p}.equal_projection"] = w["equal_on_projection"]
+        nx = w.get("nx") or {}
+        if nx:
+            nx50 = (nx.get("ms") or {}).get("p50")
+            k.update({f"{p}.nx_ms_p50": nx50, f"{p}.nx_runs": nx.get("runs"),
+                      f"{p}.input_nodes": (nx.get("input") or {}).get("nodes"), f"{p}.input_edges": (nx.get("input") or {}).get("edges")})
+            if nx.get("graph_bytes") is not None:
+                k[f"{p}.nx_graph_mb"] = round(nx["graph_bytes"] / 2**20, 2)
+            if nx.get("algo_peak_bytes") is not None:
+                k[f"{p}.nx_peak_mb"] = round(nx["algo_peak_bytes"] / 2**20, 2)
+            if nx50 and wl.get("p50"):
+                k[f"{p}.x_wall"] = round(nx50 / wl["p50"], 1)
+                faster.append(nx50 > wl["p50"])
+            if nx50 and e.get("p50"):
+                k[f"{p}.x_engine"] = round(nx50 / e["p50"], 1)
+    k["algo10k.faster_wall"] = sum(faster)
+    k["algo10k.timed_pairs"] = len(faster)
+    m = x.get("memory") or {}
+    if m:
+        k.update({"algo10k.mem.nodes": m["falkordb"]["nodes"], "algo10k.mem.edges": m["falkordb"]["edges"],
+                  "algo10k.mem.falkordb_mb": round(m["falkordb"]["bytes"] / 2**20, 1),
+                  "algo10k.mem.networkx_mb": round(m["networkx"]["bytes"] / 2**20, 1),
+                  "algo10k.mem.falkordb_bytes_per_elem": m.get("falkordb_bytes_per_elem"),
+                  "algo10k.mem.networkx_bytes_per_elem": m.get("networkx_bytes_per_elem"),
+                  "algo10k.mem.ratio": m.get("ratio_nx_over_falkordb"),
+                  "algo10k.mem.graph_memory_usage_mb": m["falkordb"].get("graph_memory_usage_mb")})
+    return k
+
+
+def algo10k_markdown(s: dict, x: dict | None = None) -> list[str]:
+    x = _side("algo10k.json") if x is None else x
+    if not x or not x.get("workloads"):
+        return []
+    ws = sorted(x["workloads"], key=lambda w: (ALGO_ORDER.index(w["procedure"]) if w["procedure"] in ALGO_ORDER else 99))
+    counts: dict = {}
+    for w in ws:
+        counts[w["procedure"]] = counts.get(w["procedure"], 0) + 1
+    L = ["", "## All 10 algo.* procedures at 10k services, against NetworkX (evals/algo10k.py, M20)", "",
+         f"Graph: the {_c('algo10k.services', s.get('algo10k.services'))}-service scale world "
+         f"({_c('algo10k.nodes', s.get('algo10k.nodes'))} nodes, {_c('algo10k.edges', s.get('algo10k.edges'))} edges). FalkorDB: "
+         f"{_c('algo10k.runs', s.get('algo10k.runs'))} runs per workload through GRAPH.RO_QUERY on the product graph and on a "
+         "projection holding exactly the extracted input. NetworkX "
+         f"{_c('algo10k.networkx', s.get('algo10k.networkx'))} (an eval-only comparator, never in the product) on that same "
+         "input. Same answers by the pre-registered criterion; × = NetworkX p50 / FalkorDB wall p50 (the client-observed "
+         "time, network and result parsing included).", "",
+         "| procedure | workload | input nodes / edges | FalkorDB engine ms p50 / p95 / p99 | FalkorDB wall ms p50 | on the projection, engine ms p50 | NetworkX ms p50 | × | NetworkX graph / peak MB | same answers (product graph / projection) |",
+         "|---|---|---|---|---|---|---|---|---|---|"]
+    names = x.get("procedures") or {}
+    for w in ws:
+        p = _algo_prefix(w, counts)
+        eq = s.get(f"{p}.equal")
+        eqs = ("n/a" if eq is None else _c(p + ".equal", eq)) + (" / " + _c(p + ".equal_projection", s[p + ".equal_projection"])
+                                                                   if p + ".equal_projection" in s else "")
+        mb = (_c(p + ".nx_graph_mb", s.get(p + ".nx_graph_mb")) + " / "
+              + (_c(p + ".nx_peak_mb", s[p + ".nx_peak_mb"]) if p + ".nx_peak_mb" in s else "not traced (slow)"))
+        L.append(f"| `{names.get(w['procedure'], w['procedure'])}` | {w['instance']} | {_c(p + '.input_nodes', s.get(p + '.input_nodes'))} / "
+                 f"{_c(p + '.input_edges', s.get(p + '.input_edges'))} | "
+                 + (" / ".join(_c(f"{p}.falkor_ms_{kk}", s.get(f"{p}.falkor_ms_{kk}")) for kk in ("p50", "p95", "p99"))
+                    if not s.get(p + ".error") else "error: " + str((w.get("falkor") or {}).get("error"))[:80])
+                 + f" | {_c(p + '.falkor_wall_ms_p50', s.get(p + '.falkor_wall_ms_p50'))} | "
+                 f"{_c(p + '.proj_ms_p50', s.get(p + '.proj_ms_p50')) if p + '.proj_ms_p50' in s else '—'} | "
+                 f"{_c(p + '.nx_ms_p50', s.get(p + '.nx_ms_p50'))} | "
+                 f"{_c(p + '.x_wall', s[p + '.x_wall']) if p + '.x_wall' in s else '—'} | {mb} | {eqs} |")
+    L += ["", f"Same answers on {_c('algo10k.same', s.get('algo10k.same'))} of {_c('algo10k.comparable', s.get('algo10k.comparable'))} "
+          f"comparable workloads (projection: {_c('algo10k.same_projection', s.get('algo10k.same_projection'))}); FalkorDB's wall "
+          f"p50 below NetworkX's on {_c('algo10k.faster_wall', s.get('algo10k.faster_wall'))} of "
+          f"{_c('algo10k.timed_pairs', s.get('algo10k.timed_pairs'))}. Criteria: "
+          + "; ".join(f"{kk}: {v}" for kk, v in sorted({w['procedure']: w['criterion'] for w in ws}.items())) + "."]
+    if s.get("algo10k.mem.falkordb_mb") is not None:
+        L += ["", f"**The same graph in memory** (every workload's input together: {_c('algo10k.mem.nodes', s['algo10k.mem.nodes'])} "
+              f"nodes, {_c('algo10k.mem.edges', s['algo10k.mem.edges'])} edges with their weights and capacities): FalkorDB "
+              f"{_c('algo10k.mem.falkordb_mb', s['algo10k.mem.falkordb_mb'])} MB (engine used_memory growth, written by the product's "
+              f"writers with the product schema's indexes; {_c('algo10k.mem.falkordb_bytes_per_elem', s.get('algo10k.mem.falkordb_bytes_per_elem'))} "
+              f"bytes per node-or-edge) against NetworkX {_c('algo10k.mem.networkx_mb', s['algo10k.mem.networkx_mb'])} MB "
+              f"(tracemalloc, a MultiDiGraph; {_c('algo10k.mem.networkx_bytes_per_elem', s.get('algo10k.mem.networkx_bytes_per_elem'))} "
+              "bytes). FalkorDB's per-call working memory is not measured (the engine logs it only under a startup flag)."]
+    return L
 
 
 def current_scale(c: dict) -> dict:
@@ -1320,6 +1914,7 @@ def scale_markdown(sc: dict) -> list[str]:
                  + (f"{last['shape']} (×{last['time_x']} for ×{last['size_x']} services)" if last else "—") + " |")
     L += ["", "\"(trunc.)\" = the RO wrapper saw LIMIT n+1 rows for at least one instance. Growth shapes compare engine-ms p50 "
           "between consecutive sizes (exponent of the time ratio over the size ratio; above 1.3 is called superlinear)."]
+    L += scale_tail_markdown(sc)
     return L
 
 

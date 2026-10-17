@@ -14,7 +14,7 @@ services:
       # maxmemory + noeviction: a full engine refuses writes with an OOM error (fails loudly) instead of being killed;
       # the container limit keeps FalkorDB from starving the rest of the host (a 14 GB dev laptop)
       REDIS_ARGS: "--appendonly yes --maxmemory ${FALKORDB_MAXMEMORY:-3500mb} --maxmemory-policy noeviction"
-      FALKORDB_ARGS: "TIMEOUT_MAX 10000 TIMEOUT_DEFAULT 2000 RESULTSET_SIZE 100000 MAX_QUEUED_QUERIES 50"
+      FALKORDB_ARGS: "TIMEOUT_MAX 10000 TIMEOUT_DEFAULT 2000 RESULTSET_SIZE 100000 MAX_QUEUED_QUERIES 50 QUERY_MEM_CAPACITY 268435456"
     volumes:
       - falkordb-data:/var/lib/falkordb/data
     healthcheck:

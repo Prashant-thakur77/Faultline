@@ -2,7 +2,8 @@
 
 Resources (read-only, tenant-bound exactly like the tools: the tenant comes from the session binding or the HTTP
 bearer key via `context.current()`, never from the URI):
-* `faultline://schema`  : the live schema of the bound tenant's graph (Q-SCHEMA-1..4 through GRAPH.RO_QUERY);
+* `faultline://schema`  : the live schema of the bound tenant's graph (Q-SCHEMA-1..5 through GRAPH.RO_QUERY: labels,
+  relationship types, indexes and the engine-enforced constraints);
 * `faultline://queries` : the linted template catalogue (id, purpose, returns, params, LIMIT, file);
 * `faultline://weights` : weights.yaml verbatim (every score and gate number the product computes comes from it).
 
@@ -30,10 +31,14 @@ _PARAM = re.compile(r"\$([A-Za-z_]\w*)")
 
 def schema_resource() -> str:
     """The live schema of this tenant's graph: labels with counts, property keys and indexes; relationship types
-    with counts and (from-label, to-label) pairs. Read-only (db.meta.stats, bounded scans, db.indexes)."""
+    with counts and (from-label, to-label) pairs; the engine-enforced constraints. Read-only (db.meta.stats, bounded
+    scans, db.indexes, db.constraints)."""
     b = context.current()
     ro = RO(b.tenant, b.graph)
     schema, results = introspect(ro)
+    cons = ro.run("Q-SCHEMA-5", {})   # the engine-enforced invariants (M20): UNIQUE / MANDATORY, with their status
+    results = [*results, cons]
+    schema = {**schema, "constraints": cons.rows}
     return json.dumps({"tenant": b.tenant, **schema, "served_by": results[0].served_by,
                        "queries": [{"template": r.template_id, "ms": round(r.ms, 2), "digest": r.digest,
                                     "truncated": r.truncated} for r in results]}, indent=1, sort_keys=True, default=str)
@@ -42,6 +47,8 @@ def schema_resource() -> str:
 def queries_catalogue() -> list[dict[str, Any]]:
     out = []
     for tid, t in sorted(catalogue().items()):
+        if t.internal:   # product-only reads (Telegram ids, consents, contract offers) are not offered to MCP clients
+            continue
         params = sorted(set(_PARAM.findall(mask_strings(t.display))))
         out.append({"id": tid, "purpose": t.purpose, "returns": t.returns, "params": params, "limit": t.limit,
                     "file": t.path})

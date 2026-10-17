@@ -8,7 +8,11 @@
 
 from __future__ import annotations
 
+import time
+from collections.abc import Iterator
+from contextlib import contextmanager
 from functools import lru_cache
+from typing import Any
 
 import redis
 from falkordb import FalkorDB, Graph
@@ -44,6 +48,41 @@ def _engine() -> FalkorDB:
         )
     except Exception as e:  # connection refused / auth failure → fail loudly
         raise GraphUnavailable(f"FalkorDB unreachable at {settings.falkordb_host}:{settings.falkordb_port}: {e}") from e
+
+
+@contextmanager
+def engine_session(graph_name: str) -> Iterator[tuple[Graph, redis.Redis]]:
+    """One dedicated engine connection (not the pool): a write and the WAITAOF after it must share a connection,
+    because WAITAOF waits for the earlier writes OF THAT CLIENT (M20 #5). Closed on exit."""
+    _disabled_guard()
+    try:
+        conn = redis.Redis(host=settings.falkordb_host, port=settings.falkordb_port,
+                           username=settings.falkordb_engine_user or None, password=settings.falkordb_engine_password or None,
+                           socket_timeout=_SOCKET_TIMEOUT_S, socket_connect_timeout=3.0, single_connection_client=True)
+    except Exception as e:  # noqa: BLE001
+        raise GraphUnavailable(f"FalkorDB unreachable at {settings.falkordb_host}:{settings.falkordb_port}: {e}") from e
+    try:
+        yield Graph(conn, graph_name), conn
+    finally:
+        conn.close()
+
+
+def wait_aof(conn: redis.Redis, *, timeout_ms: int, numlocal: int = 1, numreplicas: int = 0) -> dict[str, Any]:
+    """WAITAOF numlocal numreplicas timeout on `conn`: blocks until this connection's earlier writes are fsynced to the
+    local AOF (appendfsync everysec: within about a second). Never raises: a timeout (fewer copies than asked) or an
+    error (AOF disabled, connection lost) comes back as ok=False with the reason, and the caller treats it as UNKNOWN."""
+    t0 = time.perf_counter()
+    try:
+        local, replicas = conn.execute_command("WAITAOF", int(numlocal), int(numreplicas), int(timeout_ms))
+    except (redis.RedisError, OSError) as e:
+        return {"ok": False, "local": None, "replicas": None, "ms": round((time.perf_counter() - t0) * 1000, 1),
+                "error": f"{type(e).__name__}: {e}"[:300]}
+    ok = int(local) >= numlocal and int(replicas) >= numreplicas
+    out: dict[str, Any] = {"ok": ok, "local": int(local), "replicas": int(replicas),
+                           "ms": round((time.perf_counter() - t0) * 1000, 1)}
+    if not ok:
+        out["error"] = f"WAITAOF timed out after {timeout_ms} ms ({local} local AOF copies, {replicas} replicas)"
+    return out
 
 
 def ro_acl_enabled() -> bool:

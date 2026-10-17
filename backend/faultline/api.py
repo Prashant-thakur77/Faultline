@@ -26,7 +26,7 @@ from collections import defaultdict
 from typing import Any
 
 import anyio
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import Body, FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from sse_starlette.sse import EventSourceResponse
@@ -171,6 +171,21 @@ def engine_panel(request: Request, tenant: str = "acme") -> dict:
     return out
 
 
+@app.get("/api/engine/insight")
+def engine_insight(request: Request, tenant: str = "acme") -> dict:
+    """FalkorDB observing itself (M20 #8): per graph of this tenant its memory (GRAPH.MEMORY USAGE) and its telemetry
+    stream (6.0: every query's wait / execution / report ms, plan-cache use, write and timeout flags) aggregated per
+    template id, plus engine load and limits. Read-only, rate-limited, public-safe: ids and numbers only, never query
+    text or parameters. Response shape: docs/plans/M20.md "API"."""
+    from .graph import engine_info
+
+    _limit(f"insight:{_ip(request)}", 20, 60, global_n=300 if settings.faultline_public else None)
+    try:
+        return engine_info.insight(check_tenant(tenant))
+    except GraphError as e:
+        raise _graph_error(e) from e
+
+
 # ------------------------------------------------------------------ status
 
 def _github_real() -> bool:
@@ -197,6 +212,7 @@ def status(tenant: str = "acme") -> dict:
         out["ready"] = ro.require_ready()
         out["counts"] = ro.run("Q-COUNT-1", {}).rows[0]
         out["llm_budget"] = _llm_spend(t)
+        out["constraints"] = _constraints_view(ro)
         out["status"] = "ok"
     except GraphError as e:
         out["status"], out["reason"] = "unavailable", _graph_error(e).detail
@@ -211,6 +227,21 @@ def status(tenant: str = "acme") -> dict:
             out["udf"] = {k: "missing" for k in udf.UDF_LIBS}
             out["udf_detail"] = {"error": _public_error(e, what="GRAPH.UDF LIST failed").detail}
     return out
+
+
+def _constraints_view(ro: RO) -> dict:
+    """The engine-enforced invariants (M20) as the engine reports them (Q-SCHEMA-5, db.constraints) next to the ones
+    graph/constraints.py declares: operational, still building, and any declared one the graph does not have."""
+    from .graph import constraints as gc
+
+    r = ro.run("Q-SCHEMA-5", {})
+    have = {gc.key_of([x["type"], x["label"], x["properties"], x["entitytype"], x["status"]]): x["status"] for x in r.rows}
+    declared = gc.by_key()
+    return {"declared": len(declared), "present": len(r.rows),
+            "operational": sum(1 for v in have.values() if v == "OPERATIONAL"),
+            "pending": sum(1 for v in have.values() if v in gc.PENDING),
+            "missing": [f"{k[0]} {k[1]} {k[2]}({', '.join(k[3])})" for k in sorted(declared) if k not in have],
+            "rows": r.rows, "template": r.template_id, "graph": ro.graph_name}
 
 
 # ------------------------------------------------------------------ scenarios and runs
@@ -228,7 +259,8 @@ class RunIn(BaseModel):
     llm: str = Field("baseline", pattern="^(baseline|anthropic)$")
 
 
-def _run_groups(job: str, sid: str, p, inv, audit, token_sha: str | None, ledgers: list[str] | None = None) -> str:
+def _run_groups(job: str, sid: str, p, inv, audit, token_sha: str | None, ledgers: list[str] | None = None,
+                trusted: bool = False) -> str:
     """A scenario whose alerts INTAKE split into several incidents (alert storm + concurrent fault): every incident is
     investigated in turn, then the later intake rounds (scenario.investigate_all, the same loop as run_all). Each
     incident gets its own RunIndex row (so /api/incidents, plan, SSE and approval address it like any other) and the
@@ -269,9 +301,14 @@ def _run_groups(job: str, sid: str, p, inv, audit, token_sha: str | None, ledger
         for e in entries:
             if e["incident"] == grp.incident_id:
                 e.update(outcome=res.outcome, cause=res.cause_id, error=res.error)
+        _after_run(p.tenant, {"graph": p.graph, "run": grp.run_id, "scenario": sid}, grp.incident_id, res)
+
+    from .actions import oncall
 
     try:
-        results = anyio.run(lambda: scenario.investigate_all(p, inv, on_open=opened, on_start=start, on_done=done))
+        results = anyio.run(lambda: scenario.investigate_all(p, inv, on_open=opened, on_start=start, on_done=done,
+                                                             oncall_home=oncall.home_graph(p.tenant),
+                                                             oncall_external=trusted))
     except Exception as e:
         _fail_pending(entries, sid, p, inv, audit, _client_error_text(e))
         raise
@@ -306,7 +343,7 @@ def _fail_pending(entries: list[dict], sid: str, p, inv, audit, why: str) -> Non
 
 
 def _run_job(job: str, sid: str, llm: str, ledger_id: str | None = None, token_sha: str | None = None,
-             lease=None, gc_now: bool = False) -> None:
+             lease=None, gc_now: bool = False, trusted: bool = False) -> None:
     """`lease`: the job's hold on the warehouse (data scenarios), reserved by the request on the public demo (refused
     there with 429 when another mode is in use) or here otherwise (waits); released when the job ends."""
     from . import scenario
@@ -324,7 +361,7 @@ def _run_job(job: str, sid: str, llm: str, ledger_id: str | None = None, token_s
         p = scenario.prepare(sid, tag=job, lease=lease, origin="api")
         audit = gclient.engine().select_graph(audit_graph(p.tenant))
         if len(p.groups) > 1:
-            state = _run_groups(job, sid, p, inv, audit, token_sha, ledgers)
+            state = _run_groups(job, sid, p, inv, audit, token_sha, ledgers, trusted=trusted)
             return
         writes.index_run(audit, run=p.run_id, inc=p.incident_id, graph=p.graph, scenario=sid, tenant=p.tenant,
                          investigator=inv.name)
@@ -333,12 +370,17 @@ def _run_job(job: str, sid: str, llm: str, ledger_id: str | None = None, token_s
         _jobs[job].update(incident=p.incident_id, run=p.run_id, graph=p.graph)
         from .agent.loop import run_incident
 
+        from .actions import oncall
+
         res = anyio.run(lambda: run_incident(tenant=p.tenant, incident_id=p.incident_id, onset_ms=p.onset_ms,
                                              symptoms=p.symptoms, investigator=inv, graph=p.graph, run_id=p.run_id,
-                                             window_min=p.scenario.get("window_min")))
+                                             window_min=p.scenario.get("window_min"),
+                                             oncall_home=oncall.home_graph(p.tenant), oncall_external=trusted))
         writes.index_run(audit, run=p.run_id, inc=p.incident_id, graph=p.graph, scenario=sid, tenant=p.tenant,
                          investigator=inv.name, outcome=res.outcome, cause=res.cause_id)
         state = "settled" if not res.error else "failed"
+        # a standing contract acts BEFORE the job reads done: "done" means nothing more will happen without a human
+        _after_run(p.tenant, {"graph": p.graph, "run": p.run_id, "scenario": sid}, p.incident_id, res)
         _jobs[job].update(state="done", outcome=res.outcome, error=res.error)
     except Exception as e:  # recorded and surfaced (generic text + request id to clients), never swallowed
         unavailable = isinstance(e, (GraphUnavailable, GraphNotReady))
@@ -473,7 +515,11 @@ def run_scenario(sid: str, body: RunIn, request: Request) -> dict:
                           "token_sha": token_sha}
             _run_count[0] += 1
             gc_now = _run_count[0] % max(1, int(weights()["engine"]["gc_every_runs"])) == 0
-        threading.Thread(target=_run_job, args=(job, sid, body.llm, ledger_id, token_sha, lease, gc_now),
+        # a trusted run (off the public demo, or started with the approver key) may page external channels and use
+        # a standing contract; an anonymous public run pages in-app only (security review, M19)
+        trusted = (not settings.faultline_public) or _key_ok(request, "x-faultline-approver-key",
+                                                             settings.faultline_approver_key)
+        threading.Thread(target=_run_job, args=(job, sid, body.llm, ledger_id, token_sha, lease, gc_now, trusted),
                          daemon=True).start()
     except BaseException:  # nothing ran: the reservation at zero, the warehouse lease and the job handle are released
         if ledger_id:
@@ -817,17 +863,48 @@ def incident_plan(inc: str, tenant: str = "acme") -> dict:
     ro = c.ro()
     out: dict[str, Any] = {"stage": ro.run("Q-INC-1", {"inc": inc}).rows[0]["stage"]}
     # notify_set (who to tell, not who fixes it) and owner_at (owner when the change shipped) are ROUTE results too
-    for tool in ("containment_cut", "whatif", "who_fixes", "bus_factor", "escalation_tree", "notify_set", "owner_at"):
+    for tool in ("containment_cut", "whatif", "who_fixes", "bus_factor", "escalation_tree", "notify_set", "owner_at",
+                 "learned_preferences", "learned_responders"):
         rows = ro.run("Q-EV-TOOL", {"run": loc["run"], "tool": tool}).rows
         out[tool] = ({**rows[0], "payload": json.loads(rows[0]["payload"]) if rows[0]["payload"] else None,
                       "params": json.loads(rows[0]["params"]) if rows[0]["params"] else None} if rows else None)
     out["options"] = [{**a, "preview": json.loads(a["preview"]) if a["preview"] else None,
                        "spec": json.loads(a["spec"]) if a["spec"] else None,
-                       "channels": json.loads(a["channels"]) if a["channels"] else None}
+                       "channels": json.loads(a["channels"]) if a["channels"] else None,
+                       "learned": json.loads(a["learned"]) if a.get("learned") else None}
                       for a in ro.run("Q-ACT-1", {"inc": inc}).rows]
+    out["learned"] = _plan_learned(out["options"], out.get("learned_preferences"), out.get("learned_responders"),
+                                   ((out.get("who_fixes") or {}).get("payload") or {}).get("rows") or [])
     # memory: what RECALL found (RECALLED edges) and what those precedents teach about each fix kind
     out["memory"] = {"recalled": ro.run("Q-MEM-4", {"inc": inc}).rows, "fix_history": ro.run("Q-MEM-5", {"inc": inc}).rows}
     return out
+
+
+def _plan_learned(options: list[dict], prefs: dict | None, resp: dict | None, who_rows: list[dict] | None = None) -> dict:
+    """The plan's learning summary (M21) from what the run recorded: which options learning moved (their rank without
+    learning vs their place), which are against an active guideline, which carry a contract suggestion, and the
+    learned responders paged first (the recorded learned_* tool calls carry the Cypher)."""
+    from .memory import learning
+
+    if prefs is None and resp is None:
+        return {"consulted": False, "note": "learning not consulted for this run (no on-call home)"}
+    payload = (prefs or {}).get("payload") or {}
+    rp = (resp or {}).get("payload") or {}
+    pv = learning.plan_view({**payload, "rows": payload.get("rows") or [], "evidence_id": (prefs or {}).get("evidence_id")}
+                            if prefs else None)
+    # the plan's own order (Q-ACT-1 orders by the integer rank each option was recorded with, never by the id string)
+    moved = [o["id"] for i, o in enumerate(options, 1)
+             if (o.get("learned") or {}).get("rank_without_learning") not in (None, o.get("rank") or i)]
+    return {"consulted": True, "family": payload.get("family"), "n_family": payload.get("n_family"),
+            "applies": pv.get("applies"), "pref_min_n": int(learning.w()["pref_min_n"]), "moved": moved,
+            "flagged": [o["id"] for o in options if ((o.get("learned") or {}).get("guideline") or {}).get("needs_override")],
+            "suggested": [o["id"] for o in options if (o.get("learned") or {}).get("contract_suggestion")],
+            "guidelines": payload.get("guidelines") or [], "suggestions": payload.get("suggestions") or [],
+            "responders": rp.get("rows") or [], "first_wave": [p["person"] for p in learning.first_wave(
+                {**rp, "evidence_id": (resp or {}).get("evidence_id")})] if resp else [],
+            # who_fixes as recorded (algo.HarmonicCentrality), blended with the learned responders (learn.w_resp)
+            "who_fixes_blended": learning.blend_who(list(who_rows or [])[:10], rp if resp else None)[:5],
+            "evidence": {"preferences": (prefs or {}).get("evidence_id"), "responders": (resp or {}).get("evidence_id")}}
 
 
 class ChooseIn(BaseModel):
@@ -855,6 +932,9 @@ class ApproveIn(BaseModel):
     action_id: str = Field(..., max_length=120)
     plan_hash: str = Field(..., min_length=64, max_length=64)
     approver: str = Field(..., min_length=1, max_length=60)
+    # M21: approving an option an ACTIVE learned guideline is against needs an explicit override: its id and why
+    override_guideline: str | None = Field(default=None, pattern=r"^gl-[0-9a-f]{6,40}$")
+    override_reason: str | None = Field(default=None, min_length=3, max_length=300)
 
 
 def _world(c, loc: dict) -> dict | None:
@@ -887,7 +967,10 @@ def _reconcile(tenant: str, graph: str) -> list[dict]:
             return None
         return _world(c, loc)
 
-    return reconcile(tenant, graph, gh.client(graph), world)
+    from .actions import oncall
+
+    # an intent the reconciler settles without a verified fix pages a human (idempotent per outcome)
+    return reconcile(tenant, graph, gh.client(graph), world, oncall_home=oncall.home_graph(tenant))
 
 
 @app.on_event("startup")
@@ -991,6 +1074,18 @@ def _reconcile_all(trigger: str) -> int:
     finally:
         _reconcile_lock.release()
     return n
+
+
+@app.on_event("startup")
+def _startup_learning_homes() -> None:
+    """M21: every tenant's on-call home graph exists and carries the learning indexes before the first request, so
+    GET /api/learned (and every other learned-state read) never writes. Logged, never blocks startup."""
+    from .memory import learning
+
+    try:
+        learning.ensure_homes(_configured_tenants())
+    except GraphError as e:
+        log.warning("learning homes not prepared at startup: %s", e)
 
 
 @app.on_event("startup")
@@ -1333,8 +1428,117 @@ def _act_job_tracked(c, loc: dict, aid: str) -> None:
     """The execute job, registered as working on its graph (the collector skips it) until it ends."""
     try:
         _act_job(c, loc, aid)
+        _page_after_approval(c, aid)
+        from .memory import learning
+
+        learning.on_verified(c, aid)   # M21: a trusted approval verified APPLIED and RESOLVED (best effort)
     finally:
         _work_leave(c.graph)
+
+
+def _page_after_approval(c, aid: str) -> None:
+    """After the execute job of an APPROVED action: RESOLVED resolves the incident's open pages; UNKNOWN_ESCALATED,
+    NOT_APPLIED (back to AWAITING_APPROVAL) or FAILED pages a human at once (oncall.page_after_approval, idempotent
+    per outcome, so the reconciler settling the same outcome later pages nobody twice). Best effort: never fails
+    the job, logged loudly."""
+    from .actions import oncall
+
+    try:
+        out = oncall.page_after_approval(c.tenant, c.graph, c.inc, c.run, aid)
+        if out and out.get("pages"):
+            log.warning("%s/%s: %s after approval; paged %s", c.inc, aid, out["what"], ", ".join(out["people"]))
+    except Exception as e:  # noqa: BLE001 - the stage still says it; logged loudly
+        log.error("paging after the approval of %s/%s failed: %s", c.inc, aid, e)
+
+
+def _after_run(tenant: str, loc: dict, inc: str, res) -> None:
+    """After an investigation: when a standing contract covered its plan (agent.loop matched it before paging), act
+    under it. Never raises into the run job (its result stands); a failure pages a human."""
+    paged = ((getattr(res, "post_gate", None) or {}).get("oncall") or {}) if res is not None else {}
+    if not paged.get("contract"):
+        return
+    try:
+        _contract_job(tenant, loc, inc, paged)
+    except Exception as e:  # noqa: BLE001 - logged, and a human is paged so the incident is never left alone
+        log.error("acting under contract on %s failed: %s", inc, e)
+        _page_humans_after_contract(tenant, loc, inc, paged, f"acting under the contract failed ({_client_error_text(e)})")
+
+
+def _page_humans_after_contract(tenant: str, loc: dict, inc: str, paged: dict, why: str) -> list[str]:
+    """The contract did not end in a verified fix: page the same people a normal run would have, urgent, at once, and
+    supersede the informational notices."""
+    from .actions import oncall
+
+    g = gclient.engine().select_graph(loc["graph"])
+    writes.settle_pages(g, inc=inc, status="superseded", detail=f"superseded: {why}"[:500], now=oncall.now_ms(),
+                        kinds=("contract_notice",))
+    cid = (paged.get("contract") or {}).get("id")
+    return oncall.write_pages(tenant=tenant, graph=loc["graph"], inc=inc, people=paged.get("people") or [], kind="page",
+                              urgency="urgent", title=f"Contract {cid} did not fix {inc}",
+                              detail=f"Handled under standing contract {cid}, but {why}. A human must decide now.")
+
+
+def _contract_job(tenant: str, loc: dict, inc: str, paged: dict) -> dict:
+    """Act under a standing contract: render the exact action (choose), check it still binds the contract's params,
+    consume one use in ONE guarded write (W_CONTRACT_USE), approve as `contract:<id>` with an intent lease, then the
+    same execute → verify (second channel) → write-back job a human approval runs. Anything but a verified, resolved
+    fix pages a human at once; the use records the verdict."""
+    from .actions import act, contracts, oncall
+    from .actions import github as gh
+    from .actions.boot import BOOT_ID
+
+    m = paged["contract"]
+    home = oncall.home_graph(tenant)
+    c = act.Ctx(tenant, loc["graph"], inc, loc["run"])
+    if gh.is_real() and not m.get("real_ok"):  # the same authority a human approval needs (_approver_ok's rule)
+        _page_humans_after_contract(tenant, loc, inc, paged, "this contract was granted without the authority real "
+                                                             "GitHub needs (the approver key); a human must approve")
+        return {"acted": False}
+    if _world(c, loc) is None:  # no second channel to verify with: never act unverifiable under a contract
+        _page_humans_after_contract(tenant, loc, inc, paged, "this incident has no second verification channel")
+        return {"acted": False}
+    try:
+        spec = act.choose(c, m["option"], gh.client(c.graph))
+    except (ValueError, KeyError, gh.GitHubError) as e:
+        _page_humans_after_contract(tenant, loc, inc, paged, f"the covered action could not be rendered ({_client_error_text(e)})")
+        return {"acted": False}
+    if contracts.params_hash(spec["kind"], contracts.action_params(spec["kind"], spec["args"])) != m["params_hash"]:
+        _page_humans_after_contract(tenant, loc, inc, paged, "the rendered action no longer matches the contract's parameters")
+        return {"acted": False}
+    use = contracts.use(home=home, match=m, inc=inc, graph=c.graph, aid=m["option"])
+    if use is None:  # exhausted, expired or revoked since the match: the guarded write refused
+        _page_humans_after_contract(tenant, loc, inc, paged, "the contract was exhausted, expired or revoked before it was used")
+        return {"acted": False}
+    c.owner = f"{BOOT_ID}:contract-{uuid.uuid4().hex[:12]}"
+    _work_enter(c.graph)
+    try:
+        ok = act.approve(c, m["option"], spec["plan_hash"], f"contract:{m['id']}")
+        if ok is None or not ok.get("mine"):
+            contracts.give_back(home=home, uid=use["use"])   # consumed, never executed: the use is returned
+            _page_humans_after_contract(tenant, loc, inc, paged, "the covered action could not be approved (the incident "
+                                                                 "moved on or another run owns its idempotency key)")
+            return {"acted": False}
+        _act_job(c, loc, m["option"])
+    finally:
+        _work_leave(c.graph)
+    row = next((a for a in c.ro().run("Q-ACT-1", {"inc": inc}).rows if a["id"] == m["option"]), {})
+    stage = (c.ro().run("Q-INC-1", {"inc": inc}).rows or [{}])[0].get("stage")
+    if not row.get("verdict") and stage == "FAILED":   # refused before touching anything: the use is returned
+        contracts.give_back(home=home, uid=use["use"])
+        verdict = "NOT_EXECUTED"
+    else:
+        verdict = row.get("verdict") or "UNKNOWN"
+        contracts.settle_use(home=home, uid=use["use"], verdict=verdict)
+    if verdict == "APPLIED" and stage == "RESOLVED":
+        oncall.settle_resolved(tenant, c.graph, inc)
+        return {"acted": True, "verdict": verdict}
+    # the same after-approval page a human approval gets (one key per outcome: the reconciler never pages it twice);
+    # the informational notices are superseded first
+    writes.settle_pages(gclient.engine().select_graph(c.graph), inc=inc, status="superseded",
+                        detail=f"superseded: verification said {verdict} under contract {m['id']}", now=oncall.now_ms(),
+                        kinds=("contract_notice",))
+    oncall.page_after_approval(tenant, c.graph, inc, c.run, m["option"])
+    return {"acted": True, "verdict": verdict}
 
 
 def _approver_ok(request: Request) -> None:
@@ -1368,29 +1572,82 @@ def incident_approve(inc: str, body: ApproveIn, request: Request, tenant: str = 
     try:
         if not gcopy.exists(gclient.engine(), c.graph):
             raise HTTPException(410, _collected_text(inc))
-        res = _approve_checked(c, body, inc)
+        override = _guideline_check(c, body.action_id, body.override_guideline, body.override_reason)
+        res = _approve_checked(c, body, inc, override)   # the override is written with the Approval (one query)
+        from .memory import learning
+
+        # learned before the execute job starts: its verified fix is learned only if this approval was (M21)
+        res["learned"] = learning.on_approve(c, body.action_id, body.approver, key=_approver_key_given(request),
+                                             override=override)
         threading.Thread(target=_act_job_tracked, args=(c, loc, body.action_id), daemon=True).start()
         started = True
+        _ack_by_approval(c, body.approver)
     finally:
         if not started:
             _work_leave(c.graph)
+    if override:
+        res["override"] = override
     return res
 
 
-def _approve_checked(c, body: "ApproveIn", inc: str) -> dict:
+def _guideline_check(c, aid: str, override_id: str | None, override_reason: str | None, *,
+                     can_override: bool = True) -> dict | None:
+    """M21: an option an ACTIVE learned guideline is against (same family and action kind, read fresh from the on-call
+    home graph, Q-LEARN-GUIDE) is approved only with an explicit override naming that guideline and why: 409 with the
+    guideline otherwise. Stricter, never weaker: no guideline ⇒ nothing changes. Returns the override, or None."""
+    from .memory import learning
+
+    a = next((x for x in c.ro().run("Q-ACT-1", {"inc": c.inc}).rows if x["id"] == aid), None)
+    if a is None:
+        return None
+    fam, _ = learning.family_of(c.ro(), c.run, c.inc)
+    active = learning.active_guidelines(c.tenant, fam, a["kind"]) if fam else []
+    if not active:
+        return None
+    ids = [g["id"] for g in active]
+    if not can_override or override_id not in ids or not (override_reason or "").strip():
+        g = active[0]
+        how = ("approve it in the web UI with override_guideline and override_reason" if not can_override else
+               f"send override_guideline={g['id']} and an override_reason")
+        raise HTTPException(409, f"{a['option']} is against active guideline {g['id']} (\"{g['text'][:200]}\", "
+                                 f"promoted by {g.get('decided_by_name') or g.get('decided_by')}): {how}")
+    return {"id": override_id, "reason": " ".join((override_reason or "").split())[:300],
+            "text": next(g["text"] for g in active if g["id"] == override_id)}
+
+
+def _approver_checked(c, person: str) -> dict:
+    """Q-APPROVER-1 (M19 fix: it reads ON_CALL): the approver must be an active person (else 422) who is on call for,
+    or a member of, a team that owns a component this incident impacts (else 403, with the graph's reason)."""
+    from .actions import oncall
+
+    who = oncall.approver_check(c.ro(), run=c.run, inc=c.inc, person=person)
+    if who is None:
+        raise HTTPException(422, f"approver {person!r} is not an active person in this tenant's graph")
+    if not who["eligible"]:
+        raise HTTPException(403, f"approver {person!r} may not approve on {c.inc}: {who['reason']} (Q-APPROVER-1)")
+    return who
+
+
+def _ack_by_approval(c, approver: str) -> None:
+    """Approving is acknowledging: the incident's pages stop escalating (best effort; never fails the approval)."""
+    from .actions import oncall
+
+    try:
+        oncall.on_approval(c.tenant, c.graph, c.inc, approver)
+    except Exception as e:  # noqa: BLE001 - the pages stay open (visible, still escalating); logged
+        log.warning("acknowledging the pages of %s on approval failed: %s", c.inc, e)
+
+
+def _approve_checked(c, body: "ApproveIn", inc: str, override: dict | None = None) -> dict:
     from .actions import act
 
-    cause = (c.ro().run("Q-CAUSE-1", {"inc": c.inc}).rows or [{}])[0].get("cause")
-    comp = (c.ro().run("Q-CHANGE-1", {"id": cause}).rows or [{"target": ""}])[0]["target"] if cause else ""
-    who = c.ro().run("Q-APPROVER-1", {"person": body.approver, "component": comp}).rows
-    if not who:  # decided by the graph: an active person of this tenant (their relation to the component is shown)
-        raise HTTPException(422, f"approver {body.approver!r} is not an active person in this tenant's graph")
-    res = act.approve(c, body.action_id, body.plan_hash, body.approver)
+    who = _approver_checked(c, body.approver)  # decided by the graph, with the reason shown on the approval
+    res = act.approve(c, body.action_id, body.plan_hash, body.approver, override=override)
     if res is None:
         raise HTTPException(409, "plan hash does not match the current chosen action, or the incident is not awaiting approval")
     if not res["mine"]:
         raise HTTPException(409, "an intent with this idempotency key already exists (another run owns it)")
-    return {"approved": True, **res, "approver": who[0]}
+    return {"approved": True, **res, "approver": who}
 
 
 # ------------------------------------------------------------------ M13 workstream C: reject + read-only UI views
@@ -1417,18 +1674,17 @@ def incident_reject(inc: str, body: RejectIn, request: Request, tenant: str = "a
     _approver_ok(request)
     c, loc = _actx(inc, check_tenant(tenant))
     _run_token_ok(request, c.tenant, loc)
-    cause = (c.ro().run("Q-CAUSE-1", {"inc": c.inc}).rows or [{}])[0].get("cause")
-    comp = (c.ro().run("Q-CHANGE-1", {"id": cause}).rows or [{"target": ""}])[0]["target"] if cause else ""
-    who = c.ro().run("Q-APPROVER-1", {"person": body.approver, "component": comp}).rows
-    if not who:
-        raise HTTPException(422, f"approver {body.approver!r} is not an active person in this tenant's graph")
+    who = _approver_checked(c, body.approver)
     try:
         res = act.reject(c, body.action_id, body.plan_hash, body.approver, body.reason)
     except WriteError as e:
         raise HTTPException(422, str(e)) from e
     if res is None:
         raise HTTPException(409, "plan hash does not match the current chosen action, or the incident is not awaiting approval")
-    return {"rejected": True, **res, "reason": " ".join(body.reason.split())[:500], "approver": who[0]}
+    from .memory import learning
+
+    learned = learning.on_reject(c, body.action_id, body.approver, body.reason, key=_approver_key_given(request))
+    return {"rejected": True, **res, "reason": " ".join(body.reason.split())[:500], "approver": who, "learned": learned}
 
 
 def _qr(r) -> dict:
@@ -1615,6 +1871,11 @@ def brain_ask(body: AskIn, request: Request, tenant: str = "acme") -> dict:
         else:
             out = ask(body.question, t, body.llm, user=body.user, session=body.session, usage=usage).as_dict()
         state = "settled"
+        from .memory import learning
+
+        # M21: a question the graph could not answer becomes a KnowledgeGap; a public visitor's question never does
+        gap = learning.on_gap(t, out, body.user, trusted_=not _brain_in_scratch(request))
+        out["knowledge_gap"] = {"event": gap["event"]} if gap else None
         return out
     except SessionError as e:  # another user's session (or an id no session may take): refused, not a server error
         raise HTTPException(403, str(e)) from e
@@ -1817,7 +2078,7 @@ def decision_override(decision: str, body: OverrideIn, request: Request, tenant:
         raise HTTPException(403, "on the public demo an override needs the approver key (it changes what G8 and preflight report)")
     if body.plan_hash != plan_hash:
         raise HTTPException(409, "stale or edited override: the plan hash no longer matches (re-review it)")
-    if not body.approver or not RO(t, graph).run("Q-APPROVER-1", {"person": body.approver, "component": row["about"]}).rows:
+    if not body.approver or not RO(t, graph).run("Q-PERSON-1", {"person": body.approver}).rows:
         raise HTTPException(422, f"approver {body.approver!r} is not an active person in this tenant's graph")
     oid = writes.record_override(gclient.engine().select_graph(graph), decision=decision, change=body.change,
                                  verdict=body.verdict, by=body.approver, why=body.why.strip(), plan_hash=plan_hash,
@@ -1971,21 +2232,55 @@ def template(tid: str) -> dict:
         t = load(tid)
     except KeyError as e:
         raise HTTPException(404, f"unknown template {tid}") from e
-    return {"id": t.id, "purpose": t.purpose, "cypher": t.display, "file": t.path, "limit": t.limit}
+    return {"id": t.id, "purpose": t.purpose, "cypher": t.display, "file": t.path, "limit": t.limit, "internal": t.internal,
+            "home": t.home}
+
+
+def _runnable(tid: str):
+    """A template a client may run or profile: known, and not internal (Telegram ids, consents and contract offers are
+    read only by the product itself; security review M19 #4)."""
+    try:
+        t = load(tid)
+    except KeyError as e:
+        raise HTTPException(404, f"unknown template {tid}") from e
+    if t.internal:
+        raise HTTPException(403, f"{tid} is internal: the product reads it, clients cannot run it")
+    return t
 
 
 class TemplateParams(BaseModel):
     params: dict = Field(default_factory=dict)
     incident: str | None = None
     tenant: str = "acme"
+    # which of the tenant's own durable graphs to read (default: the template's `// home:`); an incident's clean room
+    # is chosen with `incident` instead. Never a graph name: only these three words
+    graph: str | None = Field(default=None, pattern="^(tenant|oncall|audit)$")
+
+
+def _template_graph(t: str, tmpl, body: "TemplateParams") -> str:
+    """Where a re-run or a profile reads: the incident's run graph when `incident` is given (as before), else the
+    tenant graph the caller names (`graph`: tenant, oncall or audit), else the template's home graph: learned state,
+    pages and contracts live in oncall_<t>, the run index and receipts in audit_<t>, so a re-run of them on tenant_<t>
+    returned nothing."""
+    from .actions import oncall
+
+    if body.incident:
+        graph = _locate(body.incident, t)["graph"]
+    else:
+        home = body.graph or tmpl.home
+        graph = oncall.home_graph(t) if home == "oncall" else audit_graph(t) if home == "audit" else tenant_graph(t)
+    if not graph_belongs_to(graph, t):
+        raise HTTPException(403, "graph does not belong to tenant")
+    return graph
 
 
 @app.post("/api/templates/{tid}/profile")
 def template_profile(tid: str, body: TemplateParams, request: Request) -> dict:
     _limit(f"profile:{_ip(request)}", 30, 60, global_n=60)
     t = check_tenant(body.tenant)
+    tmpl = _runnable(tid)
     try:
-        graph = _locate(body.incident, t)["graph"] if body.incident else None
+        graph = _template_graph(t, tmpl, body)
         return {"id": tid, **profile(t, tid, body.params, graph)}
     except KeyError as e:
         raise HTTPException(404, f"unknown template {tid}") from e
@@ -1997,13 +2292,12 @@ def template_profile(tid: str, body: TemplateParams, request: Request) -> dict:
 def template_run(tid: str, body: TemplateParams, request: Request) -> dict:
     _limit(f"rerun:{request.client.host if request.client else '-'}", 30, 60)
     t = check_tenant(body.tenant)
+    tmpl = _runnable(tid)
     try:
-        graph = _locate(body.incident, t)["graph"] if body.incident else tenant_graph(t)
-        if not graph_belongs_to(graph, t):
-            raise HTTPException(403, "graph does not belong to tenant")
+        graph = _template_graph(t, tmpl, body)
         r = RO(t, graph).run(tid, body.params)
         return {"rows": r.rows, "ms": round(r.ms, 2), "digest": r.digest, "truncated": r.truncated, "served_by": r.served_by,
-                "cypher": r.cypher}
+                "cypher": r.cypher, "graph": graph, "home": tmpl.home}
     except KeyError as e:
         raise HTTPException(404, f"unknown template {tid}") from e
     except GraphError as e:
@@ -2055,3 +2349,793 @@ def rearm(request: Request, tenant: str = "acme") -> dict:
     return out
 
 
+
+
+# ------------------------------------------------------------------ M19: real on-call (pages, acks, escalation, contracts)
+# Every read below is a catalogue template through the RO wrapper (actions/oncall.py, actions/contracts.py); every
+# write is one atomic query in graph/writes.py. Public mode keeps its rules: acking needs the page's signed token, the
+# run token of the page's incident or the approver key; granting/revoking a contract and writing a hand-off change what
+# every visitor's later incidents do, so on the public demo they need the approver key.
+class AckIn(BaseModel):
+    token: str | None = Field(default=None, max_length=200)
+    by: str | None = Field(default=None, min_length=1, max_length=60)   # with the approver key: who acknowledges
+    now: int | None = Field(default=None, ge=0, le=4_102_444_800_000)   # scripted clock (tests, evals); refused in public
+
+
+def _approver_key_given(request: Request) -> bool:
+    return _key_ok(request, "x-faultline-approver-key", settings.faultline_approver_key)
+
+
+def _now_param(now: int | None) -> int:
+    """`now` overrides the clock for scripted tests and evals only; refused on the public demo."""
+    from .actions import oncall
+
+    if now is None:
+        return oncall.now_ms()
+    if settings.faultline_public:
+        raise HTTPException(403, "the clock cannot be overridden on the public demo")
+    return int(now)
+
+
+def _page_in_tenant(t: str, pid: str) -> tuple[str, dict]:
+    from .actions import oncall
+
+    if not re.fullmatch(r"pg-[0-9a-f]{6,40}", pid):
+        raise HTTPException(422, "bad page id")
+    hit = oncall.locate_page(t, pid)
+    if hit is None:
+        raise HTTPException(404, f"unknown page {pid} for tenant {t}")
+    return hit
+
+
+def _page_run_token_ok(request: Request, t: str, graph: str, inc: str | None) -> bool:
+    """The visitor who started the run that opened this page's incident (its run token) may act on its pages."""
+    import hashlib
+
+    given = request.headers.get("x-faultline-run-token", "")
+    if not given or not inc:
+        return False
+    try:
+        loc = _locate(inc, t)
+    except HTTPException:
+        return False
+    rows = RO(t, graph).run("Q-RUN-TOKEN", {"run": loc["run"]}).rows
+    sha = (rows[0]["token_sha"] if rows else None) or ""
+    import hmac
+
+    return bool(sha) and hmac.compare_digest(hashlib.sha256(given.encode()).hexdigest(), sha)
+
+
+def _with_ack_token(t: str, row: dict, request: Request, *, detail: bool = False) -> dict:
+    """In-app acks: off the public demo the operator's console gets each page's signed token (as it may approve without
+    a key there); on the public demo only the holder of the incident's run token does, and only on GET /api/pages/{id}
+    (`detail`), never in a list."""
+    from .actions import oncall
+
+    if row.get("kind") in ("page", "escalation") and row.get("status") in ("sent", "delivery_failed"):
+        if not settings.faultline_public or (detail and _page_run_token_ok(request, t, row.get("graph") or "",
+                                                                           row.get("incident"))):
+            return {**row, "ack_token": oncall.page_token(t, row["id"])}
+    return row
+
+
+@app.get("/api/oncall/now")
+def oncall_now(tenant: str = "acme", at: int | None = None) -> dict:
+    """Who is on call per team at `at` (default now): Q-ONCALL-NOW on the tenant graph's ON_CALL rota."""
+    from .actions import oncall
+
+    return oncall.oncall_now(check_tenant(tenant), at)
+
+
+@app.get("/api/pages")
+def pages(request: Request, tenant: str = "acme", status: str | None = None, incident: str | None = None) -> dict:
+    """The pager inbox across the tenant graph and its run graphs (Q-PAGES in each), newest first, with the delivery
+    channels and whether each is configured. `status`: a comma list, or `open` (sent + delivery_failed)."""
+    from .actions import channels, oncall
+
+    _limit(f"pages:{_ip(request)}", 60, 60, global_n=1200 if settings.faultline_public else None)
+    _shed_load()   # a listing reads every graph that holds pages
+    t = check_tenant(tenant)
+    sts = [] if not status else (["sent", "delivery_failed"] if status == "open" else
+                                 [x.strip() for x in status.split(",") if x.strip()])
+    if any(x not in ("sent", "delivery_failed", "acked", "escalated", "resolved", "superseded") for x in sts):
+        raise HTTPException(422, "status must be open or a comma list of page statuses")
+    if incident is not None and not re.fullmatch(r"[A-Za-z0-9_.:-]{1,160}", incident):
+        raise HTTPException(422, "bad incident id")
+    graphs = None
+    if incident:
+        loc = _locate(incident, t)
+        graphs = [loc["graph"]]
+    out = oncall.list_pages(t, statuses=sts, incident=incident or "", graphs=graphs)
+    out["rows"] = [_with_ack_token(t, r, request) for r in out["rows"]]
+    out["channels"] = channels.configured()
+    out["ack_tokens"] = oncall.token_policy()
+    return out
+
+
+@app.get("/api/pages/{pid}")
+def page_detail(pid: str, request: Request, tenant: str = "acme") -> dict:
+    """One page for the phone view: the page, its incident's one-liner (stage, confirmed cause), the proof chain the
+    gate accepted (G2, Q-GATE-1), who fixes it (who_fixes as recorded at ROUTE), the obligation clock's breach and the
+    escalation chain (Q-PAGE-CHAIN). All read from the graph."""
+    from .actions import oncall
+
+    _limit(f"page:{_ip(request)}", 60, 60, global_n=1200 if settings.faultline_public else None)
+    _shed_load()
+    t = check_tenant(tenant)
+    graph, row = _page_in_tenant(t, pid)
+    ro = RO(t, graph)
+    page = {**oncall.page_view(row), "graph": graph}
+    out: dict[str, Any] = {"page": _with_ack_token(t, page, request, detail=True)}
+    if page.get("ack_token"):
+        out["ack_token"] = page["ack_token"]
+    chain = ro.run("Q-PAGE-CHAIN", {"page": pid})
+    out["chain"] = {"rows": [{**x, "person": {"id": x["person"], "name": x["person_name"]}} for x in chain.rows],
+                    "template": chain.template_id, "params": chain.params, "ms": round(chain.ms, 2)}
+    inc = row.get("incident")
+    out["incident"], out["proof"], out["who_fixes"], out["obligations"] = None, None, None, None
+    if inc:
+        inc_row = (ro.run("Q-INC-1", {"inc": inc}).rows or [{}])[0]
+        cause = (ro.run("Q-CAUSE-1", {"inc": inc}).rows or [{}])[0].get("cause")
+        gates = ro.run("Q-INC-GATES", {"inc": inc}).rows
+        passed = next((g for g in reversed(gates) if g["passed"]), None)
+        line = (f"{inc_row.get('title') or inc}: the gate confirmed {cause} as the cause" if cause else
+                f"{inc_row.get('title') or inc}: no cause confirmed by the gate (stage {inc_row.get('stage')})")
+        out["incident"] = {"id": inc, "title": inc_row.get("title"), "line": line, "stage": inc_row.get("stage"),
+                           "cause": cause, "onset_at": inc_row.get("onset_at"), "targets": inc_row.get("targets")}
+        if passed:
+            g2 = next((c for c in json.loads(passed["checks"] or "[]") if c.get("name") == "G2 path"), None)
+            if g2 and g2.get("passed"):  # the first proven chain the gate accepted (" ; " between chains)
+                first = str(g2.get("detail") or "").split(" ; ")[0].split(" (learned link")[0]
+                nodes = [x.strip() for x in first.split("→") if x.strip()]
+                out["proof"] = {"nodes": nodes, "rels": [], "template": g2.get("template") or "Q-GATE-1",
+                                "params": g2.get("params"), "gate_run": passed["id"]}
+        try:
+            run = _locate(inc, t)["run"]
+        except HTTPException:
+            run = None
+        for tool, key in (("who_fixes", "who_fixes"), ("obligation_clock", "obligations")):
+            ev = ro.run("Q-EV-TOOL", {"run": run, "tool": tool}).rows if run else []
+            if ev:
+                payload = json.loads(ev[0]["payload"]) if ev[0]["payload"] else {}
+                out[key] = ({"rows": payload.get("rows", [])[:5], "template": ev[0]["template"],
+                             "evidence_id": ev[0]["evidence_id"]} if tool == "who_fixes" else
+                            {"breach": payload.get("breach"), "urgent": payload.get("urgent"),
+                             "reason": payload.get("reason"), "template": ev[0]["template"],
+                             "evidence_id": ev[0]["evidence_id"]})
+    return out
+
+
+@app.post("/api/pages/{pid}/ack")
+def page_ack(pid: str, body: AckIn, request: Request, tenant: str = "acme") -> dict:
+    """Acknowledge a page: (:Person)-[:ACKED {at, via}]->(:Page) in one write; escalation of its incident stops and
+    the incident's other open pages are superseded. Accepted credentials: the page's signed token (its deep link), the
+    approver key (then `by` may name who acknowledges), or the run token of the page's incident. 409 when the page no
+    longer waits for an ack."""
+    from .actions import oncall
+
+    _limit(f"ack:{_ip(request)}", 30, 60)
+    t = check_tenant(tenant)
+    graph, row = _page_in_tenant(t, pid)
+    if oncall.token_ok(t, pid, body.token):
+        via = "token"
+    elif _approver_key_given(request):
+        via = "approver_key"
+    elif _page_run_token_ok(request, t, graph, row.get("incident")):
+        via = "run_token"
+    else:
+        raise HTTPException(403, "acknowledging a page needs its signed token (the page link), the run token of its "
+                                 "incident, or the approver key")
+    now = _now_param(body.now)
+    if via == "token" or (via == "approver_key" and body.by):
+        # the page's own link went to the paged person; the approver key may name who acknowledges
+        by = body.by if via == "approver_key" else row["person"]
+        res = oncall.ack(t, graph, pid, by, via, now=now)
+    else:   # the holder of the run token or of the approver key without a name: recorded as who acted, not as the paged
+        # person, and left out of MTTA (security review M19 #11)
+        by = None
+        res = oncall.ack_anonymous(t, graph, pid, via, "run-token holder" if via == "run_token" else "approver-key holder",
+                                   now=now)
+    if res is None:
+        raise HTTPException(409, f"page {pid} is {row.get('status')}" + (f" (or {by!r} is not an active person)" if by else "")
+                            + ": nothing to acknowledge")
+    from .memory import learning
+
+    learned = learning.on_ack(t, graph, res, via=via, key=via == "approver_key") if res.get("by") else None
+    return {"acked": True, **res, "by": ({"id": res["by"], "name": res["name"]} if res.get("by") else
+                                         {"id": None, "name": res["name"]}), "graph": graph, "learned": learned}
+
+
+class TickIn(BaseModel):
+    now: int | None = Field(default=None, ge=0, le=4_102_444_800_000)
+    incident: str | None = Field(default=None, max_length=160)   # scripted runs: only this incident's graph
+
+
+@app.post("/api/oncall/tick")
+def oncall_tick(request: Request, body: TickIn | None = None, tenant: str = "acme") -> dict:
+    """One escalation pass now (the background tick runs every weights.yaml oncall.tick_every_s): Q-PAGE-OVERDUE →
+    Q-PAGE-NEXT → one write per incident. `now` (scripted tests and evals only) is refused on the public demo."""
+    from .actions import oncall
+
+    _limit(f"tick:{_ip(request)}", 30, 60)
+    if settings.faultline_public and not _approver_key_given(request):   # the background tick runs anyway
+        raise HTTPException(403, "on the public demo an on-demand escalation tick needs the approver key")
+    t = check_tenant(tenant)
+    now = _now_param(body.now if body else None)
+    graphs = None
+    if body and body.incident:  # a scripted clock must never escalate another run's pages: scope it to one incident
+        graphs = [_locate(body.incident, t)["graph"]]
+    return {"tenant": t, "now": now, "escalated": oncall.tick(t, graphs=graphs, now=now)}
+
+
+class ContractIn(BaseModel):
+    step: str = Field(pattern="^(choose|approve)$")
+    scope: dict | None = None
+    hash: str | None = Field(default=None, min_length=64, max_length=64)
+    approver: str | None = Field(default=None, min_length=1, max_length=60)
+    approver_key: str | None = Field(default=None, max_length=200)
+    action_id: str | None = Field(default=None, max_length=120)
+
+
+@app.post("/api/incidents/{inc}/contract")
+def incident_contract(inc: str, body: ContractIn, request: Request, tenant: str = "acme") -> dict:
+    """A standing approval for repeats, in two steps like an action. choose {scope: {max_uses, days}} → the exact grant
+    and its hash (an offer; nothing is active); approve {hash, approver} → the contract, only if this incident's action
+    was verified APPLIED, the approver may approve on it (Q-APPROVER-1) and the hash is the offer's (single use,
+    before it expires). On the public demo approving needs the approver key."""
+    from .actions import contracts, oncall
+
+    _limit(f"contract:{_ip(request)}", 10, 60)
+    c, loc = _actx(inc, check_tenant(tenant))
+    _run_token_ok(request, c.tenant, loc)
+    home = oncall.home_graph(c.tenant)
+    if body.step == "choose":
+        scope = body.scope or {}
+        try:
+            max_uses, days = int(scope.get("max_uses", 3)), float(scope.get("days", 7))
+            return contracts.offer(tenant=c.tenant, graph=c.graph, inc=inc, home=home, max_uses=max_uses, days=days,
+                                   action_id=body.action_id)
+        except (TypeError, ValueError) as e:
+            raise HTTPException(409 if isinstance(e, contracts.ContractRefused) else 422, str(e)) from e
+    if not body.hash or not body.approver:
+        raise HTTPException(422, "approve needs the hash from the choose step and an approver")
+    _approver_ok(request)
+    if settings.faultline_public and not (_approver_key_given(request) or (
+            body.approver_key and settings.faultline_approver_key
+            and _key_ok_value(body.approver_key, settings.faultline_approver_key))):
+        raise HTTPException(403, "on the public demo a standing contract needs the approver key (it changes what later "
+                                 "incidents do for every visitor)")
+    offer = contracts.offer_row(c.tenant, home, body.hash)
+    if offer is None or offer.get("source_incident") != inc:
+        raise HTTPException(409, "no offer with this hash for this incident (choose the scope first)")
+    who = _approver_checked(c, body.approver)
+    from .actions import github as gh
+
+    # _approver_ok above refused a real-GitHub grant without the approver key: this grant carries that authority
+    granted = contracts.grant(tenant=c.tenant, home=home, hash_=body.hash, by=body.approver, real_ok=gh.is_real())
+    if granted is None:
+        raise HTTPException(409, "stale, expired or already-granted offer: choose the scope again")
+    from .memory import learning
+
+    ok, _ = learning.trusted(c.tenant, c.graph, inc, key=_approver_key_given(request))
+    learning.on_note(c.tenant, "grant", body.approver, key_parts=[granted["id"]], family=granted.get("family"),
+                     trusted_=ok, contract=granted["id"], action_kind=granted.get("action_kind"),
+                     params_hash=granted.get("params_hash"), incident=inc, graph=c.graph)
+    return {"granted": True, "contract": granted, "approver": who}
+
+
+def _key_ok_value(given: str, expected: str) -> bool:
+    import hmac
+
+    return bool(expected) and hmac.compare_digest(given.encode(), expected.encode())
+
+
+@app.get("/api/contracts")
+def contracts_list(tenant: str = "acme") -> dict:
+    """The tenant's standing approvals (Q-CONTRACTS on the on-call home graph): scope, uses, status at now, revocation."""
+    from .actions import contracts, oncall
+
+    t = check_tenant(tenant)
+    return contracts.listing(t, oncall.home_graph(t))
+
+
+class RevokeIn(BaseModel):
+    by: str | None = Field(default=None, max_length=80)
+
+
+@app.post("/api/contracts/{cid}/revoke")
+def contract_revoke(cid: str, request: Request, body: RevokeIn | None = None, tenant: str = "acme") -> dict:
+    """Revoke a standing approval now (one write; a later incident is paged as usual). Public demo: approver key."""
+    from .actions import contracts, oncall
+
+    _limit(f"revoke:{_ip(request)}", 10, 60)
+    t = check_tenant(tenant)
+    if not re.fullmatch(r"ct-[0-9a-f]{16}", cid):
+        raise HTTPException(422, "bad contract id")
+    if settings.faultline_public and not _approver_key_given(request):
+        raise HTTPException(403, "on the public demo revoking a contract needs the approver key")
+    by = (body.by if body and body.by else None) or ("approver_key" if _approver_key_given(request) else "operator")
+    if not contracts.revoke(home=oncall.home_graph(t), cid=cid, by=by):
+        raise HTTPException(409, f"contract {cid} is unknown or no longer active")
+    from .memory import learning
+
+    learning.on_note(t, "revoke", by, key_parts=[cid], trusted_=not settings.faultline_public or _approver_key_given(request),
+                     contract=cid)
+    return {"revoked": True, "id": cid, "by": by}
+
+
+@app.get("/api/oncall/report")
+def oncall_report(request: Request, tenant: str = "acme", since: int | None = Query(default=None, alias="from"),
+                  until: int | None = Query(default=None, alias="to")) -> dict:
+    """The shift (morning) report for [from, to) (default: the last 12 hours): incidents, pages, acks, approved actions
+    and verdicts, contract uses and hand-offs (Q-SHIFT-REPORT in every graph of the tenant)."""
+    from .actions import oncall
+
+    _limit(f"oncall-report:{_ip(request)}", 20, 60, global_n=400 if settings.faultline_public else None)
+    _shed_load()
+    t = check_tenant(tenant)
+    to = oncall.now_ms() if until is None else int(until)
+    frm = to - 12 * 3_600_000 if since is None else int(since)
+    if frm > to:
+        raise HTTPException(422, "from must not be after to")
+    return oncall.report(t, since=frm, until=to)
+
+
+class HandoffIn(BaseModel):
+    note: str = Field(min_length=1, max_length=2000)
+    to: str = Field(min_length=1, max_length=60)
+    incident: str | None = Field(default=None, max_length=160)
+    from_: str | None = Field(default=None, alias="from", max_length=60)
+
+
+@app.post("/api/handoffs")
+def handoff(body: HandoffIn, request: Request, tenant: str = "acme") -> dict:
+    """Hand the shift over: (:Handoff)-[:FROM]->(outgoing), -[:TO]->(incoming), -[:COVERS]->(incident) in the tenant
+    graph, plus a report page to the incoming person. `from` defaults to who is on call now for the incoming person's
+    team (Q-HANDOFF-FROM). Public demo: approver key."""
+    from .actions import oncall
+
+    _limit(f"handoff:{_ip(request)}", 10, 60)
+    t = check_tenant(tenant)
+    if settings.faultline_public and not _approver_key_given(request):
+        raise HTTPException(403, "on the public demo a hand-off needs the approver key (it is written to the tenant graph)")
+    try:
+        out = oncall.hand_off(t, from_=body.from_, to=body.to, note=body.note, inc=body.incident or "")
+    except ValueError as e:
+        raise HTTPException(422, str(e)) from e
+    from .memory import learning
+
+    learning.on_note(t, "handoff", out["from"], key_parts=[out["id"]], trusted_=True, to=out["to"],
+                     incident=out.get("incident"), handoff=out["id"])
+    return {"handoff": out}
+
+
+def _sha256_hex(s: str) -> str:
+    import hashlib
+
+    return hashlib.sha256(s.encode()).hexdigest()
+
+
+@app.get("/api/oncall/stats")
+def oncall_stats(request: Request, tenant: str = "acme", days: float = Query(default=7, gt=0, le=90)) -> dict:
+    """MTTA (first page → first ack), MTTR (opened → RESOLVED), people paged and incidents handled under a standing
+    contract over the last `days` (Q-ONCALL-STATS per graph, durations computed in Cypher)."""
+    from .actions import oncall
+
+    _limit(f"oncall-stats:{_ip(request)}", 20, 60, global_n=400 if settings.faultline_public else None)
+    _shed_load()
+    t = check_tenant(tenant)
+    since = oncall.now_ms() - int(days * 86_400_000)
+    return {"days": days, **oncall.stats(t, since=since)}
+
+
+# ------------------------------------------------------------------ what Faultline learned (M21, T2), in the on-call home
+@app.get("/api/learned")
+def learned(request: Request, tenant: str = "acme") -> dict:
+    """Everything Faultline learned from the people using it: preferences (per family and action kind, decayed),
+    guidelines (proposed / active / dismissed), learned responders (RESPONDED), knowledge gaps, contract suggestions and
+    the recent learning events, each section with the FalkorDB query that produced it. Read-only."""
+    from .memory import learning
+
+    _limit(f"learned:{_ip(request)}", 60, 60, global_n=1200 if settings.faultline_public else None)
+    try:
+        return learning.state(check_tenant(tenant))
+    except GraphError as e:
+        raise _graph_error(e) from e
+
+
+def _learn_admin(request: Request, who: str | None, what: str) -> str:
+    """Changing learned state: on the public demo only with the approver key (visitors can never poison or erase
+    it); the person acting must be an active person of the tenant (checked by the write, or here)."""
+    _limit(f"learn-admin:{_ip(request)}", 20, 60)
+    if settings.faultline_public and not _approver_key_given(request):
+        raise HTTPException(403, f"on the public demo {what} needs the approver key")
+    if not who:
+        raise HTTPException(422, f"{what} needs `by` (an active person of this tenant)")
+    return who
+
+
+class GuidelineIn(BaseModel):
+    action: str = Field(pattern="^(promote|dismiss)$")
+    by: str = Field(min_length=1, max_length=60)
+
+
+@app.post("/api/learned/guidelines/{gid}")
+def learned_guideline(gid: str, body: GuidelineIn, request: Request, tenant: str = "acme") -> dict:
+    """Promote a proposed guideline (an option against it then needs an explicit override to be approved) or dismiss
+    one (it disappears from plans). One conditional write; 409 when the guideline is not in a status that allows it or
+    `by` is not an active person."""
+    from .memory import learning
+
+    if not re.fullmatch(r"gl-[0-9a-f]{6,40}", gid):
+        raise HTTPException(422, "bad guideline id")
+    by = _learn_admin(request, body.by, f"{body.action} a guideline")
+    t = check_tenant(tenant)
+    before = learning.guideline(t, gid)
+    if before is None:
+        raise HTTPException(404, f"unknown guideline {gid}")
+    after = learning.set_guideline(t, gid, body.action, by)
+    if after is None:
+        raise HTTPException(409, f"guideline {gid} is {before['status']}, or {by!r} is not an active person: cannot "
+                                 f"{body.action} it")
+    return {"guideline": after, "action": body.action, "before": before["status"], "by": by,
+            "template": "Q-LEARN-GUIDE-1"}
+
+
+class GapDismissIn(BaseModel):
+    by: str = Field(min_length=1, max_length=60)
+
+
+@app.post("/api/learned/gaps/{gid}/dismiss")
+def learned_gap_dismiss(gid: str, body: GapDismissIn, request: Request, tenant: str = "acme") -> dict:
+    """Dismiss a knowledge gap (it re-opens if a trusted user asks the question again). 409 when not open."""
+    from .memory import learning
+
+    if not re.fullmatch(r"kg-[0-9a-f]{6,40}", gid):
+        raise HTTPException(422, "bad gap id")
+    by = _learn_admin(request, body.by, "dismissing a knowledge gap")
+    res = learning.dismiss_gap(check_tenant(tenant), gid, by)
+    if res is None:
+        raise HTTPException(409, f"knowledge gap {gid} is unknown or not open")
+    return {"gap": res, "by": by}
+
+
+class LearnForgetIn(BaseModel):
+    person: str = Field(pattern=r"^[A-Za-z0-9_.@:-]{1,80}$")
+    token: str | None = Field(default=None, min_length=64, max_length=64)
+    approver: str | None = Field(default=None, min_length=1, max_length=60)
+
+
+@app.post("/api/learned/forget")
+def learned_forget(body: LearnForgetIn, request: Request, tenant: str = "acme") -> dict:
+    """Forget a person's learned influence, with a receipt (T2: memory with receipts). Without `token`: the dry run
+    (every learning event they contributed, the guidelines they proposed, what will be recomputed, and the receipt
+    token). With the token and an approver: exactly that set is deleted (one write), every preference, responder edge
+    and knowledge gap it fed is recomputed in Cypher, a ForgetReceipt is written to audit_<tenant>, and the proof
+    re-reads that none of their events is left and no preference still cites one."""
+    from .memory import learning
+
+    t = check_tenant(tenant)
+    try:
+        if not body.token:
+            _limit(f"learn-forget:{_ip(request)}", 20, 60)
+            return {"dry_run": True, **learning.forget_dry_run(t, body.person)}
+        approver = _learn_admin(request, body.approver, "forgetting a person's learned influence")
+        if not RO(t, learning.home(t)).run("Q-PERSON-1", {"person": approver}).rows:
+            raise HTTPException(422, f"approver {approver!r} is not an active person in this tenant's graph")
+        return {"dry_run": False, **learning.forget_execute(t, body.person, body.token, approver)}
+    except learning.ForgetRefused as e:
+        raise HTTPException(409, str(e)) from e
+    except PermissionError as e:
+        raise HTTPException(409, str(e)) from e
+    except GraphError as e:
+        raise _graph_error(e) from e
+
+
+@app.post("/api/telegram/webhook")
+async def telegram_webhook(request: Request) -> dict:
+    """The Telegram on-call bot (actions/telegram_bot.py): authenticated by the secret Telegram echoes
+    (X-Telegram-Bot-Api-Secret-Token, constant-time), then every update is handled once (update_id recorded in the
+    graph), only for users the operator mapped to a person (TELEGRAM_PEOPLE), rate-limited per chat. The bot is just
+    another client: approving goes through Q-APPROVER-1 and the plan hash like the web UI, by a typed phrase. Always
+    200 once authenticated (Telegram retries anything else); the body never carries a secret."""
+    from .actions import channels, telegram_bot
+
+    if not channels.telegram_secret_ok(request.headers.get("x-telegram-bot-api-secret-token", "")):
+        raise HTTPException(403, "bad or missing webhook secret")
+    try:
+        update = await request.json()
+    except ValueError:
+        return {"ok": True, "ignored": "not json"}
+    if not isinstance(update, dict):
+        return {"ok": True, "ignored": "not an update"}
+    try:
+        out = await anyio.to_thread.run_sync(telegram_bot.handle, update)
+    except Exception as e:  # noqa: BLE001 - never a 500 to Telegram (it would retry); the detail goes to the log
+        rid = uuid.uuid4().hex[:12]
+        log.error("telegram update failed (request %s): %s", rid, type(e).__name__)
+        out = {"error": f"internal (request id {rid})"}
+    return {"ok": True, **out}
+
+
+# ------------------------------------------------------------------ the Telegram bot's entry points (M19)
+# The bot is another client of the same paths: the person is the Telegram user's mapped person (TELEGRAM_PEOPLE, set by
+# the operator), checked by Q-APPROVER-1 exactly as in the web UI; choosing renders the exact action and its plan hash;
+# approving binds that hash and leases the intent like POST /approve. They raise HTTPException with the reason.
+def bot_choose(t: str, inc: str, aid: str, person: str) -> dict:
+    from .actions import act
+    from .actions import github as gh
+
+    c, loc = _actx(inc, t)
+    who = _approver_checked(c, person)   # fail early: the same rule the approval applies
+    _guideline_check(c, aid, None, None, can_override=False)   # M21: the bot cannot override an active guideline
+    try:
+        spec = act.choose(c, aid, gh.client(c.graph))
+    except (ValueError, KeyError) as e:
+        raise HTTPException(409, str(e)) from e
+    except gh.GitHubError as e:
+        raise HTTPException(502, f"GitHub: {_client_error_text(e)}") from e
+    from .memory import learning
+
+    learning.on_choose(c, aid, person, via="telegram")
+    return {"spec": spec, "approver": who, "graph": c.graph, "run": c.run}
+
+
+def bot_approve(t: str, inc: str, aid: str, plan_hash: str, person: str, tg_user: str) -> dict:
+    from .actions import act
+    from .actions import github as gh
+    from .actions.boot import BOOT_ID
+
+    if gh.is_real() and not settings.telegram_approve_real:
+        raise HTTPException(403, "approving against real GitHub from Telegram is off on this server "
+                                 "(TELEGRAM_APPROVE_REAL); approve in the web UI with the approver key")
+    c, loc = _actx(inc, t)
+    c.owner = f"{BOOT_ID}:act-tg-{uuid.uuid4().hex[:12]}"
+    _work_enter(c.graph)
+    started = False
+    try:
+        if not gcopy.exists(gclient.engine(), c.graph):
+            raise HTTPException(410, _collected_text(inc))
+        who = _approver_checked(c, person)
+        _guideline_check(c, aid, None, None, can_override=False)   # M21: no override from the bot
+        res = act.approve(c, aid, plan_hash, person, via="telegram", tg_user=tg_user)
+        if res is None:
+            raise HTTPException(409, "plan hash does not match the current chosen action, or the incident is not "
+                                     "awaiting approval")
+        if not res["mine"]:
+            raise HTTPException(409, "an intent with this idempotency key already exists (another run owns it)")
+        from .memory import learning
+
+        learning.on_approve(c, aid, person, via="telegram")   # before the execute job (M21)
+        threading.Thread(target=_act_job_tracked, args=(c, loc, aid), daemon=True).start()
+        started = True
+        _ack_by_approval(c, person)
+    finally:
+        if not started:
+            _work_leave(c.graph)
+    return {"approved": True, **res, "approver": who}
+
+
+def bot_contract_offer(t: str, inc: str, person: str, max_uses: int, days: float) -> dict:
+    from .actions import contracts, oncall
+
+    c, loc = _actx(inc, t)
+    _approver_checked(c, person)
+    try:
+        return contracts.offer(tenant=c.tenant, graph=c.graph, inc=inc, home=oncall.home_graph(c.tenant),
+                               max_uses=max_uses, days=days)
+    except contracts.ContractRefused as e:
+        raise HTTPException(409, str(e)) from e
+
+
+def bot_contract_grant(t: str, inc: str, hash_: str, person: str) -> dict:
+    from .actions import contracts, oncall
+    from .actions import github as gh
+
+    if gh.is_real() and not settings.telegram_approve_real:
+        raise HTTPException(403, "granting a standing contract against real GitHub from Telegram is off on this server "
+                                 "(TELEGRAM_APPROVE_REAL); grant it in the web UI with the approver key")
+    c, loc = _actx(inc, t)
+    home = oncall.home_graph(c.tenant)
+    offer = contracts.offer_row(c.tenant, home, hash_)
+    if offer is None or offer.get("source_incident") != inc:
+        raise HTTPException(409, "no offer with this hash for this incident")
+    who = _approver_checked(c, person)
+    granted = contracts.grant(tenant=c.tenant, home=home, hash_=hash_, by=person, real_ok=gh.is_real())
+    if granted is None:
+        raise HTTPException(409, "stale, expired or already-granted offer")
+    return {"contract": granted, "approver": who}
+
+
+def bot_brain(t: str, question: str, user: str) -> dict:
+    """The company brain's own path (keyword routing → templates, every [id] through the citation guard); on the
+    public demo it records in a bounded scratch copy, as a visitor's question does."""
+    from .brain import scratch as brain_scratch
+    from .brain.ask import ask
+
+    if settings.faultline_public:
+        with brain_scratch.use(t) as gname:
+            return ask(question, t, "baseline", graph=gname).as_dict()
+    return ask(question, t, "baseline").as_dict()
+
+
+# ------------------------------------------------------------------ alert intake (Alertmanager v4 / generic JSON)
+def _parse_alerts(body: dict) -> list[dict]:
+    """Alertmanager v4 webhook ({alerts: [{status, labels: {service|job|alertname…, severity}, annotations: {summary},
+    startsAt}]}) or a generic {service, metric, severity, summary} (or a list of them). Firing alerts only."""
+    from datetime import datetime
+
+    raw = body.get("alerts") if isinstance(body.get("alerts"), list) else [body]
+    out = []
+    for a in raw[:50]:
+        if not isinstance(a, dict):
+            continue
+        if a.get("status") and a.get("status") != "firing":
+            continue
+        labels = a.get("labels") if isinstance(a.get("labels"), dict) else {}
+        ann = a.get("annotations") if isinstance(a.get("annotations"), dict) else {}
+        target = a.get("service") or labels.get("service") or labels.get("service_name") or labels.get("job") or labels.get("instance")
+        metric = a.get("metric") or labels.get("metric") or labels.get("alertname") or "error_rate"
+        at = None
+        if a.get("startsAt"):
+            try:
+                at = int(datetime.fromisoformat(str(a["startsAt"]).replace("Z", "+00:00")).timestamp() * 1000)
+            except ValueError:
+                at = None
+        if not target or not re.fullmatch(r"[A-Za-z0-9_.:-]{1,120}", str(target)):
+            continue
+        out.append({"target": str(target), "metric": re.sub(r"[^a-z0-9_]", "_", str(metric).lower())[:60] or "error_rate",
+                    "severity": str(a.get("severity") or labels.get("severity") or "page")[:20],
+                    "summary": str(a.get("summary") or ann.get("summary") or ann.get("description") or "")[:500],
+                    "at": at})
+    return out
+
+
+@app.post("/api/alerts")
+def alerts_intake(request: Request, body: Any = Body(...), tenant: str = "acme") -> dict:
+    """Alert intake: the firing alerts become (:Alert)-[:FIRED_ON]->(component) in the tenant graph, INTAKE groups them
+    (group_alerts, algo.WCC) into incidents, and each is investigated by the same run loop as a scenario, with
+    on-call paging on (a background job). Nothing is simulated: the investigation reads the telemetry the graph holds,
+    and with none it escalates to a human (paged). Needs FAULTLINE_ALERTS_KEY (bearer) when configured, always on the
+    public demo."""
+    import hashlib
+    import secrets as _secrets
+
+    from .actions import oncall
+
+    _limit(f"alerts:{_ip(request)}", 30, 60)
+    t = check_tenant(tenant)
+    key = settings.faultline_alerts_key
+    if key or settings.faultline_public:
+        auth = request.headers.get("authorization", "")
+        given = auth[7:].strip() if auth.lower().startswith("bearer ") else request.headers.get("x-faultline-alerts-key", "")
+        if not key or not _key_ok_value(given, key):
+            raise HTTPException(401, "alert intake needs the bearer key (FAULTLINE_ALERTS_KEY)")
+    alerts = _parse_alerts(body if isinstance(body, dict) else {"alerts": body if isinstance(body, list) else []})
+    if not alerts:
+        raise HTTPException(422, "no firing alert with a service/job label in the payload")
+    graph = oncall.home_graph(t)   # the tenant's live graph: real incidents join its history (never a clean room)
+    ro = RO(t, graph)
+    known = [a for a in alerts if ro.run("Q-CTX-1", {"id": a["target"], "now": oncall.now_ms()}).rows]
+    if not known:
+        raise HTTPException(422, "none of the alerting services is a component of this tenant's graph: "
+                                 + ", ".join(sorted({a["target"] for a in alerts}))[:300])
+    _shed_load()
+    job = uuid.uuid4().hex[:8]
+    token = _secrets.token_urlsafe(24)
+    token_sha = hashlib.sha256(token.encode()).hexdigest()
+    with _jobs_lock:
+        if sum(1 for j in _jobs.values() if j.get("state") == "running") >= MAX_RUNNING:
+            raise HTTPException(429, f"{MAX_RUNNING} runs are in progress; try again in a few seconds")
+        _jobs[job] = {"state": "running", "scenario": "alert", "started_at": time.time(), "tenant": t,
+                      "token_sha": token_sha}
+    threading.Thread(target=_alert_job, args=(job, t, known, token_sha), daemon=True).start()
+    for _ in range(100):
+        if _jobs[job].get("incident") or _jobs[job]["state"] != "running":
+            break
+        time.sleep(0.05)
+    if _jobs[job].get("error") and not _jobs[job].get("incident"):
+        raise HTTPException(503 if _jobs[job].get("unavailable") else 500, _jobs[job]["error"])
+    out = _job_view(job, _jobs[job])
+    out.update(run_token=token, alerts=len(known), ignored=[a["target"] for a in alerts if a not in known], graph=graph)
+    return out
+
+
+def _alert_job(job: str, t: str, alerts: list[dict], token_sha: str) -> None:
+    from .actions import oncall
+    from .agent.intake import intake_round
+    from .agent.loop import BaselineInvestigator, run_incident
+    from .agent.weights import weights
+
+    inv = BaselineInvestigator()
+    try:
+        graph = oncall.home_graph(t)
+        g = gclient.engine().select_graph(graph)
+        now = oncall.now_ms()
+        for a in alerts:
+            aid = "al-" + _sha256_hex(f"{job}|{a['target']}|{a['metric']}")[:12]
+            writes.raise_alert(g, id=aid, target=a["target"], metric=a["metric"], at=int(a["at"] or now),
+                               severity=a["severity"])
+        w = weights()["intake"]
+        first = min(int(a["at"] or now) for a in alerts)
+        ids = [(f"inc-alert-{job}-{k}", f"run-alert-{job}-{k}") for k in range(1, 21)]
+        rnd = intake_round(tenant=t, graph=graph, since=first - int(w["alert_lead_min"]) * 60_000,
+                           until=max(now, first) + int(w["alert_lag_min"]) * 60_000, onset=first, ids=ids,
+                           title="; ".join(sorted({a["summary"] or f"{a['metric']} on {a['target']}" for a in alerts}))[:200],
+                           report=" / ".join(a["summary"] for a in alerts if a["summary"])[:2000], round_run=f"run-alert-{job}-intake",
+                           mode="alert")
+        audit = gclient.engine().select_graph(audit_graph(t))
+        entries = []
+        for grp in rnd.opened:
+            writes.index_run(audit, run=grp.run_id, inc=grp.incident_id, graph=graph, scenario="", tenant=t,
+                             investigator=inv.name)
+            writes.set_run_token(g, run=grp.run_id, token_sha=token_sha)
+            entries.append({"incident": grp.incident_id, "run": grp.run_id, "symptoms": list(grp.symptoms),
+                            "outcome": "RUNNING"})
+        _jobs[job]["incidents"] = entries
+        if not rnd.opened:
+            _jobs[job].update(state="done", outcome="ATTACHED", attached=rnd.attached)
+            return
+        _jobs[job].update(incident=rnd.opened[0].incident_id, run=rnd.opened[0].run_id, graph=graph)
+        for grp, e in zip(rnd.opened, entries):
+            res = anyio.run(lambda grp=grp: run_incident(tenant=t, incident_id=grp.incident_id,
+                                                         onset_ms=grp.onset_ms or first, symptoms=grp.symptoms,
+                                                         investigator=inv, graph=graph, run_id=grp.run_id,
+                                                         oncall_home=oncall.home_graph(t), oncall_external=True))
+            writes.index_run(audit, run=grp.run_id, inc=grp.incident_id, graph=graph, scenario="", tenant=t,
+                             investigator=inv.name, outcome=res.outcome, cause=res.cause_id)
+            e.update(outcome=res.outcome, cause=res.cause_id, error=res.error)
+            _after_run(t, {"graph": graph, "run": grp.run_id, "scenario": None}, grp.incident_id, res)
+        _jobs[job].update(state="done", outcome=entries[0]["outcome"])
+    except Exception as e:  # noqa: BLE001 - surfaced on the job (client-safe text), never swallowed
+        _jobs[job].update(state="failed", error=_client_error_text(e),
+                          unavailable=isinstance(e, (GraphUnavailable, GraphNotReady)))
+
+
+# ------------------------------------------------------------------ the escalation tick (background)
+_tick_stop = threading.Event()
+_tick_state: dict[str, threading.Thread | None] = {"thread": None}
+
+
+def _tick_loop(stop: threading.Event) -> None:
+    from .actions import oncall
+    from .agent.weights import weights
+
+    every = float(weights()["oncall"]["tick_every_s"])
+    tlog = logging.getLogger("faultline.oncall")
+    while not stop.wait(every):
+        try:
+            tenants = _configured_tenants()
+        except GraphError as e:
+            tlog.warning("escalation tick skipped: %s", e)
+            continue
+        for t in tenants:
+            try:
+                for e in oncall.tick(t):
+                    tlog.warning("escalated %s/%s → %s", e["graph"], e["incident"], e.get("to") or "nobody (exhausted)")
+            except Exception as e:  # noqa: BLE001 - logged loudly; the next tick retries
+                tlog.error("escalation tick for %s failed: %s", t, e)
+            try:  # the morning digest on Telegram (TELEGRAM_DIGEST_HOUR; once a day, claimed in the graph) + TTL prune
+                from .actions import telegram_bot
+
+                telegram_bot.maybe_digest(t)
+                telegram_bot.prune(t)
+            except Exception as e:  # noqa: BLE001
+                tlog.warning("telegram digest / prune for %s failed: %s", t, type(e).__name__)
+
+
+@app.on_event("startup")
+def _startup_tick() -> None:
+    """Start the escalation tick (once per process)."""
+    th = _tick_state["thread"]
+    if th is not None and th.is_alive():
+        return
+    _tick_stop.clear()
+    th = threading.Thread(target=_tick_loop, args=(_tick_stop,), name="faultline-oncall-tick", daemon=True)
+    _tick_state["thread"] = th
+    th.start()
+
+
+@app.on_event("shutdown")
+def _shutdown_tick() -> None:
+    _tick_stop.set()

@@ -50,8 +50,21 @@ The full scorecard (each number with its N, a 95 % interval and whether it is me
 
 ![Faultline trades recall for safety: right causes, confident wrong blames and abstentions on the deep bench, against telemetry-only heuristics, with 95 % intervals](docs/media/charts/deep.svg)
 
+## What the judges asked for
+
+The rules and the organiser's day-1 post ("How to Build an Agent That Reasons Over a Graph", section "What Judges Are Looking For") name what is judged. Each line below is quoted, then answered with a measured number:
+
+| Judging line | What Faultline does | Evidence |
+|---|---|---|
+| "The graph has to shape what the agent does, not sit on the side" (challenge text); "whether the graph is doing work the agent could not do without it" (organiser post) | every verdict is a read-only FalkorDB query, and taking one algorithm away changes decisions | when the look-alike is itself faulty, the right cause in <!-- claim:decisive.full.g5_only.right_cause -->20<!-- /claim -->/<!-- claim:decisive.full.g5_only.cases -->20<!-- /claim --> worlds with `algo.maxFlow`, <!-- claim:decisive.no_maxflow.g5_only.right_cause -->0<!-- /claim --> without it ([decisive bench](docs/EVALS.md)); without both `algo.SPpaths` and `algo.maxFlow`, <!-- claim:ladder.full.b.right_cause -->65<!-- /claim --> → <!-- claim:ladder.neither.b.right_cause -->43<!-- /claim --> of <!-- claim:ladder.neither.b.confirm_cases -->65<!-- /claim --> ([ladder](#the-graph-is-load-bearing)); one perturbation test per algorithm use in [`test_algo_load_bearing.py`](tests/live/test_algo_load_bearing.py) |
+| "If the product still works once FalkorDB is taken out, the graph is decoration" (rule R3) | with FalkorDB off (arm A4) the run cannot start, and the UI says so | confirmed causes <!-- claim:arm.A4.confirmed_causes -->0<!-- /claim -->. That is by design, not a measurement: the product fails closed instead of degrading |
+| "Run the same question twice", "with a depth of one", then "with a depth of four" (organiser post) | the proof path is `algo.SPpaths` over up to 8 hops of change → gate → failure-flow edges; the deep bench plants causes 1 to 4 hops upstream of the alert | right cause / worlds at 1 hop <!-- claim:deep.fresh.hops.1.right_cause -->16<!-- /claim -->/<!-- claim:deep.fresh.hops.1.cases -->44<!-- /claim -->, 2 hops <!-- claim:deep.fresh.hops.2.right_cause -->18<!-- /claim -->/<!-- claim:deep.fresh.hops.2.cases -->52<!-- /claim -->, 3 hops <!-- claim:deep.fresh.hops.3.right_cause -->4<!-- /claim -->/<!-- claim:deep.fresh.hops.3.cases -->21<!-- /claim -->, 4 hops <!-- claim:deep.fresh.hops.4.right_cause -->0<!-- /claim -->/<!-- claim:deep.fresh.hops.4.cases -->3<!-- /claim -->; confident wrong blames <!-- claim:deep.fresh.hops.1.wrong_confident -->0<!-- /claim -->, <!-- claim:deep.fresh.hops.2.wrong_confident -->0<!-- /claim -->, <!-- claim:deep.fresh.hops.3.wrong_confident -->0<!-- /claim -->, <!-- claim:deep.fresh.hops.4.wrong_confident -->0<!-- /claim -->. Depth costs recall (deep causes are mostly handed to a human), never a wrong blame |
+| "Ask the agent something that is not in the graph and let it say so" (organiser post) | the brain says "not in the graph" and cites nothing; the gate ends with NO_INCIDENT or abstains instead of guessing | brain: <!-- claim:brain.unanswerable_honest -->6<!-- /claim -->/<!-- claim:brain.unanswerable -->6<!-- /claim --> unanswerable questions answered honestly with no citations; deep bench: in <!-- claim:deep.fresh.abstain_downstream.correct -->20<!-- /claim -->/<!-- claim:deep.fresh.abstain_downstream.cases -->20<!-- /claim --> worlds where no change explains the alert, no change blamed; correct abstention on the control and no-cause scenarios: <!-- claim:arm.A3.abstention_correct_rate -->1.0<!-- /claim --> |
+| "An empty traversal means your graph does not know about a dependency, which during an incident is a different and more worrying statement than safety" (organiser post) | G2 is "no path → no claim", never "no path → safe": when the graph lacks a link the gate abstains and hands over | one failure link hidden on the cause's path: <!-- claim:learning.i1_abstained -->22<!-- /claim -->/<!-- claim:learning.cases -->24<!-- /claim --> abstained, <!-- claim:learning.i1_wrong_confident -->0<!-- /claim --> wrong-confident ([learning eval](docs/EVALS.md)); one random real edge missing from the graph: <!-- claim:mismatch.hidden.wrong_confident -->0<!-- /claim --> wrong-confident in <!-- claim:mismatch.hidden.cases -->100<!-- /claim --> (<!-- claim:mismatch.hidden.abstained -->21<!-- /claim --> abstained), against <!-- claim:mismatch.arm_t.wrong_blame -->27<!-- /claim --> wrong blames for telemetry alone; telemetry missing for a fifth of components: <!-- claim:robustness.missing.0.2.wrong_confident -->0<!-- /claim --> wrong-confident, <!-- claim:robustness.missing.0.2.abstained -->37<!-- /claim --> abstained |
+
 ## Contents
 
+- [What the judges asked for](#what-the-judges-asked-for)
 - [Reproduce it](#reproduce-it)
 - [Why existing approaches fall short](#why-existing-approaches-fall-short)
 - [How one incident flows](#how-one-incident-flows)
@@ -65,6 +78,8 @@ The full scorecard (each number with its N, a 95 % interval and whether it is me
 - [What makes it different](#what-makes-it-different)
 - [Context for any agent](#context-for-any-agent)
 - [Memory, company brain, preflight, coordination](#memory-company-brain-preflight-coordination)
+- [On-call: page, acknowledge, escalate, standing approval](#on-call-page-acknowledge-escalate-standing-approval)
+- [Learns from the people who use it (T2)](#learns-from-the-people-who-use-it-t2)
 - [Screens](#screens)
 - [Query catalogue](#query-catalogue)
 - [Safety](#safety)
@@ -409,16 +424,23 @@ Every feature below is called from the listed file. Template paths are under `ba
 | `algo.betweenness`, `algo.pageRank` | chokepoints, preflight risk, node size; investigation order | `chokepoints.cypher`, `betweenness_all.cypher`, `rank_causes.cypher` |
 | `algo.HarmonicCentrality`, `algo.MSF` | who fixes it, escalation tree (scratch projections; the projection's pairs, reasons and tie weights are Cypher too) | `harmonic.cypher`, `msf.cypher`, `who_knows.cypher`, `who_reasons.cypher`, `collab_weights.cypher` |
 | `algo.labelPropagation` | incident families → derived runbooks | `families.cypher`, `memory/learn.py` |
-| Vector index (`vecf32`, `db.idx.vector.queryNodes`) | recall, brain entity seeds, forget proof | `recall.cypher`, `find_incident_vector.cypher`, `forget_vector_probe.cypher`, `graph/writes.py` |
+| Vector index (`vecf32`, `db.idx.vector.queryNodes`) | recall, brain entity seeds, forget proof. HNSW options measured against an exact `vec.cosineDistance` scan (`M 32`, `efConstruction 400`, `efRuntime 100`): recall@10 <!-- claim:vector.recall_at_10.tuned -->1.0<!-- /claim --> on every set, against <!-- claim:vector.recall_at_10.default -->0.9767<!-- /claim --> for the default index | `recall.cypher`, `find_incident_vector.cypher`, `forget_vector_probe.cypher`, `graph/schema.cypher`, [`evals/vector_recall.py`](evals/vector_recall.py) |
 | Full-text index (DDL form) | brain tier-1 seeds | `find_*.cypher`, `graph/schema.cypher` |
 | `GRAPH.COPY` | golden → tenant and eval clean rooms, what-if branches, one futures branch per containment candidate, the Break it twin, as-of branches for the backtest, Re-arm | `graph/copy.py`, `futures.cypher`, `playground.py` |
 | `GRAPH.RO_QUERY` + `TIMEOUT` + ACL users | every read | `graph/ro.py`, `deploy/users.acl.template` |
 | `GRAPH.EXPLAIN` / `GRAPH.PROFILE` | text2cypher plan check / the UI Cypher panel | `graph/guard.py`, `graph/ro.py` |
-| Unique constraint | idempotent intents (`Intent.idem`) | `graph/writes.py` |
+| `GRAPH.CONSTRAINT` MANDATORY / UNIQUE on nodes and edges | <!-- claim:repo.constraints -->15<!-- /claim --> engine-enforced invariants on every golden, tenant, on-call and clean-room graph (`GRAPH.COPY` carries them): evidence provenance, a page's deadline, an approval's plan hash, `PROPAGATES_TO.cap`, every node's id, unique run and intent ids. FalkorDB refuses the violating write | [`graph/constraints.py`](backend/faultline/graph/constraints.py), `graph/writes.py`, `tests/live/test_constraints.py` |
 | UDFs (`GRAPH.UDF LOAD`, FalkorDB FLEX, pinned by sha) | fuzzy entity resolution (`flex.text.jaroWinkler`), co-failure coupling strength (`flex.sim.jaccard`) | `find_fuzzy.cypher`, `hidden_coupling.cypher`, `graph/udf.py` |
 | Many graphs on one instance | `tenant_*`, `golden_*`, `golden_*_nomem` (memory-off arm), `audit_*` (append-only receipts), `eval_*`, `scratch_*`, `whatif_*` | `graph/tenant.py` |
 | Redis ACL users per tenant | `ro_<tenant>` may only `GRAPH.RO_QUERY`/`EXPLAIN` its own keys (S7 checks NOPERM) | `deploy/users.acl.template`, `tests/isolation/` |
-| `GRAPH.CONFIG` runtime limits | `TIMEOUT_MAX`, `TIMEOUT_DEFAULT`, `RESULTSET_SIZE`, `MAX_QUEUED_QUERIES` applied and verified at seed | `scripts/configure_falkordb.py`, `deploy/docker-compose.yml` |
+| `GRAPH.CONFIG` runtime limits | `TIMEOUT_MAX`, `TIMEOUT_DEFAULT`, `RESULTSET_SIZE`, `MAX_QUEUED_QUERIES` and the per-query memory cap `QUERY_MEM_CAPACITY` (256 MB: a runaway query, from any client including the official MCP server, is stopped by the engine and the engine stays up) applied and verified at seed | `scripts/configure_falkordb.py`, `deploy/docker-compose.yml`, `tests/live/test_mem_cap.py` |
+| `avg` / `stDevP` / `percentileCont` aggregates | the gate's anomaly band, computed in the engine (same verdicts as before: the gate bench reproduces its recorded run) | `baseline_band.cypher`, `metric_window_band.cypher`, `agent/datatools.py`, `tests/live/test_band_in_engine.py` |
+| Temporal values (`localdatetime`, `duration`, `.dayOfWeek`, `.hour`) | change-freeze windows in the pre-deploy gate: FalkorDB turns the merge time into the policy's local wall clock and holds a PR inside "no payment changes Friday 16:00 to Monday 09:00" | `preflight_freeze.cypher`, `data/gen/policies/acme.yaml`, `preflight/score.py` |
+| `dbms.functions()` | text2cypher function allow-list, built from the engine's own catalogue (built-ins plus two vetted UDFs) | `engine_functions.cypher`, `graph/guard.py` |
+| `telemetry{graph}` stream + `GRAPH.MEMORY USAGE` | `GET /api/engine/insight`: every query's wait, execution and report time and plan-cache use, per template id, as FalkorDB recorded it (ids and numbers only) | `graph/engine_info.py`, `api.py` |
+| `WAITAOF` | the write-back is on disk before VERIFY counts it; a timeout is UNKNOWN, never RESOLVED | `graph/client.py`, `actions/act.py` |
+| `intern()` | the telemetry windows' repeated strings (component, metric, kind, source) are stored once by the engine | `graph/writes.py::upsert_nodes`, `tests/live/test_intern.py` |
+| Engine without internet egress | prod puts FalkorDB on an internal network, so `LOAD CSV FROM 'https://…'` (allowed even under `GRAPH.RO_QUERY`) cannot leave | `deploy/docker-compose.prod.yml`, `scripts/egress_check.py` |
 | Edge validity windows + `SUPERSEDES` | as-of answers: owner, on-call, decisions and runbooks at a date or an incident's onset; the topology at a PR's merge | `owner_at.cypher`, `beliefs_at.cypher`, `timeline.cypher`, `preflight_impact_asof.cypher`, `topology_at.cypher` |
 | Pattern comprehensions + bounded variable-length paths | G1 grounding, alert grouping, family fixes, preflight components (the template lint rejects unbounded paths) | `gate_grounding.cypher`, `primary_symptoms.cypher`, `preflight_components.cypher` |
 | Single-query atomic writes | every state change (approval + intent, write-back, claims, forget) is one query | `graph/writes.py` |
@@ -519,7 +541,7 @@ Headline results (method for each line: [docs/EVALS.md](docs/EVALS.md)):
 | Pre-deploy gate on the same graph | a PR is scored from BFS impact, betweenness, past incidents, contradicted decisions, bus factor and missing guardrails | S6 → <!-- claim:s6.verdict -->block<!-- /claim --> (risk <!-- claim:s6.risk -->0.8<!-- /claim -->); [`deploy/github-action/`](deploy/github-action/faultline-preflight.yml) |
 | Company brain on the same graph | as-of answers about owners, decisions and on-call; every cited id must have been returned by that question's own queries | <!-- claim:brain.correct -->33<!-- /claim -->/<!-- claim:brain.questions -->33<!-- /claim --> on our wording, <!-- claim:brain_para.correct -->30<!-- /claim -->/<!-- claim:brain_para.questions -->33<!-- /claim --> reworded (the development set, not blind); <!-- claim:brain_blind.s2.hybrid.correct -->24<!-- /claim -->/<!-- claim:brain_blind.s2.hybrid.questions -->40<!-- /claim --> on a blind set; `Q-CITE-1` |
 | Per-tenant isolation | one graph and one ACL user per tenant; the hosted MCP binds a key to one tenant | S7 isolation checks: <!-- claim:s7.passed -->34<!-- /claim --> passed, <!-- claim:s7.failed -->0<!-- /claim --> failed |
-| MCP for any agent | the agent's own read-only tools, each returning the Cypher, params, timing and a row digest | <!-- claim:repo.mcp_tools -->50<!-- /claim --> tools, <!-- claim:repo.mcp_tools_hosted -->44<!-- /claim --> of them exposed over Streamable HTTP; [docs/MCP.md](docs/MCP.md) |
+| MCP for any agent | the agent's own read-only tools, each returning the Cypher, params, timing and a row digest | <!-- claim:repo.mcp_tools -->57<!-- /claim --> tools, <!-- claim:repo.mcp_tools_hosted -->51<!-- /claim --> of them exposed over Streamable HTTP; [docs/MCP.md](docs/MCP.md) |
 
 ## Context for any agent
 
@@ -603,6 +625,83 @@ Containment options are reordered by what worked before: a Beta-smoothed success
 
 </details>
 
+## On-call: page, acknowledge, escalate, standing approval
+
+Faultline runs the on-call loop itself, and every step is a FalkorDB node or a catalogue query ([API](docs/API.md#m19-on-call-pages-acknowledgements-escalation-standing-contracts-hand-offs), [graph model](docs/GRAPH_MODEL.md#m19-additions-on-call-pages-acks-escalation-standing-contracts-hand-offs)):
+
+- **Page.** When an incident becomes approvable, the on-call person of the team that owns the failing component (`who_fixes`, read from the `ON_CALL` rota) and the on-call of every team that owns something in its blast radius (`Q-NOTIFY-1`) each get a `(:Page)`. Urgency comes from the obligation clock, and "unknown" counts as urgent. An incident the gate cannot route (escalated, or accepted without confidence) still pages the symptom owners' on-call.
+- **Acknowledge.** With the page's signed link (HMAC over tenant and page id), the incident's run token or the approver key: `(:Person)-[:ACKED {at, via}]->(:Page)`. Telegram's Ack button does the same.
+- **An approved fix that ends unresolved pages a human.** Verification UNKNOWN, a write-back not fully re-read, NOT_APPLIED or a fix not executed pages the people already paged and the approver at once, urgently; once per outcome, even when the reconciler settles the intent later.
+- **Escalate.** A background tick reads `Q-PAGE-OVERDUE` and pages the next person of the incident's escalation order (`Q-PAGE-NEXT`, ranked in Cypher from the `algo.MSF` escalation tree). One write marks the late pages escalated and links them `ESCALATED_TO` the new page. Ack windows come from `weights.yaml` (urgent 5 min, normal 15).
+- **Who may approve (a bug fixed).** `Q-APPROVER-1` described the approver as "on call" but only checked that the person was active. It now reads `ON_CALL`: the approver must be on call for, or in a team that owns, a component the incident impacts, and the approval states that reason; anyone else gets 403.
+- **Standing approval ("handle it next time").** After a verified APPLIED fix, an eligible approver can grant a contract in two steps bound to a hash (family = the component the confirmed cause changed, the action, its parameters, a use limit and an expiry). On a later incident it applies only after the gate CONFIRMS a cause (G1–G8 unchanged) and the plan offers exactly that action. One guarded write (`uses < max_uses AND expires_at > now`, same family, action and parameters, grantor still active) consumes a use; the action then runs without waking anyone, verification still runs, and anything but APPLIED pages a human at once. A human can revoke it at any time.
+- **Shift report, hand-offs and stats** (`Q-SHIFT-REPORT`, `(:Handoff)`, `Q-ONCALL-STATS`: MTTA, MTTR, people paged, handled under contract), also as read-only MCP tools (`oncall_now`, `pages`, `oncall_stats`). `POST /api/alerts` takes Alertmanager v4 or generic JSON and opens incidents through the same intake and run loop.
+- **Who may be paged outside the app.** On the public demo, an anonymous run pages in-app only and never uses a standing contract; external channels are for keyed alerts and keyed runs, within an hourly budget per channel and a per-recipient cooldown. On-call state lives in its own graph (`oncall_<tenant>`), which re-arming the demo never touches.
+- **Channels.** The in-app pager always; a Slack-compatible webhook, Telegram, PagerDuty Events v2 and email through AWS SES when configured. Standard library only, never blocking a run, the result recorded on the page.
+- **One message per destination per incident wave.** Everyone one wave pages into the same Telegram chat gets ONE card listing them all (acknowledging stays per person: one button each in a shared chat, or the chat's own person's Ack); the webhook, PagerDuty and the email inbox get one message per wave with each person's own ack link. Each page still records its own delivery (`coalesced_into`), and the hourly budget counts messages, not pages. The channel, contract and report design is adapted from the author's own Beacon project.
+
+**The Telegram on-call bot.** A page arrives as one phone-sized card, and the same message is edited in place as the incident moves (acknowledged by whom, escalated to whom, approved, APPLIED with the PR link, resolved, "fixed while you slept" under a contract). This is the hero incident's card from an S1 run, as the bot renders it:
+
+```text
+🔴 URGENT · inc-s1-m19tgcard
+hero_bad_payment_deploy_with_same_minute_distractor
+D-pay-417 caused this: D-pay-417 → payment → checkout
+❌ Ruled out: D-email-88 (G5: cannot carry the impact); D-rec-12 (G2: no causal path)
+⏳ slo-checkout breaches in ~605 min · 5 customer(s), 28,600 MRR at risk
+👤 Why you: on call for team-payments, which owns payment (the failing component)
+⏰ Ack by 13:34 UTC or it escalates
+[Phone page] · [Incident room]
+[✅ Acknowledge] [⏭ Escalate now] [🔎 Why] [🛠 Options] [👥 Who fixes] [📖 Runbook] [🔗 Open]
+```
+
+- **The bot is just another client.** Only Telegram users the operator maps to a person can act. Acknowledging is open to any mapped person. Choosing and approving run the web UI's own code: `Q-APPROVER-1`, the plan hash and the intent lease.
+- **A tap never approves.** "Choose 1" shows the exact action and its plan hash; only the typed reply `approve <first 6 of the hash>` approves it, from the same person in the same chat, once, before the proposal expires. "yes" and "ok" are refused with the reason. Approval and acknowledgement record `via: telegram` and the Telegram user. Granting a contract after APPLIED (`grant …`) and revoking one (`revoke …`) are typed phrases too.
+- **Commands:** `/start` (link the chat), `/oncall`, `/pages`, `/incident <id>`, `/ack <page>`, `/brain <question>` (the company brain, citations through its guard), `/report`, `/handoff <person> <note>`, `/contracts`, `/stats`, `/mute <minutes>` (holds back information notices; pages always ring), `/help`. An optional morning digest posts the shift report at a set hour.
+- **Hardening:** the webhook secret is checked in constant time; every update is handled once (its `update_id` is claimed in the graph); per-chat rate limit; HTML escaped; every message within Telegram's 4096-character limit; a failed delivery is recorded on the page. The bot token is read in one function, never logged or returned (a test checks).
+- **Setup:** `scripts/telegram_setup.py` registers the commands and description, sets the webhook with its secret, and verifies it with `getWebhookInfo` (idempotent).
+
+| Server variable (`.env`, never committed) | What it does |
+|---|---|
+| `TELEGRAM_BOT_TOKEN` | the bot's token (from @BotFather) |
+| `TELEGRAM_WEBHOOK_SECRET` | the secret Telegram echoes on every update; without it the webhook refuses everything |
+| `TELEGRAM_PEOPLE` | `tg_user_id:p-030,…`: the only users the bot acts for, each mapped to a person |
+| `TELEGRAM_CHAT_ID` | optional shared on-call chat for pages to people who have not linked a chat with /start |
+| `FAULTLINE_PUBLIC_URL` | https base for the webhook and the links in a card |
+| `FAULTLINE_PAGE_SECRET` | key for the signed ack link in each card |
+| `TELEGRAM_APPROVE_REAL` | `true` to allow approving against real GitHub from Telegram (default: web UI with the approver key) |
+| `TELEGRAM_DIGEST_HOUR` | optional, 0–23 UTC: the morning digest |
+
+**A scripted on-call night** (pre-registered, `make oncall-night`: the real API on clean rooms, the keyless investigator): <!-- claim:oncall.night.steps_passed -->14<!-- /claim --> of <!-- claim:oncall.night.steps -->14<!-- /claim --> steps passed. The first incident paged <!-- claim:oncall.night.inc1.people_woken -->5<!-- /claim --> people, escalated <!-- claim:oncall.night.escalations -->1<!-- /claim --> time when nobody acknowledged, stopped at the acknowledgement and was fixed on the on-call's approval. The same fault again woke <!-- claim:oncall.night.inc2.people_woken -->0<!-- /claim --> people and was verified <!-- claim:oncall.night.inc2.verdict -->APPLIED<!-- /claim --> under the contract. The contract fired in <!-- claim:oncall.night.negatives_fired -->0<!-- /claim --> of <!-- claim:oncall.night.negatives -->5<!-- /claim --> negative cases (exhausted, revoked, expired, other parameters, the gate abstaining). MTTA read back from the graph (`Q-ONCALL-STATS`) equals the mean computed from the night's own pages (<!-- claim:oncall.night.mtta_matches_pages -->True<!-- /claim -->). The eval's clock is scripted, so these are correctness checks, not response-time claims; external channels were not configured (in-app only). This is run <!-- claim:oncall.night.runs -->5<!-- /claim -->: the earlier ones failed a harness check, predated "approval counts as the acknowledgement", read the numbers from every graph of the tenant, or predated the security review's fixes; all are kept on record, and no contract fired in a negative case in any of them (<!-- claim:oncall.night.runs_all_negatives_held -->True<!-- /claim -->).
+
+## Learns from the people who use it (T2)
+
+Faultline learns from recent work and from what its operators do, and all of it lives in FalkorDB: every trusted action is a `(:LearnEvent)` in the tenant's on-call graph, and what is learned is recomputed from those events by one Cypher query each, with recency decay written as an expression (`0.5 ^ (age / half-life)`, half-life in `weights.yaml learn`). Learning reorders, suggests and annotates. It never touches the gate, an approval rule or a contract's conditions, and every learned item names the events it came from ([API](docs/API.md#m21-what-faultline-learned), [graph model](docs/GRAPH_MODEL.md#m21-additions-learning-from-the-people-who-use-it)).
+
+| Loop | What it learns from | Where it shows | What it may change |
+|---|---|---|---|
+| Choices | approvals and rejections per incident family and action kind → `(:Preference)` | PLAN (`learned_preferences`, `Q-LEARN-PREF`), with a why line | the order of options **within one predicted-future class**, blended with verified outcomes (`Q-REM-1`) |
+| Guidelines | a rejection's reason → `(:Guideline {status: proposed})` | the next plan for that family and action, with who, when and which incident | nothing until a human promotes it; then the option is flagged and approving it needs an explicit override (stricter, never weaker); dismiss removes it |
+| Responders | acknowledgements, approvals and verified fixes → `(:Person)-[:RESPONDED]->(component)` | ROUTE (`learned_responders`, `Q-LEARN-RESP`) | the person who answers is paged first, in addition to the rota (never instead of it) |
+| Standing approvals | the same exact fix approved and verified on K incidents | the plan option | a suggestion to grant one; the grant is still the two-step M19 contract |
+| Recent work | recall ranks look-alike incidents by similarity and recency (`Q-MEM-1`) | RECALL, the context pack ("last seen 3 days ago; fixed by …, verified") | which precedent comes first |
+| Knowledge gaps | brain questions the graph could not answer → `(:KnowledgeGap)` | `GET /api/learned`, `knowledge_gaps` | a list of what to document, with the teams that own what each question was about |
+
+**Public demo: visitors cannot poison it.** An action is learned only from a trusted actor: a run off the public demo or started with the approver key, a keyed alert, the approver key itself, or the operator-mapped Telegram bot (M19's trust rule). An anonymous visitor's approvals, rejections, acknowledgements and brain questions are never recorded, and changing or forgetting learned state needs the approver key there (`tests/live/test_learning_live.py`).
+
+**Forget with a receipt.** `POST /api/learned/forget {person}` lists every event the person contributed and returns a receipt token; with the token and an approver it deletes exactly that set in one write, recomputes every preference, responder edge and gap it fed, writes a `ForgetReceipt` to the audit graph, and re-reads that nothing of theirs is left.
+
+**Measured** (pre-registered, `evals/learning_night.py`: the real API on clean rooms, the keyless investigator; <!-- claim:learn.night.steps_passed -->13<!-- /claim --> of <!-- claim:learn.night.steps -->13<!-- /claim --> steps passed):
+
+- **Choices, cold vs warm** (<!-- claim:learn.choices.scenarios -->S1,S1b<!-- /claim -->, three runs each): with nothing learned the top option was the rollback in <!-- claim:learn.choices.cold_top_rollback -->6<!-- /claim --> of <!-- claim:learn.choices.cold_trials -->6<!-- /claim --> runs; after the on-call approved the flag flip on <!-- claim:learn.choices.learning_plans -->5<!-- /claim --> incidents, the flag flip was first in <!-- claim:learn.choices.warm_top_flag -->6<!-- /claim --> of <!-- claim:learn.choices.warm_trials -->6<!-- /claim -->, with the line "<!-- claim:learn.choices.why_line -->learned: your team approved the flag flip 5 of the last 5 time(s) for payment; last just now<!-- /claim -->". The order changed on plan <!-- claim:learn.choices.flip_at_plan -->4<!-- /claim --> (after <!-- claim:learn.choices.pref_min_n -->3<!-- /claim --> choices), and the gate's verdicts were identical cold and warm.
+- **Contract suggestion:** first shown on plan <!-- claim:learn.suggest.first_at_plan -->3<!-- /claim --> (after K = <!-- claim:learn.suggest.k -->2<!-- /claim --> verified approvals); shown before K <!-- claim:learn.suggest.before_k -->0<!-- /claim --> times.
+- **Guidelines:** a rejection proposed one; promoted, it put the flag after the rollback and an approval without an override was refused (409); with the override it ran and was recorded; dismissed, it was gone.
+- **Who responds:** a team member who answered every page while the on-call never did was paged in the first wave from incident <!-- claim:learn.routing.first_wave_from -->3<!-- /claim --> on; time to acknowledge went from <!-- claim:learn.routing.mtta_before_min -->16.0<!-- /claim --> to <!-- claim:learn.routing.mtta_after_min -->1.0<!-- /claim --> minutes, and the rota on-call was still paged every time (<!-- claim:learn.routing.oncall_paged_every_incident -->True<!-- /claim -->). The clock is scripted, so this checks the mechanism, not a real team's response time.
+- **Forget:** forgetting the on-call's influence deleted <!-- claim:learn.forget.events -->14<!-- /claim --> events, left <!-- claim:learn.forget.events_left -->0<!-- /claim -->, and the next plan's top option went back to <!-- claim:learn.forget.top_after -->rollback_deploy<!-- /claim -->.
+- **Recall:** the warm run's top precedent was the incident just resolved in <!-- claim:learn.recall.warm_top_first -->6<!-- /claim --> of <!-- claim:learn.recall.trials -->6<!-- /claim --> trials (<!-- claim:learn.recall.pairs -->S1->S1b,S3->S3b<!-- /claim -->), with gate verdicts identical in <!-- claim:learn.recall.gate_identical -->6<!-- /claim -->. On cold rooms, recency changed the top precedent in <!-- claim:learn.recall.top_changed -->3<!-- /claim --> of <!-- claim:learn.recall.scenarios_with_precedents -->3<!-- /claim --> scenarios that have precedents (on S1, from one <!-- claim:learn.recall.s1.w00.top_age_days -->92.5<!-- /claim --> days old to one <!-- claim:learn.recall.s1.w02.top_age_days -->2.5<!-- /claim --> days old).
+- **Knowledge gaps:** <!-- claim:learn.gaps.count -->2<!-- /claim --> unanswered questions became gaps (one asked <!-- claim:learn.gaps.asked_max -->2<!-- /claim --> times); the answered and the off-topic question did not.
+
+**T2 go/no-go** (the checklist in WIN_PLAN, `evals/t2_gonogo.py`): <!-- claim:t2.green -->5<!-- /claim --> of <!-- claim:t2.items -->5<!-- /claim --> green. Cold vs warm on two scenarios with three runs each (above); S13 concurrency <!-- claim:t2.s13.rounds_one_owner -->100<!-- /claim --> of <!-- claim:t2.s13.rounds -->100<!-- /claim --> rounds with exactly one owner and <!-- claim:t2.s13.lost_updates -->0<!-- /claim --> lost updates; S7 isolation <!-- claim:t2.s7.passed -->34<!-- /claim --> passed, <!-- claim:t2.s7.failed -->0<!-- /claim --> failed, also through the shipped read-only ACL users; S10 the forget receipt locally, and the live URL's read-only forget dry run answered <!-- claim:t2.s10.live_dry_run_status -->200<!-- /claim --> with a receipt token (an executed forget there would write the live audit graph, so it ran locally; the live URL does not serve M21 yet: `GET /api/learned` <!-- claim:t2.s10.live_learned_status -->404<!-- /claim -->); session history: <!-- claim:t2.session.sessions -->2<!-- /claim --> sessions of one user, <!-- claim:t2.session.turns -->4<!-- /claim --> turns read back on a separate read-only connection.
+
 ## Screens
 
 <table>
@@ -640,7 +739,7 @@ Containment options are reordered by what worked before: a Beta-smoothed success
 
 ## Query catalogue
 
-<!-- claim:repo.templates -->182<!-- /claim --> parameterised templates, one `.cypher` file per query id, linted for `LIMIT`, `ORDER BY`, bounded paths, a `CALL` allowlist and no writes. Cypher is never built from inputs. The full list with purposes and PROFILE timings: [docs/QUERY_CATALOGUE.md](docs/QUERY_CATALOGUE.md). Three of them, as stored:
+<!-- claim:repo.templates -->225<!-- /claim --> parameterised templates, one `.cypher` file per query id, linted for `LIMIT`, `ORDER BY`, bounded paths, a `CALL` allowlist and no writes. Cypher is never built from inputs. The full list with purposes and PROFILE timings: [docs/QUERY_CATALOGUE.md](docs/QUERY_CATALOGUE.md). Three of them, as stored:
 
 <details><summary>Show the query catalogue</summary>
 
@@ -733,6 +832,8 @@ The full list, each with its source: [docs/HONEST_LIMITS.md](docs/HONEST_LIMITS.
 - The capacities are modelled from criticality and row share, not learned from traffic, and the gate assumes a single cause by default (joint sufficiency is reported as "not confident").
 - The preflight backtest is weak on acme (see Results), and its thresholds flag too many PRs. Historical PRs carry no ChangeFacts, so the decision term never fired in the backtest, and chokepoint scores and decisions are read as they are now (the topology itself is versioned: `valid_from` on calls, `topology_at` answers "what could this break back then?").
 - Learned remediation ordering counts a NOT_APPLIED rollback of the wrong change as a rollback failure, and it is not conditioned on the kind of cause. In the seeded tenants its success rates come from the synthetic history's per-family fix lists, so they show the mechanism, not real-world rates. It can put a broader action (a rollback) above the min-cut's smaller one (a flag); both stay offered, each with its reason.
+- Telegram: no voice notes (Beacon's speech-to-text is not ported), one linked chat per person, and the bot answers one tenant (`FAULTLINE_TENANT`). Approving against real GitHub from Telegram is off unless the operator sets `TELEGRAM_APPROVE_REAL`.
+- On-call: each external channel delivers to one shared destination (one webhook, one Telegram chat, one PagerDuty service, one SES list) and names the person paged; there is no per-person contact routing yet. Every team that owns something in the blast radius is paged, which is several people for the hero incident. Alert intake reads only the telemetry the graph holds: with none (no live metrics ingest is wired to it), an alert escalates to a human rather than being diagnosed. Contracts cover `flip_flag` and `rollback_deploy` only.
 - Hidden-coupling findings come from co-failure in synthetic incident history. They are suggestions for a human to confirm, never evidence for the gate.
 
 ## What didn't work

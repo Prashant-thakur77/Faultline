@@ -17,9 +17,11 @@ from faultline.graph.templates import catalogue  # noqa: E402
 GROUPS = [("Gate and proof", r"^Q-(GATE|NEG|INFER)"), ("Impact, scope and lineage", r"^Q-(BLAST|LIN|COL|SUS|CHANGE|RANK|CHOKE|PRIMARY)"),
           ("Alert-storm grouping (INTAKE: group_alerts)", r"^Q-STORM"),
           ("Containment and actions", r"^Q-(CUT|CONN|WHATIF|LEVER|FLAGS|PROTECT|KEEP|ACT|INTENT|CAUSE|WB)"),
-          ("People", r"^Q-(ORG|BRAIN-WHO)"), ("Obligations (ROUTE: obligation_clock)", r"^Q-OBL"), ("Decisions and knowledge", r"^Q-(DEC|GAP|DOC|FORGET)"),
+          ("People", r"^Q-(ORG|BRAIN-WHO)"),
+          ("On-call (M19): who may approve, pages, escalation, standing contracts, shift report",
+           r"^Q-(APPROVER|PERSON|ONCALL|PAGE|CONTRACT|SHIFT|HANDOFF)"), ("Obligations (ROUTE: obligation_clock)", r"^Q-OBL"), ("Decisions and knowledge", r"^Q-(DEC|GAP|DOC|FORGET)"),
           ("Company-brain question routing (route_question)", r"^Q-BRAIN-(INTENT|VOCAB)"),
-          ("Memory", r"^Q-(MEM|SESS|VEC)"), ("Preflight", r"^Q-PRE"), ("Seeds and lookups", r"^Q-(FIND|CTX|LABELS|META|COUNT|INC)"), ("Schema introspection", r"^Q-SCHEMA"),
+          ("Memory", r"^Q-(MEM|SESS|VEC)"), ("Preflight", r"^Q-PRE"), ("Seeds and lookups", r"^Q-(FIND|CTX|LABELS|META|COUNT|INC)"), ("Schema introspection and engine catalogues", r"^Q-(SCHEMA|FUNCS)"),
           ("Telemetry and baselines", r"^Q-(BASE|MW|SIM|VIEW|ALERT)"), ("Run state, evidence and coordination",
                                                                        r"^Q-(RUN|EV|HYP|CITE|TASK|RUNS)"),
           ("Contrast (evals only, never a decision)", r"^Q-CONTRAST")]

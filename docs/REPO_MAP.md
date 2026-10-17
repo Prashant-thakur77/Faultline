@@ -4,7 +4,7 @@
 - `graph/`: RO wrapper, writes, templates, `algo/`, guard, tenancy;
 - `agent/`: loop, gate, score, phases;
 - `mcp_server/`;
-- `actions/`: act, github, reconcile;
+- `actions/`: act, github, reconcile; oncall (pages, acks, escalation, report, stats), contracts (standing approvals), channels (in-app, webhook, Telegram, PagerDuty, SES);
 - `memory/`, `brain/`, `preflight/`, `sim/`, `ingest/`;
 - `api.py`.
 

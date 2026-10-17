@@ -155,26 +155,42 @@ def future_class(o: dict) -> int:
     return FUTURE_RANK.get(f.get("predicted") or "unknown", 1)
 
 
-def order_by_history(opts: list[dict], remedy: dict | None, min_n: int | None = None) -> list[dict]:
+def order_by_history(opts: list[dict], remedy: dict | None, min_n: int | None = None,
+                     learned: dict | None = None) -> list[dict]:
     """Stable reorder of the ENABLED, production-changing options (not open_issue, which only tracks and stays after
     them; never the disabled ones) by the Beta-smoothed success rate Q-REM-1 computed. An option whose history has
     fewer than `remedy.min_n` outcomes keeps the prior mean. The result is a permutation of `opts` (same options, same
     enabled flags); the gate is not involved. History reorders only within one predicted-future class (`future_class`):
     a past success never lifts an option the futures predict will not contain above one they predict will. Every
     option gets `static_rank` (its place before learning) and, when history was used, `history` + a reason line.
-    No history ⇒ the input order, unchanged."""
+    No history ⇒ the input order, unchanged.
+
+    `learned` (M21: the learned_preferences tool result, read from the on-call home graph) blends in what the team
+    chose: once the family has learn.pref_min_n recorded choices, each option's score is (1 - learn.w_pref) × its
+    history rate + learn.w_pref × the team's Beta-smoothed preference for its kind, still only within one
+    predicted-future class; an option against an ACTIVE guideline goes after the others of its class (and needs an
+    explicit override to be approved: api._guideline_check). Every option is annotated (`learned`: the preference line,
+    the guideline, a contract suggestion, `rank_without_learning`); nothing is added, removed, enabled or disabled."""
     from ..agent.weights import weights
+    from ..memory import learning
 
     min_n = int(min_n if min_n is not None else weights()["remedy"]["min_n"])
+    hist_ok = bool(remedy) and "error" not in (remedy or {})
+    view = learning.plan_view(learned) if learned is not None else None
+    if learned is not None:
+        without = order_by_history([dict(o) for o in opts], remedy, min_n)   # the order learning would leave alone
+        rank_without = {o["static_rank"]: i for i, o in enumerate(without, 1)}
     opts = [{**o, "static_rank": i, "history": None} for i, o in enumerate(opts, 1)]
-    if not remedy or "error" in remedy:
+    if not hist_ok and not (view and view.get("family")):
         return opts
-    by = {(r["kind"], r["target"]): r for r in remedy.get("rows", [])}
-    basis = remedy.get("basis") or "past incidents sharing a symptom with this one"
+    by = {(r["kind"], r["target"]): r for r in remedy.get("rows", [])} if hist_ok else {}
+    basis = (remedy or {}).get("basis") or "past incidents sharing a symptom with this one"
+    w_pref = float(weights()["learn"]["w_pref"])
     slots = [i for i, o in enumerate(opts) if o["enabled"] and o["kind"] != "open_issue"]
     rated = []
     for i in slots:
         o, row = opts[i], _history_row(opts[i], by, min_n)
+        rate = BETA_PRIOR
         if row is not None and int(row["n"]) >= min_n:
             what = f"flag {o['target']} → off" if row["target"] != "*" else _KIND_WORD.get(o["kind"], o["kind"])
             line = (f"history: {what} worked {int(row['successes'])}/{int(row['n'])} times on {basis} "
@@ -183,14 +199,31 @@ def order_by_history(opts: list[dict], remedy: dict | None, min_n: int | None = 
                        "history": {"successes": int(row["successes"]), "failures": int(row["failures"]),
                                    "n": int(row["n"]), "rate": round(float(row["rate"]), 4), "target": row["target"],
                                    "line": line}}
-            rated.append((i, float(row["rate"])))
-        else:
-            rated.append((i, BETA_PRIOR))
-    # stable: ties keep the static order; history never moves an option across a predicted-future class
-    ordered = [opts[i] for i, _ in sorted(rated, key=lambda t: (future_class(opts[t[0]]), -t[1]))]
+            rate = float(row["rate"])
+        score, flagged = rate, False
+        if view and view.get("family"):
+            pref = learning.pref_of(view, o["kind"])
+            if pref is not None:
+                score = (1 - w_pref) * rate + w_pref * pref
+            flagged = any(g["status"] == "active" for g in view["guides"].get(o["kind"]) or [])
+        rated.append((i, score, flagged))
+    # stable: ties keep the static order; neither history nor learning moves an option across a predicted-future class
+    ordered = [opts[i] for i, _, _ in sorted(rated, key=lambda t: (future_class(opts[t[0]]), t[2], -t[1]))]
     out = list(opts)
     for slot, o in zip(slots, ordered):
         out[slot] = o
+    if view and view.get("family"):
+        scores = {i: sc for i, sc, _ in rated}
+        for k, o in enumerate(out):
+            ann = learning.annotate(o, view)
+            if not ann:
+                continue
+            ann["rank_without_learning"] = rank_without.get(o["static_rank"])
+            src = next((i for i in slots if opts[i]["static_rank"] == o["static_rank"]), None)
+            if src is not None and view.get("applies"):
+                ann["score"] = round(float(scores[src]), 4)
+            lines = [x["line"] for x in (ann.get("preference"), ann.get("guideline"), ann.get("contract_suggestion")) if x]
+            out[k] = {**o, "learned": ann, "reason": o["reason"] + "".join(f"; {ln}" for ln in lines)}
     return out
 
 
@@ -201,7 +234,11 @@ def remedy_summary(remedy: dict | None, options: list[dict]) -> dict:
     if "error" in remedy:
         return {"applied": False, "moved": False, "note": f"remedy history unavailable ({remedy['error']}); static order kept"}
     used = [o for o in options if o.get("history")]
-    moved = [o["static_rank"] for o in options] != sorted(o["static_rank"] for o in options)
+    ranked = [o for o in options if (o.get("learned") or {}).get("rank_without_learning") is not None]
+    if ranked:   # learning also reordered (M21): history alone moved an option iff its order without learning differs
+        moved = any(o["learned"]["rank_without_learning"] != o["static_rank"] for o in ranked)
+    else:
+        moved = [o["static_rank"] for o in options] != sorted(o["static_rank"] for o in options)
     if not used:
         return {"applied": False, "moved": False, "evidence_id": remedy.get("evidence_id"),
                 "note": f"no history: no enabled fix on offer has ≥ min_n recorded outcomes on {remedy.get('basis')}; "
@@ -215,7 +252,7 @@ def remedy_summary(remedy: dict | None, options: list[dict]) -> dict:
 
 def build_options(c: Ctx, *, cause: str | None, cut: list[dict], hub: gh.GitHub, whatif: dict | None = None,
                   reviewers: list[str] | None = None, remedy: dict | None = None, futures: dict | None = None,
-                  origin: str | None = None, symptoms: list[str] | None = None) -> list[dict]:
+                  origin: str | None = None, symptoms: list[str] | None = None, learned: dict | None = None) -> list[dict]:
     """2–4 options from the fixed enum {flip_flag, rollback_deploy, data_repair, open_issue}; unavailable ones are
     listed disabled with a reason ("do not simulate them").
 
@@ -230,7 +267,9 @@ def build_options(c: Ctx, *, cause: str | None, cut: list[dict], hub: gh.GitHub,
       an issue the no-change future. The reason says it; the order puts predicted-to-contain first, and within a class
       keeps the static order. A predicted-not-to-contain option stays offered with its reason shown;
     * `remedy` (the remedy_stats tool result, Q-REM-1) only REORDERS the enabled actions within one predicted-future
-      class (order_by_history)."""
+      class (order_by_history);
+    * `learned` (the learned_preferences tool result, M21) blends the team's recent choices into that order within
+      the same class, flags options against an active guideline and annotates contract suggestions (order_by_history)."""
     opts = []
     reviewers = list(reviewers or [])[:3]
     flags, why_unread = _main_flags(hub)
@@ -305,12 +344,13 @@ def build_options(c: Ctx, *, cause: str | None, cut: list[dict], hub: gh.GitHub,
     opts = sorted(opts, key=lambda o: (not o["enabled"], o["kind"] == "open_issue", future_class(o)))
     keep = [o for o in opts if o["kind"] != "open_issue"][:3] + [o for o in opts if o["kind"] == "open_issue"][:1]
     opts = sorted(keep, key=lambda o: (not o["enabled"], o["kind"] == "open_issue", future_class(o)))
-    opts = order_by_history(opts, remedy)  # learned ordering: a permutation of the enabled actions only
+    opts = order_by_history(opts, remedy, learned=learned)  # learned ordering: a permutation of the enabled actions only
     out = []
     for i, o in enumerate(opts[:4], 1):
         aid = f"act-{c.inc}-{i}"
         writes.record_option(c.g(), inc=c.inc, aid=aid, kind=o["kind"], option=o["option"], enabled=o["enabled"],
-                             reason=o["reason"], target=o["target"], preview=o["args"], future=o.get("future"))
+                             reason=o["reason"], target=o["target"], preview=o["args"], future=o.get("future"),
+                             learned=o.get("learned"), rank=i)
         out.append({"id": aid, **o})
     return out
 
@@ -776,18 +816,31 @@ def write_back(c: Ctx, aid: str, *, cause: str, confident: bool, precedents: lis
     if act["verdict"] == "APPLIED":
         precedents = precedents_for(c, cause) if precedents is None else precedents
         summary = f"{cause} caused {c.inc}; contained by {act['option']} ({act['external_ref']})."
-        ids = writes.write_back_applied(c.g(), inc=c.inc, cause=cause, aid=aid, confident=confident, summary=summary,
-                                        pmurl=f"docs/postmortems/pm-{c.inc}.md", precedents=precedents, owner=c.owner)
+        # M20 #5: the write-back and WAITAOF share ONE connection, so WAITAOF waits for exactly this write to be fsynced
+        with gclient.engine_session(c.graph) as (g1, conn):
+            ids = writes.write_back_applied(g1, inc=c.inc, cause=cause, aid=aid, confident=confident, summary=summary,
+                                            pmurl=f"docs/postmortems/pm-{c.inc}.md", precedents=precedents, owner=c.owner)
+            durable = gclient.wait_aof(conn, timeout_ms=_waitaof_ms())
         try:  # the write is committed; a failed re-read is reported, never turned into a failure of the write
             check = verify_writeback(c, aid=aid, cause=cause, ids=ids)
         except Exception as e:  # noqa: BLE001
             from ..public_errors import client_text
 
             check = {"verified": "0/7", "checks": {}, "reread_error": client_text(e)}
-        return {"written": ids, "precedents": precedents, **check}
+        if not durable["ok"]:  # not confirmed on disk: VERIFY does not count it (UNKNOWN → a human checks, never RESOLVED)
+            check = {**check, "verified": f"0/{len(check.get('checks') or {}) or 7}",
+                     "reread_error": f"durability UNKNOWN: FalkorDB did not confirm the write-back on disk (WAITAOF: "
+                                     f"{durable.get('error') or 'not synced'}); escalated to a human"}
+        return {"written": ids, "precedents": precedents, **check, "durable": durable}
     stage = "UNKNOWN_ESCALATED" if act["verdict"] == "UNKNOWN" else "AWAITING_APPROVAL"
     out = writes.write_back_not_applied(c.g(), inc=c.inc, aid=aid, stage=stage, owner=c.owner)
     return {"written": None, "not_applied": out, "verified": None}
+
+
+def _waitaof_ms() -> int:
+    from ..agent.weights import weights
+
+    return int(weights()["engine"]["waitaof_ms"])
 
 
 def verify_writeback(c: Ctx, *, aid: str, cause: str, ids: dict) -> dict:
@@ -806,9 +859,11 @@ __all__ = ["Ctx", "build_options", "propose_data_repair", "choose", "execute", "
            "ensure_infra_repo", "approve", "reject"]
 
 
-def approve(c: Ctx, aid: str, plan_hash_: str, approver: str) -> dict | None:
+def approve(c: Ctx, aid: str, plan_hash_: str, approver: str, *, via: str = "web",
+            tg_user: str | None = None, override: dict | None = None) -> dict | None:
     """Step 2: approve the EXACT action (by its plan hash). None ⇒ stale hash, a different current choice, or not
-    awaiting approval (HTTP 409). The same query moves the incident to EXECUTE, so a second approval cannot race."""
+    awaiting approval (HTTP 409). The same query moves the incident to EXECUTE, so a second approval cannot race.
+    `override`: {id, reason} of the active guideline this approval goes past (recorded on the Approval and Action)."""
     prior = [a for a in c.ro().run("Q-ACT-1", {"inc": c.inc}).rows if a["id"] == aid]
     if prior and prior[0]["status"] == "failed":
         return None
@@ -819,7 +874,7 @@ def approve(c: Ctx, aid: str, plan_hash_: str, approver: str) -> dict | None:
 
     return writes.approve_action(c.g(), inc=c.inc, aid=aid, plan_hash=plan_hash_, approver=approver, run=c.run,
                                  owner=c.owner, lease_ms=lease_ms() if c.owner else 0, boot=BOOT_ID,
-                                 world=gh.world_id())
+                                 world=gh.world_id(), via=via, tg_user=tg_user, override=override)
 
 
 def reject(c: Ctx, aid: str, plan_hash_: str, approver: str, reason: str) -> dict | None:

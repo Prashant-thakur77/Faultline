@@ -254,6 +254,81 @@ Runs that ended NOT_CONFIDENT having accepted a change: the true cause 1, a byst
 | g5_only | 20 | 14 | 3 | 3 | 0 |
 
 
+## FaultBench-OTel: the real OpenTelemetry Demo, real telemetry (evals/faultbench_otel.py)
+
+Real services (OpenTelemetry Demo 3.1.0, trimmed to fit one laptop), real per-minute server error rates from its span metrics in Prometheus, the demo's own flagd fault flags as causes, and our own decoy changes (a real harmless flag flip and recorded no-op deploys). 5 faults, 17 fault windows (17 paged by the pre-registered page rule) and 17 no-fault control windows, one machine. Topology and failure-edge capacities from data/topology/otel-demo.yaml.
+
+Faultline is the current product; *as registered* is the product before the zero-baseline fix this bench found (PREREGISTRATION amendment 2026-10-16 23:45 IST), run on the same windows.
+
+| arm | right cause (detected fault windows) | wrong blames (all scored windows) | abstained | missed as NO_INCIDENT | blame-free controls |
+|---|---|---|---|---|---|
+| Faultline | 11/17 (41–83 %) | 0/34 (0–10 %) | 6/34 (8–34 %) | 0 | 17/17 (82–100 %) |
+| Faultline as registered | 0/17 (0–18 %) | 0/34 (0–10 %) | 5/34 (6–30 %) | 12 | 17/17 (82–100 %) |
+| T | 11/17 (41–83 %) | 23/34 (51–81 %) | 0/34 (0–10 %) | — | 0/17 (0–18 %) |
+| T+ | 11/17 (41–83 %) | 7/34 (10–37 %) | 0/34 (0–10 %) | — | 16/17 (73–99 %) |
+| N (recency) | 14/17 (59–94 %) | 20/34 (42–74 %) | 0/34 (0–10 %) | — | 0/17 (0–18 %) |
+
+| fault | windows | paged | Faultline right / wrong / abstained | as registered | T | T+ | N |
+|---|---|---|---|---|---|---|---|
+| adFailure | 4 | 4 | 4 / 0 / 0 | 0 / 0 / 0 | 4 / 0 / 0 | 4 / 0 / 0 | 2 / 2 / 0 |
+| cartFailure | 4 | 4 | 2 / 0 / 2 | 0 / 0 / 0 | 2 / 2 / 0 | 2 / 2 / 0 | 4 / 0 / 0 |
+| paymentFailure | 3 | 3 | 3 / 0 / 0 | 0 / 0 / 1 | 2 / 1 / 0 | 2 / 1 / 0 | 3 / 0 / 0 |
+| paymentUnreachable | 3 | 3 | 0 / 0 / 3 | 0 / 0 / 2 | 3 / 0 / 0 | 3 / 0 / 0 | 3 / 0 / 0 |
+| productCatalogFailure | 3 | 3 | 2 / 0 / 1 | 0 / 0 / 2 | 0 / 3 / 0 | 0 / 3 / 0 | 2 / 1 / 0 |
+
+Runs that ended NOT_CONFIDENT having accepted a change without confidence (an abstention by outcome, reported apart as on every bench): the true cause 3, an innocent change 2.
+
+The LLM alone on these windows was built and estimated only (no API call): 2 windows, about $0.07 at list price.
+
+## On-call: a scripted on-call night (evals/oncall_night.py)
+
+The real API in-process, the keyless investigator, clean rooms; the on-call home graph is its own copy of golden_acme. Delivery channels: in_app (none external configured). Pre-registered steps passed: 14 of 14; negative cases where a contract fired: 0 of 5.
+
+| step | pass |
+|---|---|
+| 1_pages_the_on_call | yes |
+| 2_no_ack_escalates | yes |
+| 3_ack_stops_escalation | yes |
+| 4_approve_applied_contract | yes |
+| 5_same_fault_under_contract | yes |
+| neg_a_exhausted | yes |
+| neg_b_revoked | yes |
+| neg_b_setup | yes |
+| neg_c_expired | yes |
+| neg_c_setup | yes |
+| neg_d_other_params | yes |
+| neg_d_setup | yes |
+| neg_e_gate_abstains | yes |
+| neg_e_setup | yes |
+
+Incident 1 paged 5 people (the failing component's owner on-call and the on-call of every team owning something in its blast radius), escalated 1 time(s) after the 5.0-minute urgent window, and stopped at the ack. The same fault again woke 0 people (5 contract notices) and was verified APPLIED under the contract. Over the night: 29 pages to 6 people; MTTA 180104 ms over 2 acknowledged incident(s) (read back from the graph; equal to the mean computed from the pages the API returned = True; incident 1's scripted acknowledgement was 360001 ms); MTTR 945 ms (in-process wall clock, not a production figure).
+
+This is run 5 (every run is kept in evals/results/oncall_night.json). The first passed 13 of 14 steps (its one failure a harness set-up check); the second passed every step before approval was made to count as the acknowledgement; the third passed every step but read the night's numbers from every graph of the tenant; the fourth read them from the night's own graphs; this one runs on the product after the security review's fixes (PREREGISTRATION amendments 1–4, 2026-10-17). No contract fired in a negative case in any run: True.
+
+## Learning from the people who use it (M21, evals/learning_night.py)
+
+The real API in-process, the keyless investigator, clean rooms, off the public demo (trusted runs); what is learned lives in a fresh copy of golden_acme per phase. Pre-registered steps passed: 13 of 13.
+
+| step | pass |
+|---|---|
+| 1_cold_top_rollback | yes |
+| 1_gate_verdicts_identical_cold_warm | yes |
+| 1_learning_flips_after_min_n | yes |
+| 1_warm_top_flag | yes |
+| 2a_rejection_proposes_a_guideline | yes |
+| 2b_shown_with_provenance_then_promoted | yes |
+| 2c_active_guideline_needs_override | yes |
+| 2d_dismissed_is_gone | yes |
+| 3_responder_paged_first_after_learning | yes |
+| 4_suggestion_after_k_never_before | yes |
+| 5_recall_warm_top_is_recent_and_gate_unchanged | yes |
+| 6_gaps_counted | yes |
+| forget_reverts_and_receipts | yes |
+
+Choices (S1,S1b, N = 3 each): the top option was the rollback in 6 of 6 cold runs and the flag flip in 6 of 6 warm runs after the on-call approved the flag on 5 incidents; the top changed on plan 4 (after learn.pref_min_n = 3 choices). The standing-approval suggestion first appeared on plan 3 (K = 2; shown before K: 0). Paging: the responder who answers was paged in the first wave from incident 3 on; MTTA 16.0 min before → 1.0 min after (scripted clock: a check of the mechanism, not a response-time claim); the rota on-call was paged on every incident: True. Forgetting the on-call's influence deleted 14 events, left 0, and the plan's top went back to rollback_deploy. Knowledge gaps: 2. Recall (S1→S1b, S3→S3b, N = 3): warm top precedent = the first incident in 6 of 6, gate verdicts identical in 6 of 6.
+
+T2 go/no-go (WIN_PLAN §12.5, evals/t2_gonogo.py): 5 of 5 green.
+
 ## Product checks
 
 - **S13 concurrency**: 16 workers × 100 rounds → 100/100 rounds with exactly one owner, 0 lost updates; RO read p50/p95 3.791/9.462 ms during writes (quiet 1.92/3.788 ms).

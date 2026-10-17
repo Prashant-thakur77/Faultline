@@ -24,8 +24,12 @@ def code_counts() -> dict:
     from faultline.graph.templates import catalogue
     from faultline.mcp_server import tools as T
 
+    from faultline.graph.constraints import CONSTRAINTS
+
     return {"repo.templates": len(catalogue()), "repo.algorithms": len(registry.resolved()), "repo.mcp_tools": len(T.TOOLS),
-            "repo.mcp_tools_hosted": len([t for t in T.TOOLS if t not in INTERNAL_TOOLS])}
+            "repo.mcp_tools_hosted": len([t for t in T.TOOLS if t not in INTERNAL_TOOLS]),
+            # engine-enforced invariants (M20 #1): MANDATORY / UNIQUE constraints on nodes and relationships
+            "repo.constraints": len(CONSTRAINTS)}
 
 
 def main() -> int:

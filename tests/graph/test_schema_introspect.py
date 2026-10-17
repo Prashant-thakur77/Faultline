@@ -102,7 +102,9 @@ def test_reserved_type_showing_up_is_reported_not_hidden():
 # ------------------------------------------------------------------ MCP resources and prompts (content)
 def test_queries_resource_lists_every_template_with_params():
     cat = {q["id"]: q for q in R.queries_catalogue()}
-    assert set(cat) == set(catalogue())
+    # every template a client may run; the internal ones (Telegram ids, consents, contract offers) are never offered
+    assert set(cat) == {k for k, t in catalogue().items() if not t.internal}
+    assert not {"Q-BOT-CHATS", "Q-BOT-PROPOSAL", "Q-CONTRACT-OFFER", "Q-PAGE-TG"} & set(cat)
     assert {"cause", "symptom"} <= set(cat["Q-GATE-1"]["params"])
     assert cat["Q-SCHEMA-1"]["params"] == [] and cat["Q-SCHEMA-1"]["file"] == "schema_stats.cypher"
 

@@ -79,6 +79,7 @@ def run(tenant: str, pr: PreflightIn, graph: str | None = None) -> dict:
     return {"pr": pid, "run_id": run_id, "verdict": out["verdict"], "risk": out["risk"], "thresholds": out["thresholds"],
             "terms": out["terms"], "would_change_if": out["would_change_if"], "reviewers": out["reviewers"],
             "decision_links": out["decision_links"], "reversals": out.get("reversals") or [],
+            "freeze": out.get("freeze") or {"rows": []}, "score_verdict": out.get("score_verdict", out["verdict"]),
             "assessment": out["rows"][0], "facts": [f.model_dump() for f in facts],
             "notes": notes, "unknown_files": unknown, "known_files": known,
             "evidence": {k: out.get(k) for k in ("evidence_id", "template", "cypher", "params", "served_by", "digest", "ms")},

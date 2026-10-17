@@ -95,7 +95,9 @@ SEGMENTS: list[tuple[str, float, str]] = [
      "Now, the numbers, honestly. We generated {deep.fresh.all.cases} worlds built to fool it. Faultline made "
      "{deep.fresh.all.wrong_confident} confident wrong blames. It named the right cause in "
      "{deep.fresh.all.right_cause} of the {deep.fresh.all.cause_cases} worlds with a real cause, and on the rest it said: "
-     "not sure. On call, a wrong rollback costs far more than an honest not sure."),
+     "not sure. A strong language model, given the same telemetry on the same worlds, found more causes, and blamed an "
+     "innocent change {llm_deep.deep.all.wrong_confident} times. On call, a wrong rollback costs far more than an "
+     "honest not sure."),
     ("cost", 0.5,
      "And refusing is cheap. Proving there is no path takes FalkorDB "
      "{perf.acme.shortest_causal_path.falkordb_engine_p50} milliseconds, and zero tokens. A language model just "

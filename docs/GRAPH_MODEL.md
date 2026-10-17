@@ -177,6 +177,61 @@ erDiagram
 - `(:Incident)-[:HAS_PROPOSAL]->(:EdgeProposal {src, dst, cap, status, plan_hash})`: a link a verified fix showed was missing, until a human approves it.
 - `(:PlaygroundRun {kind, result})` in `audit_<t>`: a recorded "break the graph" diff.
 
+## M19 additions: on-call (pages, acks, escalation, standing contracts, hand-offs)
+
+```mermaid
+erDiagram
+  Page }o--|| Person : PAGES
+  Page }o--|| Incident : FOR
+  Page }o--o| Page : ESCALATED_TO
+  Person }o--o{ Page : "ACKED {at, via}"
+  Incident }o--o{ Person : "ESCALATES_TO {rank, w, via}"
+  Contract }o--|| Person : GRANTED_BY
+  Contract }o--o| Node : COVERS
+  Contract ||--o{ ContractUse : "USED_IN {at, verdict}"
+  ContractUse }o--o| Incident : FOR
+  Handoff }o--|| Person : FROM
+  Handoff }o--|| Person : TO
+  Handoff }o--o| Incident : COVERS
+```
+
+- **Pages live with their incident** (the run's clean room, or the tenant graph for an alert-intake incident): `(:Page {id, tenant, incident, kind: page|escalation|report|contract_notice, urgency, sent_at, ack_due_at, status: sent|delivery_failed|acked|escalated|resolved|superseded, attempt, detail, reason, team, channel, channels, delivery, deep_link})`. `deep_link` never holds the ack token (it is an HMAC over tenant and page id, delivered only in the link a channel sends). Delivery results are written back on the page (one write per update).
+- **The escalation order** is recorded on the incident at ROUTE: `(:Incident)-[:ESCALATES_TO {rank, w, via}]->(:Person)`, ranked in Cypher from the algo.MSF escalation tree's edges (the strongest tie that names a person first; the who_fixes order when the tree has no edge). `Q-PAGE-NEXT` reads it; `Q-PAGE-OVERDUE` decides what is late.
+- **Standing contracts and hand-offs live in the tenant's on-call home** (the tenant graph; an eval's own room), because they outlive the incident that granted them: `(:Contract {id, family, action_kind, params_hash, params, max_uses, uses, expires_at, granted_at, status: offered|active|exhausted|revoked (expired is read at query time), hash, offer_expires_at, quote, source_incident, source_graph, source_action})`. A use is a `(:ContractUse {incident, graph, action, at, verdict})` node, linked `FOR` the incident when it is in the same graph: a clean-room incident is in another graph, and an edge cannot cross graphs (a change from the plan's `USED_IN → Incident`, docs/plans/M19.md "Contract changes").
+- **Who may approve** (`Q-APPROVER-1`, fixed in M19): an active person on call (an `ON_CALL` shift overlapping the incident, onset to now) for, or a member of, a team that `OWNS` an impacted component (the failing component, its blast radius, the symptoms).
+
+## M21 additions: learning from the people who use it
+
+```mermaid
+erDiagram
+  Person ||--o{ LearnEvent : DID
+  LearnEvent }o--o| Node : ABOUT
+  Preference }o--|{ LearnEvent : DERIVED_FROM
+  Guideline }o--|| LearnEvent : DERIVED_FROM
+  Guideline }o--o| Node : ABOUT
+  KnowledgeGap }o--|{ LearnEvent : DERIVED_FROM
+  KnowledgeGap }o--o{ Node : ABOUT
+  Person }o--o{ Node : "RESPONDED {score, n, acks, approvals, fixes, mtta_ms, last_at, events}"
+```
+
+- **Where:** the tenant's on-call home graph (`oncall_<t>`), never a scenario's clean room: what is learned outlives the incident it came from, and re-arm never touches it.
+- **`(:LearnEvent {id, kind, person, person_name, family, action_kind, option, incident, graph, at, via, trust, …})`**: one trusted operator action. Kinds: `approve`, `reject` (with `reason`), `override` (an approval past an active guideline), `verified` (an approved fix verified APPLIED and resolved, with `params_hash`), `ack` (with `ack_ms`), `choose` (Telegram), `grant`, `revoke`, `handoff`, `escalate_now`, `gap` (a brain question the graph could not answer). The id is a hash of what happened, so a retried hook records it once. `family` = the component the gate-confirmed cause changed (else the component ROUTE ran who_fixes on).
+- **`(:Preference {family, action_kind, approvals, rejections, others, n_approve, n_reject, n_family, last_at, computed_at, events})`**: recomputed per family by one aggregate query (`W_LEARN_PREFS`) with recency decay `0.5 ^ (age / learn.half_life_days)`; read by `Q-LEARN-PREF`, which decays again to the read time (exact: decay is a product) and returns the Beta-smoothed preference `(a + 1) / (a + r + o + 2)`.
+- **`(:Guideline {text, family, action_kind, status: proposed|active|dismissed, by, at, incident, source_event, decided_by, decided_at})`**: proposed by a trusted rejection's reason; only a human promotes or dismisses it (`W_LEARN_GUIDELINE_SET`).
+- **`(:Person)-[:RESPONDED]->(component)`**: recomputed per person and family (`W_LEARN_RESPONDED`) from their acks, approvals and verified fixes (weights in `learn`), with the mean ack delay and the events it rests on; no event left ⇒ no edge.
+- **`(:KnowledgeGap {text, n, first_at, last_at, status: open|dismissed, intent, reason, about, events})`**: recomputed per normalised question (`W_LEARN_GAP`); `ABOUT` the components the question resolved to, so `Q-KGAP-1` can name the teams that own them.
+- **Forget:** `W_LEARN_FORGET` deletes exactly a person's approved events and the guidelines their rejections proposed in one query; every preference, responder edge and gap they fed is then recomputed (one query each); the `ForgetReceipt {kind: 'learned_influence'}` goes to `audit_<t>` (`Q-LEARN-RECEIPTS`).
+- **Indexes:** `LearnEvent(id)`, `LearnEvent(family)`, `LearnEvent(person)`, `Preference(id)`, `Preference(family)`, `Guideline(id)`, `KnowledgeGap(id)`; applied once per process to a home graph made before M21.
+
+## M20 additions: company rules as data
+
+- `(:Policy {id, kind:'change_freeze', status, title, why, effect: block|require_review, from_day, from_hour, to_day,
+  to_hour, utc_offset_min, decided_by, decided_at, url})`, from `data/gen/policies/<tenant>.yaml` (acme: no payment changes
+  from Friday 16:00 to Monday 09:00 IST). Days are ISO (Monday 1 … Sunday 7), hours local to a fixed UTC offset (no DST).
+- `(:Policy)-[:FREEZES]->(Service|Datastore)` and `(:Person)-[:DECIDED]->(:Policy)`.
+- Seeded after every other node (`scripts/seed.py`), so no existing id moves. Read by `Q-PRE-FREEZE` (preflight): FalkorDB
+  turns the merge instant into the policy's local time and tests the weekday, hour and minute against the window.
+
 ## Key properties
 
 | Label | Properties that decisions read | Read by (examples) |
@@ -186,7 +241,9 @@ erDiagram
 | `Incident` | `onset_at`, `salience`, `last_used`, `embedding` | recall (`Q-MEM-1`), decay, as-of answers |
 | `Decision` | `status`, `decided_at`, `rule_key`, `rule_op`, `rule_value` | G8 and preflight contradictions (`Q-DEC-1`), heads (`Q-DEC-2`) |
 | `Runbook` | `reviewed_at`, `valid_from`, `support_count`, `source` | knowledge health (`Q-KH-1`), derived runbooks (`Q-MEM-3`) |
-| `Person` | `active`, `valid_to` | who fixes it, bus factor, approver check (`Q-APPROVER-1`) |
+| `Person` | `active`, `valid_to` | who fixes it, bus factor, approver check (`Q-APPROVER-1`), who is paged (`Q-ONCALL-NOW`, `Q-PAGE-NEXT`) |
+| `Page` | `status`, `kind`, `ack_due_at`, `sent_at`, `acked_at`, `attempt` | the pager (`Q-PAGES`), escalation (`Q-PAGE-OVERDUE`), MTTA (`Q-ONCALL-STATS`) |
+| `Contract` | `status`, `family`, `action_kind`, `params_hash`, `uses`, `max_uses`, `expires_at` | acting without paging (`Q-CONTRACT-MATCH`, then the guarded `W_CONTRACT_USE`) |
 | `MetricWindow` | `target_id` (range-indexed), `metric`, `kind`, `value` | telemetry tools, alert coverage, obligation clock, G4 upstream (measured excess) |
 | `SLO` | `objective`, `budget` (= 1 − objective), `window_days`, `metric`, `spent_prior` (synthetic share of the budget spent before the telemetry horizon) | obligation clock burn and budget left (`Q-OBL-SLO`) |
 | `Customer` | `mrr`, `tier`, `name` (all synthetic); `CONSUMES {via}` to an entry service, API service or KPI | customers reached and MRR at risk, counted once per customer (`Q-OBL-CUST`) |
@@ -249,7 +306,28 @@ All in [`schema.cypher`](../backend/faultline/graph/schema.cypher), except the c
   - written only through `vecf32()` (`graph/writes.py::set_vectors`);
   - queried with `db.idx.vector.queryNodes`, which returns a distance that the template converts to a similarity;
   - used by recall (`recall.cypher`), `find_incident_vector.cypher` and the forget proof (`forget_vector_probe.cypher`).
-- **Unique constraint** on `Intent.idem` (`GRAPH.CONSTRAINT CREATE … UNIQUE`). It is asynchronous, so seeding polls `db.constraints()` until OPERATIONAL. It makes execute idempotent across retries and crashes.
+- **Vector index options (M20):** `M 32`, `efConstruction 400`, `efRuntime 100` on all four vector indexes (Incident,
+  Runbook, Postmortem, IntentExemplar), chosen by `evals/vector_recall.py`: recall@10 against an exact cosine scan
+  <!-- claim:vector.recall_at_10.tuned -->1.0<!-- /claim --> on every measured set (the default index:
+  <!-- claim:vector.recall_at_10.default -->0.9767<!-- /claim -->). `writes.apply_schema` rebuilds an index whose options
+  differ and waits until it is OPERATIONAL (an index built over existing nodes is asynchronous on 6.0.2).
+- **Engine-enforced constraints (M20)**: <!-- claim:repo.constraints -->15<!-- /claim --> `GRAPH.CONSTRAINT`s, declared in
+  [`graph/constraints.py`](../backend/faultline/graph/constraints.py) and created by `writes.ensure_constraints` (called by
+  `apply_schema`, so seed, every copy, the on-call home graph and the scale worlds get them; `GRAPH.COPY` carries them):
+  - UNIQUE `Run.id`, `Intent.idem` (one run per id; one intent per idempotency key, which makes execute idempotent
+    across retries and crashes). Not `Node.id`: on 6.0.2 every insert under a UNIQUE constraint costs time proportional
+    to the label's size ([upstream/25](upstream/25-unique-constraint-insert-cost.md)), and `:Node` is every node;
+    `Node.id` is MANDATORY instead;
+  - MANDATORY on nodes: `Node.id`; Evidence `id, kind, source, digest` (provenance); ToolCall `id, tool, at`; Approval
+    `id, approver_id, plan_hash`; Intent `idem, state`; Action `id, kind`; GateRun `id, incident_id, passed`; Decision
+    `id, status`; Page `id, kind, person, status, sent_at, ack_due_at` (the deadline escalation reads); Contract
+    `id, status, hash`;
+  - MANDATORY on relationships: `PROPAGATES_TO.cap` (the min-cut and G5 are undefined without it), `ON_CALL.from/to`,
+    `OWNED_AT.from`.
+
+  Creation is asynchronous (PENDING → OPERATIONAL); a constraint the existing data violates ends FAILED, is dropped
+  again, and seeding fails loudly naming up to five violators. Every Run writer writes `Run:Node` (before M20 one writer
+  wrote a label-less `Run`, which a later `Run:Node` MERGE could not match: a second Run with the same id).
 
 `graph/copy.py` re-applies the schema after every `GRAPH.COPY` and checks `db.indexes()`.
 

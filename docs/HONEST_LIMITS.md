@@ -88,6 +88,15 @@ Every historical PR was scored by the production formula as of its merge time (`
 - **Public brain history is short-lived.** On the public demo a visitor's questions are recorded in a per-tenant brain scratch copy (`brain/scratch.py`) that is replaced after `brain.scratch_ttl_min` or `brain.scratch_max_runs`, so a visitor's session history ends with that copy. The copy is a snapshot of the tenant graph, retired at once on re-arm and on an operator's forget; any other change to the tenant graph reaches the brain when the copy is replaced.
 - **Precomputed embeddings.** Seeded history and known scenario texts are embedded ahead of time so judge-check needs no model download (`data/gen/embeddings/`). Unknown texts use the local model (`memory/embed.py`).
 
+- **On-call (M19).** Each external channel (webhook, Telegram, PagerDuty, SES) delivers to one shared destination and names the person paged; there is no per-person contact routing. Every team owning something in the blast radius is paged (5 people for the hero incident in the on-call night eval), which is noisier than an owner-only page. Alert intake reads only the telemetry already in the graph: no live metrics ingest is wired to it, so a real alert without telemetry escalates to a human instead of being diagnosed. Standing contracts cover `flip_flag` and `rollback_deploy` only, and their family is the changed component, not a learned incident family. The on-call night eval uses a scripted clock: its MTTA is a correctness check, not a response time. Pages of collected run graphs leave the stats with them. <!-- noclaim: configured constants -->
+
+- **Public demo paging.** An anonymous demo run pages in the in-app pager only and never uses a standing contract; external channels are for keyed alerts (`FAULTLINE_ALERTS_KEY`) and runs started with the approver key. Each external channel has an hourly cap and a per-recipient cooldown (`weights.yaml oncall`); pages over the budget stay in-app, marked `delivery_failed: budget`.
+- **Telegram bot.** No voice notes (Beacon's speech-to-text is not ported); one linked chat per person; one tenant per bot (`FAULTLINE_TENANT`). Tested with the Bot API mocked; the real bot depends on the operator's `.env` (token, webhook secret, people mapping) and `scripts/telegram_setup.py`.
+
+- **Learning (M21) is measured on scripted operators.** The learning night's choices, rejections and acknowledgements are scripted, on one tenant (acme) and one incident family (payment); it checks the mechanism (what changes, when, and that forgetting reverts it), not that a real team's habits pick better fixes. A preference is per family (the component the confirmed cause changed) and action kind, not per symptom or parameter; a guideline is per family and action kind too.
+- **Learned state trusts the M19 rule.** Anything done in a trusted run or with the approver key is learned; a careless operator's habit is learned as faithfully as a good one (it only reorders within a predicted-future class, and a person's influence can be forgotten with a receipt).
+- **Forgetting a person's influence is several writes.** The delete is one query; each derived item is then recomputed in its own query, so for a moment a preference's counts still include the forgotten events (the receipt re-reads after all of them).
+
 ## 6. Public demo and security
 
 From [SECURITY.md](../SECURITY.md), "What is NOT protected (accepted for a demo)":
@@ -116,6 +125,23 @@ From [FALKORDB_COMPAT.md](FALKORDB_COMPAT.md) and [docs/upstream/](upstream/):
 - **A data repair lasts until the next run sets its fixture mode.** The warehouse is shared; every mode switch and every re-arm restores the transforms from hash-pinned pristine copies (`pipeline/transforms_pristine/`). A repair verified APPLIED is therefore not permanent in the demo world. A repair whose verification is UNKNOWN is left applied and marked (`<transform>.sql.unverified.json`) for the reconciler, until that next restore. Verification re-establishes the incident's own fixture (mode and sources digest recorded in the plan); if the sources cannot be reproduced, the verdict is UNKNOWN.
 - **One warehouse user process at a time.** The warehouse gate is per process; an fcntl lock next to the DuckDB file keeps `make eval`, the CLI and the API from using it together, so a second process waits (or, on the public demo, gets 429) rather than sharing a same-mode build with another process.
 - **`GRAPH.LIST` leaks graph names** to restricted users, so the per-tenant ACL user excludes it.
+- **`LOAD CSV FROM 'https://…'` runs under `GRAPH.RO_QUERY`** and no engine switch turns it off (draft `upstream/22`). The
+  production compose puts FalkorDB on an internal Docker network with no route out (`scripts/egress_check.py`,
+  `tests/live/test_egress.py`); the development compose does not (it publishes the engine on loopback, which an internal
+  network cannot do), so on a developer machine the engine can still fetch from the internet.
+- **Change freezes use a fixed UTC offset.** FalkorDB 6.0.2 has no time zones, so a policy's window does not follow
+  daylight-saving changes. `.dayOfWeek` returns 0 on Sunday on 6.0.2; the freeze template reads it as 7. The product
+  evaluates the window on the engine clock at preflight time, which stands in for the merge time.
+- **Only the gate's band is computed in the engine.** `metric_window` and the KPI tools take their band from
+  `Q-MW-BAND` / `Q-BASE-BAND`; VERIFY, the futures prediction and learned-edge proposals still apply the same rule in
+  Python (`datatools.band_from`, the equality oracle of `tests/live/test_band_in_engine.py`).
+- **Durable verification costs about a second.** WAITAOF waits for the next once-a-second fsync (appendfsync everysec)
+  after the write-back; a timeout (5 s) is UNKNOWN and escalates. A replica (`WAIT`) is not used.
+- **Node ids are not engine-unique.** A UNIQUE constraint over `:Node` (every node) makes every insert cost time
+  proportional to the graph's size on 6.0.2 (draft `upstream/25`), so only Run and Intent ids are UNIQUE; every other
+  writer MERGEs by id, and `Node.id` is MANDATORY.
+- **The per-query memory cap is not sized on the 10k scale world yet.** 256 MB is far above the demo templates' use;
+  the heaviest 10k-scale templates are to be re-measured under the cap in the Wave B scale run.
 - **Deleted graphs keep their memory until restart.** On the pinned 6.0.2, deleting a large graph (the 10k scale tenant) left `used_memory` near 2 GB; MEMORY PURGE did not return it. `make compact` (AOF rewrite + restart, graphs kept) does, and `make eval` refuses to start above 35% of maxmemory. <!-- noclaim: a configured threshold (evals/harness.py EVAL_MAX_START_PRESSURE), not a measured result -->
 
 ## 9. Deferred, dropped or not built

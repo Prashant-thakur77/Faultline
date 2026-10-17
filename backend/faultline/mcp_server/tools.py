@@ -507,9 +507,15 @@ def context_pack(text: str, targets: list[str] | None = None, at: int | None = N
                 sim = float(x["similarity"])
                 h = past.get(x["id"])
                 if h:
-                    line = (f"past incident {x['id']} \"{h.get('title') or ''}\": caused by {h.get('cause') or 'unknown'}"
+                    from ..memory.learning import ago
+
+                    when = h.get("onset_at") or h.get("opened_at")
+                    line = (f"past incident {x['id']} \"{h.get('title') or ''}\": last seen {ago(now - int(when))}"
+                            f"; caused by {h.get('cause') or 'unknown'}"
                             + (f" on {h['cause_target']}" if h.get("cause_target") else "")
-                            + (f"; fixed by {h['fix_kind']} {h.get('fix_target') or ''} ({h.get('fix_verdict') or '?'})" if h.get("fix_kind") else "")
+                            + (f"; fixed by {h['fix_kind']} {h.get('fix_target') or ''}"
+                               + (", verified" if h.get("fix_verdict") == "APPLIED" else f" ({h.get('fix_verdict') or '?'})")
+                               if h.get("fix_kind") else "")
                             + (f"; resolved by {', '.join(h['resolvers'])}" if h.get("resolvers") else "") + f" (similarity {sim:.2f})")
                     ids = [x["id"], h.get("cause"), h.get("cause_target"), h.get("fix_target"), *(h.get("resolvers") or [])]
                 else:
@@ -1057,16 +1063,27 @@ def preflight_change(pr_id: str) -> dict[str, Any]:
     from ..agent.rules import reversals
 
     rev = reversals(_ro().run("Q-DEC-REV", {"change": a.id}).rows)
+    # change freezes (M20 #6): FalkorDB evaluates each policy's weekly window on the wall clock (Q-PRE-FREEZE); a freeze
+    # in force only tightens the verdict and is cited with its policy and the local time the engine evaluated
+    frz = P.freezes(_ro(), s.changed)
+    verdict = P.apply_freeze(s.verdict, frz.rows)
+    would = s.would + ([{"term": "freeze", "verdict": s.verdict,
+                         "if": "it merged outside " + ", ".join(sorted({r["policy"] for r in frz.rows}))}]
+                       if verdict != s.verdict else [])
     reviewers = sorted({p for c in f.comps for p in c["reviewers"]})
     imp.rows = [{"changed": s.changed, "impacted": s.impacted, "revenue_tier1": s.revenue_tier1, "decisions": dec,
                  "past_incidents": s.past, "bus_factor": f.bus, "gaps": s.gaps, "reviewers": reviewers}]
     return _envelope(imp, tool="preflight_change", via="BFS(PROPAGATES_TO) + betweenness + Q-DEC-1 + COMMITTED/OWNS",
                      kind="preflight", about=[a.id] + s.changed + [d["decision"] for d in dec],
-                     summary=f"{s.verdict} (risk {s.risk})", value=s.risk,
-                     extra={"verdict": s.verdict, "risk": s.risk, "thresholds": weights()["preflight"]["thresholds"],
+                     summary=f"{verdict} (risk {s.risk})" + (f"; frozen by {', '.join(sorted({r['policy'] for r in frz.rows}))}"
+                                                             if frz.rows else ""), value=s.risk,
+                     extra={"verdict": verdict, "risk": s.risk, "thresholds": weights()["preflight"]["thresholds"],
+                            "score_verdict": s.verdict,
+                            "freeze": {"rows": frz.rows, "template": frz.template_id, "cypher": frz.cypher,
+                                       "params": frz.params, "served_by": frz.served_by},
                             "terms": {k: {"value": round(v, 4), "weighted": round(s.parts[k], 4), "why": why}
                                       for k, (v, why) in s.terms.items()},
-                            "would_change_if": s.would, "reviewers": reviewers,
+                            "would_change_if": would, "reviewers": reviewers,
                             "decision_links": [{"id": d["decision"], "title": d["title"], "url": d["url"]} for d in dec if d["violated"]],
                             # the reversal guard: loud in the comment, never a score term (the backtest is untouched)
                             "reversals": rev})
@@ -1251,11 +1268,16 @@ def who_fixes(target_id: str, now: int, since: int) -> dict[str, Any]:
             + ([f"on call for {team} now"] if p["oncall"] else []) \
             + ([f"member of owner team {team}"] if p["member"] and not p["oncall"] else [])
         ranked.append({"person": p["person"], "name": p["name"], "score": round(float(row["score"]), 4),
-                       "teams": p["teams"], "reasons": reasons})
+                       "teams": p["teams"], "reasons": reasons, "oncall": bool(p["oncall"])})
     res = _combine([who, *pages, r], ranked[:10])
+    # who is on call for the owner team at `now` (Q-ORG-WHO's on-call column, every one of them, not only the top 10):
+    # the on-call pager pages them first (actions/oncall.recipients)
+    oncall_now = [x["person"] for x in who.rows if x["oncall"]]
     return _envelope(res, tool="who_fixes", via=f"algo.HarmonicCentrality(KNOWS_ABOUT) around {a.id}", kind="people",
                      about=[a.id] + [x["person"] for x in ranked[:3]],
-                     summary="; ".join(f"{x['person']} ({', '.join(x['reasons'][:2])})" for x in ranked[:3]))
+                     summary="; ".join(f"{x['person']} ({', '.join(x['reasons'][:2])})" for x in ranked[:3]),
+                     extra={"oncall_now": oncall_now, "owner_team": (who.rows[0]["team"] if who.rows else None),
+                            "target": a.id})
 
 
 @_guard
@@ -1542,10 +1564,20 @@ def similar_incidents(incident_id: str, now: int) -> dict[str, Any]:
     """Recall: past incidents near this one in the FalkorDB vector index AND sharing a Symptom node with it
     (vector seed → structural confirmation). Similarity, recency (half-life from weights.yaml) and salience are
     separate columns, all computed in the query."""
+    from ..memory.learning import ago
+
     a = _IdArg(id=incident_id)
-    hl = float(weights()["memory"]["half_life_days"]) * 86_400_000
-    r = _ro().run("Q-MEM-1", {"current": a.id, "now": int(now), "half_life_ms": hl})
-    return _envelope(r, tool="similar_incidents", via="db.idx.vector.queryNodes(Incident.embedding) → shared (:Symptom)",
+    m = weights()["memory"]
+    hl = float(m["half_life_days"]) * 86_400_000
+    r = _ro().run("Q-MEM-1", {"current": a.id, "now": int(now), "half_life_ms": hl,
+                              "w_recency": float(m["recall_recency_w"])})
+    for x in r.rows:   # what an agent can act on (M21 recent-work recall): when it was last seen and what fixed it
+        fixes = sorted(set(x.get("fixes") or []))
+        x["line"] = (f"last seen {ago(x.get('age_ms'))}; "
+                     + (f"fixed by {', '.join(fixes)}, verified APPLIED" if fixes else "no verified fix recorded")
+                     + f" (similarity {float(x['similarity']):.2f}, recency {float(x['recency']):.2f})")
+    return _envelope(r, tool="similar_incidents", via="db.idx.vector.queryNodes(Incident.embedding) → shared (:Symptom) "
+                     f"→ ranked by similarity and recency (w_recency {float(m['recall_recency_w'])})",
                      kind="recall", about=[a.id] + [x["id"] for x in r.rows],
                      summary=f"{len(r.rows)} structurally confirmed precedents: " + ", ".join(x["id"] for x in r.rows[:3]))
 
@@ -1752,6 +1784,173 @@ def run_cypher_readonly(query: str, failed_template: str, reason: str) -> dict[s
                      extra={"failed_template": a.failed_template, "reason": a.reason})
 
 
+# ------------------------------------------------------------------ on-call (M19), read-only
+class _OnCallNow(BaseModel):
+    at: int | None = Field(None, ge=0, le=4_102_444_800_000)
+
+
+@_guard
+def oncall_now(at: int | None = None) -> dict[str, Any]:
+    """Who is on call now (or at epoch-ms `at`): every team with the active person whose ON_CALL shift covers that
+    time and the shift window (Q-ONCALL-NOW). A team nobody covers comes back with person null."""
+    a = _OnCallNow(at=at)
+    t = int(time.time() * 1000) if a.at is None else int(a.at)
+    r = _ro().run("Q-ONCALL-NOW", {"now": t})
+    covered = sum(1 for x in r.rows if x["person"])
+    return _envelope(r, tool="oncall_now", via="(:Person)-[:ON_CALL {from, to}]->(:Team)", kind="people",
+                     about=[x["team"] for x in r.rows[:5]],
+                     summary=f"{covered} of {len(r.rows)} teams have someone on call at {t}", extra={"at": t})
+
+
+class _Pages(BaseModel):
+    status: str = Field("open", pattern=r"^(open|all|sent|delivery_failed|acked|escalated|resolved|superseded)$")
+    incident_id: str | None = Field(None, min_length=1, max_length=160)
+
+
+@_guard
+def pages(status: str = "open", incident_id: str | None = None) -> dict[str, Any]:
+    """The pager of this graph: pages to people about incidents (Q-PAGES), newest first, each with who it PAGES, its
+    status (sent, delivery_failed, acked, escalated, resolved, superseded), its ack deadline, who acknowledged it and the
+    page it ESCALATED_TO. status 'open' = still waiting for an ack; 'all' = every page."""
+    a = _Pages(status=status, incident_id=incident_id)
+    sts = [] if a.status == "all" else (["sent", "delivery_failed"] if a.status == "open" else [a.status])
+    r = _ro().run("Q-PAGES", {"incident": a.incident_id or "", "statuses": sts, "now": int(time.time() * 1000)})
+    overdue = sum(1 for x in r.rows if x["overdue"])
+    return _envelope(r, tool="pages", via="(:Page)-[:PAGES]->(:Person), (:Page)-[:FOR]->(:Incident)", kind="oncall",
+                     about=[x["id"] for x in r.rows[:5]],
+                     summary=f"{len(r.rows)} {a.status} page(s)" + (f", {overdue} past their ack deadline" if overdue else ""))
+
+
+class _Stats(BaseModel):
+    days: float = Field(7.0, gt=0, le=90)
+
+
+@_guard
+def oncall_stats(days: float = 7.0) -> dict[str, Any]:
+    """On-call numbers of this graph over the last `days`, computed in Cypher (Q-ONCALL-STATS): pages sent and people
+    paged, MTTA (first page to first ack, per incident) and MTTR (opened to RESOLVED, per incident), and incidents
+    resolved under a standing contract (nobody paged)."""
+    a = _Stats(days=days)
+    r = _ro().run("Q-ONCALL-STATS", {"since": int(time.time() * 1000) - int(a.days * 86_400_000)})
+    row = r.rows[0] if r.rows else {}
+    acked, resolved = int(row.get("acked_incidents") or 0), int(row.get("resolved_incidents") or 0)
+    mtta = round(float(row.get("ack_ms_sum") or 0) / acked) if acked else None
+    mttr = round(float(row.get("resolve_ms_sum") or 0) / resolved) if resolved else None
+    return _envelope(r, tool="oncall_stats", via="(:Page)-[:PAGES]->(:Person), (:Person)-[:ACKED]->(:Page), StageEvents",
+                     kind="oncall", about=[], summary=(f"{int(row.get('pages') or 0)} page(s) to {len(row.get('people') or [])} "
+                                                       f"person(s); MTTA {mtta} ms over {acked}, MTTR {mttr} ms over "
+                                                       f"{resolved}; {int(row.get('under_contract') or 0)} under contract"),
+                     extra={"days": a.days, "mtta_ms": mtta, "mttr_ms": mttr, "people_paged": len(row.get("people") or []),
+                            "handled_under_contract": int(row.get("under_contract") or 0)})
+
+
+# ------------------------------------------------------------------ learning (M21), read-only, from the on-call home graph
+class _Learned(BaseModel):
+    family_id: str = Id
+    now: int | None = Field(None, ge=0, le=4_102_444_800_000)
+
+
+def _learn_ro() -> tuple[RO, str]:
+    from ..memory import learning
+
+    b = context.current()
+    g = learning.home(b.tenant, ensure=False)
+    return RO(b.tenant, g), g
+
+
+@_guard
+def learned_preferences(family_id: str, now: int | None = None) -> dict[str, Any]:
+    """What the team taught Faultline about one incident family (the component its confirmed cause changed): per
+    action kind, the recency-decayed, Beta-smoothed preference from trusted approvals and rejections (Q-LEARN-PREF),
+    the guidelines rejections proposed and humans promoted (Q-LEARN-GUIDE), and exact fixes approved and verified
+    APPLIED often enough to suggest a standing approval (Q-LEARN-SUGGEST, minus those an active contract already covers,
+    Q-CONTRACT-MATCH). PLAN reads it to reorder options within one predicted-future class; it never adds, removes or
+    enables an option and never touches the gate."""
+    from ..memory import learning
+
+    a = _Learned(family_id=family_id, now=now)
+    t = int(time.time() * 1000) if a.now is None else int(a.now)
+    ro, g = _learn_ro()
+    hl = learning.half_life_ms()
+    k = int(weights()["learn"]["contract_suggest_k"])
+    prefs = ro.run("Q-LEARN-PREF", {"family": a.family_id, "now": t, "half_life_ms": hl})
+    guides = ro.run("Q-LEARN-GUIDE", {"family": a.family_id, "statuses": ["proposed", "active"]})
+    sugg = ro.run("Q-LEARN-SUGGEST", {"family": a.family_id, "k": k})
+    covered = [ro.run("Q-CONTRACT-MATCH", {"family": a.family_id, "kind": x["action_kind"], "params_hash": x["params_hash"],
+                                           "now": t}) for x in sugg.rows]
+    suggestions = [{**x, "covered": bool(c.rows), "covered_by": c.rows[0]["id"] if c.rows else None}
+                   for x, c in zip(sugg.rows, covered)]
+    res = _combine([prefs, guides, sugg, *covered], prefs.rows)
+    n_family = max([int(x.get("n_family") or 0) for x in prefs.rows] or [0])
+    return _envelope(res, tool="learned_preferences", kind="learned", about=[a.family_id],
+                     via=f"(:Preference)/(:Guideline) recomputed from trusted (:LearnEvent)s in {g}, decay half-life "
+                         f"{float(weights()['learn']['half_life_days']):g} d",
+                     summary=(f"{n_family} recorded choice(s) for {a.family_id}: " +
+                              ", ".join(f"{x['action_kind']} {float(x['pref']):.2f}" for x in prefs.rows[:3])
+                              if prefs.rows else f"nothing learned yet for {a.family_id}")
+                     + (f"; {len(guides.rows)} guideline(s)" if guides.rows else "")
+                     + (f"; {sum(1 for x in suggestions if not x['covered'])} contract suggestion(s)" if suggestions else ""),
+                     extra={"family": a.family_id, "now": t, "half_life_ms": hl, "home": g, "n_family": n_family,
+                            "guidelines": guides.rows, "suggestions": suggestions})
+
+
+class _LearnedTarget(BaseModel):
+    target_id: str = Id
+    now: int | None = Field(None, ge=0, le=4_102_444_800_000)
+
+
+@_guard
+def learned_responders(target_id: str, now: int | None = None) -> dict[str, Any]:
+    """Who actually responds when this component's incidents page (M21): active people with a RESPONDED edge to it,
+    recomputed from their trusted acknowledgements, approvals and verified fixes with recency decay (Q-LEARN-RESP),
+    each with its counts, mean ack delay and last response. ROUTE reads it: the top learned responder (learn.resp_min_n
+    responses) is paged in the first wave, before the rota, who is still paged."""
+    from ..memory import learning
+
+    a = _LearnedTarget(target_id=target_id, now=now)
+    t = int(time.time() * 1000) if a.now is None else int(a.now)
+    ro, g = _learn_ro()
+    r = ro.run("Q-LEARN-RESP", {"target": a.target_id, "now": t, "half_life_ms": learning.half_life_ms()})
+    return _envelope(r, tool="learned_responders", kind="people", about=[a.target_id] + [x["person"] for x in r.rows[:3]],
+                     via=f"(:Person)-[:RESPONDED]->(component) in {g}, recomputed from trusted acks, approvals and fixes",
+                     summary=("; ".join(f"{x['person']} {float(x['score']):.2f} ({x['n']} response(s))" for x in r.rows[:3])
+                              if r.rows else f"no learned responder for {a.target_id} yet"),
+                     extra={"target": a.target_id, "now": t, "home": g})
+
+
+class _Gaps(BaseModel):
+    status: str = Field("open", pattern=r"^(open|dismissed|all)$")
+
+
+@_guard
+def knowledge_gaps(status: str = "open") -> dict[str, Any]:
+    """What the company brain could not answer (M21): questions trusted users asked that were refused or found nothing
+    documented, how often and when (Q-KGAP-1), with the teams owning what each was about: who should document it."""
+    a = _Gaps(status=status)
+    ro, g = _learn_ro()
+    sts = ["open", "dismissed"] if a.status == "all" else [a.status]
+    r = ro.run("Q-KGAP-1", {"statuses": sts})
+    return _envelope(r, tool="knowledge_gaps", kind="knowledge", about=[x["id"] for x in r.rows[:5]],
+                     via=f"(:KnowledgeGap) recomputed from trusted unanswered brain questions in {g}",
+                     summary=f"{len(r.rows)} {a.status} knowledge gap(s)" + (
+                         f"; most asked: {r.rows[0]['text'][:60]!r} ({r.rows[0]['n']}×)" if r.rows else ""),
+                     extra={"home": g})
+
+
+@_guard
+def learned_state() -> dict[str, Any]:
+    """What Faultline has learned from the people using it (M21): how many trusted learning events of each kind, from
+    how many people (Q-LEARN-COUNTS), and the most recent ones (Q-LEARN-EVENTS). Read-only; trusted actors only."""
+    ro, g = _learn_ro()
+    counts = ro.run("Q-LEARN-COUNTS", {})
+    recent = ro.run("Q-LEARN-EVENTS", {})
+    res = _combine([counts, recent], recent.rows)
+    return _envelope(res, tool="learned_state", kind="learned", about=[x["id"] for x in recent.rows[:5]],
+                     via=f"(:LearnEvent) in {g}",
+                     summary=(", ".join(f"{x['kind']} {x['n']}" for x in counts.rows) or "nothing learned yet"),
+                     extra={"counts": counts.rows, "home": g})
+
+
 TOOLS: dict[str, Callable[..., dict]] = {f.__name__: f for f in (
     run_cypher_readonly, preflight_change, session_history, notify_set, alert_coverage, owner_at, component_timeline,
     beliefs_at, topology_at, knowledge_health, hidden_coupling, resolve_entity, people_who_worked_on, missing_guardrails, decisions_about,
@@ -1766,4 +1965,6 @@ TOOLS: dict[str, Callable[..., dict]] = {f.__name__: f for f in (
     owners_of, bus_factor, trace_decision, decision_check,
     change_details, diff_summary,
     graph_schema,
+    oncall_now, pages, oncall_stats,
+    learned_preferences, learned_responders, knowledge_gaps, learned_state,
 )}

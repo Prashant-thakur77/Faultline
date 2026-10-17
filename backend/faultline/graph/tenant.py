@@ -6,7 +6,7 @@ import hashlib
 import re
 
 TENANT_RE = re.compile(r"^[a-z][a-z0-9]{1,30}$")
-GRAPH_RE = re.compile(r"^(tenant|golden|audit|scratch|whatif|eval|smoke)_[a-z0-9_]{1,80}$")
+GRAPH_RE = re.compile(r"^(tenant|golden|audit|oncall|scratch|whatif|eval|smoke)_[a-z0-9_]{1,80}$")
 
 
 def check_tenant(t: str) -> str:
@@ -31,11 +31,12 @@ def _safe(kind: str, tenant: str, suffix: str) -> str:
 
 
 def graph_belongs_to(name: str, tenant: str) -> bool:
-    """True if `name` is one of tenant t's graphs (tenant_t, golden_t[_nomem], audit_t, scratch_t_*, whatif_t_*, eval_t_*)."""
+    """True if `name` is one of tenant t's graphs (tenant_t, golden_t[_nomem], audit_t, oncall_t, scratch_t_*,
+    whatif_t_*, eval_t_*)."""
     t = check_tenant(tenant)
     if not GRAPH_RE.fullmatch(name):
         return False
-    return bool(re.fullmatch(rf"(tenant|golden|audit)_{t}(_nomem)?|(scratch|whatif|eval)_{t}_[a-z0-9_]+", name))
+    return bool(re.fullmatch(rf"(tenant|golden|audit)_{t}(_nomem)?|oncall_{t}|(scratch|whatif|eval)_{t}_[a-z0-9_]+", name))
 
 
 def tenant_graph(t: str) -> str:
@@ -48,6 +49,12 @@ def golden_graph(t: str, nomem: bool = False) -> str:
 
 def audit_graph(t: str) -> str:
     return f"audit_{check_tenant(t)}"
+
+
+def oncall_graph(t: str) -> str:
+    """The tenant's durable on-call graph (M19): pages of real incidents, contracts, hand-offs and the bot's state. A
+    copy of golden_<t> made once (people, rota, components); re-arm and seeding never replace it."""
+    return f"oncall_{check_tenant(t)}"
 
 
 def scratch_graph(t: str, incident_id: str) -> str:

@@ -29,7 +29,7 @@ def human_fix_option(c: act.Ctx, *, change: str, by: str, why: str) -> dict:
     window = {r["deploy"] for r in c.ro().run("Q-SUS-2", {"onset": onset, "window_ms": 30 * 60_000}).rows}
     if change not in window:  # only a change that landed in this incident's 30-minute window
         raise ValueError(f"{change} did not land in {c.inc}'s 30-minute window before onset")
-    if not c.ro().run("Q-APPROVER-1", {"person": by, "component": ""}).rows:
+    if not c.ro().run("Q-PERSON-1", {"person": by}).rows:
         raise ValueError(f"{by!r} is not an active person in this tenant's graph")
     # escalated to a human; accepted without confidence (stage GATE: no plan was made); or awaiting approval. Never a
     # resolved, no-incident or failed one. (GATE was added after the first learning-eval run, where 6 not-confident

@@ -36,6 +36,7 @@ memory:
   half_life_days: 30    # A month-old incident keeps half its salience unless it led to an applied fix.
   consolidate_min: 2    # Two applied fixes in one family is the smallest evidence of a repeatable procedure.
   find_min_similarity: 0.65  # On seeded text, unrelated queries top out near 0.58 cosine and real matches start near 0.69.
+  recall_recency_w: 0.2  # Recall (Q-MEM-1) ranks its structurally confirmed precedents by 0.8 × similarity + 0.2 × recency (half_life_days): among incidents that look alike, the recent one comes first, but recency alone cannot lift a precedent more than 0.2 above a closer match (0 = similarity only, the order before M21).
 remedy:
   min_n: 2              # A fix kind needs two recorded outcomes on similar incidents before its history may reorder the plan (same bar as consolidate_min).
 knowledge:
@@ -71,9 +72,39 @@ engine:
   gc_touched_ttl_min: 30  # A run graph with anything recorded in the last 30 minutes (stage events, engine clock) is never collected: a visitor reading or approving it is still there.
   gc_open_max_idle_h: 24  # A run graph whose incident is in a non-terminal stage (awaiting approval, executing…) is kept until it has been idle for 24 hours: long enough for a human to come back to it, short enough that abandoned demo runs do not fill the engine.
   gc_every_runs: 5      # The API collects old run graphs at startup and before every 5th scenario run it starts (a list of graph names: cheap next to the copy a run makes).
+  query_mem_capacity_mb: 256  # FalkorDB stops any single query that allocates more than 256 MB (GRAPH.CONFIG QUERY_MEM_CAPACITY, set by scripts/configure_falkordb.py and in FALKORDB_ARGS): one runaway query, from guarded text2cypher, the hosted MCP or the official FalkorDB MCP server's raw read-only Cypher, can no longer take the 3.5 GB engine down. The product's heaviest templates use a few MB at demo scale; the cap is about 7% of maxmemory, so a handful of worst-case queries still fit side by side.
+  waitaof_ms: 5000      # After the success write-back, WAITAOF waits up to 5 s for FalkorDB to fsync it to its append-only file before VERIFY counts the re-read, so "verified n/n" means "on disk". Measured on the pinned engine (appendfsync everysec): about 1 s (it waits for the next once-a-second fsync); 5 s leaves room for a loaded host. A timeout or an error is UNKNOWN (escalated to a human), never a green RESOLVED.
 actions:
   intent_lease_s: 300   # An execute job leases its intent for 5 minutes and renews it before every step (and while it waits for the warehouse); the reconciler skips a leased intent while the lease runs and its holder's process is alive. Longer than any one step (each GitHub call times out after 20 s, the verification simulation takes seconds).
   boot_heartbeat_s: 10  # Every process that can hold an intent lease records a heartbeat of its boot in the audit graph this often (the API from a background thread, a reconciler before each pass).
   boot_stale_s: 30      # A boot without a heartbeat for 30 s (three missed beats) is dead: its intent leases are taken over at once instead of after intent_lease_s. A cleanly stopped API ends its boot and is taken over immediately.
   reconcile_every_s: 60 # The API reconciles every graph with PENDING intents this often (and at startup), so a crashed execute job's intent is settled about a minute after its process died, not only at the next approval. The first periodic pass runs boot_stale_s + boot_heartbeat_s after startup, when a killed predecessor's heartbeat is stale.
   reconcile_grace_s: 120  # An intent that was never leased (a direct caller outside the API) is left to its caller for 2 minutes before a reconciler may take it.
+oncall:
+  ack_window_min: {urgent: 5, normal: 15}  # An urgent page (the obligation clock says a promise breaks within page_within_min, or it cannot tell) must be acknowledged in 5 minutes before the next person is paged, the common PagerDuty default for high urgency; a normal page waits 15, one SRE handover call's length.
+  demo_ack_window_s: 60    # FAULTLINE_ONCALL_DEMO_WINDOWS (a live demo only): one minute per escalation step, so a visitor sees the escalation happen while they watch.
+  tick_every_s: 20         # The escalation tick runs every 20 s: at most a third of the shortest demo window late, and three reads per run graph per minute.
+  max_escalations: 6       # A page escalates at most 6 times (the on-call, then up to five people of the escalation order); past that it is marked exhausted for a human to pick up, never re-paged forever.
+  contract_offer_ttl_s: 900  # A contract offer (step 1) must be approved within 15 minutes, Beacon's approval window: a scope chosen and left open is not consent.
+  contract_max_uses: 10    # A standing approval covers at most 10 repeats: past that the fault is a pattern to fix, not to keep containing.
+  contract_max_days: 30    # A standing approval lasts at most 30 days (about four weekly rota shifts), so it is re-granted by someone on call then instead of outliving everyone who agreed to it.
+  telegram_rate_per_min: 20  # One chat may send the bot 20 updates a minute (a person tapping and typing on a phone stays far below it); past that it is told to slow down and nothing runs.
+  telegram_mute_max_min: 720  # /mute silences informational notices for at most 12 hours, one long shift; urgent pages are never muted.
+  delivery_per_hour: {email: 20, telegram: 60, webhook: 60, pagerduty: 30}  # Hourly cap of MESSAGES per external channel (a counter in the on-call graph; one coalesced wave = one message): a real on-call night pages a handful of people a few times; 20 emails stays inside the SES sandbox's 200 a day, and anything above these caps is an incident storm the in-app pager still shows in full.
+  recipient_cooldown_s: 20  # One person gets at most one buzz per channel every 20 s: a burst of incidents is one buzz, not a dozen; a combined message goes out when at least one person it is for is outside the window; every page stays in the in-app pager.
+  delivery_queue: 64        # At most 64 deliveries wait in the background pool; past that a page is recorded "delivery queue full" and stays in-app (never an unbounded backlog).
+  ack_token_ttl_h: 24       # A page's signed ack link works for 24 hours, past any shift that could have received it.
+  bot_update_ttl_h: 48      # Processed Telegram updates are kept 48 hours (Telegram stops redelivering an update after 24), then pruned by the tick.
+learn:
+  half_life_days: 14      # A team's choice, acknowledgement or fix two weeks ago counts half as much as one today (about two weekly rota cycles): a habit the team dropped stops steering the plan within a month.
+  w_pref: 0.5             # Within one predicted-future class the plan order blends the verified-outcome rate (Q-REM-1, smoothed) and the team's recent choices (Preference, smoothed the same way) with equal weight: both are in [0, 1] and neither alone decides.
+  pref_min_n: 3           # A family's choices reorder its plan only once it has three recorded choices (approvals or rejections, any kind): one or two are a person's one-off, three is the smallest repeated pattern.
+  w_ack: 1.0              # Each acknowledged page counts as one response to the family's component.
+  w_approve: 1.0          # Each approval of a fix counts as one response (the approver took the incident).
+  w_fix: 1.0              # Each approved fix verified APPLIED counts as one more response (the person's fix worked).
+  resp_min_n: 2           # A person who responded to a family twice (acknowledged, approved or fixed) is paged in the first wave for it: once could be chance, twice is a pattern.
+  resp_first_wave: 1      # At most one learned responder joins the first wave, before the rota: learning adds the person who answers and never removes anyone the rota pages.
+  w_resp: 0.5             # who_fixes is shown blended: 0.5 × HarmonicCentrality (as a share of the top score) + 0.5 × response score s / (s + resp_sat).
+  resp_sat: 2.0           # A decayed response score s maps to s / (s + 2): two recent responses give 0.5, so one person's long history cannot dominate.
+  contract_suggest_k: 2   # The plan suggests a standing approval once the same exact fix (family, action, parameters) was approved and verified APPLIED on two incidents (the same bar as memory.consolidate_min); never before.
+  forget_pages: 20        # A person's learned influence is read for the forget dry run in at most 20 keyset pages of 100 events; more fails loudly instead of approving a partial list.

@@ -13,6 +13,12 @@ def render(result: dict, ui_base: str = "") -> str | None:
         return None
     a = result.get("assessment") or {}
     lines = [f"### Faultline preflight: {ICON[v]} (risk {result['risk']})", ""]
+    for f in (result.get("freeze") or {}).get("rows") or []:   # M20 #6: decided in FalkorDB from the wall clock
+        days = {1: "Monday", 2: "Tuesday", 3: "Wednesday", 4: "Thursday", 5: "Friday", 6: "Saturday", 7: "Sunday"}
+        lines.append(f"- **Change freeze {f['policy']}** ({f['effect']}): {f['title']} on {f['component']}. FalkorDB "
+                     f"evaluated the merge time as {days.get(f['day'], f['day'])} {f['hour']:02d}:{f['minute']:02d} local "
+                     f"(UTC{'+' if f['utc_offset_min'] >= 0 else '-'}{abs(f['utc_offset_min']) // 60:02d}:"
+                     f"{abs(f['utc_offset_min']) % 60:02d}); decided by {f.get('decided_by') or '?'} ({f['url']})")
     for d in result.get("decision_links") or []:
         lines.append(f"- **Contradicts {d['id']}**: {d['title']} ([decision]({d['url']}))")
     for r in rev:

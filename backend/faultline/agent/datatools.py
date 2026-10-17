@@ -46,6 +46,20 @@ def column_range(column_id: str) -> tuple[float, float]:
     return float(rows[0]["min"]), float(rows[0]["max"])
 
 
+def engine_band(template: str, params: dict[str, Any]) -> tuple[float, dict[str, Any]]:
+    """The gate's band computed IN FalkorDB (M20 #4): Q-BASE-BAND (a healthy baseline series) or Q-MW-BAND (a
+    component's pre-onset error-rate windows) aggregate avg / stDevP / percentileCont over the nonzero windows and return
+    max(floor, 1 + k·σ/μ) (floor when fewer than two). The same rule as `band_from`, which stays the reference (and the
+    equality oracle in tests/live/test_band_in_engine.py); only the 4-place rounding stays in Python (Cypher's round
+    breaks ties away from zero, Python's to even). Returns (band, what the engine reported, for the evidence)."""
+    g = weights()["gate"]
+    r = _ro().run(template, {**params, "k": float(g["band_k"]), "floor": float(g["band_floor"])})
+    row = r.rows[0]
+    # (no timing in it: the evidence id hashes the payload, and the same observation must keep the same id)
+    return round(float(row["band"]), 4), {"template": template, "n": row["n_nz"], "mu": row["mu"], "sd": row["sd"],
+                                          "p95": row["p95"]}
+
+
 def band_from(values: list[float]) -> float:
     """band = max(floor, 1 + k·σ/μ) over a baseline window (weights.yaml gate.band_k / band_floor)."""
     g = weights()["gate"]
@@ -111,7 +125,7 @@ def get_metric_history() -> dict:
     """The executive KPI vs its trailing baseline (anomaly ratio, band from baseline variation)."""
     t0 = time.perf_counter()
     snap = warehouse.get_metric_snapshot()
-    band = band_from(baseline_series(FACT_TABLE, "revenue_usd"))
+    band, _ = engine_band("Q-BASE-BAND", {"target": FACT_TABLE, "metric": "revenue_usd"})   # in FalkorDB (M20 #4)
     payload = snap.model_dump()
     ev = _record("get_metric_history", "metric", payload, [KPI_ID, KPI_TABLE],
                  f"KPI {snap.kpi_day}: {snap.revenue:,.0f} vs expected {snap.expected_revenue:,.0f} (×{snap.anomaly_ratio:.2f}, band {band})",
@@ -132,7 +146,7 @@ def compare_to_baseline(last_days: int = 10) -> dict:  # noqa: D401
     last_days = max(1, min(int(last_days), 30))
     t0 = time.perf_counter()
     res = warehouse.compare_to_baseline(last_days=last_days)
-    band = band_from(baseline_series(FACT_TABLE, "revenue_usd"))
+    band, _ = engine_band("Q-BASE-BAND", {"target": FACT_TABLE, "metric": "revenue_usd"})   # in FalkorDB (M20 #4)
     ratios = [c["revenue_ratio"] for c in res["comparisons"] if c["revenue_ratio"]]
     worst = max(ratios, key=lambda r: abs(__import__("math").log(r))) if ratios else None
     anomalous_days = [c["day"] for c in res["comparisons"] if c["revenue_ratio"] and _outside(c["revenue_ratio"], band)]
@@ -240,6 +254,16 @@ def run_invariants() -> dict:
     return {"evidence_id": ev, **payload}
 
 
+def error_rate_anomalous(v: float, b: float, band: float) -> bool:
+    """metric_window's rule: at least gate.err_abs_min above the baseline AND outside the baseline band. A rise from an
+    exactly-zero baseline is outside every band (its ratio is infinite). FaultBench-OTel found this on real telemetry:
+    healthy services there report exactly 0 errors (the simulator never does), and the old rule (`bool(ratio) and …`,
+    ratio None when the baseline is 0) called any rise from zero normal, so the negative proof accepted NO_INCIDENT."""
+    if v - b < float(weights()["gate"]["err_abs_min"]):
+        return False
+    return True if b <= 0 else _outside(v / b, band)
+
+
 @_tool
 def metric_window(target_id: str, onset_ms: int) -> dict:
     """Error rate of a service/datastore around onset vs its pre-onset baseline (telemetry read from the graph).
@@ -256,17 +280,20 @@ def metric_window(target_id: str, onset_ms: int) -> dict:
     if not base or not now:
         raise KeyError(f"no telemetry windows for {target_id} around onset")
     b, v = st.fmean(base), st.fmean(now)
-    band = band_from(base)
+    # the band over the same baseline windows, computed in FalkorDB (Q-MW-BAND; M20 #4)
+    band, band_engine = engine_band("Q-MW-BAND", {"target": target_id, "metric": "error_rate",
+                                                  "since": onset - 30 * 60_000, "until": onset - 5 * 60_000})
     ratio = v / b if b else None
-    g = weights()["gate"]
-    anomalous = bool(ratio) and _outside(ratio, band) and (v - b) >= float(g["err_abs_min"])
+    anomalous = error_rate_anomalous(v, b, band)
+    # observed windows (faultline.ingest.observed) name their monitoring source; simulated ones carry none
+    src = next((r["source"] for r in rows if r.get("source")), None)
+    src, via = (src, "observed telemetry ingested into the graph") if src else ("simulator", "servicegraph (simulated)")
     payload = {"target": target_id, "baseline": round(b, 5), "now": round(v, 5), "ratio": round(ratio, 3) if ratio else None,
-               "band": band, "series": [[r["minute"], r["value"]] for r in rows][-12:]}
+               "band": band, "band_engine": band_engine, "series": [[r["minute"], r["value"]] for r in rows][-12:]}
     ev = _record("metric_window", "error_rate", payload, [target_id],
                  f"{target_id} error rate {v:.2%} vs baseline {b:.2%} (×{ratio:.1f}, band {band})" if ratio else f"{target_id} error rate {v:.2%}",
                  {"target_id": target_id, "onset_ms": onset}, (time.perf_counter() - t0) * 1000, value=round(v, 5),
-                 baseline=round(b, 5), ratio=ratio, band=band, transport="servicegraph (simulated)", anomalous=anomalous,
-                 source="simulator")
+                 baseline=round(b, 5), ratio=ratio, band=band, anomalous=anomalous, source=src, transport=via)
     return {"evidence_id": ev, **payload, "anomalous": anomalous}
 
 

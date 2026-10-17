@@ -13,8 +13,8 @@
 | GATE | `confirm_root_cause`, `declare_no_incident`, `reachable_from_changes`, `alert_coverage`, `residue_check` |
 | CONTRADICTION | `decision_check`, `trace_decision` |
 | CONTAIN | `containment_cut`, `whatif`, `futures`, `connectivity_check`, `blast_radius` |
-| ROUTE | `who_fixes`, `owners_of`, `bus_factor`, `escalation_tree`, `notify_set`, `owner_at`, `obligation_clock` |
-| PLAN | `propose_plan`, `remedy_stats` |
+| ROUTE | `who_fixes`, `owners_of`, `bus_factor`, `escalation_tree`, `notify_set`, `owner_at`, `obligation_clock`, `learned_responders` |
+| PLAN | `propose_plan`, `remedy_stats`, `learned_preferences` |
 | AWAITING_APPROVAL | — |
 | EXECUTE | `execute_action` |
 | VERIFY | `verify_action` |

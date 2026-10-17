@@ -180,10 +180,12 @@ def reconcile_one(it: dict, tenant: str, graph: str, hub: gh.GitHub, world: Worl
 
 
 def reconcile(tenant: str, graph: str, hub: gh.GitHub, world: World, *, older_than_ms: int | None = None,
-              role: str = "reconciler", warehouse_wait_s: float = 30.0) -> list[dict]:
+              role: str = "reconciler", warehouse_wait_s: float = 30.0, oncall_home: str | None = None) -> list[dict]:
     """Each intent on its own: one stuck intent never blocks the others (its failure is recorded on its incident).
     `older_than_ms`: the grace for intents that were never leased (direct callers); default weights.yaml
-    actions.reconcile_grace_s. Leased intents are taken when their lease expired or their boot is dead (engine clock)."""
+    actions.reconcile_grace_s. Leased intents are taken when their lease expired or their boot is dead (engine clock).
+    `oncall_home` (the API passes the tenant graph): an intent settled without a verified, resolved fix pages a human
+    (oncall.page_after_approval, idempotent per outcome); None keeps paging off (benches, direct callers)."""
     from ..public_errors import client_text
 
     grace = _grace_ms() if older_than_ms is None else int(older_than_ms)
@@ -232,6 +234,13 @@ def reconcile(tenant: str, graph: str, hub: gh.GitHub, world: World, *, older_th
                 writes.release_intent(g, aid=it["action"], owner=owner)
             except Exception:  # noqa: BLE001 - the lease then simply expires
                 pass
+        if oncall_home is not None and out and out[-1].get("verdict") is not None:
+            try:
+                from . import oncall
+
+                oncall.page_after_approval(tenant, graph, it["incident"], it["run"], it["action"])
+            except Exception as e:  # noqa: BLE001 - the stage still says it; logged loudly
+                log.error("paging after reconciling %s/%s failed: %s", it["incident"], it["action"], e)
     return out
 
 

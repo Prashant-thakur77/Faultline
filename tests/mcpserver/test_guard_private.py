@@ -81,6 +81,7 @@ def test_run_guarded_applies_the_policy_to_params_and_rows(monkeypatch):
 
     monkeypatch.setattr(ro_mod.client, "ro_graph", lambda tenant, graph: _G())
     monkeypatch.setattr(ro_mod, "to_plain", lambda v: v)
+    monkeypatch.setattr(G, "allowed_functions", lambda fetch: frozenset())   # M20 #7: these queries call no function
     r = ro_mod.RO("acme")
     with pytest.raises(G.GuardError):
         r.run_guarded("MATCH (n:Service) WHERE n.id = $x RETURN n", {"x": "Session"})

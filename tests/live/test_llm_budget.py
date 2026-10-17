@@ -130,7 +130,7 @@ def _fake_groups(monkeypatch, tag: str, outcomes: list):
     p = types.SimpleNamespace(graph=graph, tenant="acme", groups=grps, run_id=grps[0].run_id,
                               incident_id=grps[0].incident_id, onset_ms=0, scenario={})
 
-    async def fake_all(p_, inv, on_open=None, on_done=None, on_start=None):
+    async def fake_all(p_, inv, on_open=None, on_done=None, on_start=None, **_kw):  # M19: + on-call home and trust
         on_open(1, grps)
         out = []
         for grp, outcome in zip(grps, outcomes):

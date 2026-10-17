@@ -49,6 +49,23 @@ CREATE INDEX FOR (n:StageEvent) ON (n.id)
 CREATE INDEX FOR (n:SLO) ON (n.id)
 CREATE INDEX FOR (n:Customer) ON (n.id)
 CREATE INDEX FOR (n:IntentExemplar) ON (n.id)
+CREATE INDEX FOR (n:Page) ON (n.id)
+CREATE INDEX FOR (n:Contract) ON (n.id)
+CREATE INDEX FOR (n:ContractUse) ON (n.id)
+CREATE INDEX FOR (n:Handoff) ON (n.id)
+CREATE INDEX FOR (n:BotUpdate) ON (n.id)
+CREATE INDEX FOR (n:BotProposal) ON (n.id)
+CREATE INDEX FOR (n:BotChat) ON (n.id)
+CREATE INDEX FOR (n:DeliveryBudget) ON (n.id)
+CREATE INDEX FOR (n:PageGraph) ON (n.id)
+CREATE INDEX FOR (n:LearnEvent) ON (n.id)
+CREATE INDEX FOR (n:LearnEvent) ON (n.family)
+CREATE INDEX FOR (n:LearnEvent) ON (n.person)
+CREATE INDEX FOR (n:Preference) ON (n.id)
+CREATE INDEX FOR (n:Preference) ON (n.family)
+CREATE INDEX FOR (n:Guideline) ON (n.id)
+CREATE INDEX FOR (n:KnowledgeGap) ON (n.id)
+CREATE INDEX FOR (n:Policy) ON (n.id)
 // Full-text (DDL form only; never on an attribute that also has a range index, 6.0 #3248)
 CREATE FULLTEXT INDEX FOR (n:Service) ON (n.name)
 CREATE FULLTEXT INDEX FOR (n:Table) ON (n.name)
@@ -57,8 +74,10 @@ CREATE FULLTEXT INDEX FOR (n:Decision) ON (n.title)
 CREATE FULLTEXT INDEX FOR (n:Postmortem) ON (n.summary)
 CREATE FULLTEXT INDEX FOR (n:Doc) ON (n.title)
 CREATE FULLTEXT INDEX FOR (n:IntentExemplar) ON (n.text)
-// Vector (384-dim cosine; written only via vecf32(); query score is a distance)
-CREATE VECTOR INDEX FOR (n:Incident) ON (n.embedding) OPTIONS {dimension:384, similarityFunction:'cosine'}
-CREATE VECTOR INDEX FOR (n:Runbook) ON (n.embedding) OPTIONS {dimension:384, similarityFunction:'cosine'}
-CREATE VECTOR INDEX FOR (n:Postmortem) ON (n.embedding) OPTIONS {dimension:384, similarityFunction:'cosine'}
-CREATE VECTOR INDEX FOR (n:IntentExemplar) ON (n.embedding) OPTIONS {dimension:384, similarityFunction:'cosine'}
+// Vector (384-dim cosine; written only via vecf32(); query score is a distance). HNSW options measured by
+// evals/vector_recall.py (M20 #3): recall@10 against an exact scan 1.0 on every set (default M 16 / efRuntime 10: 0.9767).
+// apply_schema rebuilds an index whose options differ (and waits until it is OPERATIONAL).
+CREATE VECTOR INDEX FOR (n:Incident) ON (n.embedding) OPTIONS {dimension:384, similarityFunction:'cosine', M:32, efConstruction:400, efRuntime:100}
+CREATE VECTOR INDEX FOR (n:Runbook) ON (n.embedding) OPTIONS {dimension:384, similarityFunction:'cosine', M:32, efConstruction:400, efRuntime:100}
+CREATE VECTOR INDEX FOR (n:Postmortem) ON (n.embedding) OPTIONS {dimension:384, similarityFunction:'cosine', M:32, efConstruction:400, efRuntime:100}
+CREATE VECTOR INDEX FOR (n:IntentExemplar) ON (n.embedding) OPTIONS {dimension:384, similarityFunction:'cosine', M:32, efConstruction:400, efRuntime:100}

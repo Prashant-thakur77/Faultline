@@ -15,7 +15,7 @@ Rules enforced at load time (TemplateLintError, fail loudly):
 * `ORDER BY` present unless `returns: single-row` (deterministic demos);
 * every variable-length pattern has an upper bound (`*1..6`, never `*`, `*1..` or `*{…}` unbounded);
 * `CALL` only for `{algo:<key>}` (resolved from the registry), db.idx.fulltext/vector.queryNodes, the
-  schema-introspection procedures db.meta.stats / db.indexes, and read subqueries `CALL { … }` (whose inner CALLs
+  schema-introspection procedures db.meta.stats / db.indexes / db.constraints, dbms.functions, and read subqueries `CALL { … }` (whose inner CALLs
   obey the same allowlist);
 * no write clauses and no literal `algo.` names;
 * `WHERE` inside an `OPTIONAL MATCH` clause must be marked `// lint: optional-where-ok`;
@@ -45,11 +45,19 @@ _WRITE = re.compile(r"\b(CREATE|MERGE|SET|DELETE|DETACH|REMOVE|DROP|FOREACH|LOAD
 _CALL = re.compile(r"\bCALL\s+([^\s(]+)", re.I)
 # index queries, plus the read-only schema-introspection procedures (mode READ in dbms.procedures on 6.0.2;
 # verified under GRAPH.RO_QUERY by smoke item 24)
-_ALLOWED_CALLS = {"db.idx.fulltext.querynodes", "db.idx.vector.querynodes", "db.meta.stats", "db.indexes"}
+_ALLOWED_CALLS = {"db.idx.fulltext.querynodes", "db.idx.vector.querynodes", "db.meta.stats", "db.indexes",
+                  # M20: the engine's own catalogues (read-only procedures): functions (text2cypher allow-list) and
+                  # constraints (status in /api/status and faultline://schema)
+                  "dbms.functions", "db.constraints"}
 _AGG = re.compile(r"\b(collect|count|sum|min|max|avg)\s*\(", re.I)
 _COMP = re.compile(r"\[\s*(?:\w+\s*=\s*)?\((?:[^\[\]]|\[[^\[\]]*\])*\|")       # [(…) | , [ (…) | , [p = (…) |
 _NAMED_REL = re.compile(r"-\[\s*(\w+)\s*[:\]*{]")                                  # -[r:T], -[r], -[r*1..2]
 _CLAUSE = re.compile(r"\b(OPTIONAL\s+MATCH|MATCH|WITH|RETURN|UNWIND|CALL|ORDER\s+BY)\b", re.I)
+
+
+# which of a tenant's durable graphs a template is read from (`// home:`): tenant_<t> (default), oncall_<t> (pages,
+# contracts, hand-offs, what Faultline learned) or audit_<t> (the run index, receipts, the LLM ledger)
+HOMES = ("tenant", "oncall", "audit")
 
 
 class TemplateLintError(ValueError):
@@ -70,6 +78,8 @@ class Template:
     limit: int
     path: str
     seen: tuple[str, ...] = field(default_factory=tuple)
+    internal: bool = False   # `// internal: true`: product-only (Telegram ids, consents, offers); never run for a client
+    home: str = "tenant"     # `// home: oncall|audit`: the tenant graph the product reads it from (a re-run defaults to it)
 
 
 def mask_strings(s: str) -> str:
@@ -241,6 +251,19 @@ def lint(tid: str, raw_body: str, returns: str, seen: tuple[str, ...]) -> tuple[
             if hit:
                 raise TemplateLintError(f"{tid}: a MATCH after a CALL subquery re-uses {', '.join(hit)} bound before it "
                                         "(engine bug #19 matches every node instead); MATCH first, then the subqueries")
+    # FalkorDB 6.0.2: a MATCH whose WHERE holds a pattern comprehension, directly followed by a MATCH that uses none of
+    # its variables, drops the row (docs/upstream/20, found writing the on-call escalation); MATCH the other first, or
+    # move the comprehension into a WITH
+    for i, (kw, a, b) in enumerate(spans):
+        if kw == "MATCH" and i + 1 < len(spans) and spans[i + 1][0] == "MATCH":
+            parts = re.split(r"\bWHERE\b", n[a:b], maxsplit=1, flags=re.I)
+            if len(parts) == 2 and _COMP.search(parts[1]):
+                bound = set(re.findall(r"[(\[]\s*([A-Za-z_]\w*)", parts[0]))
+                nxt = n[spans[i + 1][1]:spans[i + 1][2]]
+                if not any(re.search(rf"\b{re.escape(v)}\b", nxt) for v in bound):
+                    raise TemplateLintError(f"{tid}: a MATCH whose WHERE holds a pattern comprehension is followed by a "
+                                            "MATCH that uses none of its variables (engine bug #20 drops the row); MATCH "
+                                            "the other first, or move the comprehension into a WITH")
     # FalkorDB 6.0.2: right after a MATCH, a node's inline map reading a variable's property ((a {id: p.src})) is silently
     # empty without an index and fails with an index (docs/upstream/18); use WHERE, or put a WITH between the clauses
     if inline_map_after_match(n):
@@ -269,11 +292,15 @@ def parse(path: Path) -> Template:
     if any(ln.strip().startswith("//") and re.search(r"['\"]", ln) for ln in body_lines):
         raise TemplateLintError(f"{tid}: quote character in a comment line (the comment stripper would mis-mask the code)")
     returns = meta.get("returns", "rows")
+    home = meta.get("home", "tenant").strip().lower()
+    if home not in HOMES:
+        raise TemplateLintError(f"{tid}: home must be one of {', '.join(HOMES)} (the tenant graph it is read from)")
     seen = tuple(c.strip() for c in meta.get("seen", "").split(",") if c.strip())
     code, limit = lint(tid, "\n".join(body_lines), returns, seen)
     display = _ALGO_PH.sub(lambda m: registry.name(m.group(1)), code)
     text = _LIMIT_END.sub(f"LIMIT {limit + 1}", display)
-    return Template(tid, meta.get("purpose", ""), returns, text, display, limit, path.name, seen)
+    return Template(tid, meta.get("purpose", ""), returns, text, display, limit, path.name, seen,
+                    meta.get("internal", "").strip().lower() == "true", home)
 
 
 @lru_cache(maxsize=1)

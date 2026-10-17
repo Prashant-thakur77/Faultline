@@ -1,8 +1,10 @@
 """Seed golden graphs and tenant graphs (idempotent): `make seed [TENANT=acme]`.
 
 golden_<t> is built with UNWIND … MERGE (batches of 300) from deterministic ingest bundles, gets
-the schema (indexes + Intent.idem unique constraint), normalised flow properties and finally
-(:Meta {ready:true, data_hash}). If golden_<t> already holds the same data_hash it is reused.
+the schema (indexes + the engine-enforced constraints of graph/constraints.py), normalised flow properties and finally
+(:Meta {ready:true, data_hash}). If golden_<t> already holds the same data_hash it is reused (the schema, the
+constraints and the vector-index options are re-applied to it). The tenant's policies (data/gen/policies) are merged in
+last.
 Then tenant_<t> = GRAPH.COPY golden_<t> (re-armed). Prints node/edge counts.
 """
 
@@ -18,6 +20,7 @@ import time
 from faultline.graph import client, copy as gcopy, writes
 from faultline.graph.algo import registry
 from faultline.graph.tenant import golden_graph, tenant_graph
+from faultline.ingest import policies
 from faultline.ingest.bundle import Bundle
 
 sys.path.insert(0, str(__import__('pathlib').Path(__file__).resolve().parent))
@@ -108,6 +111,8 @@ def seed(tenant: str, no_memory: bool = False, force: bool = False, only: list[s
         meta = g.ro_query("MATCH (m:Meta) RETURN m.ready, m.data_hash LIMIT 1").result_set
         reused = bool(meta and meta[0][0] and meta[0][1] == h)
     info: dict = {"golden": golden, "data_hash": h[:12], "reused": reused}
+    if reused:  # an index added to schema.cypher since the golden graph was built (M19: Page, Contract, …) lands here
+        info["schema"] = writes.apply_schema(g)   # idempotent: "already indexed" is tolerated
     if not reused:
         gcopy.delete_if_exists(db, golden)
         g = db.select_graph(golden)
@@ -117,6 +122,9 @@ def seed(tenant: str, no_memory: bool = False, force: bool = False, only: list[s
 
             info["derived_runbooks"] = len(consolidate_all(tenant, golden))
         writes.mark_ready(g, h, registry.resolved_meta().get("engine") or "?", tenant)
+    # company rules as data (M20 #6): applied AFTER every other node and edge, on a new or a reused golden graph alike,
+    # so no existing node or edge id moves (some algorithms break ties by id); idempotent MERGE
+    info["policies"] = policies.apply(g, tenant)
     if not no_memory:
         info["copy"] = gcopy.rearm(db, tenant, reason="seed")
     info["counts"] = writes.counts(db.select_graph(tenant_graph(tenant) if not no_memory else golden))

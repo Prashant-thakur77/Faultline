@@ -19,3 +19,8 @@ class GraphNotReady(GraphError):
 
 class GraphQueryError(GraphError):
     """The engine rejected the query (syntax, permission, write under RO_QUERY)."""
+
+
+class GraphMemoryCapExceeded(GraphError):
+    """FalkorDB stopped the query at its per-query memory cap (QUERY_MEM_CAPACITY, M20 #2). Like a timeout it is never
+    "0 rows": the caller abstains or reports it, and the engine stays up for every other query."""

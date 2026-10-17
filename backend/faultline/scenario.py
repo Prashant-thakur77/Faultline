@@ -398,7 +398,13 @@ def prepare(sid: str, tag: str | None = None, set_mode: bool = True, graph: str 
         act.set_world_flag(act.Ctx(tenant, graph, "", ""), gh.client(graph), flag, state, why=f"scenario {sid}: world change")
     for f in s.get("facts", []):
         writes.assert_change_fact(g, change=f["change"], key=f["key"], value=f["value"], about=f["about"], file=f.get("file", ""))
-    if s.get("effects") or not s.get("pipeline_mode"):  # service scenarios always get telemetry (healthy if no effects)
+    if s.get("observed"):  # telemetry measured on a real system (evals/faultbench_otel.py): ingested, never simulated
+        from .ingest.observed import write_error_windows
+
+        obs = s["observed"]
+        write_error_windows(g, RO(tenant, graph), rows=obs["rows"], onset_ms=onset, source=obs["source"],
+                            query=obs.get("query", ""), run=f"ingest-{sid.lower()}-{tag}")
+    elif s.get("effects") or not s.get("pipeline_mode"):  # service scenarios always get telemetry (healthy if no effects)
         from .sim.telemetry import simulate
 
         effects = effects_of(s, onset)
@@ -518,12 +524,13 @@ async def run_all(sid: str, investigator, tag: str | None = None, keep: bool = T
     return p, results
 
 
-async def investigate_all(p: Prepared, investigator, on_open=None, on_done=None, on_start=None) -> list:
+async def investigate_all(p: Prepared, investigator, on_open=None, on_done=None, on_start=None,
+                          oncall_home: str | None = None, oncall_external: bool = False) -> list:
     """run_all's loop on an already prepared scenario: each onset incident in opening order, then each later intake
     round (whose alerts attach or open new incidents, investigated in turn). `on_open(round, [Opened])` runs when a
     round's incidents exist (before any of them is investigated), `on_start(Opened)` just before each one (it may
     raise to stop the loop, e.g. no LLM budget left), `on_done(Opened, RunResult)` after each one: the API indexes
-    every incident's run through them."""
+    every incident's run through them. `oncall_home`: page humans and honour standing contracts (agent.loop)."""
     from .agent.loop import run_incident
 
     results = []
@@ -538,7 +545,8 @@ async def investigate_all(p: Prepared, investigator, on_open=None, on_done=None,
                 on_start(grp)
             res = await run_incident(tenant=p.tenant, incident_id=grp.incident_id, onset_ms=grp.onset_ms or p.onset_ms,
                                      symptoms=grp.symptoms, investigator=investigator, graph=p.graph,
-                                     run_id=grp.run_id, window_min=p.scenario.get("window_min"))
+                                     run_id=grp.run_id, window_min=p.scenario.get("window_min"), oncall_home=oncall_home,
+                                     oncall_external=oncall_external)
             results.append(res)
             if on_done is not None:
                 on_done(grp, res)

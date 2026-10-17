@@ -126,7 +126,8 @@ def test_seed_consolidation_wrote_derived_runbooks(ro):
 
 
 def test_recall_vector_plus_shared_symptom(ro):
-    rows = ro.run("Q-MEM-1", {"current": "gx-inc-010", "now": NOW, "half_life_ms": 30 * 86_400_000.0}).rows
+    rows = ro.run("Q-MEM-1", {"current": "gx-inc-010", "now": NOW, "half_life_ms": 30 * 86_400_000.0,
+                              "w_recency": 0.2}).rows
     assert rows and all(r["shared"] for r in rows) and all(r["id"].startswith("gx-inc-") for r in rows)
 
 

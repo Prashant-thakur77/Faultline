@@ -791,12 +791,178 @@ class Smoke:
 
         self.probe("24", "Schema introspection under RO_QUERY (db.labels/relationshipTypes/propertyKeys/meta.stats/indexes)", False, run)
 
+    # ------------------------------------------------------------------ M20: engine depth (verified 2026-10-17)
+    def p_constraints_m20(self):
+        def run():
+            with self.graph() as g:
+                c = self.conn
+                g.query("CREATE INDEX FOR (n:Node) ON (n.id)")
+                g.query("CREATE (:Node {id:'a'}), (:Node {id:'b'})")
+                # (UNIQUE on a tiny label here; in the product only small labels get UNIQUE: docs/upstream/25)
+                for args in (("UNIQUE", "NODE", "Node", "PROPERTIES", 1, "id"),
+                             ("MANDATORY", "NODE", "Evidence", "PROPERTIES", 2, "kind", "digest"),
+                             ("MANDATORY", "RELATIONSHIP", "PROPAGATES_TO", "PROPERTIES", 1, "cap")):
+                    c.execute_command("GRAPH.CONSTRAINT", "CREATE", g.name, *args)
+                for _ in range(100):
+                    st = [r[4] for r in g.ro_query("CALL db.constraints() YIELD type, label, properties, entitytype, "
+                                                   "status RETURN type, label, properties, entitytype, status").result_set]
+                    if st and all(x == "OPERATIONAL" for x in st):
+                        break
+                    time.sleep(0.02)
+                refused = []
+                for q in ("CREATE (:Node {id:'a'})", "CREATE (:Evidence {kind:'k'})",
+                          "MATCH (a:Node {id:'a'}), (b:Node {id:'b'}) CREATE (a)-[:PROPAGATES_TO]->(b)",
+                          "UNWIND [{d:'x'},{d:null}] AS r CREATE (:Evidence {kind:'k', digest:r.d})"):
+                    try:
+                        g.query(q)
+                    except Exception as e:  # noqa: BLE001
+                        refused.append(str(e)[:70])
+                g.query("MERGE (e:Evidence {kind:'k2'}) ON CREATE SET e.digest = 'd' RETURN e")   # set in the same query
+                rolled_back = g.ro_query("MATCH (e:Evidence {digest:'x'}) RETURN count(e)").result_set[0][0] == 0
+                cp = g.name + "_cp"
+                g.copy(cp)
+                try:
+                    copied = len(self.db.select_graph(cp).ro_query(
+                        "CALL db.constraints() YIELD status RETURN status").result_set)
+                    try:
+                        self.db.select_graph(cp).query("CREATE (:Evidence {kind:'k'})")
+                        copy_enforces = False
+                    except Exception:  # noqa: BLE001
+                        copy_enforces = True
+                finally:
+                    self.db.select_graph(cp).delete()
+            ok = len(st) == 3 and all(x == "OPERATIONAL" for x in st) and len(refused) == 4 and rolled_back \
+                and copied == 3 and copy_enforces
+            return (ok, f"3 constraints {st}; refused {len(refused)}/4 ({'; '.join(refused)}); one bad row rolls the batch "
+                        f"back: {rolled_back}; MERGE … ON CREATE SET passes; GRAPH.COPY carries {copied} and enforces them: "
+                        f"{copy_enforces}",
+                    "GRAPH.CONSTRAINT CREATE g MANDATORY|UNIQUE NODE|RELATIONSHIP L PROPERTIES n p…; "
+                    "CALL db.constraints() YIELD type, label, properties, entitytype, status (PENDING → OPERATIONAL)")
+
+        self.probe("25", "M20 MANDATORY/UNIQUE constraints on nodes and edges (+ GRAPH.COPY carries them)", True, run)
+
+    def p_vector_options_m20(self):
+        def run():
+            with self.graph() as g:
+                g.query("UNWIND range(1, 200) AS i CREATE (:V {id: i, e: vecf32([toFloat(i % 7), toFloat(i % 5), 1.0, "
+                        "toFloat(i % 3)])})")
+                g.query("CREATE VECTOR INDEX FOR (n:V) ON (n.e) OPTIONS {dimension:4, similarityFunction:'cosine', "
+                        "M:32, efConstruction:400, efRuntime:100}")
+                seen = set()
+                for _ in range(400):
+                    st = [r[1] for r in g.ro_query("CALL db.indexes() YIELD label, status RETURN label, status").result_set
+                          if r[0] == "V"]
+                    seen.update(st)
+                    if st == ["OPERATIONAL"]:
+                        break
+                    time.sleep(0.01)
+                opts = [r[1] for r in g.ro_query("CALL db.indexes() YIELD label, options RETURN label, options").result_set
+                        if r[0] == "V"][0]["e"]
+                g.query("DROP VECTOR INDEX FOR (n:V) ON (n.e)")
+                gone = not any(r[0] == "V" for r in g.ro_query("CALL db.indexes() YIELD label RETURN label").result_set)
+            ok = (opts.get("M"), opts.get("efConstruction"), opts.get("efRuntime")) == (32, 400, 100) and gone
+            return (ok, f"options read back {dict(opts)}; build status seen {sorted(seen)}; DROP VECTOR INDEX removes it: "
+                        f"{gone}. Query-time map form ({{label, …, efRuntime}}) is refused (positional args only).",
+                    "CREATE VECTOR INDEX FOR (n:L) ON (n.p) OPTIONS {dimension, similarityFunction, M, efConstruction, "
+                    "efRuntime}; DROP VECTOR INDEX FOR (n:L) ON (n.p); poll db.indexes() status until OPERATIONAL")
+
+        self.probe("26", "M20 vector index HNSW options (M, efConstruction, efRuntime) + DROP + async build", True, run)
+
+    def p_aggregates_m20(self):
+        def run():
+            vals = [0.011, 0.0123, 0.0, 0.0145, 0.0101]
+            with self.graph() as g:
+                g.query("UNWIND range(0, size($v) - 1) AS i CREATE (:W {i: i, value: $v[i]})", {"v": vals})
+                r = g.ro_query("MATCH (w:W) RETURN count(CASE WHEN w.value <> 0 THEN 1 END), "
+                               "avg(CASE WHEN w.value <> 0 THEN w.value END), "
+                               "stDevP(CASE WHEN w.value <> 0 THEN w.value END), "
+                               "percentileCont(CASE WHEN w.value <> 0 THEN w.value END, 0.95)").result_set[0]
+                empty = g.ro_query("MATCH (w:W) WHERE w.i > 99 RETURN avg(w.value), stDevP(w.value)").result_set[0]
+            nz = [v for v in vals if v]
+            ok = (r[0] == 4 and abs(r[1] - statistics.fmean(nz)) < 1e-12 and abs(r[2] - statistics.pstdev(nz)) < 1e-12
+                  and r[3] is not None and empty[0] is None)
+            return (ok, f"nonzero n={r[0]} avg={r[1]} stDevP={r[2]} (Python {statistics.pstdev(nz)}) p95={r[3]}; "
+                        f"aggregates skip CASE nulls; over no rows avg={empty[0]} stDevP={empty[1]}",
+                    "avg / stDevP / percentileCont(x, 0.95) over CASE WHEN … THEN x END (nulls skipped)")
+
+        self.probe("27", "M20 avg / stDevP / percentileCont (the gate band in the engine)", True, run)
+
+    def p_temporal_m20(self):
+        def run():
+            q = ("WITH localdatetime('1970-01-01T00:00:00') + duration({seconds: toInteger($at / 1000) + $off}) AS t "
+                 "RETURN toString(t), t.dayOfWeek, t.weekDay, t.hour, t.minute")
+            with self.graph() as g:
+                fri = g.ro_query(q, {"at": 1792150500000, "off": 19800}).result_set[0]    # 2026-10-16T11:35Z = Fri 17:05 IST
+                sun = g.ro_query(q, {"at": 1792324800000, "off": 0}).result_set[0]        # 2026-10-18T12:00Z, a Sunday
+                ms0 = g.ro_query("RETURN toString(duration({milliseconds: 90000}))").result_set[0][0]
+                em = g.ro_query("RETURN toString(localdatetime({epochMillis: 1792224000000}))").result_set[0][0]
+            ok = fri[0] == "2026-10-16T17:05:00" and fri[1:] == [5, 5, 17, 5]
+            return (ok, f"Fri 17:05 IST → {fri}; Sunday → dayOfWeek {sun[1]}, weekDay {sun[2]} (openCypher: 7); "
+                        f"duration({{milliseconds: 90000}}) → {ms0}; localdatetime({{epochMillis}}) → {em} (both silent, U8)",
+                    "localdatetime('1970-01-01T00:00:00') + duration({seconds: toInteger($ms / 1000) + offset_s}) then "
+                    ".dayOfWeek (Sunday 0) / .weekDay (Sunday 7) / .hour / .minute; never {epochMillis} or {milliseconds}")
+
+        self.probe("28", "M20 temporal accessors for wall-clock rules (epoch ms → local time)", True, run)
+
+    def p_engine_catalogue_m20(self):
+        def run():
+            with self.graph() as g:
+                fn = g.ro_query("CALL dbms.functions() YIELD name, udf RETURN count(name), sum(CASE WHEN udf THEN 1 ELSE 0 "
+                                "END)").result_set[0]
+                g.ro_query("MATCH (n:N) RETURN count(n)")
+                key = f"telemetry{{{g.name}}}"
+                waited = 0.0
+                while waited < 3.0:   # the engine appends the entry after it replies (asynchronously)
+                    kind = self.conn.execute_command("TYPE", key)
+                    if str(kind).lower().endswith("stream"):
+                        break
+                    time.sleep(0.05)
+                    waited += 0.05
+                ent = self.conn.execute_command("XREVRANGE", key, "+", "-", "COUNT", 1)
+                fields = sorted((ent[0][1] if ent else {}).keys())
+                cap = self.conn.execute_command("GRAPH.CONFIG", "GET", "QUERY_MEM_CAPACITY")[1]
+            want = {"Execution duration", "Query", "Query parameters", "Received at", "Report duration", "Timeout",
+                    "Total duration", "Utilized cache", "Wait duration", "Write"}
+            ok = fn[0] > 100 and str(kind).lower().endswith("stream") and want <= set(fields)
+            return (ok, f"dbms.functions: {fn[0]} names, {int(fn[1])} UDFs (YIELD name, udf, aggregation); telemetry{{graph}} is a "
+                        f"{kind} (entry visible after {waited:.2f} s) with fields {fields}; QUERY_MEM_CAPACITY now {cap} "
+                        "(set by configure_falkordb.py)",
+                    "CALL dbms.functions() YIELD name, udf; XREVRANGE telemetry{<graph>} + - COUNT n; "
+                    "GRAPH.CONFIG SET QUERY_MEM_CAPACITY <bytes> (error: Query's mem consumption exceeded capacity)")
+
+        self.probe("29", "M20 engine catalogues: dbms.functions, telemetry{graph} stream, QUERY_MEM_CAPACITY", False, run)
+
+    def p_waitaof_m20(self):
+        def run():
+            import redis
+
+            kw = self.conn.connection_pool.connection_kwargs
+            one = redis.Redis(host=kw.get("host"), port=kw.get("port"), username=kw.get("username"),
+                              password=kw.get("password"), single_connection_client=True)
+            with self.graph() as g:
+                try:
+                    from falkordb import Graph
+
+                    Graph(one, g.name).query("CREATE (:Z {x: 1})")
+                    t0 = time.perf_counter()
+                    rep = one.execute_command("WAITAOF", 1, 0, 3000)
+                    ms = (time.perf_counter() - t0) * 1000
+                finally:
+                    one.close()
+            ok = list(rep)[:1] == [1]
+            return (ok, f"WAITAOF 1 0 3000 after a write on the same connection → {list(rep)} in {ms:.0f} ms "
+                        "(appendfsync everysec waits for the next fsync)",
+                    "same connection: GRAPH.QUERY … then WAITAOF numlocal numreplicas timeout_ms → [local, replicas]")
+
+        self.probe("30", "M20 WAITAOF after a write (durable before verified)", False, run)
+
     def run_all(self) -> list[Result]:
         for p in (self.p_names, self.p_bfs, self.p_sppaths, self.p_sspaths, self.p_pagerank, self.p_betweenness,
                   self.p_harmonic, self.p_wcc, self.p_cdlp, self.p_maxflow, self.p_msf, self.p_algo_under_ro,
                   self.p_ro_rejects_write, self.p_timeout, self.p_fulltext, self.p_vector, self.p_copy,
                   self.p_constraint, self.p_cypher_features, self.p_explain_profile, self.p_config, self.p_acl,
-                  self.p_concurrency, self.p_schema_introspection):
+                  self.p_concurrency, self.p_schema_introspection, self.p_constraints_m20, self.p_vector_options_m20,
+                  self.p_aggregates_m20, self.p_temporal_m20, self.p_engine_catalogue_m20, self.p_waitaof_m20):
             p()
         return self.results
 

@@ -27,9 +27,13 @@ PHASE_TOOLS: dict[Stage, list[str]] = {
     # futures: one GRAPH.COPY branch per containment candidate, each predicted back in band or not (Q-FUTURE-1)
     Stage.CONTAIN: ["containment_cut", "whatif", "futures", "connectivity_check", "blast_radius"],
     # obligation_clock: SLO burn, time to breach and customers reached; it decides urgency and who is told first
-    Stage.ROUTE: ["who_fixes", "owners_of", "bus_factor", "escalation_tree", "notify_set", "owner_at", "obligation_clock"],
+    # learned_responders (M21): who actually answers this component's pages; the top one joins the first wave
+    Stage.ROUTE: ["who_fixes", "owners_of", "bus_factor", "escalation_tree", "notify_set", "owner_at", "obligation_clock",
+                  "learned_responders"],
     # (CONTAIN also runs blast_radius on the cause's target to find what must be protected)
-    Stage.PLAN: ["propose_plan", "remedy_stats"],  # remedy_stats only reorders the options (Q-REM-1)
+    # remedy_stats only reorders the options (Q-REM-1); learned_preferences (M21) blends the team's recent choices into
+    # that order within one predicted-future class, flags options against an active guideline, suggests contracts
+    Stage.PLAN: ["propose_plan", "remedy_stats", "learned_preferences"],
     Stage.AWAITING_APPROVAL: [],
     Stage.EXECUTE: ["execute_action"],
     Stage.VERIFY: ["verify_action"],

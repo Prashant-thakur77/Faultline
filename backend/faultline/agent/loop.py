@@ -129,8 +129,15 @@ class ToolBox:
 # ---------------------------------------------------------------------------------------------
 class RunState:
     def __init__(self, tenant: str, graph: str, run_id: str, incident_id: str, onset_ms: int, symptoms: list[str],
-                 window_min: int | None = None):
+                 window_min: int | None = None, oncall_home: str | None = None, oncall_external: bool = False):
         self.tenant, self.graph, self.run_id, self.inc = tenant, graph, run_id, incident_id
+        # trusted run (security review): its pages may leave the in-app pager and a standing contract may act for it.
+        # False for an anonymous public-demo run: in-app pages only, and no contract is ever considered
+        self.oncall_external = bool(oncall_external)
+        # on-call (M19): where standing contracts live (the tenant graph for API runs). None = paging off (benches,
+        # CLI and eval clean rooms keep their recorded behaviour; nothing is paged and no contract can apply)
+        self.oncall_home = oncall_home
+        self.paged: dict | None = None
         self.onset_ms, self.symptoms = onset_ms, symptoms
         self.gate = Gate(tenant, run_id, incident_id, graph, window_min)
         self.swept: list[dict] | None = None
@@ -459,6 +466,15 @@ async def post_gate(box: ToolBox, run: RunState, res: GateResult | None, onset_m
                             | ({"priority_ids": clock.get("obligated") or []} if urgency["urgent"] else {}))
     # who owned it when the change shipped: after a handover, the old team holds the context (OWNED_AT history)
     owned = await box.call("owner_at", {"target_id": target, "at": int(change.get("at") or onset_ms)})
+    learned_resp = None
+    if run.oncall_home is not None:  # the escalation order Q-PAGE-NEXT follows: the algo.MSF tree, ranked in Cypher
+        writes.record_escalation_order(run.g(), inc=run.inc, edges=esc.get("rows", []) if "error" not in esc else [],
+                                       fallback=top, via="algo.MSF")
+        # M21: who actually answers this component's pages (RESPONDED, recomputed from trusted acks, approvals and
+        # verified fixes in the on-call home graph); the top one joins the first wave. Off for benches, CLI and evals
+        from ..memory import learning
+
+        learned_resp = await box.call("learned_responders", {"target_id": target, "now": learning.now_ms()})
     # PLAN: options from the fixed enum, then wait for a human
     if shift:
         shift.note(f"fixer {top[0] if top else 'unknown'}; bus factor {bus.get('bus_factor')}; "
@@ -472,9 +488,17 @@ async def post_gate(box: ToolBox, run: RunState, res: GateResult | None, onset_m
     act.ensure_infra_repo(c, hub)
     # learned ordering (Q-REM-1): how each fix kind fared on past incidents sharing a symptom; it only reorders
     remedy = await box.call("remedy_stats", {"incident_id": run.inc})
+    # M21: what the team taught it about this family (preferences, guidelines, contract suggestions), from the on-call
+    # home graph; it only reorders within a predicted-future class and annotates. Off without an on-call home
+    learned = None
+    if run.oncall_home is not None:
+        from ..memory import learning
+
+        learned = await box.call("learned_preferences", {"family_id": target, "now": learning.now_ms()})
     options = act.build_options(c, cause=cause_id, cut=cut_rows, hub=hub, whatif={"verdict": wi.get("verdict")} if wi else None,
                                 reviewers=top, remedy=remedy, futures=fut if fut and "error" not in fut else None,
-                                origin=target, symptoms=list(symptoms or []))
+                                origin=target, symptoms=list(symptoms or []),
+                                learned=learned if learned is not None and "error" not in learned else None)
     if run.repair_proposal and any(o["kind"] == "data_repair" for o in options):
         rp = act.propose_data_repair(c, file=run.repair_proposal["file"], new_content=run.repair_proposal["new_content"],
                                      reasoning=run.repair_proposal["reasoning"])
@@ -482,8 +506,22 @@ async def post_gate(box: ToolBox, run: RunState, res: GateResult | None, onset_m
     if shift:
         shift.note(f"{len(options)} option(s), {sum(1 for o in options if o.get('enabled'))} enabled; awaiting two-step approval")
         shift.end()
+    # on-call: a standing contract (only for a gate-CONFIRMED cause) or the pages; decided before the incident becomes
+    # approvable, written right after it is (a page always points at an incident someone can act on)
+    # an option against an ACTIVE guideline (M21) needs a human's explicit override: a standing contract never takes it
+    unflagged = [o for o in options if not ((o.get("learned") or {}).get("guideline") or {}).get("needs_override")]
+    match = _contract_match(run, cause_id, unflagged) if run.oncall_home is not None and run.oncall_external else (
+        {"match": None, "why": "an anonymous demo run: standing contracts act only for keyed runs and alerts",
+         "queries": []} if run.oncall_home is not None else None)
+    note = "two-step approval required: choose an option, then approve its plan hash"
+    if match and match.get("match"):
+        note = (f"standing contract {match['match']['id']} covers {match['match']['option_text']}: it runs without paging "
+                "a human (verification still runs; anything but APPLIED pages one at once)")
     # last: the incident only becomes approvable once every option exists in the graph
-    run.stage(Stage.AWAITING_APPROVAL, note="two-step approval required: choose an option, then approve its plan hash")
+    run.stage(Stage.AWAITING_APPROVAL, note=note)
+    if run.oncall_home is not None:
+        run.paged = _page_after_plan(run, cause_id=cause_id, target=target, who=who, notify=notify, urgency=urgency,
+                                     match=match, change=change, learned_resp=learned_resp)
     fix_history = RO(run.tenant, run.graph).run("Q-MEM-5", {"inc": run.inc}).rows
     return {"fix_history": fix_history, "target": target, "protect": protect, "protect_note": protect_note,
             "cut": cut_rows, "max_flow": cut.get("max_flow"),
@@ -500,7 +538,106 @@ async def post_gate(box: ToolBox, run: RunState, res: GateResult | None, onset_m
                                | {"knew_it_then": [p["person"] for p in owned.get("knew_it_then") or []][:5],
                                   "at": int(change.get("at") or onset_ms)},
             "remedy": act.remedy_summary(remedy, options),
-            "options": options}
+            "learned": _learned_summary(options, learned, who, learned_resp),
+            "options": options, "oncall": run.paged}
+
+
+def _learned_summary(options: list[dict], learned: dict | None, who: dict, resp: dict | None) -> dict:
+    """What learning changed in this incident (M21): the plan (moved, flagged, suggested) and who_fixes blended with
+    the learned responders (display and paging order; the recorded who_fixes ranking is unchanged)."""
+    from ..memory import learning
+
+    out = learning.plan_summary(options, learned)
+    if resp is not None:
+        out["responders"] = {"rows": (resp.get("rows") or [])[:5], "evidence_id": resp.get("evidence_id"),
+                             "error": resp.get("error"), "first_wave": [p["person"] for p in learning.first_wave(resp)]}
+        out["who_fixes_blended"] = learning.blend_who((who.get("rows") or [])[:10] if "error" not in who else [], resp)[:5]
+    return out
+
+
+def _contract_match(run: RunState, cause_id: str | None, options: list[dict]) -> dict:
+    """Does a standing contract in the on-call home graph cover this plan? Never without a gate-CONFIRMED cause
+    (post_gate gets `cause_id` only from a confident gate pass; an inferred origin passes None)."""
+    from ..actions import contracts
+
+    family = contracts.family_of(RO(run.tenant, run.graph), run.inc) if cause_id else None
+    return contracts.match_plan(tenant=run.tenant, home=run.oncall_home, family=family, options=options)
+
+
+def _page_after_plan(run: RunState, *, cause_id: str | None, target: str, who: dict, notify: dict, urgency: dict,
+                     match: dict | None, change: dict, learned_resp: dict | None = None) -> dict:
+    """Page the owner team's on-call for the failing component and the on-call of every team that owns something in
+    its blast radius (who_fixes / notify_set, recorded above), urgent unless the obligation clock says otherwise. With
+    a standing contract the same people get an informational notice instead (nobody is woken). M21: the learned
+    responder for the component (learned_responders, recorded above) is paged first, in addition to the rota."""
+    from ..actions import oncall
+    from ..memory import learning
+
+    people = oncall.recipients(who if "error" not in who else None, notify if "error" not in notify else None, target,
+                               learned=learning.first_wave({**(learned_resp or {}), "target": target})
+                               if learned_resp is not None and "error" not in learned_resp else None)
+    people = people or _first_of_escalation_order(run)
+    urg = oncall.urgency_of(urgency.get("urgent"))
+    inc_title = (RO(run.tenant, run.graph).run("Q-INC-1", {"inc": run.inc}).rows or [{}])[0].get("title") or run.inc
+    cause_line = (f"The gate confirmed {cause_id} (on {target}) as the cause." if cause_id else
+                  f"No cause confirmed by the gate; the inferred origin {target} is NOT confirmed.")
+    if match and match.get("match"):
+        m = match["match"]
+        detail = (f"{cause_line} Handled under standing contract {m['id']} granted by {m['granted_by_name'] or m['granted_by']}: "
+                  f"{m['option_text']} runs without waking anyone; verification still runs and anything but APPLIED "
+                  "pages a human at once.")
+        ids = oncall.write_pages(tenant=run.tenant, graph=run.graph, inc=run.inc, people=people, kind="contract_notice",
+                                 urgency=urg, title=f"Handled under contract: {inc_title}", detail=detail)
+        return {"pages": ids, "people": people, "urgency": urg, "kind": "contract_notice", "contract": m,
+                "queries": match.get("queries"), "reason": urgency.get("reason")}
+    detail = (f"{cause_line} {urgency.get('reason') or ''} Open the incident to approve the smallest containment."
+              ).replace("  ", " ")
+    ids = oncall.write_pages(tenant=run.tenant, graph=run.graph, inc=run.inc, people=people, kind="page", urgency=urg,
+                             title=f"{inc_title} ({run.inc})", detail=detail)
+    return {"pages": ids, "people": people, "urgency": urg, "kind": "page", "contract": None,
+            "why_no_contract": (match or {}).get("why"), "queries": (match or {}).get("queries"),
+            "reason": urgency.get("reason")}
+
+
+def _first_of_escalation_order(run: RunState) -> list[dict]:
+    """Nobody is on call for the owner team or the blast radius: page the first person of the incident's escalation
+    order (Q-PAGE-NEXT), so a human is always told."""
+    rows = RO(run.tenant, run.graph).run("Q-PAGE-NEXT", {"inc": run.inc}).rows
+    return [{"person": rows[0]["person"], "team": "", "evidence": "",
+             "reason": "nobody is on call for the failing component or its blast radius: first of the escalation order "
+                       f"({rows[0]['via']})"}] if rows else []
+
+
+async def page_unrouted(box: ToolBox, run: RunState, symptoms: list[str], onset_ms: int, why: str) -> dict | None:
+    """An incident the gate could not route (escalated with no cause, or accepted without confidence) still pages a
+    human: the on-call of each symptom component's owner team (who_fixes on the symptom, ROUTE tools), urgent, with
+    the escalation order of their algo.MSF tree. Off unless the run has an on-call home."""
+    from ..actions import oncall
+
+    if run.oncall_home is None or not symptoms:
+        return None
+    people: list[dict] = []
+    tops: list[str] = []
+    for s in symptoms[:4]:
+        who = await box.call("who_fixes", {"target_id": s, "now": onset_ms, "since": onset_ms - 30 * 86_400_000},
+                             stage=Stage.ROUTE)
+        if "error" in who:
+            continue
+        people += [p for p in oncall.recipients(who, None, s) if p["person"] not in {x["person"] for x in people}]
+        tops += [w["person"] for w in who.get("rows", [])[:3] if w["person"] not in tops]
+    if tops:
+        esc = await box.call("escalation_tree", {"person_ids": tops}, stage=Stage.ROUTE)
+        writes.record_escalation_order(run.g(), inc=run.inc, edges=esc.get("rows", []) if "error" not in esc else [],
+                                       fallback=tops, via="algo.MSF")
+    people = people or _first_of_escalation_order(run)
+    if not people:
+        log.error("run %s: %s has nobody on call and no escalation order: nobody could be paged", run.run_id, run.inc)
+        return {"pages": [], "people": [], "urgency": "urgent", "kind": "page", "why": "no on-call found for the symptoms"}
+    inc_title = (RO(run.tenant, run.graph).run("Q-INC-1", {"inc": run.inc}).rows or [{}])[0].get("title") or run.inc
+    ids = oncall.write_pages(tenant=run.tenant, graph=run.graph, inc=run.inc, people=people, kind="page", urgency="urgent",
+                             title=f"{inc_title} ({run.inc})", detail=f"{why} A human must look at it.")
+    run.paged = {"pages": ids, "people": people, "urgency": "urgent", "kind": "page", "contract": None, "why": why}
+    return run.paged
 
 
 # ---------------------------------------------------------------------------------------------
@@ -508,12 +645,19 @@ async def post_gate(box: ToolBox, run: RunState, res: GateResult | None, onset_m
 # ---------------------------------------------------------------------------------------------
 async def run_incident(*, tenant: str, incident_id: str, onset_ms: int, symptoms: list[str],
                        investigator: Investigator, graph: str | None = None, run_id: str | None = None,
-                       window_min: int | None = None) -> RunResult:
+                       window_min: int | None = None, oncall_home: str | None = None,
+                       oncall_external: bool = False) -> RunResult:
+    """`oncall_home`: page humans and honour standing contracts from that graph (the on-call graph for API runs);
+    None keeps paging off. `oncall_external`: a trusted run (keyed, or off the public demo): its pages may go to
+    external channels and a contract may act; otherwise in-app pages only and no contract."""
     graph = graph or tenant_graph(tenant)
     run_id = run_id or f"run-{uuid.uuid4().hex[:10]}"
     t0 = time.perf_counter()
     window = int(window_min or weights()["gate"]["window_min"])
-    run = RunState(tenant, graph, run_id, incident_id, onset_ms, symptoms, window)
+    run = RunState(tenant, graph, run_id, incident_id, onset_ms, symptoms, window, oncall_home=oncall_home,
+                   oncall_external=oncall_external)
+    if oncall_home is not None:  # the incident carries whether its pages may leave the in-app pager (deliver reads it)
+        writes.set_incident_paging(run.g(), inc=incident_id, external=bool(oncall_external) or graph == oncall_home)
     result = RunResult(run_id, incident_id, graph, "FAILED", investigator=investigator.name)
     token = context.bind(tenant, run_id=run_id, graph=graph)
     result_shift: crew.Shift | None = None
@@ -630,6 +774,9 @@ async def run_incident(*, tenant: str, incident_id: str, onset_ms: int, symptoms
                 result.cause_id, result.confident, result.gate = run.result.cause_id, run.result.confident, run.result.as_dict()
                 if run.result.confident:
                     result.post_gate = await post_gate(box, run, run.result, onset_ms, symptoms=symptoms, shift=shift)
+                else:  # accepted without confidence: no plan, but a human must look (on-call only)
+                    await page_unrouted(box, run, symptoms, onset_ms, f"The gate accepted {run.result.cause_id} without "
+                                                                      "confidence; no containment was planned.")
             elif run.no_incident is not None:
                 run.stage(Stage.NO_INCIDENT, note="negative proof accepted")
                 result.outcome, result.gate = "NO_INCIDENT", run.no_incident.as_dict()
@@ -644,6 +791,8 @@ async def run_incident(*, tenant: str, incident_id: str, onset_ms: int, symptoms
                 else:
                     run.stage(Stage.UNKNOWN_ESCALATED, note="no cause accepted by the gate; escalated to a human")
                     result.outcome = "UNKNOWN_ESCALATED"
+                    await page_unrouted(box, run, symptoms, onset_ms, "No cause was accepted by the gate: escalated to a "
+                                                                      "human.")
         shift.end()
     except Exception as e:  # fail loudly, record the failure in the graph
         if result_shift is not None:

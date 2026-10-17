@@ -62,6 +62,25 @@ class Settings(BaseSettings):
     # Ablation arm A4: every graph tool raises GraphUnavailable before any network call.
     faultline_disable_graph: bool = False
 
+    # On-call (M19). Pages always land in the in-app pager (the Page node); each external channel is used only when it
+    # is configured here (secrets: .env only, never logged). None configured = in-app only, and /api/pages says so.
+    faultline_public_url: str = ""          # base of the deep links in pages (e.g. https://faultline.example); "" = relative
+    faultline_page_secret: str = ""         # HMAC key for the per-page ack tokens; unset = a random per-process key (logged)
+    faultline_oncall_demo_windows: bool = False  # short ack windows (weights.yaml oncall.demo_ack_window_s) for a live demo
+    faultline_alerts_key: str = ""          # bearer key for POST /api/alerts on the public demo (secret; .env only)
+    faultline_webhook_url: str = ""         # Slack-compatible incoming webhook (Block Kit message with a deep link)
+    telegram_bot_token: str = ""            # Telegram bot: pages with an Ack button
+    telegram_chat_id: str = ""
+    telegram_webhook_secret: str = ""       # Telegram echoes it in X-Telegram-Bot-Api-Secret-Token on /api/telegram/webhook
+    telegram_allowed_ids: str = ""          # (M19 first cut, superseded by TELEGRAM_PEOPLE; kept so old .env files parse)
+    telegram_people: str = ""               # "tg_user_id:p-030,…": the only Telegram users who may act, each mapped to a person
+    telegram_approve_real: bool = False     # allow approving against REAL GitHub from Telegram (else the web + approver key)
+    telegram_digest_hour: int = -1          # 0..23 UTC: send the shift report to the bot's chats once a day; -1 = off
+    pagerduty_routing_key: str = ""         # PagerDuty Events API v2 (trigger on page/escalation, resolve on RESOLVED)
+    faultline_ses_from: str = ""            # AWS SES email (needs boto3 installed and AWS credentials in the environment)
+    faultline_ses_to: str = ""              # comma-separated recipients
+    faultline_ses_region: str = ""
+
 
     faultline_api_port: int = 8400
 

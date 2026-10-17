@@ -136,4 +136,29 @@ def score(f: Facts, *, without: Iterable[str] = (), overrides: dict[str, tuple[f
     return Assessment(risk, verdict, terms, parts, would, changed, impacted, rev1, past, gaps)
 
 
-__all__ = ["Facts", "Assessment", "TERMS", "gather", "score", "verdict_of"]
+# ---- change freeze (M20 #6) --------------------------------------------------------------------------------------
+# The instant a change-freeze window is evaluated at (epoch ms). None = the ENGINE clock (timestamp() inside
+# Q-PRE-FREEZE): the product never sets it. tests/conftest.py pins it to a fixed weekday so a weekend run of the suite
+# does not change verdicts that have nothing to do with a freeze; the freeze tests pass their own instants.
+FREEZE_AT: int | None = None
+SEVERITY = {"allow": 0, "require_review": 1, "block": 2}
+
+
+def freezes(ro: RO, changed: Iterable[str], at: int | None = None) -> QueryResult:
+    """Change-freeze policies in force on the changed components at `at` (Q-PRE-FREEZE: FalkorDB turns the instant
+    into each policy's local wall clock and tests .dayOfWeek / .hour / .minute against its weekly window)."""
+    return ro.run("Q-PRE-FREEZE", {"components": sorted(set(changed)), "at": FREEZE_AT if at is None else int(at)})
+
+
+def apply_freeze(verdict: str, rows: list[dict]) -> str:
+    """A freeze only ever tightens: a policy in force with effect `block` blocks; `require_review` lifts an allow. Not a
+    score term (the risk and the backtest are untouched): the policy is cited, with the local time FalkorDB evaluated."""
+    out = verdict
+    for r in rows:
+        eff = "block" if r.get("effect") == "block" else "require_review"
+        if SEVERITY[eff] > SEVERITY[out]:
+            out = eff
+    return out
+
+
+__all__ = ["Facts", "Assessment", "TERMS", "gather", "score", "verdict_of", "freezes", "apply_freeze", "FREEZE_AT"]

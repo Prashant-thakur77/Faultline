@@ -62,9 +62,12 @@ def _clean(props: dict[str, Any]) -> dict[str, Any]:
     return out
 
 
-def apply_schema(g: Graph) -> dict[str, int]:
-    """Apply schema.cypher; tolerate 'already indexed'. Returns {created, existing}."""
+def apply_schema(g: Graph) -> dict[str, Any]:
+    """Apply schema.cypher; tolerate 'already indexed'. Then the engine-enforced invariants of graph/constraints.py
+    (M20 #1: every path that applies the schema, i.e. seed, every GRAPH.COPY, the on-call home graph and the scale
+    worlds, gets them). Returns {created, existing, constraints}."""
     created = existing = 0
+    rebuilt = _drop_drifted_vector_indexes(g)   # M20 #3: options (efRuntime…) changed in schema.cypher → rebuild
     for line in SCHEMA_PATH.read_text().splitlines():
         stmt = line.strip()
         if not stmt or stmt.startswith("//"):
@@ -78,39 +81,176 @@ def apply_schema(g: Graph) -> dict[str, int]:
                 existing += 1
             else:
                 raise WriteError(f"schema statement failed: {stmt}: {e}") from e
-    return {"created": created, "existing": existing}
+    for label in rebuilt:   # never hand out a graph whose rebuilt vector index is still a partial one
+        wait_index_operational(g, label)
+    out: dict[str, Any] = {"created": created, "existing": existing, "constraints": ensure_constraints(g)}
+    if rebuilt:
+        out["vector_indexes_rebuilt"] = rebuilt
+    return out
 
 
-def ensure_constraints(g: Graph, deadline_s: float = 10.0) -> str:
-    """Unique constraint on Intent.idem (async on 6.0: PENDING → OPERATIONAL). Returns status."""
-    try:
-        g.execute_command("GRAPH.CONSTRAINT", "CREATE", g.name, "UNIQUE", "NODE", "Intent", "PROPERTIES", 1, "idem")
-    except Exception as e:
-        if "already" not in str(e).lower():
-            raise WriteError(f"constraint create failed: {e}") from e
+def wait_index_operational(g: Graph, label: str, deadline_s: float = 120.0) -> None:
+    """Index builds over existing nodes are asynchronous on 6.0.2 (db.indexes status "[Indexing] i/n: UNDER
+    CONSTRUCTION"); a vector query meanwhile reads a partial index and silently misses neighbours (found measuring
+    recall, M20 #3). Wait until every index of `label` is OPERATIONAL."""
     end = time.time() + deadline_s
-    status = "UNKNOWN"
-    while time.time() < end:
-        rows = g.ro_query("CALL db.constraints() YIELD label, properties, status RETURN label, properties, status").result_set
-        st = [r[2] for r in rows if r[0] == "Intent"]
-        status = st[0] if st else "MISSING"
-        if status in ("OPERATIONAL", "FAILED"):
+    while True:
+        st = [r[1] for r in g.ro_query("CALL db.indexes() YIELD label, status RETURN label, status",
+                                       timeout=WRITE_TIMEOUT_MS).result_set if r[0] == label]
+        if st and all(x == "OPERATIONAL" for x in st):
+            return
+        if time.time() > end:
+            raise WriteError(f"{g.name}: the index on {label} is not operational after {deadline_s:.0f} s: {st}")
+        time.sleep(0.05)
+
+
+_VEC_LINE = re.compile(r"^CREATE VECTOR INDEX FOR \(n:(\w+)\) ON \(n\.embedding\) OPTIONS \{(.*)\}\s*$")
+_VEC_TUNED = ("M", "efConstruction", "efRuntime")   # HNSW options that only a rebuild changes (vectors stay on nodes)
+
+
+def schema_vector_options() -> dict[str, dict[str, Any]]:
+    """label → the HNSW options schema.cypher asks for (M, efConstruction, efRuntime; ints)."""
+    out: dict[str, dict[str, Any]] = {}
+    for line in SCHEMA_PATH.read_text().splitlines():
+        m = _VEC_LINE.match(line.strip())
+        if m:
+            opts = dict(re.findall(r"(\w+)\s*:\s*'?([\w.]+)'?", m.group(2)))
+            out[m.group(1)] = {k: int(opts[k]) for k in _VEC_TUNED if k in opts}
+    return out
+
+
+def _drop_drifted_vector_indexes(g: Graph) -> list[str]:
+    """A vector index whose HNSW options differ from schema.cypher (e.g. the default efRuntime 10 before M20 #3) is
+    dropped, so the CREATE that follows rebuilds it with the schema's options. The embeddings stay on the nodes."""
+    want = schema_vector_options()
+    try:
+        rows = g.ro_query("CALL db.indexes() YIELD label, types, options RETURN label, types, options",
+                          timeout=WRITE_TIMEOUT_MS).result_set
+    except Exception as e:  # noqa: BLE001 - a graph that does not exist yet has no index to migrate
+        if "empty key" in str(e).lower():
+            return []
+        raise
+    dropped = []
+    for label, types, options in rows:
+        if label not in want or "VECTOR" not in ((types or {}).get("embedding") or []):
+            continue
+        have = (options or {}).get("embedding") or {}
+        if any(int(have.get(k, -1)) != v for k, v in want[label].items()):
+            check_label(label)
+            g.query(f"DROP VECTOR INDEX FOR (n:{label}) ON (n.embedding)", timeout=WRITE_TIMEOUT_MS)
+            dropped.append(label)
+    return dropped
+
+
+VECTOR_LABELS = ("Incident", "Runbook", "Postmortem", "IntentExemplar")
+
+
+def rebuild_vector_index(g: Graph, label: str, *, ef_runtime: int, m: int = 16, ef_construction: int = 200) -> None:
+    """Eval clean rooms only (evals/vector_recall.py): rebuild one vector index with the given HNSW options, to measure
+    recall@10 against an exact scan at several efRuntime values. Options are validated ints; the label a fixed set."""
+    if not g.name.startswith("eval_"):
+        raise WriteError(f"refusing to rebuild a vector index outside an eval clean room: {g.name}")
+    if label not in VECTOR_LABELS:
+        raise WriteError(f"no vector index on {label!r}")
+    ef_runtime, m, ef_construction = int(ef_runtime), int(m), int(ef_construction)
+    if not (1 <= ef_runtime <= 10_000 and 2 <= m <= 512 and 1 <= ef_construction <= 10_000):
+        raise WriteError("HNSW options out of range")
+    try:
+        g.query(f"DROP VECTOR INDEX FOR (n:{label}) ON (n.embedding)", timeout=WRITE_TIMEOUT_MS)
+    except Exception as e:  # noqa: BLE001 - no index yet is fine; anything else is not
+        if "no such index" not in str(e).lower() and "unable to drop" not in str(e).lower():
+            raise WriteError(f"vector index drop failed on {label}: {e}") from e
+    g.query(f"CREATE VECTOR INDEX FOR (n:{label}) ON (n.embedding) OPTIONS {{dimension:384, similarityFunction:'cosine', "
+            f"M:{m}, efConstruction:{ef_construction}, efRuntime:{ef_runtime}}}", timeout=WRITE_TIMEOUT_MS)
+    wait_index_operational(g, label)
+
+
+def _constraint_violators(g: Graph, c: Any) -> list[str]:
+    """Up to 5 records breaking constraint `c` (label and properties are code constants from graph/constraints.py)."""
+    if c.kind == "MANDATORY":
+        miss = " OR ".join(f"x.{p} IS NULL" for p in c.props)
+        pat = f"(x:{c.label})" if c.entity == "NODE" else f"()-[x:{c.label}]->()"
+        q = f"MATCH {pat} WHERE {miss} RETURN coalesce(x.id, x.k, toString(id(x))) LIMIT 5"
+    else:
+        cols = ", ".join(f"x.{p}" for p in c.props)
+        q = f"MATCH (x:{c.label}) WITH [{cols}] AS k, count(x) AS n WHERE n > 1 RETURN toString(k) LIMIT 5"
+    try:
+        return [str(r[0]) for r in g.ro_query(q, timeout=WRITE_TIMEOUT_MS).result_set]
+    except Exception as e:  # noqa: BLE001 - the audit is a diagnostic for the error message only
+        return [f"(audit query failed: {e})"]
+
+
+def ensure_constraints(g: Graph, deadline_s: float = 30.0) -> dict[str, Any]:
+    """Create every constraint of graph/constraints.py that `g` lacks (async on 6.0: PENDING → OPERATIONAL), then wait
+    until all are OPERATIONAL. A constraint that ends FAILED (data already violates it) is dropped again and raises
+    WriteError naming it and up to 5 violators: the data must be fixed, never the constraint. Idempotent: on a graph that
+    has them (a GRAPH.COPY carries constraints) this is one db.constraints() read. Returns {total, created, operational}."""
+    from .constraints import CONSTRAINTS, PENDING, RETIRED, STATUS_QUERY, by_key, key_of
+
+    def status() -> dict:
+        return {key_of(r): str(r[4]) for r in g.ro_query(STATUS_QUERY, timeout=WRITE_TIMEOUT_MS).result_set}
+
+    have = status()
+    for c in RETIRED:   # created once by an earlier version and no longer wanted (graph/constraints.py says why)
+        if c.key in have:
+            g.execute_command("GRAPH.CONSTRAINT", "DROP", g.name, *c.args())
+    created = 0
+    for c in CONSTRAINTS:
+        if c.key in have and have[c.key] != "FAILED":
+            continue
+        if have.get(c.key) == "FAILED":  # left over from an earlier attempt on bad data: drop it and try again
+            g.execute_command("GRAPH.CONSTRAINT", "DROP", g.name, *c.args())
+        try:
+            g.execute_command("GRAPH.CONSTRAINT", "CREATE", g.name, *c.args())
+            created += 1
+        except Exception as e:
+            if "already exists" not in str(e).lower():
+                raise WriteError(f"constraint {c.describe()} could not be created on {g.name}: {e}") from e
+    want = by_key()
+    end = time.time() + deadline_s
+    while True:
+        have = status()
+        mine = {k: v for k, v in have.items() if k in want}
+        if not any(v in PENDING for v in mine.values()) or time.time() > end:
             break
-        time.sleep(0.1)
-    if status != "OPERATIONAL":
-        raise WriteError(f"Intent.idem unique constraint not operational: {status}")
-    return status
+        time.sleep(0.05)
+    failed = [want[k] for k, v in mine.items() if v == "FAILED"]
+    for c in failed:
+        bad = _constraint_violators(g, c)
+        try:
+            g.execute_command("GRAPH.CONSTRAINT", "DROP", g.name, *c.args())
+        except Exception:  # noqa: BLE001 - the error below is what matters
+            pass
+        raise WriteError(f"{g.name}: the data violates {c.describe()} ({c.why}); violators: {', '.join(bad) or '?'}")
+    missing = [want[k].describe() for k in want if mine.get(k) != "OPERATIONAL"]
+    if missing:
+        raise WriteError(f"{g.name}: constraints not operational after {deadline_s:.0f} s: {'; '.join(missing)}")
+    return {"total": len(CONSTRAINTS), "created": created, "operational": len(mine)}
+
+
+# M20 #11: the high-volume label whose low-cardinality strings FalkorDB stores once (intern(): one shared copy per
+# distinct string, GRAPH.INFO ObjectPool). Measured on 6.0.2 at 100k MetricWindow nodes: GRAPH.MEMORY total 67 → 48 MB,
+# attributes 40 → 21 MB, equality matches unchanged. The value must be WRITTEN through intern(): a later
+# `SET n.p = intern(n.p)` interns nothing (6.0.2 skips a SET to an equal value).
+INTERNED: dict[str, tuple[str, ...]] = {"MetricWindow": ("target_id", "metric", "kind", "source")}
 
 
 def upsert_nodes(g: Graph, label: str, rows: list[dict[str, Any]]) -> int:
     check_label(label)
     if any(not isinstance(r.get("id"), str) or not r["id"] for r in rows):
         raise WriteError(f"{label}: every row needs a non-empty string id")
-    # Every node also carries :Node (indexed on id) so cross-label id lookups in templates use an index.
-    q = f"UNWIND $rows AS r MERGE (n:{label}:Node {{id: r.id}}) SET n += r.props RETURN count(n)"
+    keys = INTERNED.get(label, ())
+    # Every node also carries :Node (indexed on id) so cross-label id lookups in templates use an index. Interned keys
+    # are set from r.i (string values only); a key a row lacks keeps the node's current value (coalesce).
+    q = (f"UNWIND $rows AS r MERGE (n:{label}:Node {{id: r.id}}) SET n += r.props"
+         + "".join(f", n.{k} = coalesce(intern(r.i.{k}), n.{k})" for k in keys) + " RETURN count(n)")
     n = 0
     for chunk in _batches(rows):
-        payload = [{"id": r["id"], "props": _clean({k: v for k, v in r.items() if k != "embedding"})} for r in chunk]
+        payload = []
+        for r in chunk:
+            props = _clean({k: v for k, v in r.items() if k != "embedding"})
+            inter = {k: props.pop(k) for k in keys if isinstance(props.get(k), str)}
+            payload.append({"id": r["id"], "props": props, **({"i": inter} if keys else {})})
         n += g.query(q, {"rows": payload}, timeout=WRITE_TIMEOUT_MS).result_set[0][0]
     return n
 
@@ -210,7 +350,7 @@ def append_audit(g: Graph, kind: str, props: dict[str, Any]) -> None:
 # ---------------------------------------------------------------------------------------------
 
 W_TOOL_CALL = (
-    "MERGE (run:Run {id: $run}) ON CREATE SET run.created_at = timestamp(), run.tenant = $tenant "
+    "MERGE (run:Run:Node {id: $run}) ON CREATE SET run.created_at = timestamp(), run.tenant = $tenant "
     "CREATE (tc:ToolCall:Node {id: $tc_id, tool: $tool, template: $template, at: timestamp(), ms: $ms, "
     "rows: $rows, truncated: $truncated, served_by: $served_by}) "
     "MERGE (run)-[:HAS_TOOL_CALL {k: $tc_id}]->(tc) "
@@ -739,21 +879,30 @@ def remove_flow_edges(g: Graph, edges: list[tuple[str, str]]) -> int:
 W_OPTION = (
     "MATCH (i:Incident {id: $inc}) "
     "MERGE (a:Action:Node {id: $aid}) SET a.kind = $kind, a.option = $option, a.enabled = $enabled, a.reason = $reason, "
-    "a.target_id = $target, a.preview = $preview, a.future = CASE WHEN $keep_future THEN a.future ELSE $future END, a.status = coalesce(a.status, 'option'), "
+    "a.target_id = $target, a.preview = $preview, a.future = CASE WHEN $keep_future THEN a.future ELSE $future END, "
+    "a.learned = CASE WHEN $keep_future THEN a.learned ELSE $learned END, a.status = coalesce(a.status, 'option'), "
+    # the option's place in the plan as an integer (Q-ACT-1 orders by it: an id string sorts act-…-10 before act-…-2)
+    "a.rank = CASE WHEN $rank IS NULL THEN a.rank ELSE $rank END, "
     "a.incident_id = $inc "
     "MERGE (i)-[:HAS_PLAN {k: $aid}]->(a) RETURN a.id"
 )
 
 
 def record_option(g: Graph, *, inc: str, aid: str, kind: str, option: str, enabled: bool, reason: str, target: str,
-                  preview: dict, future: dict | None = None, keep_future: bool = False) -> None:
+                  preview: dict, future: dict | None = None, keep_future: bool = False, learned: dict | None = None,
+                  rank: int | None = None) -> None:
     """One plan option; `future` is its predicted outcome (futures tool), kept so VERIFY can say whether it came true.
-    `keep_future`: re-recording the SAME option (propose_data_repair enabling it) keeps the future already stored;
-    otherwise the given one replaces it (a rebuilt plan never inherits another option's future by slot id)."""
+    `keep_future`: re-recording the SAME option (propose_data_repair enabling it) keeps the future (and the learned
+    annotations) already stored; otherwise the given ones replace them (a rebuilt plan never inherits another option's
+    future by slot id). `learned` (M21): what learning said about the option (preference, guideline, suggestion).
+    `rank`: its 1-based place in the plan (None keeps the stored one; an option added later without one, a human-named
+    fix, sorts after the plan)."""
     g.query(W_OPTION, {"inc": inc, "aid": aid, "kind": kind, "option": option, "enabled": bool(enabled), "reason": reason,
                        "target": target, "preview": json.dumps(preview, sort_keys=True, default=str),
                        "future": json.dumps(future, sort_keys=True, default=str) if future else None,
-                       "keep_future": bool(keep_future)},
+                       "keep_future": bool(keep_future),
+                       "learned": json.dumps(learned, sort_keys=True, default=str) if learned else None,
+                       "rank": int(rank) if rank is not None else None},
             timeout=WRITE_TIMEOUT_MS)
 
 
@@ -787,22 +936,30 @@ W_APPROVE = (
     "it.lease_by = $owner, it.lease_boot = CASE WHEN $owner IS NULL THEN null ELSE $boot END, "
     "it.lease_until = CASE WHEN $owner IS NULL THEN null ELSE timestamp() + $lease_ms END "
     "MERGE (ap)-[:APPROVED {k: ''}]->(it) MERGE (i)-[:HAS_INTENT {k: ''}]->(it) "
-    "SET a.status = 'approved', a.approval_id = ap.id "
+    "SET a.status = 'approved', a.approval_id = ap.id, ap.via = $via, ap.tg_user = $tg_user, "
+    # an approval past an ACTIVE learned guideline (M21) carries the override on the Approval and the Action, in this
+    # same query, whoever approved (learning records it only for trusted approvers; this is the incident's own record)
+    "ap.override_guideline = $override_guideline, ap.override_reason = $override_reason, "
+    "a.override_guideline = $override_guideline, a.override_reason = $override_reason "
     "RETURN it.state AS state, it.created_by_run = $run AS mine, it.idem AS idem"
 )
 
 
 def approve_action(g: Graph, *, inc: str, aid: str, plan_hash: str, approver: str, run: str, owner: str | None = None,
-                   lease_ms: int = 0, boot: str | None = None, world: str | None = None) -> dict | None:
+                   lease_ms: int = 0, boot: str | None = None, world: str | None = None, via: str = "web",
+                   tg_user: str | None = None, override: dict | None = None) -> dict | None:
     """Two-step approval: only succeeds if the hash matches the CURRENT chosen action and the incident awaits
     approval (else None → HTTP 409). Creates the Approval and the idempotent Intent in the same query; with `owner`
-    the new intent is leased to the execute job for `lease_ms` (renewed by `renew_intent`)."""
+    the new intent is leased to the execute job for `lease_ms` (renewed by `renew_intent`). `override` ({id, reason}:
+    the approval goes past an active learned guideline) is written on the Approval and the Action in the same query."""
     apid = f"ap-{aid}-{plan_hash[:8]}"
     from ..agent.state import Stage, ordinal
 
     r = g.query(W_APPROVE, {"inc": inc, "aid": aid, "hash": plan_hash, "approver": approver, "run": run, "apid": apid,
                             "exec_ord": ordinal(Stage.EXECUTE), "owner": owner, "lease_ms": int(lease_ms),
-                            "boot": boot, "world": world},
+                            "boot": boot, "world": world, "via": via, "tg_user": tg_user,
+                            "override_guideline": (override or {}).get("id"),
+                            "override_reason": ((override or {}).get("reason") or None)},
                 timeout=WRITE_TIMEOUT_MS).result_set
     return {"state": r[0][0], "mine": bool(r[0][1]), "idem": r[0][2], "approval_id": apid} if r else None
 
@@ -1130,7 +1287,7 @@ def reap_expired(g: Graph, *, run: str, kind: str) -> list[str]:
 
 W_CREW_DONE = (
     "MATCH (t:Task {id: $task}) WHERE t.state = 'claimed' AND t.owner = $agent AND t.n = $n "
-    "MERGE (run:Run {id: $run}) ON CREATE SET run.created_at = timestamp() "
+    "MERGE (run:Run:Node {id: $run}) ON CREATE SET run.created_at = timestamp() "
     "SET t.state = $state, t.done_at = timestamp(), t.role = $role, t.stage = $stage, t.stages = $stages, t.run = $run, "
     "t.summary = $summary, t.status = $state, t.result = $state "
     "MERGE (run)-[:HAS_TASK {k: $task}]->(t) "
@@ -1187,7 +1344,7 @@ def complete_task(g: Graph, *, task: str, agent: str, result: str = "") -> bool:
 
 W_SPECIALIST_DONE = (
     "MATCH (t:Task {id: $task}) WHERE t.state = 'claimed' AND t.owner = $agent AND ($n = 0 OR t.n = $n) "
-    "MERGE (run:Run {id: $run}) ON CREATE SET run.created_at = timestamp() "
+    "MERGE (run:Run:Node {id: $run}) ON CREATE SET run.created_at = timestamp() "
     "SET t.state = 'done', t.done_at = timestamp(), t.role = $role, t.status = $status, t.result = $status, "
     "t.run = $run, t.report = $report, t.unknowns = $unknowns, t.limits = $limits "
     "MERGE (run)-[:HAS_TASK {k: $task}]->(t) "
@@ -1226,7 +1383,7 @@ def complete_specialist_task(g: Graph, *, task: str, agent: str, run: str, role:
 
 
 W_REFUSED_CALL = (
-    "MERGE (run:Run {id: $run}) ON CREATE SET run.created_at = timestamp(), run.tenant = $tenant "
+    "MERGE (run:Run:Node {id: $run}) ON CREATE SET run.created_at = timestamp(), run.tenant = $tenant "
     "CREATE (tc:ToolCall:Node {id: $tc_id, tool: $tool, template: '', at: timestamp(), ms: 0.0, rows: 0, "
     "truncated: false, served_by: 'refused', refused: true, stage: $stage, error: $error}) "
     "MERGE (run)-[:HAS_TOOL_CALL {k: $tc_id}]->(tc) "
@@ -1459,3 +1616,762 @@ def write_back_not_applied(g: Graph, *, inc: str, aid: str, stage: str, owner: s
             raise IntentNotPending(f"write-back (not applied) for {inc}/{aid} not written: intent settled or leased elsewhere")
         raise WriteError(f"write-back (not applied) refused for {inc}/{aid}")
     return {"stage": r[0][0], "intent": r[0][1]}
+
+
+# ---------------------------------------------------------------------------------------------
+# On-call (M19): pages, acks, escalation, standing contracts (Sleep Contracts, adapted from the author's Beacon project)
+# and hand-offs. One atomic query each; every condition that makes a write safe (still unacked, still active, uses
+# below max, not expired) is checked inside the same query that writes. `$now` is the caller's wall clock (epoch ms):
+# the escalation tick and the contract checks compare against the same clock the page or grant was written with.
+# ---------------------------------------------------------------------------------------------
+PAGE_OPEN = ("sent", "delivery_failed")       # a human still has to acknowledge it
+PAGE_KINDS = ("page", "escalation", "report", "contract_notice")
+
+W_ESCALATION_ORDER = (
+    # the escalation tree's edges in Q-ORG-MSF order (strongest tie first) → one ESCALATES_TO edge per person, ranked by
+    # the first tree edge that names them (computed here, in Cypher, from the algo.MSF result the caller passes)
+    "MATCH (i:Incident {id: $inc}) "
+    "UNWIND range(0, size($edges) - 1) AS k "
+    "UNWIND [$edges[k].from, $edges[k].to] AS pid "
+    "WITH i, pid, min(k) AS rank, max($edges[k].w) AS w "
+    "MATCH (p:Person {id: pid}) "
+    "MERGE (i)-[r:ESCALATES_TO {k: pid}]->(p) SET r.rank = rank, r.w = w, r.via = $via "
+    "RETURN count(r)"
+)
+
+W_ESCALATION_FALLBACK = (
+    # no tree edge (one responder, no ties): the people in the order the caller's graph tool ranked them
+    "MATCH (i:Incident {id: $inc}) "
+    "UNWIND range(0, size($people) - 1) AS k "
+    "WITH i, k, $people[k] AS pid "
+    "MATCH (p:Person {id: pid}) "
+    "MERGE (i)-[r:ESCALATES_TO {k: pid}]->(p) SET r.rank = $offset + k, r.w = 0.0, r.via = $via "
+    "RETURN count(r)"
+)
+
+
+def record_escalation_order(g: Graph, *, inc: str, edges: list[dict], fallback: list[str], via: str) -> int:
+    """The incident's escalation order (Q-PAGE-NEXT reads it): the algo.MSF escalation tree's edges ranked in Cypher;
+    when the tree has no edge, the fallback people (who_fixes order) instead. Idempotent (MERGE per person)."""
+    n = 0
+    if edges:
+        rows = [{"from": str(e["from"]), "to": str(e["to"]), "w": float(e.get("w") or 0.0)} for e in edges]
+        r = g.query(W_ESCALATION_ORDER, {"inc": inc, "edges": rows, "via": via}, timeout=WRITE_TIMEOUT_MS).result_set
+        n = int(r[0][0]) if r else 0
+    if n == 0 and fallback:
+        r = g.query(W_ESCALATION_FALLBACK, {"inc": inc, "people": [str(p) for p in fallback], "offset": 0,
+                                            "via": "who_fixes"}, timeout=WRITE_TIMEOUT_MS).result_set
+        n = int(r[0][0]) if r else 0
+    return n
+
+
+W_PAGE_CREATE = (
+    "MATCH (i:Incident {id: $inc}) "
+    "UNWIND $pages AS x "
+    "MATCH (p:Person {id: x.person}) "
+    "MERGE (pg:Page:Node {id: x.id}) "
+    "ON CREATE SET pg.tenant = $tenant, pg.incident = $inc, pg.kind = x.kind, pg.urgency = x.urgency, pg.sent_at = $now, "
+    "pg.ack_due_at = $now + x.window_ms, pg.status = 'sent', pg.attempt = x.attempt, pg.detail = x.detail, "
+    "pg.deep_link = x.deep_link, pg.channel = 'in_app', pg.channels = ['in_app'], pg.team = x.team, pg.reason = x.reason, "
+    "pg.evidence = x.evidence, pg.person = p.id, pg.batch = $batch "
+    "MERGE (pg)-[:PAGES {k: ''}]->(p) "
+    "MERGE (pg)-[:FOR {k: ''}]->(i) "
+    "RETURN pg.id, pg.status, pg.batch = $batch AS fresh"
+)
+
+
+def create_pages(g: Graph, *, tenant: str, inc: str, pages: list[dict], now: int) -> list[dict]:
+    """Pages for one incident, in one query (MERGE by page id: a retried run, or a reconciler settling the same outcome
+    again, never pages twice). Each page dict: id, person, kind, urgency, window_ms, attempt, detail, deep_link, team,
+    reason, evidence. Returns [{id, fresh}] for every page that exists now (`fresh`: created by THIS call, so only those
+    are delivered); a person or incident missing from the graph writes nothing for it (the caller compares)."""
+    import uuid
+
+    for x in pages:
+        if x["kind"] not in PAGE_KINDS:
+            raise WriteError(f"bad page kind {x['kind']!r}")
+    rows = [{"id": x["id"], "person": x["person"], "kind": x["kind"], "urgency": x["urgency"],
+             "window_ms": int(x["window_ms"]), "attempt": int(x.get("attempt") or 1), "detail": str(x.get("detail") or "")[:1000],
+             "deep_link": str(x.get("deep_link") or ""), "team": x.get("team") or "", "reason": str(x.get("reason") or "")[:500],
+             "evidence": x.get("evidence") or ""} for x in pages]
+    if not rows:
+        return []
+    r = g.query(W_PAGE_CREATE, {"tenant": tenant, "inc": inc, "pages": rows, "now": int(now), "batch": uuid.uuid4().hex},
+                timeout=WRITE_TIMEOUT_MS).result_set
+    return [{"id": row[0], "fresh": bool(row[2])} for row in r]
+
+
+W_PAGE_NOTE = (
+    # an informational page with no incident in this graph (a hand-off report): PAGES only
+    "MATCH (p:Person {id: $person}) "
+    "MERGE (pg:Page:Node {id: $id}) "
+    "ON CREATE SET pg.tenant = $tenant, pg.incident = $inc, pg.kind = $kind, pg.urgency = 'normal', pg.sent_at = $now, "
+    "pg.ack_due_at = $now, pg.status = 'sent', pg.attempt = 1, pg.detail = $detail, pg.deep_link = $deep_link, "
+    "pg.channel = 'in_app', pg.channels = ['in_app'], pg.team = '', pg.reason = $reason, pg.person = p.id "
+    "MERGE (pg)-[:PAGES {k: ''}]->(p) "
+    "RETURN pg.id"
+)
+
+
+def create_note_page(g: Graph, *, tenant: str, pid: str, person: str, kind: str, detail: str, reason: str, now: int,
+                     inc: str = "", deep_link: str = "") -> str | None:
+    if kind not in ("report", "contract_notice"):
+        raise WriteError(f"a note page is a report or a contract notice, not {kind!r}")
+    r = g.query(W_PAGE_NOTE, {"tenant": tenant, "id": pid, "person": person, "kind": kind, "detail": detail[:2000],
+                              "reason": reason[:500], "now": int(now), "inc": inc, "deep_link": deep_link},
+                timeout=WRITE_TIMEOUT_MS).result_set
+    return r[0][0] if r else None
+
+
+W_PAGE_DELIVERY = (
+    "MATCH (pg:Page {id: $id}) "
+    "SET pg.delivery = $delivery, pg.channels = $channels, pg.channel = $channel, pg.delivered_at = $now, "
+    "pg.status = CASE WHEN $failed AND pg.status = 'sent' THEN 'delivery_failed' ELSE pg.status END "
+    "RETURN pg.status"
+)
+
+
+def record_delivery(g: Graph, *, pid: str, delivery: dict, now: int) -> str | None:
+    """What each channel did with a page (in-app always; external ones as configured). A page whose every external
+    channel failed reads delivery_failed (still in the in-app pager, still escalating); an acked page keeps its status."""
+    ext = {k: v for k, v in delivery.items() if k != "in_app"}
+    failed = bool(ext) and not any(v.get("ok") for v in ext.values())
+    chans = ["in_app"] + sorted(ext)
+    r = g.query(W_PAGE_DELIVERY, {"id": pid, "delivery": json.dumps(delivery, sort_keys=True, default=str),
+                                  "channels": chans, "channel": ",".join(chans), "failed": failed, "now": int(now)},
+                timeout=WRITE_TIMEOUT_MS).result_set
+    return r[0][0] if r else None
+
+
+W_PAGE_ACK = (
+    "MATCH (pg:Page {id: $id}) "
+    "WHERE pg.status IN ['sent', 'delivery_failed'] AND pg.kind IN ['page', 'escalation'] "
+    "MATCH (p:Person {id: $by}) WHERE p.active "
+    "SET pg.status = 'acked', pg.acked_at = $now, pg.acked_by = p.id, pg.ack_via = $via "
+    "MERGE (p)-[ak:ACKED {k: $id}]->(pg) SET ak.at = $now, ak.via = $via, ak.tg_user = $tg_user, pg.ack_tg_user = $tg_user "
+    "WITH pg, p "
+    "OPTIONAL MATCH (pg)-[:FOR]->(i:Incident) "
+    # the incident is acknowledged: its other open pages (other teams told at the same time) are superseded
+    "FOREACH (o IN [(i)<-[:FOR]-(x:Page) WHERE x.id <> $id AND x.status IN ['sent', 'delivery_failed'] | x] | "
+    "SET o.status = 'superseded', o.detail = $superseded) "
+    "RETURN pg.id, pg.incident, p.id, p.name"
+)
+
+
+W_PAGE_ACK_ANON = (
+    # the holder of the incident's run token (a demo visitor, not a person of the graph): the page is acknowledged with
+    # who acted (via run_token), no (:Person)-[:ACKED]-> edge, and MTTA (Q-ONCALL-STATS) counts only people's acks
+    "MATCH (pg:Page {id: $id}) "
+    "WHERE pg.status IN ['sent', 'delivery_failed'] AND pg.kind IN ['page', 'escalation'] "
+    "SET pg.status = 'acked', pg.acked_at = $now, pg.acked_by = null, pg.ack_via = $via, pg.ack_actor = $actor "
+    "WITH pg "
+    "OPTIONAL MATCH (pg)-[:FOR]->(i:Incident) "
+    "FOREACH (o IN [(i)<-[:FOR]-(x:Page) WHERE x.id <> $id AND x.status IN ['sent', 'delivery_failed'] | x] | "
+    "SET o.status = 'superseded', o.detail = $superseded) "
+    "RETURN pg.id, pg.incident"
+)
+
+
+def ack_page_anonymous(g: Graph, *, pid: str, via: str, actor: str, now: int) -> dict | None:
+    r = g.query(W_PAGE_ACK_ANON, {"id": pid, "via": via, "actor": actor[:80], "now": int(now),
+                                  "superseded": f"acknowledged by {actor} on page {pid}"}, timeout=WRITE_TIMEOUT_MS).result_set
+    return {"page": r[0][0], "incident": r[0][1], "by": None, "name": actor, "at": int(now), "via": via} if r else None
+
+
+def ack_page(g: Graph, *, pid: str, by: str, via: str, now: int, tg_user: str | None = None) -> dict | None:
+    """(:Person)-[:ACKED {at, via}]->(:Page), only while the page still waits for an ack (None ⇒ already acked,
+    escalated, resolved or not a page that needs an ack: HTTP 409). The incident's other open pages are superseded in
+    the same query, and escalation stops (Q-PAGE-OVERDUE skips an incident with an acked page)."""
+    r = g.query(W_PAGE_ACK, {"id": pid, "by": by, "via": via, "now": int(now), "tg_user": tg_user,
+                             "superseded": f"acknowledged by {by} on page {pid}"}, timeout=WRITE_TIMEOUT_MS).result_set
+    return {"page": r[0][0], "incident": r[0][1], "by": r[0][2], "name": r[0][3], "at": int(now), "via": via} if r else None
+
+
+W_PAGE_ESCALATE = (
+    # (FalkorDB 6.0.2 drops the row when a MATCH whose WHERE holds a pattern comprehension is followed by another
+    # MATCH: both MATCHes first, every comprehension in the WITH)
+    "MATCH (who:Person {id: $person}) WHERE who.active "
+    "MATCH (i:Incident {id: $inc}) "
+    "WITH i, who, [(i)<-[:FOR]-(o:Page) WHERE o.id IN $overdue AND o.status IN ['sent', 'delivery_failed'] "
+    "AND ($force OR o.ack_due_at <= $now) | o] AS olds "
+    # acknowledged = a page sent at or after the oldest overdue one was acked (an earlier wave does not count)
+    "WITH i, who, olds, reduce(m = $now, o IN olds | CASE WHEN o.sent_at < m THEN o.sent_at ELSE m END) AS since "
+    "WITH i, who, olds, size([(i)<-[:FOR]-(a:Page) WHERE a.status = 'acked' AND a.sent_at >= since | a]) AS acked "
+    "WHERE acked = 0 AND size(olds) > 0 "
+    "MERGE (pg:Page:Node {id: $id}) "
+    "ON CREATE SET pg.tenant = $tenant, pg.incident = $inc, pg.kind = 'escalation', pg.urgency = $urgency, "
+    "pg.sent_at = $now, pg.ack_due_at = $now + $window_ms, pg.status = 'sent', pg.attempt = $attempt, "
+    "pg.detail = $detail, pg.deep_link = $deep_link, pg.channel = 'in_app', pg.channels = ['in_app'], pg.team = '', "
+    "pg.reason = $reason, pg.evidence = $evidence, pg.person = who.id "
+    "MERGE (pg)-[:PAGES {k: ''}]->(who) "
+    "MERGE (pg)-[:FOR {k: ''}]->(i) "
+    "FOREACH (o IN olds | SET o.status = 'escalated', o.escalated_at = $now MERGE (o)-[:ESCALATED_TO {k: ''}]->(pg)) "
+    "RETURN pg.id, size(olds)"
+)
+
+W_PAGE_EXHAUSTED = (
+    "MATCH (i:Incident {id: $inc}) "
+    "WITH i, [(i)<-[:FOR]-(o:Page) WHERE o.id IN $overdue AND o.status IN ['sent', 'delivery_failed'] "
+    "AND ($force OR o.ack_due_at <= $now) | o] AS olds "
+    "WITH i, olds, reduce(m = $now, o IN olds | CASE WHEN o.sent_at < m THEN o.sent_at ELSE m END) AS since "
+    "WITH i, olds, size([(i)<-[:FOR]-(a:Page) WHERE a.status = 'acked' AND a.sent_at >= since | a]) AS acked "
+    "WHERE acked = 0 AND size(olds) > 0 "
+    "FOREACH (o IN olds | SET o.status = 'escalated', o.escalated_at = $now, o.detail = $detail) "
+    "RETURN size(olds)"
+)
+
+
+def escalate_pages(g: Graph, *, tenant: str, inc: str, overdue: list[str], page: dict | None, now: int,
+                   force: bool = False) -> dict | None:
+    """Escalate an unacknowledged incident in ONE query: the overdue pages (still unacked, deadline passed, and no page
+    of the incident acked meanwhile) become 'escalated' and each gets (:Page)-[:ESCALATED_TO]->(new page); the new
+    escalation page goes to `page['person']`. `page` None: nobody is left to page; the overdue pages are marked
+    escalated with the reason. None ⇒ nothing to escalate (acked or escalated by someone else meanwhile)."""
+    if page is None:
+        r = g.query(W_PAGE_EXHAUSTED, {"inc": inc, "overdue": overdue, "now": int(now), "force": bool(force),
+                                       "detail": "escalation order exhausted: nobody left to page; a human must pick this up"},
+                    timeout=WRITE_TIMEOUT_MS).result_set
+        return {"page": None, "escalated": int(r[0][0])} if r else None
+    r = g.query(W_PAGE_ESCALATE, {"tenant": tenant, "inc": inc, "overdue": overdue, "now": int(now), "force": bool(force),
+                                  "id": page["id"],
+                                  "person": page["person"], "urgency": page["urgency"], "window_ms": int(page["window_ms"]),
+                                  "attempt": int(page["attempt"]), "detail": str(page.get("detail") or "")[:1000],
+                                  "deep_link": str(page.get("deep_link") or ""), "reason": str(page.get("reason") or "")[:500],
+                                  "evidence": page.get("evidence") or ""}, timeout=WRITE_TIMEOUT_MS).result_set
+    return {"page": r[0][0], "escalated": int(r[0][1])} if r else None
+
+
+W_PAGES_SETTLE = (
+    "MATCH (i:Incident {id: $inc})<-[:FOR]-(pg:Page) "
+    "WHERE pg.status IN ['sent', 'delivery_failed'] AND pg.kind IN $kinds "
+    "SET pg.status = $status, pg.settled_at = $now, pg.detail = $detail "
+    "RETURN collect(pg.id)"
+)
+
+
+def settle_pages(g: Graph, *, inc: str, status: str, detail: str, now: int,
+                 kinds: tuple[str, ...] = ("page", "escalation", "contract_notice")) -> list[str]:
+    """The incident's open pages become `resolved` (it was fixed) or `superseded` (a later page replaces them)."""
+    if status not in ("resolved", "superseded"):
+        raise WriteError(f"pages settle as resolved or superseded, not {status!r}")
+    r = g.query(W_PAGES_SETTLE, {"inc": inc, "status": status, "detail": detail[:500], "now": int(now),
+                                 "kinds": list(kinds)}, timeout=WRITE_TIMEOUT_MS).result_set
+    return list(r[0][0]) if r else []
+
+
+# Standing approvals (contracts): granted in two steps like an action (choose the scope → an OFFER bound to a hash;
+# approve that exact hash → active), used under one guarded write, revoked by a human. They live in the tenant's
+# on-call home graph (the tenant graph; an eval's own room), never in a scenario's clean room.
+W_CONTRACT_OFFER = (
+    "MERGE (c:Contract:Node {id: $id}) "
+    "ON CREATE SET c.status = 'offered', c.tenant = $tenant, c.family = $family, c.action_kind = $kind, "
+    "c.params_hash = $params_hash, c.params = $params, c.max_uses = $max_uses, c.uses = 0, c.days = $days, "
+    "c.expires_at = $expires_at, c.offered_at = $now, c.offer_expires_at = $now + $ttl_ms, c.hash = $hash, "
+    "c.source_incident = $inc, c.source_graph = $graph, c.source_action = $aid, c.covers = $covers, c.quote = $quote "
+    "RETURN c.id, c.status, c.hash, c.offer_expires_at"
+)
+
+
+def offer_contract(g: Graph, *, cid: str, tenant: str, family: str, kind: str, params_hash: str, params: dict,
+                   max_uses: int, days: float, expires_at: int, now: int, ttl_ms: int, hash_: str, inc: str, graph: str,
+                   aid: str, covers: str, quote: str) -> dict:
+    r = g.query(W_CONTRACT_OFFER, {"id": cid, "tenant": tenant, "family": family, "kind": kind, "params_hash": params_hash,
+                                   "params": json.dumps(params, sort_keys=True, default=str), "max_uses": int(max_uses),
+                                   "days": float(days), "expires_at": int(expires_at), "now": int(now), "ttl_ms": int(ttl_ms),
+                                   "hash": hash_, "inc": inc, "graph": graph, "aid": aid, "covers": covers,
+                                   "quote": quote[:500]}, timeout=WRITE_TIMEOUT_MS).result_set
+    return {"id": r[0][0], "status": r[0][1], "hash": r[0][2], "offer_expires_at": r[0][3]}
+
+
+W_CONTRACT_GRANT = (
+    # single use, bound to the hash, before the offer expires: an offer becomes active exactly once
+    "MATCH (c:Contract {id: $id}) "
+    "WHERE c.status = 'offered' AND c.hash = $hash AND c.offer_expires_at > $now AND c.expires_at > $now "
+    "MATCH (p:Person {id: $by}) WHERE p.active "
+    "SET c.status = 'active', c.granted_at = $now, c.granted_by = p.id, c.real_ok = $real_ok "
+    "MERGE (c)-[:GRANTED_BY {k: ''}]->(p) "
+    "WITH c "
+    "OPTIONAL MATCH (n:Node {id: $covers}) "
+    "FOREACH (x IN CASE WHEN n IS NULL THEN [] ELSE [n] END | MERGE (c)-[:COVERS {k: ''}]->(x)) "
+    "RETURN c.id, c.status, c.granted_at, c.expires_at"
+)
+
+
+def grant_contract(g: Graph, *, cid: str, hash_: str, by: str, covers: str, now: int, real_ok: bool = False) -> dict | None:
+    """Step 2: approve the exact offer (by its hash). None ⇒ unknown, stale hash, expired offer, already granted, or
+    not an active person (HTTP 409). `real_ok`: granted with the authority real GitHub needs (the approver key, or
+    TELEGRAM_APPROVE_REAL); a contract without it never acts while GitHub is real."""
+    r = g.query(W_CONTRACT_GRANT, {"id": cid, "hash": hash_, "by": by, "covers": covers, "now": int(now),
+                                   "real_ok": bool(real_ok)}, timeout=WRITE_TIMEOUT_MS).result_set
+    return {"id": r[0][0], "status": r[0][1], "granted_at": r[0][2], "expires_at": r[0][3]} if r else None
+
+
+W_CONTRACT_USE = (
+    # THE guarded use (Beacon's conditional update): active, same family + action + params, uses < max_uses, not
+    # expired, granted by a person still active; increments and records the use in the same query. The use is MERGEd by
+    # its deterministic id (contract, graph, incident, action): a retry finds it and never counts it twice
+    "MATCH (c:Contract {id: $id})-[:GRANTED_BY]->(p:Person) "
+    "OPTIONAL MATCH (c)-[:USED_IN]->(old:ContractUse {id: $uid}) "
+    "WITH c, p, old "
+    "WHERE old IS NOT NULL OR (c.status = 'active' AND c.family = $family AND c.action_kind = $kind "
+    "AND c.params_hash = $params_hash AND c.uses < c.max_uses AND c.expires_at > $now AND p.active) "
+    "MERGE (u:ContractUse:Node {id: $uid}) "
+    "ON CREATE SET u.contract = c.id, u.incident = $inc, u.graph = $graph, u.action = $aid, u.at = $now, "
+    "u.verdict = 'pending', u.batch = $batch "
+    "WITH c, u, u.batch = $batch AS fresh "
+    "WITH c, u, fresh, CASE WHEN fresh THEN c.uses + 1 ELSE c.uses END AS n "
+    "SET c.uses = n, c.last_used_at = CASE WHEN fresh THEN $now ELSE c.last_used_at END, "
+    "c.status = CASE WHEN fresh AND n >= c.max_uses THEN 'exhausted' ELSE c.status END "
+    "MERGE (c)-[r:USED_IN {k: $uid}]->(u) ON CREATE SET r.at = $now, r.verdict = 'pending' "
+    "WITH c, u, fresh "
+    "OPTIONAL MATCH (i:Incident {id: $inc}) "
+    "FOREACH (x IN CASE WHEN i IS NULL THEN [] ELSE [i] END | MERGE (u)-[:FOR {k: ''}]->(x)) "
+    "RETURN c.id, c.uses, c.max_uses, c.status, u.id, fresh"
+)
+
+
+def use_contract(g: Graph, *, cid: str, family: str, kind: str, params_hash: str, uid: str, inc: str, graph: str,
+                 aid: str, now: int) -> dict | None:
+    """One use of a standing approval, or None (exhausted, expired, revoked, a different family/action/params, or its
+    grantor left): the caller then pages a human instead of acting."""
+    import uuid
+
+    r = g.query(W_CONTRACT_USE, {"id": cid, "family": family, "kind": kind, "params_hash": params_hash, "uid": uid,
+                                 "inc": inc, "graph": graph, "aid": aid, "now": int(now), "batch": uuid.uuid4().hex},
+                timeout=WRITE_TIMEOUT_MS).result_set
+    return {"contract": r[0][0], "uses": r[0][1], "max_uses": r[0][2], "status": r[0][3], "use": r[0][4],
+            "fresh": bool(r[0][5])} if r else None
+
+
+W_CONTRACT_USE_RETURN = (
+    # the use was consumed but the action never ran (NOT_EXECUTED): give it back, once (only a still-pending use)
+    "MATCH (c:Contract)-[r:USED_IN]->(u:ContractUse {id: $uid}) "
+    "WHERE u.verdict = 'pending' "
+    "WITH c, r, u, c.uses - 1 AS n "
+    "SET c.uses = n, u.verdict = 'NOT_EXECUTED', u.settled_at = $now, r.verdict = 'NOT_EXECUTED', "
+    "c.status = CASE WHEN c.status = 'exhausted' AND n < c.max_uses AND c.expires_at > $now THEN 'active' ELSE c.status END "
+    "RETURN c.uses, c.status"
+)
+
+
+def give_back_contract_use(g: Graph, *, uid: str, now: int) -> dict | None:
+    r = g.query(W_CONTRACT_USE_RETURN, {"uid": uid, "now": int(now)}, timeout=WRITE_TIMEOUT_MS).result_set
+    return {"uses": r[0][0], "status": r[0][1]} if r else None
+
+
+W_CONTRACT_USE_VERDICT = (
+    "MATCH (c:Contract)-[r:USED_IN]->(u:ContractUse {id: $uid}) "
+    "SET u.verdict = $verdict, u.settled_at = $now, r.verdict = $verdict "
+    "RETURN u.id"
+)
+
+
+def contract_use_verdict(g: Graph, *, uid: str, verdict: str, now: int) -> bool:
+    if verdict not in ("APPLIED", "NOT_APPLIED", "UNKNOWN", "NOT_EXECUTED"):
+        raise WriteError(f"bad contract-use verdict {verdict!r}")
+    return bool(g.query(W_CONTRACT_USE_VERDICT, {"uid": uid, "verdict": verdict, "now": int(now)},
+                        timeout=WRITE_TIMEOUT_MS).result_set)
+
+
+W_CONTRACT_REVOKE = (
+    "MATCH (c:Contract {id: $id}) WHERE c.status IN ['active', 'offered'] "
+    "SET c.status = 'revoked', c.revoked_at = $now, c.revoked_by = $by "
+    "RETURN c.id, c.status"
+)
+
+
+def revoke_contract(g: Graph, *, cid: str, by: str, now: int) -> bool:
+    return bool(g.query(W_CONTRACT_REVOKE, {"id": cid, "by": by[:80], "now": int(now)}, timeout=WRITE_TIMEOUT_MS).result_set)
+
+
+W_SHIFT_HANDOFF = (
+    "MATCH (f:Person {id: $from}) WHERE f.active "
+    "MATCH (t:Person {id: $to}) WHERE t.active "
+    "CREATE (h:Handoff:Node {id: $id, at: $now, from_shift: $from_shift, note: $note, tenant: $tenant, incident: $inc, "
+    "from_person: f.id, to_person: t.id}) "
+    "MERGE (h)-[:FROM {k: ''}]->(f) "
+    "MERGE (h)-[:TO {k: ''}]->(t) "
+    "WITH h "
+    "OPTIONAL MATCH (i:Incident {id: $inc}) "
+    "FOREACH (x IN CASE WHEN i IS NULL THEN [] ELSE [i] END | MERGE (h)-[:COVERS {k: ''}]->(x)) "
+    "RETURN h.id, h.at"
+)
+
+
+def hand_off_shift(g: Graph, *, hid: str, tenant: str, from_: str, to: str, note: str, from_shift: str, inc: str,
+                   now: int) -> dict | None:
+    """(:Handoff)-[:FROM]->(outgoing), -[:TO]->(incoming), -[:COVERS]->(incident, when it is in this graph). None ⇒ a
+    person is unknown or inactive."""
+    r = g.query(W_SHIFT_HANDOFF, {"id": hid, "tenant": tenant, "from": from_, "to": to, "note": note[:2000],
+                            "from_shift": from_shift[:200], "inc": inc, "now": int(now)}, timeout=WRITE_TIMEOUT_MS).result_set
+    return {"id": r[0][0], "at": r[0][1]} if r else None
+
+
+# The Telegram on-call bot (actions/telegram_bot.py): state that must outlive one webhook call lives in the on-call
+# home graph. An update is processed once (its update_id); a typed-phrase consent (approve / grant) is a single-use,
+# expiring proposal bound to the plan or contract hash; a chat is linked to a person and may mute information notices.
+W_BOT_UPDATE = (
+    "MERGE (u:BotUpdate:Node {id: $id}) "
+    "ON CREATE SET u.at = $now, u.chat = $chat, u.user = $user, u.kind = $kind, u.batch = $batch "
+    "RETURN u.batch = $batch AS fresh"
+)
+
+
+def claim_bot_update(g: Graph, *, uid: str, chat: str, user: str, kind: str, now: int) -> bool:
+    """True the first time this update (or digest key) is seen; False for a redelivery (do nothing)."""
+    import uuid
+
+    r = g.query(W_BOT_UPDATE, {"id": uid, "chat": chat, "user": user, "kind": kind[:40], "now": int(now),
+                               "batch": uuid.uuid4().hex}, timeout=WRITE_TIMEOUT_MS).result_set
+    return bool(r and r[0][0])
+
+
+W_BOT_CHAT = (
+    "MERGE (c:BotChat:Node {id: $id}) "
+    "ON CREATE SET c.linked_at = $now "
+    "SET c.chat = $chat, c.user = $user, c.person = $person, c.seen_at = $now, c.title = $title "
+    "RETURN c.id"
+)
+
+
+def link_bot_chat(g: Graph, *, chat: str, user: str, person: str, title: str, now: int) -> str | None:
+    r = g.query(W_BOT_CHAT, {"id": f"tgchat-{chat}", "chat": chat, "user": user, "person": person, "title": title[:120],
+                             "now": int(now)}, timeout=WRITE_TIMEOUT_MS).result_set
+    return r[0][0] if r else None
+
+
+W_BOT_MUTE = "MATCH (c:BotChat {id: $id}) SET c.muted_until = $until RETURN c.muted_until"
+
+
+def mute_bot_chat(g: Graph, *, chat: str, until: int) -> bool:
+    return bool(g.query(W_BOT_MUTE, {"id": f"tgchat-{chat}", "until": int(until)}, timeout=WRITE_TIMEOUT_MS).result_set)
+
+
+W_BOT_PROPOSAL = (
+    "CREATE (p:BotProposal:Node {id: $id, kind: $kind, chat: $chat, user: $user, person: $person, tenant: $tenant, "
+    "graph: $graph, incident: $inc, action: $action, hash: $hash, prefix: $prefix, created_at: $now, "
+    "expires_at: $expires_at, status: 'open', detail: $detail}) "
+    "RETURN p.id"
+)
+
+
+def create_bot_proposal(g: Graph, *, pid: str, kind: str, chat: str, user: str, person: str, tenant: str, graph: str,
+                        inc: str, action: str, hash_: str, now: int, ttl_ms: int, detail: str = "") -> str:
+    if kind not in ("approve", "grant"):
+        raise WriteError(f"bad proposal kind {kind!r}")
+    r = g.query(W_BOT_PROPOSAL, {"id": pid, "kind": kind, "chat": chat, "user": user, "person": person, "tenant": tenant,
+                                 "graph": graph, "inc": inc, "action": action, "hash": hash_, "prefix": hash_[:6],
+                                 "now": int(now), "expires_at": int(now) + int(ttl_ms), "detail": detail[:500]},
+                timeout=WRITE_TIMEOUT_MS).result_set
+    return r[0][0]
+
+
+W_BOT_PROPOSAL_USE = (
+    # single use, before it expires, by the user it was made for, in the chat it was made in: one guarded write
+    "MATCH (p:BotProposal {id: $id}) "
+    "WHERE p.status = 'open' AND p.expires_at > $now AND p.chat = $chat AND p.user = $user "
+    "SET p.status = 'used', p.used_at = $now "
+    "RETURN p.id"
+)
+
+
+def use_bot_proposal(g: Graph, *, pid: str, chat: str, user: str, now: int) -> bool:
+    return bool(g.query(W_BOT_PROPOSAL_USE, {"id": pid, "chat": chat, "user": user, "now": int(now)},
+                        timeout=WRITE_TIMEOUT_MS).result_set)
+
+
+W_PAGE_TG = (
+    "MATCH (pg:Page {id: $id}) "
+    "SET pg.tg_chat = coalesce($chat, pg.tg_chat), pg.tg_message_id = coalesce($mid, pg.tg_message_id), "
+    "pg.tg_digest = $digest "
+    "RETURN pg.id"
+)
+
+
+def record_page_message(g: Graph, *, pid: str, chat: str | None, mid: int | None, digest: str) -> bool:
+    """Which Telegram message shows this page (so it is edited in place) and a digest of what it shows (so an
+    unchanged card is never re-sent)."""
+    return bool(g.query(W_PAGE_TG, {"id": pid, "chat": chat, "mid": mid, "digest": digest},
+                        timeout=WRITE_TIMEOUT_MS).result_set)
+
+
+# Public-mode paging safety (security review): which incidents may leave the building, a per-channel hourly budget and a
+# per-recipient cooldown, and the durable index of graphs that hold pages (so escalation never depends on a list cap).
+W_INCIDENT_PAGING = "MATCH (i:Incident {id: $inc}) SET i.page_external = $external RETURN i.id"
+
+
+def set_incident_paging(g: Graph, *, inc: str, external: bool) -> bool:
+    """May this incident's pages go to external channels (a keyed or non-public run), or in-app only."""
+    return bool(g.query(W_INCIDENT_PAGING, {"inc": inc, "external": bool(external)}, timeout=WRITE_TIMEOUT_MS).result_set)
+
+
+W_BUDGET_TAKE = (
+    "MERGE (b:DeliveryBudget:Node {id: $id}) "
+    "ON CREATE SET b.n = 0, b.channel = $channel, b.hour = $hour, b.created_at = $now "
+    "WITH b WHERE b.n < $cap "
+    "SET b.n = b.n + 1 "
+    "RETURN b.n"
+)
+
+
+def take_delivery_budget(g: Graph, *, channel: str, hour: int, cap: int, now: int) -> bool:
+    """One send of `channel` in this hour, if the hourly cap allows it (one MERGE, so concurrent senders share it)."""
+    return bool(g.query(W_BUDGET_TAKE, {"id": f"budget|{channel}|{hour}", "channel": channel, "hour": int(hour),
+                                        "cap": int(cap), "now": int(now)}, timeout=WRITE_TIMEOUT_MS).result_set)
+
+
+W_COOLDOWN_TAKE = (
+    "MERGE (b:DeliveryBudget:Node {id: $id}) "
+    "ON CREATE SET b.last = 0, b.channel = $channel, b.created_at = $now "
+    "WITH b WHERE $now - b.last >= $cooldown_ms "
+    "SET b.last = $now "
+    "RETURN b.last"
+)
+
+
+def take_recipient_cooldown(g: Graph, *, channel: str, recipient: str, cooldown_ms: int, now: int) -> bool:
+    return bool(g.query(W_COOLDOWN_TAKE, {"id": f"cooldown|{channel}|{recipient}", "channel": channel,
+                                          "cooldown_ms": int(cooldown_ms), "now": int(now)}, timeout=WRITE_TIMEOUT_MS).result_set)
+
+
+W_PAGE_GRAPH = (
+    "MERGE (x:PageGraph:Node {id: $graph}) "
+    "ON CREATE SET x.first_at = $now "
+    "SET x.last_at = $now, x.tenant = $tenant "
+    "RETURN x.id"
+)
+
+
+def index_page_graph(g: Graph, *, graph: str, tenant: str, now: int) -> None:
+    g.query(W_PAGE_GRAPH, {"graph": graph, "tenant": tenant, "now": int(now)}, timeout=WRITE_TIMEOUT_MS)
+
+
+W_PAGE_GRAPH_DROP = "MATCH (x:PageGraph) WHERE x.id IN $graphs DELETE x RETURN count(x)"
+
+
+def drop_page_graphs(g: Graph, *, graphs: list[str]) -> int:
+    r = g.query(W_PAGE_GRAPH_DROP, {"graphs": list(graphs)}, timeout=WRITE_TIMEOUT_MS).result_set
+    return int(r[0][0]) if r else 0
+
+
+W_BOT_PRUNE_UPDATES = "MATCH (n:BotUpdate) WHERE n.at < $before WITH n LIMIT 1000 DELETE n RETURN count(*)"
+W_BOT_PRUNE_PROPOSALS = "MATCH (n:BotProposal) WHERE n.expires_at < $before WITH n LIMIT 1000 DELETE n RETURN count(*)"
+W_BOT_PRUNE_BUDGET = (
+    "MATCH (n:DeliveryBudget) WHERE n.hour IS NOT NULL AND n.created_at < $before WITH n LIMIT 1000 DELETE n "
+    "RETURN count(*)"
+)
+
+
+def prune_bot_state(g: Graph, *, updates_before: int, proposals_before: int, budget_before: int) -> int:
+    """TTL clean-up: processed bot updates (and digest claims), expired consents and old hourly budget counters (the
+    per-recipient cooldown counters, one per person and channel, are kept). Three single queries, 1000 nodes each."""
+    n = 0
+    for q, before in ((W_BOT_PRUNE_UPDATES, updates_before), (W_BOT_PRUNE_PROPOSALS, proposals_before),
+                      (W_BOT_PRUNE_BUDGET, budget_before)):
+        r = g.query(q, {"before": int(before)}, timeout=WRITE_TIMEOUT_MS).result_set
+        n += int(r[0][0]) if r else 0
+    return n
+
+
+
+# ------------------------------------------------------------------ learning (M21): events, then derived state in Cypher
+# Every learned item lives in the tenant's on-call home graph (oncall_<t>) and is derived from (:LearnEvent) nodes, each
+# a TRUSTED operator action (memory/learning.py decides trust; anonymous public-demo actions are never recorded). The
+# derived state (Preference, RESPONDED, Guideline, KnowledgeGap) is recomputed from the events by ONE aggregate query
+# each, recency decay included as an expression (0.5 ^ (age / half-life)); each derived node keeps DERIVED_FROM edges
+# (or an `events` list on a RESPONDED edge) to the events it came from, so forgetting a person's events and recomputing
+# removes their influence.
+LEARN_KINDS = ("choose", "approve", "reject", "override", "grant", "revoke", "ack", "escalate_now", "handoff",
+               "verified", "gap")
+
+W_LEARN_EVENT = (
+    "MERGE (e:LearnEvent:Node {id: $id}) "
+    "ON CREATE SET e += $props, e.recorded_at = timestamp() "
+    "WITH e "
+    "OPTIONAL MATCH (p:Person {id: $person}) "
+    "FOREACH (x IN CASE WHEN p IS NULL THEN [] ELSE [p] END | SET e.person_name = x.name MERGE (x)-[:DID {k: ''}]->(e)) "
+    "WITH e "
+    "OPTIONAL MATCH (c:Node {id: $family}) "
+    "FOREACH (x IN CASE WHEN c IS NULL OR $family = '' THEN [] ELSE [c] END | MERGE (e)-[:ABOUT {k: ''}]->(x)) "
+    "RETURN e.id, e.at, e.recorded_at"
+)
+
+
+def learn_event(g: Graph, *, eid: str, kind: str, person: str, family: str | None, at: int, **props: Any) -> dict:
+    """One trusted operator action as a (:LearnEvent), idempotent by id (a retried hook records it once), linked
+    (:Person)-[:DID]->(e) when the person exists and -[:ABOUT]->(the family's component). Props are scalars."""
+    if kind not in LEARN_KINDS:
+        raise WriteError(f"bad learn event kind {kind!r}")
+    body = _clean({**props, "kind": kind, "person": person, "family": family or "", "at": int(at)})
+    r = g.query(W_LEARN_EVENT, {"id": eid, "person": person or "", "family": family or "", "props": body},
+                timeout=WRITE_TIMEOUT_MS).result_set
+    if not r:
+        raise WriteError(f"learn event {eid} not written")
+    return {"id": r[0][0], "at": r[0][1]}
+
+
+_LN2 = "0.6931471805599453"
+W_LEARN_PREFS = (
+    # one family: drop its preferences, then rebuild them from its approve/reject events with recency decay, the
+    # family totals for the Beta-smoothed preference and DERIVED_FROM edges to every event used (provenance)
+    "OPTIONAL MATCH (old:Preference) WHERE old.family = $family "
+    "DETACH DELETE old "
+    "WITH count(*) AS gone "
+    "MATCH (e:LearnEvent) WHERE e.family = $family AND e.kind IN ['approve', 'reject'] AND e.action_kind IS NOT NULL "
+    f"WITH e, exp(-{_LN2} * toFloat($now - e.at) / $half_life_ms) AS w "
+    "WITH e.action_kind AS kind, sum(CASE WHEN e.kind = 'approve' THEN w ELSE 0.0 END) AS a, "
+    "sum(CASE WHEN e.kind = 'reject' THEN w ELSE 0.0 END) AS r, "
+    "sum(CASE WHEN e.kind = 'approve' THEN 1 ELSE 0 END) AS na, sum(CASE WHEN e.kind = 'reject' THEN 1 ELSE 0 END) AS nr, "
+    "max(CASE WHEN e.kind = 'approve' THEN e.at END) AS last_at, max(e.at) AS last_any, collect(e.id) AS evs "
+    "WITH collect({kind: kind, a: a, r: r, na: na, nr: nr, last_at: last_at, last_any: last_any, evs: evs}) AS rows, "
+    "sum(a) AS ta, sum(na) AS tna, sum(na + nr) AS tn "
+    "UNWIND rows AS x "
+    "CREATE (p:Preference:Node {id: 'pref|' + $family + '|' + x.kind, family: $family, action_kind: x.kind, "
+    "approvals: x.a, rejections: x.r, others: ta - x.a, n_approve: toInteger(x.na), n_reject: toInteger(x.nr), "
+    "n_family_approve: toInteger(tna), n_family: toInteger(tn), last_at: x.last_at, last_event_at: x.last_any, "
+    "computed_at: $now, half_life_ms: $half_life_ms, events: x.evs[0..50]}) "
+    "WITH p, x "
+    "UNWIND x.evs AS eid "
+    "MATCH (e:LearnEvent) WHERE e.id = eid "
+    "MERGE (p)-[:DERIVED_FROM {k: eid}]->(e) "
+    "RETURN count(DISTINCT p), count(e)"
+)
+
+
+def learn_recompute_prefs(g: Graph, *, family: str, now: int, half_life_ms: float) -> dict:
+    """Recompute one family's Preference nodes from its approve/reject events (one query; none left ⇒ none kept)."""
+    r = g.query(W_LEARN_PREFS, {"family": family, "now": int(now), "half_life_ms": float(half_life_ms)},
+                timeout=WRITE_TIMEOUT_MS).result_set
+    return {"family": family, "preferences": int(r[0][0]) if r else 0, "edges": int(r[0][1]) if r else 0}
+
+
+W_LEARN_RESPONDED = (
+    # one person and one family's component: the decayed sum of their acks, approvals and verified fixes, written on
+    # ONE RESPONDED edge with the counts, the mean ack delay, the last response and the events it came from; no event
+    # left ⇒ no edge
+    "MATCH (p:Person {id: $person}) "
+    "MATCH (c:Node {id: $family}) "
+    "OPTIONAL MATCH (e:LearnEvent) WHERE e.person = $person AND e.family = $family AND e.kind IN ['ack', 'approve', 'verified'] "
+    f"WITH p, c, e, CASE WHEN e IS NULL THEN 0.0 ELSE exp(-{_LN2} * toFloat($now - e.at) / $half_life_ms) END AS w "
+    "WITH p, c, sum(w * CASE e.kind WHEN 'ack' THEN $w_ack WHEN 'approve' THEN $w_approve WHEN 'verified' THEN $w_fix "
+    "ELSE 0.0 END) AS score, count(e) AS n, sum(CASE WHEN e.kind = 'ack' THEN 1 ELSE 0 END) AS acks, "
+    "sum(CASE WHEN e.kind = 'approve' THEN 1 ELSE 0 END) AS approvals, "
+    "sum(CASE WHEN e.kind = 'verified' THEN 1 ELSE 0 END) AS fixes, "
+    "avg(CASE WHEN e.kind = 'ack' THEN e.ack_ms END) AS mtta, max(e.at) AS last_at, collect(e.id) AS evs, "
+    "count(DISTINCT e.incident) AS incidents "
+    "MERGE (p)-[r:RESPONDED {k: $family}]->(c) "
+    "SET r.score = score, r.n = n, r.acks = toInteger(acks), r.approvals = toInteger(approvals), "
+    "r.fixes = toInteger(fixes), r.mtta_ms = mtta, r.last_at = last_at, r.computed_at = $now, "
+    "r.half_life_ms = $half_life_ms, r.events = evs[0..50], r.incidents = incidents "
+    "WITH r, n "
+    "FOREACH (x IN CASE WHEN n = 0 THEN [r] ELSE [] END | DELETE x) "
+    "RETURN n"
+)
+
+
+def learn_recompute_responder(g: Graph, *, person: str, family: str, now: int, half_life_ms: float, w_ack: float,
+                              w_approve: float, w_fix: float) -> int:
+    """Recompute (person)-[:RESPONDED]->(family component) from the person's events (one query). Returns the number
+    of events it now rests on (0: the edge is gone). A person or component missing from the graph writes nothing."""
+    r = g.query(W_LEARN_RESPONDED, {"person": person, "family": family, "now": int(now),
+                                    "half_life_ms": float(half_life_ms), "w_ack": float(w_ack),
+                                    "w_approve": float(w_approve), "w_fix": float(w_fix)},
+                timeout=WRITE_TIMEOUT_MS).result_set
+    return int(r[0][0]) if r else 0
+
+
+W_LEARN_GUIDELINE = (
+    # a rejection's reason becomes a PROPOSED guideline for its family and action kind (never active by itself)
+    "MATCH (e:LearnEvent {id: $event}) WHERE e.kind = 'reject' "
+    "MERGE (gd:Guideline:Node {id: $gid}) "
+    "ON CREATE SET gd.text = $text, gd.family = e.family, gd.action_kind = e.action_kind, gd.source = 'rejection', "
+    "gd.by = e.person, gd.by_name = e.person_name, gd.at = e.at, gd.status = 'proposed', gd.incident = e.incident, "
+    "gd.graph = e.graph, gd.option = e.option, gd.source_event = e.id "
+    "MERGE (gd)-[:DERIVED_FROM {k: e.id}]->(e) "
+    "WITH gd "
+    "OPTIONAL MATCH (c:Node) WHERE c.id = gd.family AND NOT c:LearnEvent "
+    "FOREACH (x IN CASE WHEN c IS NULL THEN [] ELSE [c] END | MERGE (gd)-[:ABOUT {k: ''}]->(x)) "
+    "RETURN gd.id, gd.status"
+)
+
+
+def learn_guideline(g: Graph, *, event: str, gid: str, text: str) -> dict | None:
+    r = g.query(W_LEARN_GUIDELINE, {"event": event, "gid": gid, "text": text[:500]}, timeout=WRITE_TIMEOUT_MS).result_set
+    return {"id": r[0][0], "status": r[0][1]} if r else None
+
+
+W_LEARN_GUIDELINE_SET = (
+    # promote (proposed → active) or dismiss (proposed|active → dismissed), by an active person, only from the stated
+    # statuses (a stale click is a no-op → HTTP 409)
+    "MATCH (p:Person {id: $by}) WHERE p.active "
+    "MATCH (gd:Guideline {id: $id}) WHERE gd.status IN $from "
+    "SET gd.status = $to, gd.decided_by = p.id, gd.decided_by_name = p.name, gd.decided_at = $now "
+    "RETURN gd.id, gd.status, gd.decided_at"
+)
+
+
+def learn_set_guideline(g: Graph, *, gid: str, action: str, by: str, now: int) -> dict | None:
+    if action not in ("promote", "dismiss"):
+        raise WriteError(f"bad guideline action {action!r}")
+    frm, to = (["proposed"], "active") if action == "promote" else (["proposed", "active"], "dismissed")
+    r = g.query(W_LEARN_GUIDELINE_SET, {"id": gid, "by": by, "from": frm, "to": to, "now": int(now)},
+                timeout=WRITE_TIMEOUT_MS).result_set
+    return {"id": r[0][0], "status": r[0][1], "decided_at": r[0][2]} if r else None
+
+
+W_LEARN_GAP = (
+    # one question (normalised text): how often trusted users asked it without an answer, when, and the components it
+    # was about (ABOUT, so knowledge health can name the owning team); a dismissed gap re-opens when asked again
+    "MERGE (k:KnowledgeGap:Node {id: $gid}) "
+    "ON CREATE SET k.first_at = $now "
+    "WITH k "
+    "OPTIONAL MATCH (e:LearnEvent) WHERE e.kind = 'gap' AND e.gap = $gid "
+    "WITH k, count(e) AS n, max(e.at) AS last_at, min(e.at) AS first_at, collect(e) AS evs "
+    "SET k.n = n, k.last_at = last_at, k.first_at = coalesce(first_at, k.first_at), k.text = $text, "
+    "k.intent = $intent, k.reason = $reason, k.about = $about, k.events = [x IN evs | x.id][0..50], "
+    "k.status = CASE WHEN k.dismissed_at IS NOT NULL AND k.dismissed_at >= last_at THEN 'dismissed' ELSE 'open' END "
+    "FOREACH (x IN evs | MERGE (k)-[:DERIVED_FROM {k: x.id}]->(x)) "
+    "WITH k, n "
+    "OPTIONAL MATCH (a:Node) WHERE a.id IN $about AND NOT a:LearnEvent AND NOT a:KnowledgeGap "
+    "FOREACH (x IN CASE WHEN a IS NULL OR n = 0 THEN [] ELSE [a] END | MERGE (k)-[:ABOUT {k: x.id}]->(x)) "
+    "WITH DISTINCT k, n "
+    "FOREACH (x IN CASE WHEN n = 0 THEN [k] ELSE [] END | DETACH DELETE x) "
+    "RETURN n"
+)
+
+
+def learn_recompute_gap(g: Graph, *, gid: str, text: str, intent: str, reason: str, about: list[str], now: int) -> int:
+    r = g.query(W_LEARN_GAP, {"gid": gid, "text": text[:500], "intent": intent or "", "reason": reason[:300],
+                              "about": sorted(set(about))[:10], "now": int(now)}, timeout=WRITE_TIMEOUT_MS).result_set
+    return int(r[0][0]) if r else 0
+
+
+W_LEARN_GAP_DISMISS = (
+    "MATCH (k:KnowledgeGap {id: $id}) WHERE k.status = 'open' "
+    "SET k.status = 'dismissed', k.dismissed_at = $now, k.dismissed_by = $by "
+    "RETURN k.id, k.status"
+)
+
+
+def learn_dismiss_gap(g: Graph, *, gid: str, by: str, now: int) -> dict | None:
+    r = g.query(W_LEARN_GAP_DISMISS, {"id": gid, "by": by, "now": int(now)}, timeout=WRITE_TIMEOUT_MS).result_set
+    return {"id": r[0][0], "status": r[0][1]} if r else None
+
+
+W_LEARN_FORGET = (
+    # forget a person's learned influence (the approved dry-run list only): their events and the guidelines their
+    # rejections proposed, in one query; the derived state is then recomputed (learn_recompute_*), one query each
+    "MATCH (e:LearnEvent) WHERE e.person = $person AND e.id IN $ids "
+    "OPTIONAL MATCH (gd:Guideline) WHERE gd.source_event = e.id "
+    "WITH collect(DISTINCT e) AS evs, collect(DISTINCT gd) AS gds "
+    "WITH evs, gds, size(evs) AS n_e, size(gds) AS n_g, reduce(r = 0, x IN evs | r + size([(x)-[k]-() | k])) AS rels "
+    "FOREACH (x IN gds | DETACH DELETE x) "
+    "FOREACH (x IN evs | DETACH DELETE x) "
+    "RETURN n_e, n_g, rels"
+)
+
+
+def learn_forget(g: Graph, *, person: str, ids: list[str]) -> dict:
+    r = g.query(W_LEARN_FORGET, {"person": person, "ids": sorted(set(ids))}, timeout=WRITE_TIMEOUT_MS).result_set
+    return {"events": int(r[0][0]), "guidelines": int(r[0][1]), "relationships": int(r[0][2])} if r else \
+        {"events": 0, "guidelines": 0, "relationships": 0}

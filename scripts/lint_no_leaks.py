@@ -30,6 +30,24 @@ def literals() -> set[str]:
             out.add(a["id"])
         for f in s.get("facts", []):
             out.add(f["key"])
+    out |= faultbench_literals()
+    return out
+
+
+def faultbench_literals() -> set[str]:
+    """FaultBench-OTel (evals/faultbench_otel.py): every change id recorded in its injection log (the cause and the
+    decoys alike) must not appear in the package either. The log is the grader's truth file; the lint only collects
+    ids from it, it never decides anything with it."""
+    p = ROOT / "data" / "scenarios" / "faultbench_otel.truth.json"
+    if not p.exists():
+        return set()
+    import json
+
+    out: set[str] = set()
+    for w in json.loads(p.read_text()).get("windows", {}).values():
+        if w.get("cause"):
+            out.add(w["cause"])
+        out |= set((w.get("decoys") or {}).keys())
     return out
 
 

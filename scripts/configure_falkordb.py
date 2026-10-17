@@ -18,6 +18,23 @@ from faultline.graph.udf import load_udfs as _load_udfs
 CONFIG = {"TIMEOUT_MAX": 10000, "TIMEOUT_DEFAULT": 2000, "RESULTSET_SIZE": 100000, "MAX_QUEUED_QUERIES": 50}
 
 
+def query_mem_capacity() -> int:
+    """QUERY_MEM_CAPACITY in bytes from weights.yaml engine.query_mem_capacity_mb (M20 #2): FalkorDB stops any single
+    query above it with "Query's mem consumption exceeded capacity" (the RO wrapper raises GraphMemoryCapExceeded).
+    GRAPH.CONFIG SET is not persisted across restarts, so deploy/docker-compose*.yml also pass it in FALKORDB_ARGS
+    (tests/graph/test_engine_config.py keeps the two equal)."""
+    from faultline.agent.weights import weights
+
+    mb = int(weights()["engine"]["query_mem_capacity_mb"])
+    if mb <= 0:
+        raise ValueError("engine.query_mem_capacity_mb must be > 0 (0 would mean no per-query memory cap)")
+    return mb * 1024 * 1024
+
+
+def config() -> dict[str, int]:
+    return {**CONFIG, "QUERY_MEM_CAPACITY": query_mem_capacity()}
+
+
 class EngineMismatch(RuntimeError):
     pass
 
@@ -46,7 +63,7 @@ def apply() -> dict:
     r = redis.Redis(host=settings.falkordb_host, port=settings.falkordb_port,
                     username=settings.falkordb_engine_user or None, password=settings.falkordb_engine_password or None)
     out = {"engine_module": verify_engine(r)}
-    for k, v in CONFIG.items():
+    for k, v in config().items():
         r.execute_command("GRAPH.CONFIG", "SET", k, v)
         out[k] = r.execute_command("GRAPH.CONFIG", "GET", k)[1]
     out["udf"] = load_udfs(r)

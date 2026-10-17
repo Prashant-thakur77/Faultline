@@ -22,7 +22,7 @@ import redis
 from ..config import settings
 from . import client
 from .algo import registry
-from .errors import GraphNotReady, GraphQueryError, GraphTimeout, GraphUnavailable
+from .errors import GraphMemoryCapExceeded, GraphNotReady, GraphQueryError, GraphTimeout, GraphUnavailable
 from .templates import load
 from .tenant import check_tenant, graph_belongs_to, tenant_graph
 
@@ -93,6 +93,8 @@ def classify(e: Exception, tid: str) -> Exception:
         return GraphUnavailable(f"{tid}: FalkorDB unreachable: {msg}")
     if "Query timed out" in msg:
         return GraphTimeout(f"{tid}: {msg}")
+    if "mem consumption exceeded capacity" in msg:  # QUERY_MEM_CAPACITY (M20 #2): fail closed, never an empty result
+        return GraphMemoryCapExceeded(f"{tid}: stopped by FalkorDB's per-query memory cap (QUERY_MEM_CAPACITY): {msg}")
     if "empty key" in msg.lower():
         return GraphNotReady(f"{tid}: graph does not exist (not seeded): {msg}")
     return GraphQueryError(f"{tid}: {msg}")
@@ -152,6 +154,8 @@ class RO:
         q = G.guard(query)
         params = dict(params or {})
         G.check_params(params)
+        # the function allow-list comes from the engine's own catalogue (Q-FUNCS, once per process; M20 #7)
+        G.check_functions(q, G.allowed_functions(lambda: self.run("Q-FUNCS", {}).rows[0]))
         g = client.ro_graph(self.tenant, self.graph_name)
         try:
             plan = g.explain(q, params)

@@ -44,9 +44,9 @@ def test_copy_carries_indexes_and_ready_flag(db, scratch):
 def test_unique_constraint_blocks_duplicate_intent(scratch):
     writes.apply_schema(scratch)
     writes.ensure_constraints(scratch)
-    scratch.query("CREATE (:Intent {idem:'x'})")
-    with pytest.raises(Exception):
-        scratch.query("CREATE (:Intent {idem:'x'})")
+    scratch.query("CREATE (:Intent {idem:'x', state:'PENDING'})")      # (M20: Intent.state is mandatory too)
+    with pytest.raises(Exception, match="unique constraint violation"):
+        scratch.query("CREATE (:Intent {idem:'x', state:'PENDING'})")
 
 
 def test_dangling_edge_fails_loudly(scratch):

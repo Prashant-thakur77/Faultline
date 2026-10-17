@@ -249,3 +249,18 @@ def test_match_after_call_subquery_reusing_a_bound_variable_is_rejected():
     # MATCH first, then the subqueries (Q-GATE-UPSTREAM's shape): allowed
     lint("T", "MATCH (s:Node) WHERE s.id IN $ids\nMATCH (u:Node)-[:PROPAGATES_TO*1..8]->(s)\nWITH DISTINCT u, s\n"
               "CALL { WITH s RETURN 1 AS x }\nRETURN u.id AS u, x ORDER BY u LIMIT 10", "", ())
+
+
+def test_comprehension_filter_then_disconnected_match_is_refused():
+    """docs/upstream/20 (found writing the on-call escalation): a MATCH whose WHERE holds a pattern comprehension,
+    followed by a MATCH that uses none of its variables, silently drops the row on 6.0.2."""
+    from faultline.graph.templates import TemplateLintError, lint
+
+    bad = "MATCH (n:N {id:$a}) WHERE size([(n)<-[:R]-(x:X) | x]) = 0 MATCH (p:P {id:$p}) RETURN n.id AS id ORDER BY id LIMIT 1"
+    with pytest.raises(TemplateLintError, match="engine bug #20"):
+        lint("T", bad, "rows", ())
+    # the forms that work: the other MATCH first, a connected second MATCH, the comprehension in a WITH
+    lint("T", "MATCH (p:P {id:$p}) MATCH (n:N {id:$a}) WHERE size([(n)<-[:R]-(x:X) | x]) = 0 RETURN n.id AS id ORDER BY id LIMIT 1", "rows", ())
+    lint("T", "MATCH (n:N {id:$a}) WHERE size([(n)<-[:R]-(x:X) | x]) = 0 MATCH (n)-[:T]->(m) RETURN m.id AS id ORDER BY id LIMIT 1", "rows", ())
+    lint("T", "MATCH (n:N {id:$a}) WITH n, size([(n)<-[:R]-(x:X) | x]) AS k WHERE k = 0 MATCH (p:P {id:$p}) "
+              "RETURN p.id AS id ORDER BY id LIMIT 1", "rows", ())
