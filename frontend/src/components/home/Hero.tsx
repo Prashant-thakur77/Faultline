@@ -139,7 +139,6 @@ function Numbers() {
   const s = useEvalSummary();
   const v = s.state === "ok" ? s.summary.values : {};
   const get = (k: string) => (k in v && v[k] !== null ? String(v[k]) : "–");
-  const two = (k: string) => (typeof v[k] === "number" ? (v[k] as number).toFixed(2) : get(k));   // shown rounded; exact in the title
   // each number says how to read it: two of them are zeros, and zero is the result we want
   const items: { big: string; unit: string; tag: string; good: string; text: React.ReactNode; exact?: string }[] = [
     // Safety, not accuracy: the honest trade (right causes, hand-offs to a human) is stated next to the zero.
@@ -160,8 +159,15 @@ function Numbers() {
           right causes, but nothing checks its guesses against the graph
         </>
       ) },
-    { big: two("ctx.busy30.b1000.GA.mrr"), unit: "MRR", tag: "Ranking", good: "higher is better", exact: get("ctx.busy30.b1000.GA.mrr"),
-      text: <>where the context pack ranks the true cause (MRR), vs {two("ctx.busy30.b1000.V.mrr")} for vector RAG and {two("ctx.busy30.b1000.R.mrr")} for recency, with 30 unrelated deploys in the window</> },
+    // the real OpenTelemetry Demo with its own fault flags (evals/faultbench_otel.py): real services, real telemetry
+    { big: get("otel.faultline.wrong.k"), unit: "wrong blames on a real system", tag: "Real system", good: "lower is better",
+      text: (
+        <>
+          wrong blames in {get("otel.faultline.wrong.n")} windows of the real OpenTelemetry Demo, broken with its own
+          fault flags: {get("otel.faultline.right_cause.k")}/{get("otel.faultline.right_cause.n")} right causes. A
+          threshold on the same telemetry: {get("otel.Tplus.wrong.k")} wrong
+        </>
+      ) },
   ];
   return (
     <div className="mx-auto max-w-[1200px] px-5 pb-20 pt-6 sm:px-8">
