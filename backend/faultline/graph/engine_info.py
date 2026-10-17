@@ -117,7 +117,146 @@ def tenant_report(tenant: str, graphs: list[str] | None = None) -> dict[str, Any
     return out
 
 
-__all__ = ["memory", "info", "slowlog", "tenant_report"]
+# ---------------------------------------------------------------------------------------------------------------------
+# M20 #8: FalkorDB's own per-query telemetry (6.0.2 writes a `telemetry{<graph>}` stream: one entry per query with
+# "Received at", "Query", "Query parameters", "Total/Wait/Execution/Report duration" (ms), "Utilized cache", "Write",
+# "Timeout"; trimmed to MAX_INFO_QUERIES, deleted with the graph). Unlike GRAPH.SLOWLOG (10 entries, ≥ 10 ms) it sees
+# every query, so the engine itself reports queueing (wait), execution and plan-cache use per template.
+# Public-safe by construction: entries are mapped to template ids (Q-…) or writer ids (W-…) and only ids, numbers and
+# flags leave this module. The query text and the parameters (another visitor's input) are never returned.
+_DURATIONS = {"Total duration": "total_ms", "Wait duration": "wait_ms", "Execution duration": "exec_ms",
+              "Report duration": "report_ms"}
+MAX_INSIGHT_ROOMS = 10          # eval clean rooms included per call (their streams go when the room is deleted)
+TELEMETRY_COUNT = 1000          # entries read per graph (MAX_INFO_QUERIES keeps 1000)
+RECENT = 20
+
+
+def _writer_index() -> dict[str, str]:
+    from . import writes
+
+    return {_norm(v): k.replace("_", "-") for k, v in vars(writes).items() if k.startswith("W_") and isinstance(v, str)}
+
+
+def _s(x: Any) -> str:
+    return x.decode() if isinstance(x, bytes) else str(x)
+
+
+def _pct(xs: list[float], q: float) -> float | None:
+    """Nearest-rank percentile (the convention of scripts/profile_templates.py)."""
+    if not xs:
+        return None
+    ys = sorted(xs)
+    return round(ys[max(0, min(len(ys) - 1, int(-(-q * len(ys) // 1)) - 1))], 4)
+
+
+def _entries(graph: str, count: int) -> list[dict[str, Any]]:
+    raw = engine().connection.execute_command("XREVRANGE", f"telemetry{{{graph}}}", "+", "-", "COUNT", int(count)) or []
+    tidx, widx = _template_index(), _writer_index()
+    out = []
+    for item in raw:
+        fields = item[1] if isinstance(item, (list, tuple)) else {}
+        if isinstance(fields, (list, tuple)):        # a RESP2 flat [k, v, k, v] reply
+            fields = {fields[i]: fields[i + 1] for i in range(0, len(fields) - 1, 2)}
+        f = {_s(k): _s(v) for k, v in fields.items()}
+        q = _norm(f.get("Query", ""))
+        qid = tidx.get(q) or widx.get(q)
+        e: dict[str, Any] = {"at": int(float(f.get("Received at") or 0)), "id": qid,
+                             "kind": "template" if q in tidx else "write" if q in widx else None,
+                             "cache": f.get("Utilized cache") == "1", "write": f.get("Write") == "1",
+                             "timeout": f.get("Timeout") == "1"}
+        for src, dst in _DURATIONS.items():
+            try:
+                e[dst] = float(f.get(src) or 0.0)
+            except ValueError:
+                e[dst] = None
+        out.append(e)
+    return out
+
+
+def _aggregate(entries: list[dict[str, Any]]) -> dict[str, Any]:
+    by: dict[str, list[dict]] = {}
+    other = []
+    for e in entries:
+        (by.setdefault(e["id"], []) if e["id"] else other).append(e)
+
+    def stats(es: list[dict]) -> dict[str, Any]:
+        col = {k: [x[k] for x in es if x.get(k) is not None] for k in _DURATIONS.values()}
+        return {"n": len(es), "total_ms_p50": _pct(col["total_ms"], 0.5), "total_ms_p95": _pct(col["total_ms"], 0.95),
+                "wait_ms_p50": _pct(col["wait_ms"], 0.5), "wait_ms_p95": _pct(col["wait_ms"], 0.95),
+                "exec_ms_p50": _pct(col["exec_ms"], 0.5), "exec_ms_p95": _pct(col["exec_ms"], 0.95),
+                "report_ms_p50": _pct(col["report_ms"], 0.5),
+                "cache_pct": round(100.0 * sum(1 for x in es if x["cache"]) / len(es), 1),
+                "writes": sum(1 for x in es if x["write"]), "timeouts": sum(1 for x in es if x["timeout"])}
+
+    rows = [{"id": k, "kind": v[0]["kind"], **stats(v)} for k, v in by.items()]
+    rows.sort(key=lambda r: (-r["n"], r["id"]))
+    ats = [e["at"] for e in entries if e["at"]]
+    return {"entries": len(entries), "from": min(ats) if ats else None, "to": max(ats) if ats else None,
+            "queries": rows,
+            # ad-hoc queries (guarded text2cypher, the official MCP server, operators): counted, never shown
+            "unmapped": {"n": len(other), **({k: v for k, v in stats(other).items() if k != "n"} if other else {})}}
+
+
+@_engine_call
+def telemetry(graph: str, count: int = TELEMETRY_COUNT) -> dict[str, Any]:
+    """One graph's telemetry stream, mapped and aggregated: per template/writer id n, total/wait/execution ms p50 and
+    p95, report ms p50, plan-cache hit %, writes and timeouts; plus the most recent mapped entries (ids and numbers)."""
+    es = _entries(graph, count)
+    agg = _aggregate(es)
+    agg["recent"] = [{k: e[k] for k in ("at", "id", "kind", "total_ms", "wait_ms", "exec_ms", "report_ms", "cache",
+                                         "write", "timeout")} for e in es if e["id"]][:RECENT]
+    return agg
+
+
+@_engine_call
+def engine_config() -> dict[str, Any]:
+    """The engine limits a panel can show (GRAPH.CONFIG GET; numbers only)."""
+    c = engine().connection
+    out = {}
+    for k in ("QUERY_MEM_CAPACITY", "TIMEOUT_MAX", "TIMEOUT_DEFAULT", "MAX_QUEUED_QUERIES", "CACHE_SIZE",
+              "MAX_INFO_QUERIES", "THREAD_COUNT"):
+        try:
+            out[k] = c.execute_command("GRAPH.CONFIG", "GET", k)[1]
+        except redis.exceptions.ResponseError:
+            out[k] = None
+    return out
+
+
+@_engine_call
+def insight(tenant: str) -> dict[str, Any]:
+    """FalkorDB observing itself for one tenant (GET /api/engine/insight; response shape in docs/plans/M20.md "API"):
+    per graph of the tenant (tenant_, golden_, oncall_, audit_ and up to MAX_INSIGHT_ROOMS live eval clean rooms) its
+    GRAPH.MEMORY USAGE and its telemetry stream aggregated per template id; a combined per-template table over those
+    graphs; engine load (GRAPH.INFO) and limits (GRAPH.CONFIG). Never another tenant's graph, never query text or
+    parameters."""
+    t = check_tenant(tenant)
+    existing = set(engine().list_graphs())
+    rooms = sorted(g for g in existing if g.startswith(f"eval_{t}_"))
+    names = [g for g in [f"tenant_{t}", f"golden_{t}", f"oncall_{t}", f"audit_{t}"] + rooms[:MAX_INSIGHT_ROOMS]
+             if g in existing and graph_belongs_to(g, t)]
+    out: dict[str, Any] = {"tenant": t, "load": info(), "config": engine_config(), "graphs": {},
+                           "rooms_not_reported": max(0, len(rooms) - MAX_INSIGHT_ROOMS),
+                           "source": "GRAPH.MEMORY USAGE + the engine's telemetry{graph} stream (FalkorDB 6.0)",
+                           "privacy": "template and writer ids, timings and flags only; no query text, no parameters"}
+    every: list[dict] = []
+    for g in names:
+        try:
+            mem = memory(g)
+            es = _entries(g, TELEMETRY_COUNT)
+        except redis.exceptions.ResponseError:     # deleted since list_graphs (a clean room): nothing left to report
+            continue
+        every += es
+        tel = _aggregate(es)
+        tel["recent"] = [{k: e[k] for k in ("at", "id", "kind", "total_ms", "wait_ms", "exec_ms", "report_ms", "cache",
+                                             "write", "timeout")} for e in es if e["id"]][:RECENT]
+        out["graphs"][g] = {"memory_mb": mem.get("total_graph_sz_mb"),
+                            "memory": {k: v for k, v in mem.items() if isinstance(v, (int, float, dict))},
+                            "telemetry": tel}
+    out["templates"] = _aggregate(every)
+    return out
+
+
+__all__ = ["memory", "info", "slowlog", "tenant_report", "telemetry", "insight", "engine_config"]
 
 
 class EngineOverloaded(RuntimeError):

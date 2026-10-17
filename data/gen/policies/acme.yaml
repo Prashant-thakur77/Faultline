@@ -1,0 +1,21 @@
+# Company rules as data (M20 #6): change-freeze policies the preflight gate evaluates IN FalkorDB (template Q-PRE-FREEZE)
+# from the wall clock with temporal accessors. Seeded into golden_acme by scripts/seed.py AFTER every other node, so no
+# existing node or edge id moves. Days are ISO (Monday = 1 … Sunday = 7); hours are local to the fixed UTC offset
+# (FalkorDB 6.0.2 has no time zones: no DST). A window may wrap the week (Friday 16:00 → Monday 09:00).
+policies:
+  - id: POL-freeze-payment-weekend
+    kind: change_freeze
+    status: active
+    title: "No payment changes from Friday 16:00 to Monday 09:00 (IST)"
+    why: "Weekend checkout volume peaks while the payments on-call is one person; a bad payment change then waits hours for a fix."
+    effect: block                 # block | require_review
+    from_day: 5                   # Friday
+    from_hour: 16
+    to_day: 1                     # Monday
+    to_hour: 9
+    utc_offset_min: 330           # IST (UTC+05:30)
+    decided_by: p-004             # Dorian Marrowby, Payments (also decided ADR-012)
+    decided_at: "2026-09-01"
+    url: data/gen/policies/acme.yaml
+    freezes:
+      - {id: payment, label: Service}
