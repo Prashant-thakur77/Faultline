@@ -685,7 +685,7 @@ Faultline runs the on-call loop itself, and every step is a FalkorDB node or a c
 
 ```text
 🔴 URGENT · inc-s1-m19tgcard
-hero_bad_payment_deploy_with_same_minute_distractor
+Checkout errors are spiking
 D-pay-417 caused this: D-pay-417 → payment → checkout
 ❌ Ruled out: D-email-88 (G5: cannot carry the impact); D-rec-12 (G2: no causal path)
 ⏳ slo-checkout breaches in ~605 min · 5 customer(s), 28,600 MRR at risk
