@@ -29,3 +29,13 @@ Each draft is reproducible with the pinned digests in docs/FALKORDB_COMPAT.md. E
 | 23 | **Silent wrong results**: `localdatetime({epochMillis})` is 1970, `duration({milliseconds})` is PT0S, unknown temporal keys are ignored, `dayOfWeek` is 0 on Sunday | 6.0.2 | draft (M20): possibly the #3295 family, search first; 23-temporal-silent-errors.md |
 | 24 | A relationship range index slows anchored and labelled traversals 13× to 240× (one scan times out) | 6.0.2 | draft (M20): not yet searched upstream; 24-edge-index-planner.md |
 | 25 | Every insert under a UNIQUE constraint costs time proportional to the label's size (1,000 MERGEs: 0.005 s without, 5.2 s with, at 19k nodes) | 6.0.2 | draft (M20): not yet searched upstream; 25-unique-constraint-insert-cost.md |
+
+## Filed upstream (2026-10-17)
+
+- [FalkorDB/GraphRAG-SDK#345](https://github.com/FalkorDB/GraphRAG-SDK/pull/345): fix for GraphRAG-SDK#344. Fulltext indexes are created with the `CREATE FULLTEXT INDEX` DDL, vector indexes are dropped with `DROP VECTOR INDEX`, and rejected statements no longer feed the circuit breaker. On 6.0.2 the SDK's full suite goes from 124 failures to the 2 environment-only ones that also fail on `main`; tested on 4.18.0, 4.22.0 and 6.0.2.
+- [FalkorDB#3376](https://github.com/FalkorDB/FalkorDB/issues/3376): a relationship range index makes traversals from bound nodes much slower on 6.0.2 (5 ms → 5.4 s, draft 24).
+- [FalkorDB#3377](https://github.com/FalkorDB/FalkorDB/issues/3377): the Docker image's default `IMPORT_FOLDER` does not exist, so `LOAD CSV FROM 'file://…'` fails out of the box.
+- [New evidence on FalkorDB#2502](https://github.com/FalkorDB/FalkorDB/issues/2502#issuecomment-6237945777): the pattern-comprehension form of draft 20 silently drops the row.
+- Remote `LOAD CSV` under `GRAPH.RO_QUERY` (draft 22) was reported privately through FalkorDB's vulnerability reporting, not as a public issue; Faultline's own deployment closes it with an internal-only network.
+- Earlier: [FalkorDB#3349](https://github.com/FalkorDB/FalkorDB/issues/3349) and [new evidence on #3150](https://github.com/FalkorDB/FalkorDB/issues/3150#issuecomment-6201125566).
+- Drafts 21, 23 and 25 turned out to be known upstream (FalkorDB#3375 with fix PR #3374; #3295 and #2936; #3330, fixed by #3334 after 6.0.2), so they were not refiled.
