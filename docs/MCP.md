@@ -23,6 +23,8 @@ claude mcp add --transport http faultline-live https://13-203-185-119.sslip.io/m
 ```
 Then ask, for example: *"Use causal_paths from payment to checkout, then from recommendation to checkout."* The first returns the path; the second returns no path, so nothing can be blamed through it.
 
+Authentication is the bearer header only; there is no OAuth flow, so a client that tries OAuth discovery (some hosted connectors do) must be given the header instead.
+
 ## 2. Remote, over Streamable HTTP (bearer key)
 ```bash
 export FAULTLINE_MCP_KEYS="$(python -c 'import secrets;print(secrets.token_urlsafe(32))'):acme"   # or put it in .env

@@ -95,5 +95,5 @@ How it is recorded:
 - **The UNKNOWN-verification result (S9) is not in this cut.** It is an eval result, not a UI state; see `evals/RESULTS.md`.
 - **What the video does not claim.**
   - Warm memory did not reduce tool calls for the deterministic investigator (<!-- claim:memory.cold_tool_calls -->17<!-- /claim --> → <!-- claim:memory.warm_tool_calls -->17<!-- /claim -->), so the voice says the next incident "starts warm", never "takes fewer steps".
-  - The video makes no LLM-versus-graph claim: the recorded LLM test had two flaws (see PROOF.md), so the voice compares only the cost of a decision.
+  - Its one LLM line ("a strong language model blamed an innocent change <!-- claim:llm_deep.deep.all.wrong_confident -->37<!-- /claim --> times") is the deep-bench result with the fixed prompt (v2); the voice never says the graph is more accurate, because the model names more right causes (<!-- claim:llm_deep.deep.all.right_cause -->66<!-- /claim --> of <!-- claim:llm_deep.deep.all.cause_cases -->100<!-- /claim -->, against Faultline's <!-- claim:deep.fresh.all.right_cause -->51<!-- /claim -->).
   - It never says "every scenario right": the deep bench's right-cause rate is spoken with its abstentions.

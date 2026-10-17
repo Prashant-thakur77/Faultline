@@ -8,5 +8,5 @@
 | Changes | scenario injection | deploy events + PR webhooks | `graph/writes.py::inject_change`, `preflight/engine.py` |
 | People | synthetic org | directory + on-call schedule + git history | `ingest/org_gen.py` |
 | Decisions and runbooks | markdown with front matter | ADR repo, wiki, chats, tickets | `ingest/docs.py` |
-| Actions | simulated GitHub | GitHub REST (`gh api`); run once on S1: [faultline-demo-infra PR #1](https://github.com/Prashant-thakur77/faultline-demo-infra/pull/1), verified APPLIED | `actions/github.py` |
+| Actions | simulated GitHub | GitHub REST (`gh api`); run on every real video take: the [faultline-demo-infra pull requests](https://github.com/Prashant-thakur77/faultline-demo-infra/pulls?q=is%3Apr), each verified APPLIED | `actions/github.py` |
 

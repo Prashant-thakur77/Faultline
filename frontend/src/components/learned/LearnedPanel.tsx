@@ -146,10 +146,11 @@ export function LearnedVerdict({ data, error, loading }: { data: LearnedState | 
     const t = learnedSummary(data);
     if (t.empty) {
       icon = <GraduationCap aria-hidden className="size-6 text-zinc-300" />;
-      head = "Nothing learned yet";
+      head = data.trust.public ? "Nothing learned on this public demo, by design" : "Nothing learned yet";
       tone = "bg-zinc-500";
-      sub =
-        "Faultline learns only from trusted people: approvals, rejections with a reason, acks and verified fixes, and brain questions the graph could not answer.";
+      sub = data.trust.public
+        ? "Visitors cannot teach it: Faultline learns only from trusted people (approvals, rejections with a reason, acks and verified fixes). The recorded learning night in the README shows what it learns and how it changes the next plan."
+        : "Faultline learns only from trusted people: approvals, rejections with a reason, acks and verified fixes, and brain questions the graph could not answer.";
     } else {
       const waiting = [
         t.proposed ? `${t.proposed} guideline${t.proposed === 1 ? "" : "s"} wait${t.proposed === 1 ? "s" : ""} for a decision` : null,

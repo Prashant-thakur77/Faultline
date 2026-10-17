@@ -1,7 +1,7 @@
 {
   "source": "evals/results/latest.json",
   "run": "run_0033.json",
-  "generated_from_mtime": "2026-10-17T18:53:38.958Z",
+  "generated_from_mtime": "2026-10-17T19:45:26.616Z",
   "values": {
     "arm.A3.abstention_correct_rate": 1,
     "arm.A3.blast_precision": 1,
@@ -611,7 +611,7 @@
     "scale.10k.edges": 1097675,
     "scale.10k.memory_mb": 490,
     "scale.10k.nodes": 296261,
-    "scale.1k.copy_ms": 325.5,
+    "scale.1k.copy_ms": 383.1,
     "scale.1k.nodes": 29131
   }
 }

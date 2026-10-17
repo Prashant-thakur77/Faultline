@@ -1,4 +1,4 @@
-"""The PR comment (quiet on `allow`, Precedent's "silence as a feature") and the status-check outcome."""
+"""The PR comment (quiet on `allow`: silence as a feature) and the status-check outcome."""
 
 from __future__ import annotations
 

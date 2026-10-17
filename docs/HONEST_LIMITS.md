@@ -19,7 +19,7 @@ Every measured number on this page is tagged and checked against `evals/results/
 | Org, people, history, ADRs, runbooks, postmortems, chats, issues, SLOs, customers | Synthetic, seeded and deterministic (`ingest/org_gen.py`, `ingest/history.py`, `ingest/obligations.py`, `data/gen/docs/`, `ingest/globex/`) | README "What's real vs synthetic" |
 | Service topology | Shaped on the OpenTelemetry Demo (`data/topology/otel-demo.yaml`); globex is generated (`data/topology/globex.yaml`). Its history is synthetic: a quarter of the calls are dated to a past PR that introduced them (`ingest/topology_history.py`) | same |
 | Service telemetry | Simulated in every bench but one: `sim/telemetry.py` writes `MetricWindow` nodes from the topology and the scenario's effects. FaultBench-OTel uses the real OpenTelemetry Demo's measured span-metric error rates (`ingest/observed.py`) | same |
-| GitHub | Simulated in every eval run and on the public site (`actions/github.py::SimGitHub`). The real path (`RealGitHub`, `FAULTLINE_GITHUB=real`) was exercised once, on the hero scenario: [faultline-demo-infra PR #1](https://github.com/Prashant-thakur77/faultline-demo-infra/pull/1) opened, merged after the two-step approval and verified APPLIED. One run is a demonstration, not a measurement. | README "What's real vs synthetic" |
+| GitHub | Simulated in every eval run and on the public site (`actions/github.py::SimGitHub`). The real path (`RealGitHub`, `FAULTLINE_GITHUB=real`) runs on every real video take: each of the [pull requests on faultline-demo-infra](https://github.com/Prashant-thakur77/faultline-demo-infra/pulls?q=is%3Apr) was opened, merged after the two-step approval and verified APPLIED (the first is [PR #1](https://github.com/Prashant-thakur77/faultline-demo-infra/pull/1)). These are demonstrations, not a measurement. | README "What's real vs synthetic" |
 | Scenarios and brain questions | Self-authored (`data/scenarios/scenarios.yaml`, `data/brain/`) | RESULTS "What didn't work" |
 | The investigator behind the keyless numbers | The deterministic `BaselineInvestigator`, not an LLM (`agent/loop.py`). The LLM arms (A0, A1, A3L) are a separate, small comparison with one model: A0 and A1 three trials per scenario, A3L one per scenario on all 8 | README "Honest limits" |
 
@@ -141,8 +141,8 @@ From [FALKORDB_COMPAT.md](FALKORDB_COMPAT.md) and [docs/upstream/](upstream/):
 - **Node ids are not engine-unique.** A UNIQUE constraint over `:Node` (every node) makes every insert cost time
   proportional to the graph's size on 6.0.2 (draft `upstream/25`), so only Run and Intent ids are UNIQUE; every other
   writer MERGEs by id, and `Node.id` is MANDATORY.
-- **The per-query memory cap is not sized on the 10k scale world yet.** 256 MB is far above the demo templates' use;
-  the heaviest 10k-scale templates are to be re-measured under the cap in the Wave B scale run.
+- **The per-query memory cap is sized for these workloads only.** 256 MB was active through the 1k to 10k scale curve
+  and no template hit it; a much larger world would need it re-measured.
 - **Deleted graphs keep their memory until restart.** On the pinned 6.0.2, deleting a large graph (the 10k scale tenant) left `used_memory` near 2 GB; MEMORY PURGE did not return it. `make compact` (AOF rewrite + restart, graphs kept) does, and `make eval` refuses to start above 35% of maxmemory. <!-- noclaim: a configured threshold (evals/harness.py EVAL_MAX_START_PRESSURE), not a measured result -->
 
 ## 9. Deferred, dropped or not built
