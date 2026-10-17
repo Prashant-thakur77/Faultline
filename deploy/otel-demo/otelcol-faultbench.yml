@@ -1,0 +1,17 @@
+# FaultBench-OTel collector layer (replaces the demo's observability layer): span metrics and the other metrics go to
+# Prometheus over OTLP; traces feed only the span_metrics connector (no Jaeger). The collector merges config files and
+# REPLACES arrays, so each pipeline's exporters are listed in full.
+exporters:
+  otlp_http/prometheus:
+    endpoint: "http://prometheus:9090/api/v1/otlp"
+    tls:
+      insecure: true
+    sending_queue:
+      batch:
+
+service:
+  pipelines:
+    traces:
+      exporters: [span_metrics]
+    metrics:
+      exporters: [otlp_http/prometheus]

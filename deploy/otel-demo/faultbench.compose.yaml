@@ -1,0 +1,65 @@
+# FaultBench-OTel: a trimmed OpenTelemetry Demo for fault injection on one 14 GB laptop (evals/faultbench_otel.py).
+#
+# Layered on the official demo's core file, pinned to release 3.1.0 (scripts/otel_demo.sh clones the tag into
+# tmp/otel-demo/src and exports DEMO_VERSION=3.1.0, so no image uses `latest`):
+#   docker compose -f tmp/otel-demo/src/compose.yaml -f deploy/otel-demo/faultbench.compose.yaml up -d <services>
+# What changes against the demo's own minimal set (compose.yaml):
+#   * Prometheus is added (the demo's observability layer also adds Jaeger, OpenSearch, Grafana and OpAMP: ~2.5 GB of
+#     memory limits we do not need); the collector exports span metrics to it over OTLP;
+#   * the load generator runs HTTP users only (no headless Chromium), 25 of them (the demo's 5 give ~3 orders a minute,
+#     too few for a per-minute error rate);
+#   * flagd-ui and telemetry-docs are not started: flags are flipped by writing flagd's own watched file, the way
+#     flagd-ui does;
+#   * no host ports except Prometheus on loopback (host :8080 is taken on this machine).
+services:
+  frontend-proxy:
+    ports: !reset []
+    depends_on: !override
+      frontend:
+        condition: service_healthy
+      load-generator:
+        condition: service_started
+
+  load-generator:
+    environment:
+      - LOCUST_BROWSER_TRAFFIC_ENABLED=false
+      - LOCUST_USERS=${FAULTBENCH_LOCUST_USERS:-25}
+
+  otel-collector:
+    command:
+      - --config=/etc/otelcol-config.yml
+      - --config=/etc/otelcol-config-faultbench.yml
+      - --feature-gates=service.profilesSupport
+    volumes:
+      - ${HOST_FILESYSTEM}:/hostfs:ro
+      - ${DOCKER_SOCK}:/var/run/docker.sock:ro
+      - ${OTEL_COLLECTOR_CONFIG}:/etc/otelcol-config.yml
+      - ${FAULTBENCH_DIR}/otelcol-faultbench.yml:/etc/otelcol-config-faultbench.yml
+    depends_on:
+      prometheus:
+        condition: service_started
+
+  prometheus:
+    image: quay.io/prometheus/prometheus:v3.13.1
+    container_name: prometheus
+    command:
+      - --storage.tsdb.retention.time=7d
+      - --config.file=/etc/prometheus/prometheus-config.yaml
+      - --storage.tsdb.path=/prometheus
+      - --web.enable-lifecycle
+      - --web.route-prefix=/
+      - --web.enable-otlp-receiver
+    volumes:
+      - ./src/prometheus/prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml
+    deploy:
+      resources:
+        limits:
+          memory: 400M
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${FAULTBENCH_PROM_PORT:-19090}:9090"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
