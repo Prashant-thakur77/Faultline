@@ -46,6 +46,12 @@ def rel_ms(expr: str | int, base: int) -> int:
     return origin - delta if sign == "-" else origin + delta
 
 
+def incident_title(s: dict, sid: str) -> str:
+    """An incident's title is what was reported ("Checkout errors are spiking"), as a pager would show it; the
+    scenario's `name` is a fixture label that can describe the answer, so it never reaches the incident."""
+    return s.get("report") or sid
+
+
 def scenario_onset(s: dict) -> int:
     """The scenario's onset (config, relative to the clock anchor): every effect and alert time is relative to it."""
     return rel_ms(s["onset"], ANCHOR_MS)
@@ -424,7 +430,7 @@ def prepare(sid: str, tag: str | None = None, set_mode: bool = True, graph: str 
     base_inc, base_run = f"inc-{sid.lower()}-{tag}", f"run-{sid.lower()}-{tag}"
     ids = [(base_inc, base_run)] + [(f"{base_inc}-{k}", f"{base_run}-{k}") for k in range(2, 21)]
     rnd = intake_round(tenant=tenant, graph=graph, since=onset - int(w["alert_lead_min"]) * 60_000,
-                       until=onset + int(w["alert_lag_min"]) * 60_000, onset=onset, ids=ids, title=s.get("name", sid),
+                       until=onset + int(w["alert_lag_min"]) * 60_000, onset=onset, ids=ids, title=incident_title(s, sid),
                        report=s.get("report", ""), round_run=f"{base_run}-intake",
                        embed=lambda g_, inc, alerts: embed_incident(g_, inc, s.get("report") or s.get("name", sid),
                                                                      symptom_texts(alerts, sorted({a["target"] for a in alerts}))))
@@ -451,7 +457,7 @@ def intake_late(p: Prepared, since: int, until: int, k: int = 2):
     base_inc, base_run = p.incident_id, p.run_id
     ids = [(f"{base_inc}-r{k}-{j}", f"{base_run}-r{k}-{j}") for j in range(1, 21)]
     rnd = intake_round(tenant=p.tenant, graph=p.graph, since=since, until=until, onset=None, ids=ids,
-                       title=s.get("name", ""), report=s.get("report", ""), round_run=f"{base_run}-intake{k}",
+                       title=incident_title(s, s.get("id", "")), report=s.get("report", ""), round_run=f"{base_run}-intake{k}",
                        embed=lambda g_, inc, alerts: embed_incident(g_, inc, s.get("report") or s.get("name", ""),
                                                                      symptom_texts(alerts, sorted({a["target"] for a in alerts}))))
     p.intake.append(rnd)
