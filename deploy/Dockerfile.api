@@ -5,7 +5,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 UV_LINK_MODE=copy PYTHONPATH=/a
 RUN pip install --no-cache-dir uv==0.10.9
 WORKDIR /app
 COPY pyproject.toml uv.lock ./
-RUN uv sync --frozen --no-dev --no-install-project
+RUN uv sync --frozen --no-dev --no-install-project --extra email   # boto3: the SES email pager channel
 COPY backend ./backend
 COPY data ./data
 COPY pipeline ./pipeline

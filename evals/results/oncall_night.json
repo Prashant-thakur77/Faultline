@@ -1,0 +1,212 @@
+{
+  "started": "2026-10-17T14:09:43Z",
+  "home": "eval_acme_oncallnight_45840f5a",
+  "channels": [
+    "in_app"
+  ],
+  "ack_window_min": 5.0,
+  "incidents": {
+    "1": {
+      "id": "inc-s1-e63b37a5",
+      "stage": "AWAITING_APPROVAL",
+      "pages": 5,
+      "woken": [
+        "p-005",
+        "p-015",
+        "p-023",
+        "p-028",
+        "p-030"
+      ]
+    },
+    "2": {
+      "id": "inc-s1-d48e66b1",
+      "stage": "RESOLVED",
+      "pages": 5,
+      "woken": [],
+      "notices": 5,
+      "verdict": "APPLIED"
+    }
+  },
+  "stats": {
+    "pages": 29,
+    "incidents": 6,
+    "people_paged": 6,
+    "mtta_ms": 180104,
+    "mttr_ms": 945,
+    "handled_under_contract": 1,
+    "acked_incidents": 2,
+    "resolved_incidents": 3
+  },
+  "report": {
+    "counts": {
+      "incidents": 7,
+      "pages": 34,
+      "acks": 2,
+      "actions": 3,
+      "contract_uses": 1,
+      "handoffs": 0
+    },
+    "summary": "7 incident(s) opened; 29 page(s) to 6 person(s), 2 acknowledged; 3 approved action(s), 3 verified APPLIED; 1 handled under a standing contract; 0 hand-off(s)."
+  },
+  "negatives": 5,
+  "ack_delays_ms": [
+    360001,
+    208
+  ],
+  "mtta_expected_ms": 180104,
+  "scripted_ack_ms": 360001,
+  "steps": {
+    "1_pages_the_on_call": {
+      "pass": true,
+      "stage": "AWAITING_APPROVAL",
+      "pages": 5,
+      "people": [
+        "p-005",
+        "p-015",
+        "p-023",
+        "p-028",
+        "p-030"
+      ],
+      "owner": "p-030",
+      "urgency": "urgent"
+    },
+    "2_no_ack_escalates": {
+      "pass": true,
+      "escalations": 1,
+      "to": "p-004",
+      "chain": 6
+    },
+    "3_ack_stops_escalation": {
+      "pass": true,
+      "forged": 403,
+      "ack": 200,
+      "by": "p-004",
+      "later": 0
+    },
+    "4_approve_applied_contract": {
+      "pass": true,
+      "vp": 403,
+      "approve": 200,
+      "stage": "RESOLVED",
+      "verdict": "APPLIED",
+      "contract": "ct-39352ebcbe950b1b",
+      "scope": {
+        "family": "payment",
+        "action_kind": "flip_flag",
+        "params_hash": "9d7169b8b70f8d92ae043f3253674438227e0bb5c5003004db49968222bd74b3",
+        "params": {
+          "repo": "Prashant-thakur77/faultline-demo-infra",
+          "path": "flags.json",
+          "flag": "paymentGate",
+          "state": "off"
+        },
+        "max_uses": 1,
+        "days": 7.0,
+        "expires_at": 1792850985683
+      },
+      "approver_reason": "Dorian Marrowby is a member of team-payments, which owns payment"
+    },
+    "5_same_fault_under_contract": {
+      "pass": true,
+      "stage": "RESOLVED",
+      "woken": 0,
+      "notices": 5,
+      "verdict": "APPLIED",
+      "uses": 1,
+      "status": "exhausted"
+    },
+    "neg_a_exhausted": {
+      "pass": true,
+      "stage": "AWAITING_APPROVAL",
+      "woken": 5,
+      "fired": false
+    },
+    "neg_b_setup": {
+      "pass": true,
+      "approve": 200,
+      "stage": "RESOLVED",
+      "grant": 200,
+      "revoke": 200
+    },
+    "neg_b_revoked": {
+      "pass": true,
+      "stage": "AWAITING_APPROVAL",
+      "woken": 5,
+      "fired": false
+    },
+    "neg_c_setup": {
+      "pass": true,
+      "contract": "ct-7e2373ed04497f8d",
+      "status": "expired",
+      "expires_at": 1792159789214
+    },
+    "neg_c_expired": {
+      "pass": true,
+      "stage": "AWAITING_APPROVAL",
+      "woken": 5,
+      "fired": false
+    },
+    "neg_d_setup": {
+      "pass": true,
+      "family": "payment",
+      "params_hash": "db367209a6c9216706bd1599227a16fc220ba446ef5b471ec839150357512491"
+    },
+    "neg_d_other_params": {
+      "pass": true,
+      "stage": "AWAITING_APPROVAL",
+      "woken": 5,
+      "fired": false
+    },
+    "neg_e_setup": {
+      "pass": true
+    },
+    "neg_e_gate_abstains": {
+      "pass": true,
+      "stage": "AWAITING_APPROVAL",
+      "woken": 3,
+      "fired": false,
+      "outcome": "NOT_CONFIDENT"
+    }
+  },
+  "passed": 14,
+  "total": 14,
+  "seconds": 8.8,
+  "negatives_fired": 0,
+  "reason": "security fixes (PREREGISTRATION amendment 4): on-call graph, in-app-only anonymous runs, delivery budget, contract deadline, idempotent uses, expiring ack links; scripted ticks scoped to the night's incident",
+  "earlier_runs": [
+    {
+      "passed": 13,
+      "total": 14,
+      "failed": [
+        "neg_c_setup"
+      ],
+      "negatives_fired": 0,
+      "why": "harness check, not the product: the expired case's set-up read the contract's status at the shifted clock (still active there) instead of the real clock (expired); the expired negative itself passed. Fixed in evals/oncall_night.py and re-run once (PREREGISTRATION amendment 2026-10-17); added to this file by hand from that run's console output."
+    },
+    {
+      "started": "2026-10-17T12:24:33Z",
+      "passed": 14,
+      "total": 14,
+      "negatives_fired": 0,
+      "reason": "",
+      "failed": []
+    },
+    {
+      "started": "2026-10-17T12:39:19Z",
+      "passed": 14,
+      "total": 14,
+      "negatives_fired": 0,
+      "reason": "amendment 2: re-run once on the final product (approval counts as the acknowledgement); the second run passed 14/14 before that change",
+      "failed": [],
+      "note": "added by hand from that run's output: its read-back was not scoped to the night (PREREGISTRATION amendment 3): stats counted 8 incidents paged and MTTA 90115 ms against 180024 ms computed from the night's own pages; all 14 steps passed, 0 of 5 negatives fired"
+    },
+    {
+      "started": "2026-10-17T12:39:50Z",
+      "passed": 14,
+      "total": 14,
+      "negatives_fired": 0,
+      "reason": "amendment 3: the read-back scoped to the night's own graphs; no product change since the third run",
+      "failed": []
+    }
+  ]
+}
