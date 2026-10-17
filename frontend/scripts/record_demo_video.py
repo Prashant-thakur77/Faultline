@@ -101,7 +101,7 @@ GITHUB_SHOT = 4.0  # silent seconds on the merged PR at github.com after the app
 MIN_GAP = 0.25  # the shortest pause between two segments when a beat ran long
 
 EXPLAINER = ["x_tenant", "x_matrices", "x_blast", "x_path", "x_flow", "x_cut", "x_who", "x_readonly", "x_unplug"]  # /explainer scenes, in order
-ONCALL = ["oc_page", "oc_ack", "oc_telegram", "oc_contract"]  # v4: the page, the ack, the Telegram still, a contract
+ONCALL = ["oc_page", "oc_ack", "oc_contract"]  # v4: the page, the ack, a contract; add "oc_telegram" (and its narration) once media/telegram.png exists
 # The beats, in narration order (cut v4). The recorder refuses a narration whose segments differ.
 SEGMENT_IDS = ["problem", "whyhard", "idea", "cube", *EXPLAINER, "run", "g2", "g5", "proof", "contain", "act", *ONCALL,
                "preflight", "brain", "learn", "engine", "numbers", "cost", "close"]
@@ -109,7 +109,8 @@ SEGMENT_IDS = ["problem", "whyhard", "idea", "cube", *EXPLAINER, "run", "g2", "g
 # evenly, or "name@word" shows it when the voice reaches that word. "close" shows its charts before "Any agent".
 # Every name listed must be drawn into docs/media/charts/<name>.svg (scripts/gen_charts.py), copied byte for byte to
 # frontend/public/media/charts/ and known to proof.html's CHARTS; the recorder refuses to start otherwise.
-PROOF_CHARTS: dict[str, list[str]] = {"numbers": ["deep", "otel@real system"], "cost": ["cost"], "close": ["live"]}
+PROOF_CHARTS: dict[str, list[str]] = {"numbers": ["deep", "otel@real system"], "cost": ["cost", "tenants@it scales"],
+                                     "close": ["live"]}
 # Hooks for the newer benches' charts: proof.html knows these names; list one above (e.g. "numbers": ["deep", "otel"])
 # once scripts/gen_charts.py draws it, and the check above applies to it.
 CHART_HOOKS = ["otel", "tenants", "algo"]
@@ -1562,6 +1563,16 @@ def record(a: argparse.Namespace, work: Path, segs: list[Seg], llm: dict, issue:
             if win < MIN_ACK_WINDOW_S:
                 raise fail(f"pages wait only {win:.0f} s for an ack (FAULTLINE_ONCALL_DEMO_WINDOWS?): B would escalate "
                            f"before oc_ack; restart the API without it (at least {MIN_ACK_WINDOW_S} s)")
+            # the validation incident's pages are the pre-roll's, not the take's: settle them now, or the inbox the
+            # on-call beats film shows them waiting (and escalating) while the voice says nobody was woken. One ack
+            # with the approver key (anonymous: no person credited, nothing learned) supersedes the incident's others.
+            if key or api_key:
+                api_req(a.api, "POST", f"/api/pages/{urllib.parse.quote(open_v[0]['id'])}/ack?{t.q}", {},
+                        {"X-Faultline-Approver-Key": key or api_key})
+                left = [p for p in pages_of(t, inc_v) if open_page(p)]
+                if left:
+                    raise fail(f"the validation incident {inc_v} still has {len(left)} open page(s) after its ack")
+                facts["validation_pages_settled"] = True
             if "learn" in S and numbers_said(S["learn"].text, r"moved up from (?:number |#)?(\w+)"):
                 mv = moved_up(t.api("GET", f"/api/incidents/{urllib.parse.quote(inc_v)}/plan?{t.q}").get("options") or [])
                 facts["moved_on_validation_plan"] = mv

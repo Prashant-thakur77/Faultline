@@ -193,8 +193,18 @@ def main() -> int:
                                  f"Its own fault flags and its real telemetry: {d.get('otel.fault_windows')} fault windows "
                                  f"and {d.get('otel.controls')} no-fault controls, our decoy changes in each. Whiskers: 95 % "
                                  "interval.", [r for r in orows if r[1] is not None], pct, 1.0,
-                                 note="Pre-registered, one laptop, five faults. Recency looks strong on faults only because "
-                                      "the flag flip lands just before the page; it blames a change in every control.")
+                                 note="Pre-registered; five faults, one laptop. Recency blames a change in every control window.")
+    if d.get("tenants.n") and d.get("scale.10k.tail.Q-GATE-1.engine_ms_p99") is not None:
+        srows = [(f"Proof path (algo.SPpaths), {k} services", d.get(f"scale.{k}.tail.Q-GATE-1.engine_ms_p99"), True,
+                  f"engine p99 ms at {k} services") for k in ("1k", "3k", "5k", "10k")]
+        srows += [("Gate reads, 1 investigator", d.get("tenants.c1.p99_ms"), False, "p99 ms, one investigator"),
+                  ("Gate reads, 64 investigators at once", d.get("tenants.c64.p99_ms"), False, "p99 ms, 64 in parallel")]
+        srows = [r for r in srows if r[1] is not None]
+        files["tenants.svg"] = bars("It scales on one FalkorDB engine",
+                                    f"{d.get('tenants.n')} tenant graphs on one engine, {d.get('tenants.acl.leaks')} leaks in "
+                                    f"{int(d.get('tenants.acl.cross.n') or 0):,} cross-tenant reads. Bars: p99 milliseconds, lower is better.",
+                                    srows, lambda v: f"{v:.1f} ms", max(r[1] for r in srows),
+                                    note="Engine time for the proof path over 200 runs per size; gate reads timed at the client.")
     nopath = d.get("perf.acme.shortest_causal_path.falkordb_engine_p50")
     cost = [("FalkorDB proving \"no path\" (G2)", 0, True, f"0 model tokens; engine time p50 {nopath} ms", None,
              f"0 tokens · {nopath} ms engine time")]

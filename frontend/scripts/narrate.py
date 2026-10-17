@@ -95,8 +95,6 @@ SEGMENTS: list[tuple[str, float, str]] = [
      "for the owning team. On their phone: the verdict, the proof path, and who should fix it."),
     ("oc_ack", 0.5,
      "One tap acknowledges it. The escalation stops, and the graph records who answered."),
-    ("oc_telegram", 0.5,
-     "The same page reaches Telegram, on the on-call's own phone."),
     ("oc_contract", 0.6,
      "After a verified fix, the on-call can grant a standing approval for exactly this repeat: one use, seven days. "
      "When the same fault comes back, the gate still has to prove the cause. Then the same fix runs, a second real "
@@ -115,22 +113,21 @@ SEGMENTS: list[tuple[str, float, str]] = [
      "the engine's own telemetry, and the live tail as queries run."),
     # --- 4. the proof, honestly
     ("numbers", 0.8,
-     "Now, the numbers, honestly. We generated {deep.fresh.all.cases} worlds built to fool it. Faultline made "
+     "Now, the numbers, honestly. On {deep.fresh.all.cases} worlds built to fool it, Faultline made "
      "{deep.fresh.all.wrong_confident} confident wrong blames. It named the right cause in "
      "{deep.fresh.all.right_cause} of the {deep.fresh.all.cause_cases} worlds with a real cause, and on the rest it said: "
-     "not sure. A strong language model, given the same telemetry on the same worlds, found more causes, and blamed an "
-     "innocent change {llm_deep.deep.all.wrong_confident} times. Then we broke a real system: the OpenTelemetry Demo, "
-     "with its own fault flags and its real telemetry. Faultline named the right cause in "
-     "{otel.faultline.right_cause.k} of {otel.faultline.right_cause.n} faults, with {otel.faultline.wrong.k} wrong blames "
-     "in {otel.faultline.wrong.n} windows. A threshold on the same telemetry was wrong {otel.Tplus.wrong.k} times. On "
-     "call, a wrong rollback costs far more than an honest not sure."),
+     "not sure. A strong language model, given the same telemetry, found more causes, and blamed an innocent change "
+     "{llm_deep.deep.all.wrong_confident} times. Then we broke a real system: the OpenTelemetry Demo, with its own fault "
+     "flags and its real telemetry. Faultline named the right cause in {otel.faultline.right_cause.k} of "
+     "{otel.faultline.right_cause.n} faults, with {otel.faultline.wrong.k} wrong blames in {otel.faultline.wrong.n} "
+     "windows; a threshold on the same telemetry was wrong {otel.Tplus.wrong.k} times. On call, a wrong rollback costs "
+     "far more than an honest not sure."),
     ("cost", 0.5,
-     "And refusing is cheap. Proving there is no path takes FalkorDB "
-     "{perf.acme.shortest_causal_path.falkordb_engine_p50} milliseconds, and zero tokens. A language model just "
-     "reading the same incident spends {arm.A0.tokens_median:approx} tokens to make a guess. And it scales: "
-     "{tenants.n} customer graphs on one FalkorDB engine, with {tenants.acl.leaks} leaks between them, and at "
-     "{scale.10k.services:approx} services the proof path still takes about "
-     "{scale.10k.tail.Q-GATE-1.engine_ms_p99:int} milliseconds."),
+     "And refusing is cheap: proving there is no path takes FalkorDB "
+     "{perf.acme.shortest_causal_path.falkordb_engine_p50} milliseconds and zero tokens, while a language model spends "
+     "{arm.A0.tokens_median:approx} tokens to guess. And it scales: {tenants.n} customer graphs on one engine, "
+     "{tenants.acl.leaks} leaks between them, and about {scale.10k.tail.Q-GATE-1.engine_ms_p99:int} milliseconds for "
+     "the proof path at {scale.10k.services:approx} services."),
     ("close", 0.7,
      "And it's live right now: {live.hero.applied} out of {live.hero.n} real runs, verified. Any agent can use the "
      "same read-only tools over M.C.P. Faultline, built on FalkorDB. No path, no claim. Clone it, run make judge "

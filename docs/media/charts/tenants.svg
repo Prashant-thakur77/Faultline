@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 358" width="820" height="358" role="img" aria-label="It scales on one FalkorDB engine">
+<title>It scales on one FalkorDB engine</title>
+<rect x="0.5" y="0.5" width="819" height="357" rx="12" fill="#fcfcfb" stroke="#e7e6e2"/>
+<text x="24" y="34" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#0b0b0b">It scales on one FalkorDB engine</text>
+<text x="24" y="56" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" fill="#52514e">250 tenant graphs on one engine, 0 leaks in 1,000 cross-tenant reads. Bars: p99 milliseconds, lower is better.</text>
+<line x1="290.0" y1="76" x2="290.0" y2="300" stroke="#e7e6e2"/>
+<line x1="480.0" y1="76" x2="480.0" y2="300" stroke="#e7e6e2"/>
+<line x1="670.0" y1="76" x2="670.0" y2="300" stroke="#e7e6e2"/>
+<text x="276" y="98" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">Proof path (algo.SPpaths), 1k services</text>
+<g><title>engine p99 ms at 1k services</title><rect x="290" y="84" width="36.3" height="18" rx="4" fill="#2a78d6"/></g>
+<text x="334.3" y="98" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">0.9 ms</text>
+<text x="276" y="136" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">Proof path (algo.SPpaths), 3k services</text>
+<g><title>engine p99 ms at 3k services</title><rect x="290" y="122" width="153.3" height="18" rx="4" fill="#2a78d6"/></g>
+<text x="451.3" y="136" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">3.6 ms</text>
+<text x="276" y="174" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">Proof path (algo.SPpaths), 5k services</text>
+<g><title>engine p99 ms at 5k services</title><rect x="290" y="160" width="171.6" height="18" rx="4" fill="#2a78d6"/></g>
+<text x="469.6" y="174" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">4.0 ms</text>
+<text x="276" y="212" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">Proof path (algo.SPpaths), 10k services</text>
+<g><title>engine p99 ms at 10k services</title><rect x="290" y="198" width="380.0" height="18" rx="4" fill="#2a78d6"/></g>
+<text x="678.0" y="212" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">8.9 ms</text>
+<text x="276" y="250" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Gate reads, 1 investigator</text>
+<g><title>p99 ms, one investigator</title><rect x="290" y="236" width="59.6" height="18" rx="4" fill="#8c8a84"/></g>
+<text x="357.6" y="250" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">1.4 ms</text>
+<text x="276" y="288" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Gate reads, 64 investigators at once</text>
+<g><title>p99 ms, 64 in parallel</title><rect x="290" y="274" width="281.8" height="18" rx="4" fill="#8c8a84"/></g>
+<text x="579.8" y="288" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">6.6 ms</text>
+<text x="24" y="340" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" fill="#77756f">Engine time for the proof path over 200 runs per size; gate reads timed at the client.</text>
+</svg>

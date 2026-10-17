@@ -61,6 +61,10 @@ Real GitHub, once, on the hero scenario: [faultline-demo-infra PR #1](https://gi
 
 ![Faultline trades recall for safety](media/charts/deep.svg)
 
+![On a real system: the OpenTelemetry Demo, its own fault flags and real telemetry](media/charts/otel.svg)
+
+![It scales on one FalkorDB engine: proof-path p99 by graph size and gate reads under parallel investigators](media/charts/tenants.svg)
+
 ![Right outcome on the scenario suite](media/charts/outcome.svg)
 
 ![Blaming a change that did not cause it](media/charts/false_blame.svg)
