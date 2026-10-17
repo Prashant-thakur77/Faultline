@@ -7,49 +7,15 @@
   "escalation_tree": null,
   "notify_set": null,
   "owner_at": null,
+  "learned_preferences": null,
+  "learned_responders": null,
   "options": [],
+  "learned": {
+    "consulted": false,
+    "note": "learning not consulted for this run (no on-call home)"
+  },
   "memory": {
     "recalled": [
-      {
-        "id": "inc-h005",
-        "title": "Spike in failed orders from payment charge errors",
-        "similarity": 0.75892616724416,
-        "recency": 0.116891403615832,
-        "salience": 1.0,
-        "shared": [
-          "sym-error_rate-checkout"
-        ],
-        "actions": [
-          {
-            "kind": "flip_flag",
-            "verdict": "APPLIED",
-            "target": "paymentGate"
-          }
-        ],
-        "cause_targets": [
-          "payment"
-        ]
-      },
-      {
-        "id": "inc-h015",
-        "title": "Spike in failed orders from payment charge errors",
-        "similarity": 0.747781843439999,
-        "recency": 0.177740853017277,
-        "salience": 1.0,
-        "shared": [
-          "sym-error_rate-checkout"
-        ],
-        "actions": [
-          {
-            "kind": "rollback_deploy",
-            "verdict": "APPLIED",
-            "target": "dep-136"
-          }
-        ],
-        "cause_targets": [
-          "payment"
-        ]
-      },
       {
         "id": "inc-h039",
         "title": "Payment charge failures surface at checkout",
@@ -109,6 +75,46 @@
         "cause_targets": [
           "payment"
         ]
+      },
+      {
+        "id": "inc-h027",
+        "title": "Spike in failed orders from payment charge errors",
+        "similarity": 0.728517104801776,
+        "recency": 0.455342222736865,
+        "salience": 1.0,
+        "shared": [
+          "sym-error_rate-checkout"
+        ],
+        "actions": [
+          {
+            "kind": "rollback_deploy",
+            "verdict": "APPLIED",
+            "target": "dep-263"
+          }
+        ],
+        "cause_targets": [
+          "payment"
+        ]
+      },
+      {
+        "id": "inc-h028",
+        "title": "Checkout errors after payment deploy",
+        "similarity": 0.726583399933078,
+        "recency": 0.479193603484995,
+        "salience": 1.0,
+        "shared": [
+          "sym-error_rate-checkout"
+        ],
+        "actions": [
+          {
+            "kind": "flip_flag",
+            "verdict": "APPLIED",
+            "target": "paymentGate"
+          }
+        ],
+        "cause_targets": [
+          "payment"
+        ]
       }
     ],
     "fix_history": [
@@ -117,7 +123,7 @@
         "verdict": "APPLIED",
         "n": 1,
         "incidents": [
-          "inc-h005"
+          "inc-h028"
         ]
       },
       {
@@ -125,7 +131,7 @@
         "verdict": "APPLIED",
         "n": 4,
         "incidents": [
-          "inc-h015",
+          "inc-h027",
           "inc-h030",
           "inc-h037",
           "inc-h039"

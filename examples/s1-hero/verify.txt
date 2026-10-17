@@ -1,6 +1,6 @@
-run run-s1-ee6d96e6 · incident inc-s1-ee6d96e6 · scenario S1 · final stage RESOLVED
+run run-s1-66af9843 · incident inc-s1-66af9843 · scenario S1 · final stage RESOLVED
 
-action act-inc-s1-ee6d96e6-2 · flip_flag · flag paymentGate → off · approval ap-act-inc-s1-ee6d96e6-2-90dde7c1
+action act-inc-s1-66af9843-1 · flip_flag · flag paymentGate → off · approval ap-act-inc-s1-66af9843-1-175bd315
   external ref: https://github.com/Prashant-thakur77/faultline-demo-infra/pull/1 (simulated)
   verdict: APPLIED — flags.json at main HEAD has the change; checkout, frontend back in band for 3 minutes; no collateral on frontend-proxy
   channel github_main: ok (simulated GitHub (no token; keyless mode))

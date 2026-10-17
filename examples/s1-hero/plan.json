@@ -1,7 +1,7 @@
 {
   "stage": "RESOLVED",
   "containment_cut": {
-    "id": "run-s1-ee6d96e6-tc0050",
+    "id": "run-s1-66af9843-tc0050",
     "evidence_id": "ev_44da9f7262",
     "summary": "cut [('payment', 'checkout'), ('payment', 'raw.raw_orders')] total 1.04",
     "payload": {
@@ -32,14 +32,14 @@
         "kpi.exec_revenue"
       ]
     },
-    "at": 1791988500758
+    "at": 1792279122111
   },
   "whatif": {
-    "id": "run-s1-ee6d96e6-tc0051",
+    "id": "run-s1-66af9843-tc0051",
     "evidence_id": "ev_36ccc99d18",
     "summary": "contains: protected still reached []; connected {'cart': True, 'checkout': True, 'currency': True, 'frontend': True, 'product-catalog': True, 'shipping': True, 'quote': True}",
     "payload": {
-      "branch": "whatif_acme_run_s1_ee6d96e6_97932359_ef8d218e",
+      "branch": "whatif_acme_run_s1_66af9843_40629084_f4fb17d7",
       "rows": [
         {
           "no_longer_reached": [
@@ -90,16 +90,21 @@
     "params": {
       "failing": "payment"
     },
-    "at": 1791988500859
+    "at": 1792279122259
   },
   "who_fixes": {
-    "id": "run-s1-ee6d96e6-tc0053",
+    "id": "run-s1-66af9843-tc0053",
     "evidence_id": "ev_0345b9bef4",
     "summary": "p-017 (authored 8 recent commit(s) on payment, resolved inc-h008, inc-h011, inc-h015 on payment); p-030 (authored 5 recent commit(s) on payment, resolved inc-h018 on payment); p-036 (authored 5 recent commit(s) on payment, resolved inc-h037, inc-h039 on payment)",
     "payload": {
+      "oncall_now": [
+        "p-030"
+      ],
+      "owner_team": "team-payments",
       "rows": [
         {
           "name": "Quinn Lindqvane",
+          "oncall": false,
           "person": "p-017",
           "reasons": [
             "authored 8 recent commit(s) on payment",
@@ -113,6 +118,7 @@
         },
         {
           "name": "Desmond Brackwater",
+          "oncall": true,
           "person": "p-030",
           "reasons": [
             "authored 5 recent commit(s) on payment",
@@ -126,6 +132,7 @@
         },
         {
           "name": "Juno Pellucid",
+          "oncall": false,
           "person": "p-036",
           "reasons": [
             "authored 5 recent commit(s) on payment",
@@ -139,6 +146,7 @@
         },
         {
           "name": "Dorian Marrowby",
+          "oncall": false,
           "person": "p-004",
           "reasons": [
             "authored 2 recent commit(s) on payment",
@@ -152,6 +160,7 @@
         },
         {
           "name": "Hester Hawksmere",
+          "oncall": false,
           "person": "p-034",
           "reasons": [
             "member of owner team team-payments"
@@ -163,6 +172,7 @@
         },
         {
           "name": "Lior Sablewood",
+          "oncall": false,
           "person": "p-038",
           "reasons": [
             "authored 1 recent commit(s) on payment",
@@ -173,7 +183,8 @@
             "team-storefront"
           ]
         }
-      ]
+      ],
+      "target": "payment"
     },
     "template": "Q-ORG-WHO+Q-ORG-KNOWS+Q-ORG-HARM",
     "params": {
@@ -192,10 +203,10 @@
         "target": "payment"
       }
     },
-    "at": 1791988501190
+    "at": 1792279122605
   },
   "bus_factor": {
-    "id": "run-s1-ee6d96e6-tc0054",
+    "id": "run-s1-66af9843-tc0054",
     "evidence_id": "ev_2c21d8019a",
     "summary": "bus factor 2",
     "payload": {
@@ -216,10 +227,10 @@
     "params": {
       "target": "payment"
     },
-    "at": 1791988501196
+    "at": 1792279122613
   },
   "escalation_tree": {
-    "id": "run-s1-ee6d96e6-tc0055",
+    "id": "run-s1-66af9843-tc0055",
     "evidence_id": "ev_8e150d984c",
     "summary": "5 escalation edges over 6 people",
     "payload": {
@@ -318,10 +329,10 @@
       },
       "Q-ORG-MSF": {}
     },
-    "at": 1791988501205
+    "at": 1792279122630
   },
   "notify_set": {
-    "id": "run-s1-ee6d96e6-tc0057",
+    "id": "run-s1-66af9843-tc0057",
     "evidence_id": "ev_5e8b146a26",
     "summary": "4 teams to notify: team-storefront, team-checkout, team-data, team-assistant (owners of obligated nodes first)",
     "payload": {
@@ -415,10 +426,10 @@
       ],
       "now": 1792033200000
     },
-    "at": 1791988501219
+    "at": 1792279122652
   },
   "owner_at": {
-    "id": "run-s1-ee6d96e6-tc0058",
+    "id": "run-s1-66af9843-tc0058",
     "evidence_id": "ev_bf6daeb347",
     "summary": "payment was owned by team-payments then, and still is",
     "payload": {
@@ -443,47 +454,845 @@
       "at": 1792033020000,
       "id": "payment"
     },
-    "at": 1791988501225
+    "at": 1792279122659
+  },
+  "learned_preferences": {
+    "id": "run-s1-66af9843-tc0061",
+    "evidence_id": "ev_8e39761d44",
+    "summary": "64 recorded choice(s) for payment: flip_flag 0.61, open_issue 0.16, rollback_deploy 0.02; 28 guideline(s); 1 contract suggestion(s)",
+    "payload": {
+      "family": "payment",
+      "guidelines": [
+        {
+          "action_kind": "open_issue",
+          "at": 1792265758119,
+          "by": "p-030",
+          "by_name": "Desmond Brackwater",
+          "decided_at": null,
+          "decided_by": null,
+          "decided_by_name": null,
+          "event": "le-164899ea2565517a",
+          "family": "payment",
+          "graph": "eval_acme_api_v2_s1_8080_5211f330",
+          "id": "gl-164899ea2565517a",
+          "incident": "inc-s1-5211f330",
+          "option": "open an issue for D-pay-417",
+          "source": "rejection",
+          "status": "proposed",
+          "text": "prefer a rollback over a flag flip during the freeze"
+        },
+        {
+          "action_kind": "rollback_deploy",
+          "at": 1792265758081,
+          "by": "p-030",
+          "by_name": "Desmond Brackwater",
+          "decided_at": null,
+          "decided_by": null,
+          "decided_by_name": null,
+          "event": "le-6da42915960e1446",
+          "family": "payment",
+          "graph": "eval_acme_api_v2_s1_8080_5211f330",
+          "id": "gl-6da42915960e1446",
+          "incident": "inc-s1-5211f330",
+          "option": "roll back D-pay-417",
+          "source": "rejection",
+          "status": "proposed",
+          "text": "prefer a rollback over a flag flip during the freeze"
+        },
+        {
+          "action_kind": "flip_flag",
+          "at": 1792265758041,
+          "by": "p-030",
+          "by_name": "Desmond Brackwater",
+          "decided_at": null,
+          "decided_by": null,
+          "decided_by_name": null,
+          "event": "le-21c35d4d8eefa1a6",
+          "family": "payment",
+          "graph": "eval_acme_api_v2_s1_8080_5211f330",
+          "id": "gl-21c35d4d8eefa1a6",
+          "incident": "inc-s1-5211f330",
+          "option": "flag paymentGate \u2192 off",
+          "source": "rejection",
+          "status": "proposed",
+          "text": "prefer a rollback over a flag flip during the freeze"
+        },
+        {
+          "action_kind": "flip_flag",
+          "at": 1792265755930,
+          "by": "p-030",
+          "by_name": "Desmond Brackwater",
+          "decided_at": null,
+          "decided_by": null,
+          "decided_by_name": null,
+          "event": "le-d916af8de515381e",
+          "family": "payment",
+          "graph": "eval_acme_api_v2_s1_8431_78105d7f",
+          "id": "gl-d916af8de515381e",
+          "incident": "inc-s1-78105d7f",
+          "option": "flag paymentGate \u2192 off",
+          "source": "rejection",
+          "status": "proposed",
+          "text": "prefer a rollback over a flag flip during the freeze"
+        },
+        {
+          "action_kind": "open_issue",
+          "at": 1792264100563,
+          "by": "p-030",
+          "by_name": "Desmond Brackwater",
+          "decided_at": null,
+          "decided_by": null,
+          "decided_by_name": null,
+          "event": "le-85e9f1df11a11fe2",
+          "family": "payment",
+          "graph": "eval_acme_api_v2_s1_9622_9f4d1776",
+          "id": "gl-85e9f1df11a11fe2",
+          "incident": "inc-s1-9f4d1776",
+          "option": "open an issue for D-pay-417",
+          "source": "rejection",
+          "status": "proposed",
+          "text": "prefer a rollback over a flag flip during the freeze"
+        },
+        {
+          "action_kind": "rollback_deploy",
+          "at": 1792264100541,
+          "by": "p-030",
+          "by_name": "Desmond Brackwater",
+          "decided_at": null,
+          "decided_by": null,
+          "decided_by_name": null,
+          "event": "le-5b0fdf9f9b881504",
+          "family": "payment",
+          "graph": "eval_acme_api_v2_s1_9622_9f4d1776",
+          "id": "gl-5b0fdf9f9b881504",
+          "incident": "inc-s1-9f4d1776",
+          "option": "roll back D-pay-417",
+          "source": "rejection",
+          "status": "proposed",
+          "text": "prefer a rollback over a flag flip during the freeze"
+        },
+        {
+          "action_kind": "flip_flag",
+          "at": 1792264100517,
+          "by": "p-030",
+          "by_name": "Desmond Brackwater",
+          "decided_at": null,
+          "decided_by": null,
+          "decided_by_name": null,
+          "event": "le-e727948392d904d6",
+          "family": "payment",
+          "graph": "eval_acme_api_v2_s1_9622_9f4d1776",
+          "id": "gl-e727948392d904d6",
+          "incident": "inc-s1-9f4d1776",
+          "option": "flag paymentGate \u2192 off",
+          "source": "rejection",
+          "status": "proposed",
+          "text": "prefer a rollback over a flag flip during the freeze"
+        },
+        {
+          "action_kind": "flip_flag",
+          "at": 1792264098668,
+          "by": "p-030",
+          "by_name": "Desmond Brackwater",
+          "decided_at": null,
+          "decided_by": null,
+          "decided_by_name": null,
+          "event": "le-a7cca02714dfdf80",
+          "family": "payment",
+          "graph": "eval_acme_api_v2_s1_946_2205bb32",
+          "id": "gl-a7cca02714dfdf80",
+          "incident": "inc-s1-2205bb32",
+          "option": "flag paymentGate \u2192 off",
+          "source": "rejection",
+          "status": "proposed",
+          "text": "prefer a rollback over a flag flip during the freeze"
+        },
+        {
+          "action_kind": "open_issue",
+          "at": 1792263543490,
+          "by": "p-030",
+          "by_name": "Desmond Brackwater",
+          "decided_at": null,
+          "decided_by": null,
+          "decided_by_name": null,
+          "event": "le-3a631e7e82e62177",
+          "family": "payment",
+          "graph": "eval_acme_api_v2_s1_3515_5222350b",
+          "id": "gl-3a631e7e82e62177",
+          "incident": "inc-s1-5222350b",
+          "option": "open an issue for D-pay-417",
+          "source": "rejection",
+          "status": "proposed",
+          "text": "prefer a rollback over a flag flip during the freeze"
+        },
+        {
+          "action_kind": "rollback_deploy",
+          "at": 1792263543456,
+          "by": "p-030",
+          "by_name": "Desmond Brackwater",
+          "decided_at": null,
+          "decided_by": null,
+          "decided_by_name": null,
+          "event": "le-feb75db68f3606b6",
+          "family": "payment",
+          "graph": "eval_acme_api_v2_s1_3515_5222350b",
+          "id": "gl-feb75db68f3606b6",
+          "incident": "inc-s1-5222350b",
+          "option": "roll back D-pay-417",
+          "source": "rejection",
+          "status": "proposed",
+          "text": "prefer a rollback over a flag flip during the freeze"
+        },
+        {
+          "action_kind": "flip_flag",
+          "at": 1792263543415,
+          "by": "p-030",
+          "by_name": "Desmond Brackwater",
+          "decided_at": null,
+          "decided_by": null,
+          "decided_by_name": null,
+          "event": "le-5a70831974c8701c",
+          "family": "payment",
+          "graph": "eval_acme_api_v2_s1_3515_5222350b",
+          "id": "gl-5a70831974c8701c",
+          "incident": "inc-s1-5222350b",
+          "option": "flag paymentGate \u2192 off",
+          "source": "rejection",
+          "status": "proposed",
+          "text": "prefer a rollback over a flag flip during the freeze"
+        },
+        {
+          "action_kind": "flip_flag",
+          "at": 1792263541560,
+          "by": "p-030",
+          "by_name": "Desmond Brackwater",
+          "decided_at": null,
+          "decided_by": null,
+          "decided_by_name": null,
+          "event": "le-05597c784ba428e4",
+          "family": "payment",
+          "graph": "eval_acme_api_v2_s1_5352_55f9d118",
+          "id": "gl-05597c784ba428e4",
+          "incident": "inc-s1-55f9d118",
+          "option": "flag paymentGate \u2192 off",
+          "source": "rejection",
+          "status": "proposed",
+          "text": "prefer a rollback over a flag flip during the freeze"
+        },
+        {
+          "action_kind": "open_issue",
+          "at": 1792255414519,
+          "by": "p-030",
+          "by_name": "Desmond Brackwater",
+          "decided_at": null,
+          "decided_by": null,
+          "decided_by_name": null,
+          "event": "le-1307455cbcb897ff",
+          "family": "payment",
+          "graph": "eval_acme_api_v2_s1_8564_9ffa4344",
+          "id": "gl-1307455cbcb897ff",
+          "incident": "inc-s1-9ffa4344",
+          "option": "open an issue for D-pay-417",
+          "source": "rejection",
+          "status": "proposed",
+          "text": "prefer a rollback over a flag flip during the freeze"
+        },
+        {
+          "action_kind": "rollback_deploy",
+          "at": 1792255414504,
+          "by": "p-030",
+          "by_name": "Desmond Brackwater",
+          "decided_at": null,
+          "decided_by": null,
+          "decided_by_name": null,
+          "event": "le-0c6daf3a265d5149",
+          "family": "payment",
+          "graph": "eval_acme_api_v2_s1_8564_9ffa4344",
+          "id": "gl-0c6daf3a265d5149",
+          "incident": "inc-s1-9ffa4344",
+          "option": "roll back D-pay-417",
+          "source": "rejection",
+          "status": "proposed",
+          "text": "prefer a rollback over a flag flip during the freeze"
+        },
+        {
+          "action_kind": "flip_flag",
+          "at": 1792255414474,
+          "by": "p-030",
+          "by_name": "Desmond Brackwater",
+          "decided_at": null,
+          "decided_by": null,
+          "decided_by_name": null,
+          "event": "le-d8960841dc7ab0fd",
+          "family": "payment",
+          "graph": "eval_acme_api_v2_s1_8564_9ffa4344",
+          "id": "gl-d8960841dc7ab0fd",
+          "incident": "inc-s1-9ffa4344",
+          "option": "flag paymentGate \u2192 off",
+          "source": "rejection",
+          "status": "proposed",
+          "text": "prefer a rollback over a flag flip during the freeze"
+        },
+        {
+          "action_kind": "flip_flag",
+          "at": 1792255412746,
+          "by": "p-030",
+          "by_name": "Desmond Brackwater",
+          "decided_at": null,
+          "decided_by": null,
+          "decided_by_name": null,
+          "event": "le-03d5edb4d381a923",
+          "family": "payment",
+          "graph": "eval_acme_api_v2_s1_9400_e3925a48",
+          "id": "gl-03d5edb4d381a923",
+          "incident": "inc-s1-e3925a48",
+          "option": "flag paymentGate \u2192 off",
+          "source": "rejection",
+          "status": "proposed",
+          "text": "prefer a rollback over a flag flip during the freeze"
+        },
+        {
+          "action_kind": "open_issue",
+          "at": 1792254761966,
+          "by": "p-030",
+          "by_name": "Desmond Brackwater",
+          "decided_at": null,
+          "decided_by": null,
+          "decided_by_name": null,
+          "event": "le-8d3d97365df8fb35",
+          "family": "payment",
+          "graph": "eval_acme_api_v2_s1_4305_2b8481f1",
+          "id": "gl-8d3d97365df8fb35",
+          "incident": "inc-s1-2b8481f1",
+          "option": "open an issue for D-pay-417",
+          "source": "rejection",
+          "status": "proposed",
+          "text": "prefer a rollback over a flag flip during the freeze"
+        },
+        {
+          "action_kind": "rollback_deploy",
+          "at": 1792254761951,
+          "by": "p-030",
+          "by_name": "Desmond Brackwater",
+          "decided_at": null,
+          "decided_by": null,
+          "decided_by_name": null,
+          "event": "le-dee45f828c0ce0a1",
+          "family": "payment",
+          "graph": "eval_acme_api_v2_s1_4305_2b8481f1",
+          "id": "gl-dee45f828c0ce0a1",
+          "incident": "inc-s1-2b8481f1",
+          "option": "roll back D-pay-417",
+          "source": "rejection",
+          "status": "proposed",
+          "text": "prefer a rollback over a flag flip during the freeze"
+        },
+        {
+          "action_kind": "flip_flag",
+          "at": 1792254761935,
+          "by": "p-030",
+          "by_name": "Desmond Brackwater",
+          "decided_at": null,
+          "decided_by": null,
+          "decided_by_name": null,
+          "event": "le-e750725dca11cba4",
+          "family": "payment",
+          "graph": "eval_acme_api_v2_s1_4305_2b8481f1",
+          "id": "gl-e750725dca11cba4",
+          "incident": "inc-s1-2b8481f1",
+          "option": "flag paymentGate \u2192 off",
+          "source": "rejection",
+          "status": "proposed",
+          "text": "prefer a rollback over a flag flip during the freeze"
+        },
+        {
+          "action_kind": "flip_flag",
+          "at": 1792254760297,
+          "by": "p-030",
+          "by_name": "Desmond Brackwater",
+          "decided_at": null,
+          "decided_by": null,
+          "decided_by_name": null,
+          "event": "le-829954d00e0a60a6",
+          "family": "payment",
+          "graph": "eval_acme_api_v2_s1_6443_65acb17b",
+          "id": "gl-829954d00e0a60a6",
+          "incident": "inc-s1-65acb17b",
+          "option": "flag paymentGate \u2192 off",
+          "source": "rejection",
+          "status": "proposed",
+          "text": "prefer a rollback over a flag flip during the freeze"
+        },
+        {
+          "action_kind": "open_issue",
+          "at": 1792253804710,
+          "by": "p-030",
+          "by_name": "Desmond Brackwater",
+          "decided_at": null,
+          "decided_by": null,
+          "decided_by_name": null,
+          "event": "le-65181a506853a8dd",
+          "family": "payment",
+          "graph": "eval_acme_api_v2_s1_7295_614737cf",
+          "id": "gl-65181a506853a8dd",
+          "incident": "inc-s1-614737cf",
+          "option": "open an issue for D-pay-417",
+          "source": "rejection",
+          "status": "proposed",
+          "text": "prefer a rollback over a flag flip during the freeze"
+        },
+        {
+          "action_kind": "rollback_deploy",
+          "at": 1792253804655,
+          "by": "p-030",
+          "by_name": "Desmond Brackwater",
+          "decided_at": null,
+          "decided_by": null,
+          "decided_by_name": null,
+          "event": "le-d585456f79256ef3",
+          "family": "payment",
+          "graph": "eval_acme_api_v2_s1_7295_614737cf",
+          "id": "gl-d585456f79256ef3",
+          "incident": "inc-s1-614737cf",
+          "option": "roll back D-pay-417",
+          "source": "rejection",
+          "status": "proposed",
+          "text": "prefer a rollback over a flag flip during the freeze"
+        },
+        {
+          "action_kind": "flip_flag",
+          "at": 1792253804610,
+          "by": "p-030",
+          "by_name": "Desmond Brackwater",
+          "decided_at": null,
+          "decided_by": null,
+          "decided_by_name": null,
+          "event": "le-8190effd42524322",
+          "family": "payment",
+          "graph": "eval_acme_api_v2_s1_7295_614737cf",
+          "id": "gl-8190effd42524322",
+          "incident": "inc-s1-614737cf",
+          "option": "flag paymentGate \u2192 off",
+          "source": "rejection",
+          "status": "proposed",
+          "text": "prefer a rollback over a flag flip during the freeze"
+        },
+        {
+          "action_kind": "flip_flag",
+          "at": 1792253802279,
+          "by": "p-030",
+          "by_name": "Desmond Brackwater",
+          "decided_at": null,
+          "decided_by": null,
+          "decided_by_name": null,
+          "event": "le-6b845d2cc329bc5c",
+          "family": "payment",
+          "graph": "eval_acme_api_v2_s1_2899_60629303",
+          "id": "gl-6b845d2cc329bc5c",
+          "incident": "inc-s1-60629303",
+          "option": "flag paymentGate \u2192 off",
+          "source": "rejection",
+          "status": "proposed",
+          "text": "prefer a rollback over a flag flip during the freeze"
+        },
+        {
+          "action_kind": "open_issue",
+          "at": 1792251360760,
+          "by": "p-030",
+          "by_name": "Desmond Brackwater",
+          "decided_at": null,
+          "decided_by": null,
+          "decided_by_name": null,
+          "event": "le-29ad233617c2b8f0",
+          "family": "payment",
+          "graph": "eval_acme_api_v2_s1_4019_680e65c3",
+          "id": "gl-29ad233617c2b8f0",
+          "incident": "inc-s1-680e65c3",
+          "option": "open an issue for D-pay-417",
+          "source": "rejection",
+          "status": "proposed",
+          "text": "prefer a rollback over a flag flip during the freeze"
+        },
+        {
+          "action_kind": "flip_flag",
+          "at": 1792251360742,
+          "by": "p-030",
+          "by_name": "Desmond Brackwater",
+          "decided_at": null,
+          "decided_by": null,
+          "decided_by_name": null,
+          "event": "le-0894bcc539bd0bb2",
+          "family": "payment",
+          "graph": "eval_acme_api_v2_s1_4019_680e65c3",
+          "id": "gl-0894bcc539bd0bb2",
+          "incident": "inc-s1-680e65c3",
+          "option": "flag paymentGate \u2192 off",
+          "source": "rejection",
+          "status": "proposed",
+          "text": "prefer a rollback over a flag flip during the freeze"
+        },
+        {
+          "action_kind": "rollback_deploy",
+          "at": 1792251360724,
+          "by": "p-030",
+          "by_name": "Desmond Brackwater",
+          "decided_at": null,
+          "decided_by": null,
+          "decided_by_name": null,
+          "event": "le-dc41d7793d3f0266",
+          "family": "payment",
+          "graph": "eval_acme_api_v2_s1_4019_680e65c3",
+          "id": "gl-dc41d7793d3f0266",
+          "incident": "inc-s1-680e65c3",
+          "option": "roll back D-pay-417",
+          "source": "rejection",
+          "status": "proposed",
+          "text": "prefer a rollback over a flag flip during the freeze"
+        },
+        {
+          "action_kind": "rollback_deploy",
+          "at": 1792251359250,
+          "by": "p-030",
+          "by_name": "Desmond Brackwater",
+          "decided_at": null,
+          "decided_by": null,
+          "decided_by_name": null,
+          "event": "le-058e27fdc426d143",
+          "family": "payment",
+          "graph": "eval_acme_api_v2_s1_845_83756cbd",
+          "id": "gl-058e27fdc426d143",
+          "incident": "inc-s1-83756cbd",
+          "option": "roll back D-pay-417",
+          "source": "rejection",
+          "status": "proposed",
+          "text": "prefer a rollback over a flag flip during the freeze"
+        }
+      ],
+      "half_life_ms": 1209600000.0,
+      "home": "oncall_acme",
+      "n_family": 64,
+      "now": 1792279122694,
+      "rows": [
+        {
+          "action_kind": "flip_flag",
+          "approvals": 29.6785901282053,
+          "computed_at": 1792271102747,
+          "events": [
+            "le-dc3ed4f6e2f34f0c",
+            "le-0894bcc539bd0bb2",
+            "le-5ba42a603639c884",
+            "le-4c4aa2f52145b2a1",
+            "le-3fe82fd7b88d4afa",
+            "le-8aa2a4019c8a2eab",
+            "le-69ea2b1dcceddd90",
+            "le-2f6926c0ba13c5a7",
+            "le-6b845d2cc329bc5c",
+            "le-80382b6671bb361d",
+            "le-8190effd42524322",
+            "le-eb72a5acbad28abc",
+            "le-828fc4a2491d5b6a",
+            "le-f518334413a61235",
+            "le-6f9413e30da37e51",
+            "le-829954d00e0a60a6",
+            "le-ea3a81cb911a8deb",
+            "le-e750725dca11cba4",
+            "le-8714b57457462e22",
+            "le-c02d956d3e376d6d",
+            "le-03d5edb4d381a923",
+            "le-d8960841dc7ab0fd",
+            "le-4fa9d6f70ca99f0d",
+            "le-c59c273f85fd83cf",
+            "le-c61e445d3616b6ba",
+            "le-982128895cece355",
+            "le-ac7f2276a4162190",
+            "le-a761396f49898dcf",
+            "le-05597c784ba428e4",
+            "le-5a70831974c8701c",
+            "le-a7cca02714dfdf80",
+            "le-2def20767ca7a741",
+            "le-e727948392d904d6",
+            "le-6922cdb8a8b591ab",
+            "le-98557ea1aa113165",
+            "le-6cbcae6e441be365",
+            "le-9edda61b4c35f117",
+            "le-b4272ae3a32eecc3",
+            "le-d916af8de515381e",
+            "le-21c35d4d8eefa1a6",
+            "le-145e999159962b45",
+            "le-6167ef4e75eb5f24",
+            "le-a3646260ac68ba50"
+          ],
+          "family": "payment",
+          "id": "pref|payment|flip_flag",
+          "last_at": 1792271102746,
+          "last_event_at": 1792271102746,
+          "n_approve": 30,
+          "n_family": 64,
+          "n_family_approve": 36,
+          "n_reject": 13,
+          "others": 5.93083695509013,
+          "pref": 0.607979111243132,
+          "rejections": 12.8505139917802
+        },
+        {
+          "action_kind": "open_issue",
+          "approvals": 5.93083695509013,
+          "computed_at": 1792271102747,
+          "events": [
+            "le-29ad233617c2b8f0",
+            "le-ef44d34ecf2cdd1d",
+            "le-89b42420f5bf555a",
+            "le-6799afb737f4e9d5",
+            "le-65181a506853a8dd",
+            "le-8d3d97365df8fb35",
+            "le-1307455cbcb897ff",
+            "le-db50b13c12c50dae",
+            "le-df7ea6ceccdb9900",
+            "le-3a631e7e82e62177",
+            "le-85e9f1df11a11fe2",
+            "le-356aa760e297edd6",
+            "le-164899ea2565517a"
+          ],
+          "family": "payment",
+          "id": "pref|payment|open_issue",
+          "last_at": 1792265621984,
+          "last_event_at": 1792265758119,
+          "n_approve": 6,
+          "n_family": 64,
+          "n_family_approve": 36,
+          "n_reject": 7,
+          "others": 29.6785901282053,
+          "pref": 0.155655415420874,
+          "rejections": 6.91736908598645
+        },
+        {
+          "action_kind": "rollback_deploy",
+          "approvals": 0.0,
+          "computed_at": 1792271102747,
+          "events": [
+            "le-058e27fdc426d143",
+            "le-dc41d7793d3f0266",
+            "le-d585456f79256ef3",
+            "le-dee45f828c0ce0a1",
+            "le-0c6daf3a265d5149",
+            "le-feb75db68f3606b6",
+            "le-5b0fdf9f9b881504",
+            "le-6da42915960e1446"
+          ],
+          "family": "payment",
+          "id": "pref|payment|rollback_deploy",
+          "last_at": null,
+          "last_event_at": 1792265758081,
+          "n_approve": 0,
+          "n_family": 64,
+          "n_family_approve": 36,
+          "n_reject": 8,
+          "others": 35.6094270832954,
+          "pref": 0.0219727038991603,
+          "rejections": 7.90158533417116
+        }
+      ],
+      "suggestions": [
+        {
+          "action_kind": "flip_flag",
+          "covered": false,
+          "covered_by": null,
+          "events": [
+            "le-cfe8e19507121b33",
+            "le-da5f273e756ca488",
+            "le-95189eea1f33209c",
+            "le-291584b7f7fe26e2",
+            "le-4a9b7c80dea76113",
+            "le-c5647e6dfb259a33",
+            "le-d60c7b290001f01f",
+            "le-7e173955b96923fb",
+            "le-a8b50071bb6b2418",
+            "le-dfe51494438ddada",
+            "le-787e51c88340c024",
+            "le-d16272d64cdf4ade",
+            "le-f3099d51a3c68864",
+            "le-4ccd04f8477c3b28",
+            "le-6520b9c73e6d856b",
+            "le-4812f4be0340dc66",
+            "le-708dd3b6ae8570b5",
+            "le-c099eec8eab5b271",
+            "le-d535da24d5ce9040",
+            "le-4bb3f65748cea2d2"
+          ],
+          "incidents": [
+            "inc-s1-4c1d7423",
+            "inc-s1-fc4bcee2",
+            "inc-s1-c807d009",
+            "inc-s1-98620a2d",
+            "inc-s1-4066dbfc",
+            "inc-s1-da2a3f84",
+            "inc-s1-e298bb3b",
+            "inc-s1-7c4d1648",
+            "inc-s1-30c94629",
+            "inc-s1-a73285be",
+            "inc-s1-6fa0a796",
+            "inc-s1-163530d7",
+            "inc-s1-77c62c91",
+            "inc-s1-dca1f5c7",
+            "inc-s1-4021b563",
+            "inc-s1-83e7f405",
+            "inc-s1-996944b4",
+            "inc-s1-bfabcef2",
+            "inc-s1-85b9c82e",
+            "inc-s1-61890f46"
+          ],
+          "last_at": 1792271112589,
+          "n": 20,
+          "params_hash": "9d7169b8b70f8d92ae043f3253674438227e0bb5c5003004db49968222bd74b3",
+          "people": [
+            "p-030",
+            "p-017"
+          ]
+        }
+      ]
+    },
+    "template": "Q-LEARN-PREF+Q-LEARN-GUIDE+Q-LEARN-SUGGEST+Q-CONTRACT-MATCH",
+    "params": {
+      "Q-CONTRACT-MATCH": {
+        "family": "payment",
+        "kind": "flip_flag",
+        "now": 1792279122694,
+        "params_hash": "9d7169b8b70f8d92ae043f3253674438227e0bb5c5003004db49968222bd74b3"
+      },
+      "Q-LEARN-GUIDE": {
+        "family": "payment",
+        "statuses": [
+          "proposed",
+          "active"
+        ]
+      },
+      "Q-LEARN-PREF": {
+        "family": "payment",
+        "half_life_ms": 1209600000.0,
+        "now": 1792279122694
+      },
+      "Q-LEARN-SUGGEST": {
+        "family": "payment",
+        "k": 2
+      }
+    },
+    "at": 1792279122703
+  },
+  "learned_responders": {
+    "id": "run-s1-66af9843-tc0059",
+    "evidence_id": "ev_53977a26ac",
+    "summary": "p-030 36.59 (37 response(s)); p-017 23.77 (24 response(s))",
+    "payload": {
+      "home": "oncall_acme",
+      "now": 1792279122666,
+      "rows": [
+        {
+          "acks": 5,
+          "approvals": 19,
+          "events": [
+            "le-5ba42a603639c884",
+            "le-cfe8e19507121b33",
+            "le-3fe82fd7b88d4afa",
+            "le-da5f273e756ca488",
+            "le-ef44d34ecf2cdd1d",
+            "le-69ea2b1dcceddd90",
+            "le-2f6926c0ba13c5a7",
+            "le-291584b7f7fe26e2",
+            "le-4a9b7c80dea76113",
+            "le-89b42420f5bf555a",
+            "le-6799afb737f4e9d5",
+            "le-80382b6671bb361d",
+            "le-c5647e6dfb259a33",
+            "le-6f9413e30da37e51",
+            "le-7e173955b96923fb",
+            "le-6c89e74852870d13",
+            "le-8714b57457462e22",
+            "le-a8b50071bb6b2418",
+            "le-4fa9d6f70ca99f0d",
+            "le-be600f6d42a77498",
+            "le-d16272d64cdf4ade",
+            "le-c61e445d3616b6ba",
+            "le-f3099d51a3c68864",
+            "le-a761396f49898dcf",
+            "le-4ccd04f8477c3b28",
+            "le-db50b13c12c50dae",
+            "le-df7ea6ceccdb9900",
+            "le-2def20767ca7a741",
+            "le-6520b9c73e6d856b",
+            "le-98557ea1aa113165",
+            "le-4812f4be0340dc66",
+            "le-b4272ae3a32eecc3",
+            "le-708dd3b6ae8570b5",
+            "le-356aa760e297edd6",
+            "le-145131bac44118d1",
+            "le-40c3cb3aa65f3ffc",
+            "le-d125b6a14281b9b0"
+          ],
+          "fixes": 13,
+          "incidents": 24,
+          "last_at": 1792271137296,
+          "mtta_ms": 19551.6,
+          "n": 37,
+          "name": "Desmond Brackwater",
+          "person": "p-030",
+          "score": 36.5864128339031
+        },
+        {
+          "acks": 0,
+          "approvals": 17,
+          "events": [
+            "le-dc3ed4f6e2f34f0c",
+            "le-4c4aa2f52145b2a1",
+            "le-8aa2a4019c8a2eab",
+            "le-95189eea1f33209c",
+            "le-eb72a5acbad28abc",
+            "le-828fc4a2491d5b6a",
+            "le-f518334413a61235",
+            "le-d60c7b290001f01f",
+            "le-ea3a81cb911a8deb",
+            "le-c02d956d3e376d6d",
+            "le-dfe51494438ddada",
+            "le-c59c273f85fd83cf",
+            "le-787e51c88340c024",
+            "le-982128895cece355",
+            "le-ac7f2276a4162190",
+            "le-6922cdb8a8b591ab",
+            "le-6cbcae6e441be365",
+            "le-9edda61b4c35f117",
+            "le-145e999159962b45",
+            "le-c099eec8eab5b271",
+            "le-6167ef4e75eb5f24",
+            "le-d535da24d5ce9040",
+            "le-a3646260ac68ba50",
+            "le-4bb3f65748cea2d2"
+          ],
+          "fixes": 7,
+          "incidents": 17,
+          "last_at": 1792271112589,
+          "mtta_ms": null,
+          "n": 24,
+          "name": "Quinn Lindqvane",
+          "person": "p-017",
+          "score": 23.770295376206
+        }
+      ],
+      "target": "payment"
+    },
+    "template": "Q-LEARN-RESP",
+    "params": {
+      "half_life_ms": 1209600000.0,
+      "now": 1792279122666,
+      "target": "payment"
+    },
+    "at": 1792279122672
   },
   "options": [
     {
-      "id": "act-inc-s1-ee6d96e6-1",
-      "kind": "rollback_deploy",
-      "option": "roll back D-pay-417",
-      "enabled": true,
-      "reason": "revert payment: raise client timeout to 5000 ms, drop retries on payment (removes the cause; slower than a flag); future: contains if the confirmed cause is the cause (removing the origin's fault; assumed, not measured); history: rollback worked 6/6 times on past incidents sharing a symptom with this one (smoothed success 0.88)",
-      "target": "D-pay-417",
-      "status": "option",
-      "preview": {
-        "path": "deploys.json",
-        "repo": "Prashant-thakur77/faultline-demo-infra",
-        "revert": "D-pay-417",
-        "reviewers": [
-          "p-017",
-          "p-030",
-          "p-036"
-        ],
-        "service": "payment"
-      },
-      "spec": null,
-      "plan_hash": null,
-      "idem": null,
-      "external_ref": null,
-      "verdict": null,
-      "explanation": null,
-      "channels": null,
-      "approval_id": null,
-      "rejected_by": null,
-      "reject_reason": null,
-      "rejected_at": null,
-      "future": "{\"assumed\": true, \"evidence_id\": \"ev_cfe3b16bdb\", \"exposed\": [], \"key\": \"remove_origin\", \"line\": \"contains if the confirmed cause is the cause (removing the origin's fault; assumed, not measured)\", \"predicted\": \"contains\"}"
-    },
-    {
-      "id": "act-inc-s1-ee6d96e6-2",
+      "id": "act-inc-s1-66af9843-1",
       "kind": "flip_flag",
       "option": "flag paymentGate \u2192 off",
       "enabled": true,
-      "reason": "cuts payment \u2192 checkout (min-cut edge, cut_cost 0.04); containment lever: when off, checkout accepts orders and defers the charge (queue), so payment failures stop failing checkout (faultline-demo-infra flags.json); what-if branch: contains the failure; future: contains: every symptom predicted back in band; leaves kpi.exec_revenue exposed; history: flag paymentGate \u2192 off worked 4/5 times on past incidents sharing a symptom with this one (smoothed success 0.71)",
+      "reason": "cuts payment \u2192 checkout (min-cut edge, cut_cost 0.04); containment lever: when off, checkout accepts orders and defers the charge (queue), so payment failures stop failing checkout (faultline-demo-infra flags.json); what-if branch: contains the failure; future: contains: every symptom predicted back in band; leaves kpi.exec_revenue exposed; history: flag paymentGate \u2192 off worked 4/5 times on past incidents sharing a symptom with this one (smoothed success 0.71); learned: your team approved the flag flip 30 of the last 36 time(s) for payment; rejected it 13 time(s); last 2 h ago; proposed guideline gl-21c35d4d8eefa1a6 from Desmond Brackwater's rejection 3 h ago: \"prefer a rollback over a flag flip during the freeze\" (not active: promote or dismiss it); this exact fix was approved and verified APPLIED on 20 incidents of payment: once it is verified here, grant a standing approval for repeats? (still two steps)",
       "target": "paymentGate",
       "status": "executed",
       "preview": {
@@ -511,18 +1320,18 @@
           "state": "off"
         },
         "before": "{\n  \"flags\": {\n    \"adFailure\": {\n      \"state\": \"off\"\n    },\n    \"cartFailure\": {\n      \"state\": \"off\"\n    },\n    \"emailMemoryLeak\": {\n      \"state\": \"off\"\n    },\n    \"imageSlowLoad\": {\n      \"state\": \"off\"\n    },\n    \"intlShippingSlowdown\": {\n      \"state\": \"off\"\n    },\n    \"kafkaQueueProblems\": {\n      \"state\": \"off\"\n    },\n    \"paymentFailure\": {\n      \"state\": \"off\"\n    },\n    \"paymentGate\": {\n      \"cuts\": [\n        \"payment\",\n        \"checkout\"\n      ],\n      \"state\": \"on\"\n    },\n    \"paymentUnreachable\": {\n      \"state\": \"off\"\n    },\n    \"productCatalogFailure\": {\n      \"state\": \"off\"\n    },\n    \"productCatalogLockContention\": {\n      \"state\": \"off\"\n    },\n    \"recommendationCacheFailure\": {\n      \"state\": \"off\"\n    },\n    \"recommendationsEnabled\": {\n      \"cuts\": [\n        \"recommendation\",\n        \"frontend\"\n      ],\n      \"state\": \"on\"\n    }\n  }\n}\n",
-        "branch": "faultline/fix-28232c94",
-        "commit": "fix: turn paymentGate off (contain inc-s1-ee6d96e6)\n\nFaultline-Idem: 28232c940653a17080e89478612db6051f0e6b6ab63718c6966c5ce5d35a7687",
+        "branch": "faultline/fix-46a4c301",
+        "commit": "fix: turn paymentGate off (contain inc-s1-66af9843)\n\nFaultline-Idem: 46a4c301d15f18c0f17caff4bbaa9ba1dc03a50d0d15b8261147f449b9682c38",
         "file": "flags.json",
-        "idem": "28232c940653a17080e89478612db6051f0e6b6ab63718c6966c5ce5d35a7687",
-        "incident": "inc-s1-ee6d96e6",
+        "idem": "46a4c301d15f18c0f17caff4bbaa9ba1dc03a50d0d15b8261147f449b9682c38",
+        "incident": "inc-s1-66af9843",
         "kind": "flip_flag",
-        "plan_hash": "90dde7c112316822e00d51bf45ddc6cd3849593dbdbfd3054fe01157ab2c07aa",
-        "pr_body": "Approved in Faultline (inc-s1-ee6d96e6).\n\nSuggested reviewers (who_fixes): p-017, p-030, p-036\n\nRollback: set flags.paymentGate.state back to 'on' in flags.json\n\nFaultline-Idem: 28232c940653a17080e89478612db6051f0e6b6ab63718c6966c5ce5d35a7687",
+        "plan_hash": "175bd3155b8fb2205f14d47aa23e868aea2c9f91187ed9f5d6927445c4868a71",
+        "pr_body": "Approved in Faultline (inc-s1-66af9843).\n\nSuggested reviewers (who_fixes): p-017, p-030, p-036\n\nRollback: set flags.paymentGate.state back to 'on' in flags.json\n\nFaultline-Idem: 46a4c301d15f18c0f17caff4bbaa9ba1dc03a50d0d15b8261147f449b9682c38",
         "rollback": "set flags.paymentGate.state back to 'on' in flags.json"
       },
-      "plan_hash": "90dde7c112316822e00d51bf45ddc6cd3849593dbdbfd3054fe01157ab2c07aa",
-      "idem": "28232c940653a17080e89478612db6051f0e6b6ab63718c6966c5ce5d35a7687",
+      "plan_hash": "175bd3155b8fb2205f14d47aa23e868aea2c9f91187ed9f5d6927445c4868a71",
+      "idem": "46a4c301d15f18c0f17caff4bbaa9ba1dc03a50d0d15b8261147f449b9682c38",
       "external_ref": "https://github.com/Prashant-thakur77/faultline-demo-infra/pull/1 (simulated)",
       "verdict": "APPLIED",
       "explanation": "flags.json at main HEAD has the change; checkout, frontend back in band for 3 minutes; no collateral on frontend-proxy",
@@ -550,7 +1359,7 @@
               "cuts": [
                 "payment|checkout"
               ],
-              "inc": "inc-s1-ee6d96e6",
+              "inc": "inc-s1-66af9843",
               "since": 1792033560000,
               "symptoms": [
                 "checkout",
@@ -621,28 +1430,143 @@
           }
         }
       },
-      "approval_id": "ap-act-inc-s1-ee6d96e6-2-90dde7c1",
+      "approval_id": "ap-act-inc-s1-66af9843-1-175bd315",
       "rejected_by": null,
       "reject_reason": null,
       "rejected_at": null,
-      "future": "{\"assumed\": false, \"evidence_id\": \"ev_cfe3b16bdb\", \"exposed\": [\"kpi.exec_revenue\"], \"key\": \"payment|checkout\", \"line\": \"contains: every symptom predicted back in band\", \"predicted\": \"contains\"}"
+      "future": "{\"assumed\": false, \"evidence_id\": \"ev_cfe3b16bdb\", \"exposed\": [\"kpi.exec_revenue\"], \"key\": \"payment|checkout\", \"line\": \"contains: every symptom predicted back in band\", \"predicted\": \"contains\"}",
+      "learned": {
+        "contract_suggestion": {
+          "events": [
+            "le-cfe8e19507121b33",
+            "le-da5f273e756ca488",
+            "le-95189eea1f33209c",
+            "le-291584b7f7fe26e2",
+            "le-4a9b7c80dea76113",
+            "le-c5647e6dfb259a33",
+            "le-d60c7b290001f01f",
+            "le-7e173955b96923fb",
+            "le-a8b50071bb6b2418",
+            "le-dfe51494438ddada",
+            "le-787e51c88340c024",
+            "le-d16272d64cdf4ade",
+            "le-f3099d51a3c68864",
+            "le-4ccd04f8477c3b28",
+            "le-6520b9c73e6d856b",
+            "le-4812f4be0340dc66",
+            "le-708dd3b6ae8570b5",
+            "le-c099eec8eab5b271",
+            "le-d535da24d5ce9040",
+            "le-4bb3f65748cea2d2"
+          ],
+          "incidents": [
+            "inc-s1-4c1d7423",
+            "inc-s1-fc4bcee2",
+            "inc-s1-c807d009",
+            "inc-s1-98620a2d",
+            "inc-s1-4066dbfc",
+            "inc-s1-da2a3f84",
+            "inc-s1-e298bb3b",
+            "inc-s1-7c4d1648",
+            "inc-s1-30c94629",
+            "inc-s1-a73285be",
+            "inc-s1-6fa0a796",
+            "inc-s1-163530d7",
+            "inc-s1-77c62c91",
+            "inc-s1-dca1f5c7",
+            "inc-s1-4021b563",
+            "inc-s1-83e7f405",
+            "inc-s1-996944b4",
+            "inc-s1-bfabcef2",
+            "inc-s1-85b9c82e",
+            "inc-s1-61890f46"
+          ],
+          "line": "this exact fix was approved and verified APPLIED on 20 incidents of payment: once it is verified here, grant a standing approval for repeats? (still two steps)",
+          "n": 20,
+          "params_hash": "9d7169b8b70f8d92ae043f3253674438227e0bb5c5003004db49968222bd74b3",
+          "people": [
+            "p-030",
+            "p-017"
+          ]
+        },
+        "family": "payment",
+        "guideline": {
+          "at": 1792265758041,
+          "by": "p-030",
+          "by_name": "Desmond Brackwater",
+          "decided_at": null,
+          "decided_by": null,
+          "decided_by_name": null,
+          "event": "le-21c35d4d8eefa1a6",
+          "id": "gl-21c35d4d8eefa1a6",
+          "incident": "inc-s1-5211f330",
+          "line": "proposed guideline gl-21c35d4d8eefa1a6 from Desmond Brackwater's rejection 3 h ago: \"prefer a rollback over a flag flip during the freeze\" (not active: promote or dismiss it)",
+          "needs_override": false,
+          "others": [
+            "gl-d916af8de515381e",
+            "gl-e727948392d904d6",
+            "gl-a7cca02714dfdf80",
+            "gl-5a70831974c8701c",
+            "gl-05597c784ba428e4"
+          ],
+          "status": "proposed",
+          "text": "prefer a rollback over a flag flip during the freeze"
+        },
+        "preference": {
+          "events": [
+            "le-dc3ed4f6e2f34f0c",
+            "le-0894bcc539bd0bb2",
+            "le-5ba42a603639c884",
+            "le-4c4aa2f52145b2a1",
+            "le-3fe82fd7b88d4afa",
+            "le-8aa2a4019c8a2eab",
+            "le-69ea2b1dcceddd90",
+            "le-2f6926c0ba13c5a7",
+            "le-6b845d2cc329bc5c",
+            "le-80382b6671bb361d",
+            "le-8190effd42524322",
+            "le-eb72a5acbad28abc",
+            "le-828fc4a2491d5b6a",
+            "le-f518334413a61235",
+            "le-6f9413e30da37e51",
+            "le-829954d00e0a60a6",
+            "le-ea3a81cb911a8deb",
+            "le-e750725dca11cba4",
+            "le-8714b57457462e22",
+            "le-c02d956d3e376d6d"
+          ],
+          "last_at": 1792271102746,
+          "line": "learned: your team approved the flag flip 30 of the last 36 time(s) for payment; rejected it 13 time(s); last 2 h ago",
+          "n_approve": 30,
+          "n_family_approve": 36,
+          "n_reject": 13,
+          "pref": 0.608
+        },
+        "rank_without_learning": 2,
+        "score": 0.6611
+      },
+      "override_guideline": null,
+      "override_reason": null,
+      "rank": 1
     },
     {
-      "id": "act-inc-s1-ee6d96e6-3",
-      "kind": "open_issue",
-      "option": "open an issue for D-pay-417",
+      "id": "act-inc-s1-66af9843-2",
+      "kind": "rollback_deploy",
+      "option": "roll back D-pay-417",
       "enabled": true,
-      "reason": "hand the cause to the owner team (no change to production; does not resolve the incident); future: does not contain: checkout residual 0.4029 over its band, frontend residual 0.4029 over its band; leaves frontend-proxy, kpi.exec_revenue exposed",
+      "reason": "revert payment: raise client timeout to 5000 ms, drop retries on payment (removes the cause; slower than a flag); future: contains if the confirmed cause is the cause (removing the origin's fault; assumed, not measured); history: rollback worked 6/6 times on past incidents sharing a symptom with this one (smoothed success 0.88); learned: your team approved the rollback 0 of the last 36 time(s) for payment; rejected it 8 time(s); proposed guideline gl-6da42915960e1446 from Desmond Brackwater's rejection 3 h ago: \"prefer a rollback over a flag flip during the freeze\" (not active: promote or dismiss it)",
       "target": "D-pay-417",
       "status": "option",
       "preview": {
+        "path": "deploys.json",
         "repo": "Prashant-thakur77/faultline-demo-infra",
+        "revert": "D-pay-417",
         "reviewers": [
           "p-017",
           "p-030",
           "p-036"
         ],
-        "title": "Incident inc-s1-ee6d96e6: D-pay-417"
+        "service": "payment"
       },
       "spec": null,
       "plan_hash": null,
@@ -655,10 +1579,117 @@
       "rejected_by": null,
       "reject_reason": null,
       "rejected_at": null,
-      "future": "{\"assumed\": false, \"evidence_id\": \"ev_cfe3b16bdb\", \"exposed\": [\"frontend-proxy\", \"kpi.exec_revenue\"], \"key\": \"no_change\", \"line\": \"does not contain: checkout residual 0.4029 over its band, frontend residual 0.4029 over its band\", \"predicted\": \"does_not_contain\"}"
+      "future": "{\"assumed\": true, \"evidence_id\": \"ev_cfe3b16bdb\", \"exposed\": [], \"key\": \"remove_origin\", \"line\": \"contains if the confirmed cause is the cause (removing the origin's fault; assumed, not measured)\", \"predicted\": \"contains\"}",
+      "learned": {
+        "family": "payment",
+        "guideline": {
+          "at": 1792265758081,
+          "by": "p-030",
+          "by_name": "Desmond Brackwater",
+          "decided_at": null,
+          "decided_by": null,
+          "decided_by_name": null,
+          "event": "le-6da42915960e1446",
+          "id": "gl-6da42915960e1446",
+          "incident": "inc-s1-5211f330",
+          "line": "proposed guideline gl-6da42915960e1446 from Desmond Brackwater's rejection 3 h ago: \"prefer a rollback over a flag flip during the freeze\" (not active: promote or dismiss it)",
+          "needs_override": false,
+          "others": [
+            "gl-5b0fdf9f9b881504",
+            "gl-feb75db68f3606b6",
+            "gl-0c6daf3a265d5149",
+            "gl-dee45f828c0ce0a1",
+            "gl-d585456f79256ef3"
+          ],
+          "status": "proposed",
+          "text": "prefer a rollback over a flag flip during the freeze"
+        },
+        "preference": {
+          "events": [
+            "le-058e27fdc426d143",
+            "le-dc41d7793d3f0266",
+            "le-d585456f79256ef3",
+            "le-dee45f828c0ce0a1",
+            "le-0c6daf3a265d5149",
+            "le-feb75db68f3606b6",
+            "le-5b0fdf9f9b881504",
+            "le-6da42915960e1446"
+          ],
+          "last_at": null,
+          "line": "learned: your team approved the rollback 0 of the last 36 time(s) for payment; rejected it 8 time(s)",
+          "n_approve": 0,
+          "n_family_approve": 36,
+          "n_reject": 8,
+          "pref": 0.022
+        },
+        "rank_without_learning": 1,
+        "score": 0.4485
+      },
+      "override_guideline": null,
+      "override_reason": null,
+      "rank": 2
     },
     {
-      "id": "act-inc-s1-ee6d96e6-4",
+      "id": "act-inc-s1-66af9843-3",
+      "kind": "open_issue",
+      "option": "open an issue for D-pay-417",
+      "enabled": true,
+      "reason": "hand the cause to the owner team (no change to production; does not resolve the incident); future: does not contain: checkout residual 0.4029 over its band, frontend residual 0.4029 over its band; leaves frontend-proxy, kpi.exec_revenue exposed; proposed guideline gl-164899ea2565517a from Desmond Brackwater's rejection 3 h ago: \"prefer a rollback over a flag flip during the freeze\" (not active: promote or dismiss it)",
+      "target": "D-pay-417",
+      "status": "option",
+      "preview": {
+        "repo": "Prashant-thakur77/faultline-demo-infra",
+        "reviewers": [
+          "p-017",
+          "p-030",
+          "p-036"
+        ],
+        "title": "Incident inc-s1-66af9843: D-pay-417"
+      },
+      "spec": null,
+      "plan_hash": null,
+      "idem": null,
+      "external_ref": null,
+      "verdict": null,
+      "explanation": null,
+      "channels": null,
+      "approval_id": null,
+      "rejected_by": null,
+      "reject_reason": null,
+      "rejected_at": null,
+      "future": "{\"assumed\": false, \"evidence_id\": \"ev_cfe3b16bdb\", \"exposed\": [\"frontend-proxy\", \"kpi.exec_revenue\"], \"key\": \"no_change\", \"line\": \"does not contain: checkout residual 0.4029 over its band, frontend residual 0.4029 over its band\", \"predicted\": \"does_not_contain\"}",
+      "learned": {
+        "family": "payment",
+        "guideline": {
+          "at": 1792265758119,
+          "by": "p-030",
+          "by_name": "Desmond Brackwater",
+          "decided_at": null,
+          "decided_by": null,
+          "decided_by_name": null,
+          "event": "le-164899ea2565517a",
+          "id": "gl-164899ea2565517a",
+          "incident": "inc-s1-5211f330",
+          "line": "proposed guideline gl-164899ea2565517a from Desmond Brackwater's rejection 3 h ago: \"prefer a rollback over a flag flip during the freeze\" (not active: promote or dismiss it)",
+          "needs_override": false,
+          "others": [
+            "gl-85e9f1df11a11fe2",
+            "gl-3a631e7e82e62177",
+            "gl-1307455cbcb897ff",
+            "gl-8d3d97365df8fb35",
+            "gl-65181a506853a8dd"
+          ],
+          "status": "proposed",
+          "text": "prefer a rollback over a flag flip during the freeze"
+        },
+        "rank_without_learning": 3
+      },
+      "override_guideline": null,
+      "override_reason": null,
+      "rank": 3
+    },
+    {
+      "id": "act-inc-s1-66af9843-4",
       "kind": "flip_flag",
       "option": "cut payment \u2192 raw.raw_orders",
       "enabled": false,
@@ -677,9 +1708,778 @@
       "rejected_by": null,
       "reject_reason": null,
       "rejected_at": null,
-      "future": null
+      "future": null,
+      "learned": {
+        "family": "payment",
+        "rank_without_learning": 4
+      },
+      "override_guideline": null,
+      "override_reason": null,
+      "rank": 4
     }
   ],
+  "learned": {
+    "consulted": true,
+    "family": "payment",
+    "n_family": 64,
+    "applies": true,
+    "pref_min_n": 3,
+    "moved": [
+      "act-inc-s1-66af9843-1",
+      "act-inc-s1-66af9843-2"
+    ],
+    "flagged": [],
+    "suggested": [
+      "act-inc-s1-66af9843-1"
+    ],
+    "guidelines": [
+      {
+        "action_kind": "open_issue",
+        "at": 1792265758119,
+        "by": "p-030",
+        "by_name": "Desmond Brackwater",
+        "decided_at": null,
+        "decided_by": null,
+        "decided_by_name": null,
+        "event": "le-164899ea2565517a",
+        "family": "payment",
+        "graph": "eval_acme_api_v2_s1_8080_5211f330",
+        "id": "gl-164899ea2565517a",
+        "incident": "inc-s1-5211f330",
+        "option": "open an issue for D-pay-417",
+        "source": "rejection",
+        "status": "proposed",
+        "text": "prefer a rollback over a flag flip during the freeze"
+      },
+      {
+        "action_kind": "rollback_deploy",
+        "at": 1792265758081,
+        "by": "p-030",
+        "by_name": "Desmond Brackwater",
+        "decided_at": null,
+        "decided_by": null,
+        "decided_by_name": null,
+        "event": "le-6da42915960e1446",
+        "family": "payment",
+        "graph": "eval_acme_api_v2_s1_8080_5211f330",
+        "id": "gl-6da42915960e1446",
+        "incident": "inc-s1-5211f330",
+        "option": "roll back D-pay-417",
+        "source": "rejection",
+        "status": "proposed",
+        "text": "prefer a rollback over a flag flip during the freeze"
+      },
+      {
+        "action_kind": "flip_flag",
+        "at": 1792265758041,
+        "by": "p-030",
+        "by_name": "Desmond Brackwater",
+        "decided_at": null,
+        "decided_by": null,
+        "decided_by_name": null,
+        "event": "le-21c35d4d8eefa1a6",
+        "family": "payment",
+        "graph": "eval_acme_api_v2_s1_8080_5211f330",
+        "id": "gl-21c35d4d8eefa1a6",
+        "incident": "inc-s1-5211f330",
+        "option": "flag paymentGate \u2192 off",
+        "source": "rejection",
+        "status": "proposed",
+        "text": "prefer a rollback over a flag flip during the freeze"
+      },
+      {
+        "action_kind": "flip_flag",
+        "at": 1792265755930,
+        "by": "p-030",
+        "by_name": "Desmond Brackwater",
+        "decided_at": null,
+        "decided_by": null,
+        "decided_by_name": null,
+        "event": "le-d916af8de515381e",
+        "family": "payment",
+        "graph": "eval_acme_api_v2_s1_8431_78105d7f",
+        "id": "gl-d916af8de515381e",
+        "incident": "inc-s1-78105d7f",
+        "option": "flag paymentGate \u2192 off",
+        "source": "rejection",
+        "status": "proposed",
+        "text": "prefer a rollback over a flag flip during the freeze"
+      },
+      {
+        "action_kind": "open_issue",
+        "at": 1792264100563,
+        "by": "p-030",
+        "by_name": "Desmond Brackwater",
+        "decided_at": null,
+        "decided_by": null,
+        "decided_by_name": null,
+        "event": "le-85e9f1df11a11fe2",
+        "family": "payment",
+        "graph": "eval_acme_api_v2_s1_9622_9f4d1776",
+        "id": "gl-85e9f1df11a11fe2",
+        "incident": "inc-s1-9f4d1776",
+        "option": "open an issue for D-pay-417",
+        "source": "rejection",
+        "status": "proposed",
+        "text": "prefer a rollback over a flag flip during the freeze"
+      },
+      {
+        "action_kind": "rollback_deploy",
+        "at": 1792264100541,
+        "by": "p-030",
+        "by_name": "Desmond Brackwater",
+        "decided_at": null,
+        "decided_by": null,
+        "decided_by_name": null,
+        "event": "le-5b0fdf9f9b881504",
+        "family": "payment",
+        "graph": "eval_acme_api_v2_s1_9622_9f4d1776",
+        "id": "gl-5b0fdf9f9b881504",
+        "incident": "inc-s1-9f4d1776",
+        "option": "roll back D-pay-417",
+        "source": "rejection",
+        "status": "proposed",
+        "text": "prefer a rollback over a flag flip during the freeze"
+      },
+      {
+        "action_kind": "flip_flag",
+        "at": 1792264100517,
+        "by": "p-030",
+        "by_name": "Desmond Brackwater",
+        "decided_at": null,
+        "decided_by": null,
+        "decided_by_name": null,
+        "event": "le-e727948392d904d6",
+        "family": "payment",
+        "graph": "eval_acme_api_v2_s1_9622_9f4d1776",
+        "id": "gl-e727948392d904d6",
+        "incident": "inc-s1-9f4d1776",
+        "option": "flag paymentGate \u2192 off",
+        "source": "rejection",
+        "status": "proposed",
+        "text": "prefer a rollback over a flag flip during the freeze"
+      },
+      {
+        "action_kind": "flip_flag",
+        "at": 1792264098668,
+        "by": "p-030",
+        "by_name": "Desmond Brackwater",
+        "decided_at": null,
+        "decided_by": null,
+        "decided_by_name": null,
+        "event": "le-a7cca02714dfdf80",
+        "family": "payment",
+        "graph": "eval_acme_api_v2_s1_946_2205bb32",
+        "id": "gl-a7cca02714dfdf80",
+        "incident": "inc-s1-2205bb32",
+        "option": "flag paymentGate \u2192 off",
+        "source": "rejection",
+        "status": "proposed",
+        "text": "prefer a rollback over a flag flip during the freeze"
+      },
+      {
+        "action_kind": "open_issue",
+        "at": 1792263543490,
+        "by": "p-030",
+        "by_name": "Desmond Brackwater",
+        "decided_at": null,
+        "decided_by": null,
+        "decided_by_name": null,
+        "event": "le-3a631e7e82e62177",
+        "family": "payment",
+        "graph": "eval_acme_api_v2_s1_3515_5222350b",
+        "id": "gl-3a631e7e82e62177",
+        "incident": "inc-s1-5222350b",
+        "option": "open an issue for D-pay-417",
+        "source": "rejection",
+        "status": "proposed",
+        "text": "prefer a rollback over a flag flip during the freeze"
+      },
+      {
+        "action_kind": "rollback_deploy",
+        "at": 1792263543456,
+        "by": "p-030",
+        "by_name": "Desmond Brackwater",
+        "decided_at": null,
+        "decided_by": null,
+        "decided_by_name": null,
+        "event": "le-feb75db68f3606b6",
+        "family": "payment",
+        "graph": "eval_acme_api_v2_s1_3515_5222350b",
+        "id": "gl-feb75db68f3606b6",
+        "incident": "inc-s1-5222350b",
+        "option": "roll back D-pay-417",
+        "source": "rejection",
+        "status": "proposed",
+        "text": "prefer a rollback over a flag flip during the freeze"
+      },
+      {
+        "action_kind": "flip_flag",
+        "at": 1792263543415,
+        "by": "p-030",
+        "by_name": "Desmond Brackwater",
+        "decided_at": null,
+        "decided_by": null,
+        "decided_by_name": null,
+        "event": "le-5a70831974c8701c",
+        "family": "payment",
+        "graph": "eval_acme_api_v2_s1_3515_5222350b",
+        "id": "gl-5a70831974c8701c",
+        "incident": "inc-s1-5222350b",
+        "option": "flag paymentGate \u2192 off",
+        "source": "rejection",
+        "status": "proposed",
+        "text": "prefer a rollback over a flag flip during the freeze"
+      },
+      {
+        "action_kind": "flip_flag",
+        "at": 1792263541560,
+        "by": "p-030",
+        "by_name": "Desmond Brackwater",
+        "decided_at": null,
+        "decided_by": null,
+        "decided_by_name": null,
+        "event": "le-05597c784ba428e4",
+        "family": "payment",
+        "graph": "eval_acme_api_v2_s1_5352_55f9d118",
+        "id": "gl-05597c784ba428e4",
+        "incident": "inc-s1-55f9d118",
+        "option": "flag paymentGate \u2192 off",
+        "source": "rejection",
+        "status": "proposed",
+        "text": "prefer a rollback over a flag flip during the freeze"
+      },
+      {
+        "action_kind": "open_issue",
+        "at": 1792255414519,
+        "by": "p-030",
+        "by_name": "Desmond Brackwater",
+        "decided_at": null,
+        "decided_by": null,
+        "decided_by_name": null,
+        "event": "le-1307455cbcb897ff",
+        "family": "payment",
+        "graph": "eval_acme_api_v2_s1_8564_9ffa4344",
+        "id": "gl-1307455cbcb897ff",
+        "incident": "inc-s1-9ffa4344",
+        "option": "open an issue for D-pay-417",
+        "source": "rejection",
+        "status": "proposed",
+        "text": "prefer a rollback over a flag flip during the freeze"
+      },
+      {
+        "action_kind": "rollback_deploy",
+        "at": 1792255414504,
+        "by": "p-030",
+        "by_name": "Desmond Brackwater",
+        "decided_at": null,
+        "decided_by": null,
+        "decided_by_name": null,
+        "event": "le-0c6daf3a265d5149",
+        "family": "payment",
+        "graph": "eval_acme_api_v2_s1_8564_9ffa4344",
+        "id": "gl-0c6daf3a265d5149",
+        "incident": "inc-s1-9ffa4344",
+        "option": "roll back D-pay-417",
+        "source": "rejection",
+        "status": "proposed",
+        "text": "prefer a rollback over a flag flip during the freeze"
+      },
+      {
+        "action_kind": "flip_flag",
+        "at": 1792255414474,
+        "by": "p-030",
+        "by_name": "Desmond Brackwater",
+        "decided_at": null,
+        "decided_by": null,
+        "decided_by_name": null,
+        "event": "le-d8960841dc7ab0fd",
+        "family": "payment",
+        "graph": "eval_acme_api_v2_s1_8564_9ffa4344",
+        "id": "gl-d8960841dc7ab0fd",
+        "incident": "inc-s1-9ffa4344",
+        "option": "flag paymentGate \u2192 off",
+        "source": "rejection",
+        "status": "proposed",
+        "text": "prefer a rollback over a flag flip during the freeze"
+      },
+      {
+        "action_kind": "flip_flag",
+        "at": 1792255412746,
+        "by": "p-030",
+        "by_name": "Desmond Brackwater",
+        "decided_at": null,
+        "decided_by": null,
+        "decided_by_name": null,
+        "event": "le-03d5edb4d381a923",
+        "family": "payment",
+        "graph": "eval_acme_api_v2_s1_9400_e3925a48",
+        "id": "gl-03d5edb4d381a923",
+        "incident": "inc-s1-e3925a48",
+        "option": "flag paymentGate \u2192 off",
+        "source": "rejection",
+        "status": "proposed",
+        "text": "prefer a rollback over a flag flip during the freeze"
+      },
+      {
+        "action_kind": "open_issue",
+        "at": 1792254761966,
+        "by": "p-030",
+        "by_name": "Desmond Brackwater",
+        "decided_at": null,
+        "decided_by": null,
+        "decided_by_name": null,
+        "event": "le-8d3d97365df8fb35",
+        "family": "payment",
+        "graph": "eval_acme_api_v2_s1_4305_2b8481f1",
+        "id": "gl-8d3d97365df8fb35",
+        "incident": "inc-s1-2b8481f1",
+        "option": "open an issue for D-pay-417",
+        "source": "rejection",
+        "status": "proposed",
+        "text": "prefer a rollback over a flag flip during the freeze"
+      },
+      {
+        "action_kind": "rollback_deploy",
+        "at": 1792254761951,
+        "by": "p-030",
+        "by_name": "Desmond Brackwater",
+        "decided_at": null,
+        "decided_by": null,
+        "decided_by_name": null,
+        "event": "le-dee45f828c0ce0a1",
+        "family": "payment",
+        "graph": "eval_acme_api_v2_s1_4305_2b8481f1",
+        "id": "gl-dee45f828c0ce0a1",
+        "incident": "inc-s1-2b8481f1",
+        "option": "roll back D-pay-417",
+        "source": "rejection",
+        "status": "proposed",
+        "text": "prefer a rollback over a flag flip during the freeze"
+      },
+      {
+        "action_kind": "flip_flag",
+        "at": 1792254761935,
+        "by": "p-030",
+        "by_name": "Desmond Brackwater",
+        "decided_at": null,
+        "decided_by": null,
+        "decided_by_name": null,
+        "event": "le-e750725dca11cba4",
+        "family": "payment",
+        "graph": "eval_acme_api_v2_s1_4305_2b8481f1",
+        "id": "gl-e750725dca11cba4",
+        "incident": "inc-s1-2b8481f1",
+        "option": "flag paymentGate \u2192 off",
+        "source": "rejection",
+        "status": "proposed",
+        "text": "prefer a rollback over a flag flip during the freeze"
+      },
+      {
+        "action_kind": "flip_flag",
+        "at": 1792254760297,
+        "by": "p-030",
+        "by_name": "Desmond Brackwater",
+        "decided_at": null,
+        "decided_by": null,
+        "decided_by_name": null,
+        "event": "le-829954d00e0a60a6",
+        "family": "payment",
+        "graph": "eval_acme_api_v2_s1_6443_65acb17b",
+        "id": "gl-829954d00e0a60a6",
+        "incident": "inc-s1-65acb17b",
+        "option": "flag paymentGate \u2192 off",
+        "source": "rejection",
+        "status": "proposed",
+        "text": "prefer a rollback over a flag flip during the freeze"
+      },
+      {
+        "action_kind": "open_issue",
+        "at": 1792253804710,
+        "by": "p-030",
+        "by_name": "Desmond Brackwater",
+        "decided_at": null,
+        "decided_by": null,
+        "decided_by_name": null,
+        "event": "le-65181a506853a8dd",
+        "family": "payment",
+        "graph": "eval_acme_api_v2_s1_7295_614737cf",
+        "id": "gl-65181a506853a8dd",
+        "incident": "inc-s1-614737cf",
+        "option": "open an issue for D-pay-417",
+        "source": "rejection",
+        "status": "proposed",
+        "text": "prefer a rollback over a flag flip during the freeze"
+      },
+      {
+        "action_kind": "rollback_deploy",
+        "at": 1792253804655,
+        "by": "p-030",
+        "by_name": "Desmond Brackwater",
+        "decided_at": null,
+        "decided_by": null,
+        "decided_by_name": null,
+        "event": "le-d585456f79256ef3",
+        "family": "payment",
+        "graph": "eval_acme_api_v2_s1_7295_614737cf",
+        "id": "gl-d585456f79256ef3",
+        "incident": "inc-s1-614737cf",
+        "option": "roll back D-pay-417",
+        "source": "rejection",
+        "status": "proposed",
+        "text": "prefer a rollback over a flag flip during the freeze"
+      },
+      {
+        "action_kind": "flip_flag",
+        "at": 1792253804610,
+        "by": "p-030",
+        "by_name": "Desmond Brackwater",
+        "decided_at": null,
+        "decided_by": null,
+        "decided_by_name": null,
+        "event": "le-8190effd42524322",
+        "family": "payment",
+        "graph": "eval_acme_api_v2_s1_7295_614737cf",
+        "id": "gl-8190effd42524322",
+        "incident": "inc-s1-614737cf",
+        "option": "flag paymentGate \u2192 off",
+        "source": "rejection",
+        "status": "proposed",
+        "text": "prefer a rollback over a flag flip during the freeze"
+      },
+      {
+        "action_kind": "flip_flag",
+        "at": 1792253802279,
+        "by": "p-030",
+        "by_name": "Desmond Brackwater",
+        "decided_at": null,
+        "decided_by": null,
+        "decided_by_name": null,
+        "event": "le-6b845d2cc329bc5c",
+        "family": "payment",
+        "graph": "eval_acme_api_v2_s1_2899_60629303",
+        "id": "gl-6b845d2cc329bc5c",
+        "incident": "inc-s1-60629303",
+        "option": "flag paymentGate \u2192 off",
+        "source": "rejection",
+        "status": "proposed",
+        "text": "prefer a rollback over a flag flip during the freeze"
+      },
+      {
+        "action_kind": "open_issue",
+        "at": 1792251360760,
+        "by": "p-030",
+        "by_name": "Desmond Brackwater",
+        "decided_at": null,
+        "decided_by": null,
+        "decided_by_name": null,
+        "event": "le-29ad233617c2b8f0",
+        "family": "payment",
+        "graph": "eval_acme_api_v2_s1_4019_680e65c3",
+        "id": "gl-29ad233617c2b8f0",
+        "incident": "inc-s1-680e65c3",
+        "option": "open an issue for D-pay-417",
+        "source": "rejection",
+        "status": "proposed",
+        "text": "prefer a rollback over a flag flip during the freeze"
+      },
+      {
+        "action_kind": "flip_flag",
+        "at": 1792251360742,
+        "by": "p-030",
+        "by_name": "Desmond Brackwater",
+        "decided_at": null,
+        "decided_by": null,
+        "decided_by_name": null,
+        "event": "le-0894bcc539bd0bb2",
+        "family": "payment",
+        "graph": "eval_acme_api_v2_s1_4019_680e65c3",
+        "id": "gl-0894bcc539bd0bb2",
+        "incident": "inc-s1-680e65c3",
+        "option": "flag paymentGate \u2192 off",
+        "source": "rejection",
+        "status": "proposed",
+        "text": "prefer a rollback over a flag flip during the freeze"
+      },
+      {
+        "action_kind": "rollback_deploy",
+        "at": 1792251360724,
+        "by": "p-030",
+        "by_name": "Desmond Brackwater",
+        "decided_at": null,
+        "decided_by": null,
+        "decided_by_name": null,
+        "event": "le-dc41d7793d3f0266",
+        "family": "payment",
+        "graph": "eval_acme_api_v2_s1_4019_680e65c3",
+        "id": "gl-dc41d7793d3f0266",
+        "incident": "inc-s1-680e65c3",
+        "option": "roll back D-pay-417",
+        "source": "rejection",
+        "status": "proposed",
+        "text": "prefer a rollback over a flag flip during the freeze"
+      },
+      {
+        "action_kind": "rollback_deploy",
+        "at": 1792251359250,
+        "by": "p-030",
+        "by_name": "Desmond Brackwater",
+        "decided_at": null,
+        "decided_by": null,
+        "decided_by_name": null,
+        "event": "le-058e27fdc426d143",
+        "family": "payment",
+        "graph": "eval_acme_api_v2_s1_845_83756cbd",
+        "id": "gl-058e27fdc426d143",
+        "incident": "inc-s1-83756cbd",
+        "option": "roll back D-pay-417",
+        "source": "rejection",
+        "status": "proposed",
+        "text": "prefer a rollback over a flag flip during the freeze"
+      }
+    ],
+    "suggestions": [
+      {
+        "action_kind": "flip_flag",
+        "covered": false,
+        "covered_by": null,
+        "events": [
+          "le-cfe8e19507121b33",
+          "le-da5f273e756ca488",
+          "le-95189eea1f33209c",
+          "le-291584b7f7fe26e2",
+          "le-4a9b7c80dea76113",
+          "le-c5647e6dfb259a33",
+          "le-d60c7b290001f01f",
+          "le-7e173955b96923fb",
+          "le-a8b50071bb6b2418",
+          "le-dfe51494438ddada",
+          "le-787e51c88340c024",
+          "le-d16272d64cdf4ade",
+          "le-f3099d51a3c68864",
+          "le-4ccd04f8477c3b28",
+          "le-6520b9c73e6d856b",
+          "le-4812f4be0340dc66",
+          "le-708dd3b6ae8570b5",
+          "le-c099eec8eab5b271",
+          "le-d535da24d5ce9040",
+          "le-4bb3f65748cea2d2"
+        ],
+        "incidents": [
+          "inc-s1-4c1d7423",
+          "inc-s1-fc4bcee2",
+          "inc-s1-c807d009",
+          "inc-s1-98620a2d",
+          "inc-s1-4066dbfc",
+          "inc-s1-da2a3f84",
+          "inc-s1-e298bb3b",
+          "inc-s1-7c4d1648",
+          "inc-s1-30c94629",
+          "inc-s1-a73285be",
+          "inc-s1-6fa0a796",
+          "inc-s1-163530d7",
+          "inc-s1-77c62c91",
+          "inc-s1-dca1f5c7",
+          "inc-s1-4021b563",
+          "inc-s1-83e7f405",
+          "inc-s1-996944b4",
+          "inc-s1-bfabcef2",
+          "inc-s1-85b9c82e",
+          "inc-s1-61890f46"
+        ],
+        "last_at": 1792271112589,
+        "n": 20,
+        "params_hash": "9d7169b8b70f8d92ae043f3253674438227e0bb5c5003004db49968222bd74b3",
+        "people": [
+          "p-030",
+          "p-017"
+        ]
+      }
+    ],
+    "responders": [
+      {
+        "acks": 5,
+        "approvals": 19,
+        "events": [
+          "le-5ba42a603639c884",
+          "le-cfe8e19507121b33",
+          "le-3fe82fd7b88d4afa",
+          "le-da5f273e756ca488",
+          "le-ef44d34ecf2cdd1d",
+          "le-69ea2b1dcceddd90",
+          "le-2f6926c0ba13c5a7",
+          "le-291584b7f7fe26e2",
+          "le-4a9b7c80dea76113",
+          "le-89b42420f5bf555a",
+          "le-6799afb737f4e9d5",
+          "le-80382b6671bb361d",
+          "le-c5647e6dfb259a33",
+          "le-6f9413e30da37e51",
+          "le-7e173955b96923fb",
+          "le-6c89e74852870d13",
+          "le-8714b57457462e22",
+          "le-a8b50071bb6b2418",
+          "le-4fa9d6f70ca99f0d",
+          "le-be600f6d42a77498",
+          "le-d16272d64cdf4ade",
+          "le-c61e445d3616b6ba",
+          "le-f3099d51a3c68864",
+          "le-a761396f49898dcf",
+          "le-4ccd04f8477c3b28",
+          "le-db50b13c12c50dae",
+          "le-df7ea6ceccdb9900",
+          "le-2def20767ca7a741",
+          "le-6520b9c73e6d856b",
+          "le-98557ea1aa113165",
+          "le-4812f4be0340dc66",
+          "le-b4272ae3a32eecc3",
+          "le-708dd3b6ae8570b5",
+          "le-356aa760e297edd6",
+          "le-145131bac44118d1",
+          "le-40c3cb3aa65f3ffc",
+          "le-d125b6a14281b9b0"
+        ],
+        "fixes": 13,
+        "incidents": 24,
+        "last_at": 1792271137296,
+        "mtta_ms": 19551.6,
+        "n": 37,
+        "name": "Desmond Brackwater",
+        "person": "p-030",
+        "score": 36.5864128339031
+      },
+      {
+        "acks": 0,
+        "approvals": 17,
+        "events": [
+          "le-dc3ed4f6e2f34f0c",
+          "le-4c4aa2f52145b2a1",
+          "le-8aa2a4019c8a2eab",
+          "le-95189eea1f33209c",
+          "le-eb72a5acbad28abc",
+          "le-828fc4a2491d5b6a",
+          "le-f518334413a61235",
+          "le-d60c7b290001f01f",
+          "le-ea3a81cb911a8deb",
+          "le-c02d956d3e376d6d",
+          "le-dfe51494438ddada",
+          "le-c59c273f85fd83cf",
+          "le-787e51c88340c024",
+          "le-982128895cece355",
+          "le-ac7f2276a4162190",
+          "le-6922cdb8a8b591ab",
+          "le-6cbcae6e441be365",
+          "le-9edda61b4c35f117",
+          "le-145e999159962b45",
+          "le-c099eec8eab5b271",
+          "le-6167ef4e75eb5f24",
+          "le-d535da24d5ce9040",
+          "le-a3646260ac68ba50",
+          "le-4bb3f65748cea2d2"
+        ],
+        "fixes": 7,
+        "incidents": 17,
+        "last_at": 1792271112589,
+        "mtta_ms": null,
+        "n": 24,
+        "name": "Quinn Lindqvane",
+        "person": "p-017",
+        "score": 23.770295376206
+      }
+    ],
+    "first_wave": [
+      "p-030"
+    ],
+    "who_fixes_blended": [
+      {
+        "name": "Quinn Lindqvane",
+        "oncall": false,
+        "person": "p-017",
+        "reasons": [
+          "authored 8 recent commit(s) on payment",
+          "resolved inc-h008, inc-h011, inc-h015 on payment",
+          "member of owner team team-payments"
+        ],
+        "score": 17.5046,
+        "teams": [
+          "team-payments"
+        ],
+        "harmonic": 17.5046,
+        "responded": 23.7703,
+        "blended": 0.9612
+      },
+      {
+        "name": "Desmond Brackwater",
+        "oncall": true,
+        "person": "p-030",
+        "reasons": [
+          "authored 5 recent commit(s) on payment",
+          "resolved inc-h018 on payment",
+          "on call for team-payments now"
+        ],
+        "score": 16.1548,
+        "teams": [
+          "team-payments"
+        ],
+        "harmonic": 16.1548,
+        "responded": 36.5864,
+        "blended": 0.9355
+      },
+      {
+        "name": "Juno Pellucid",
+        "oncall": false,
+        "person": "p-036",
+        "reasons": [
+          "authored 5 recent commit(s) on payment",
+          "resolved inc-h037, inc-h039 on payment",
+          "member of owner team team-payments"
+        ],
+        "score": 14.8037,
+        "teams": [
+          "team-payments"
+        ],
+        "harmonic": 14.8037,
+        "responded": 0.0,
+        "blended": 0.4229
+      },
+      {
+        "name": "Dorian Marrowby",
+        "oncall": false,
+        "person": "p-004",
+        "reasons": [
+          "authored 2 recent commit(s) on payment",
+          "resolved inc-h028 on payment",
+          "member of owner team team-payments"
+        ],
+        "score": 13.7948,
+        "teams": [
+          "team-payments"
+        ],
+        "harmonic": 13.7948,
+        "responded": 0.0,
+        "blended": 0.394
+      },
+      {
+        "name": "Hester Hawksmere",
+        "oncall": false,
+        "person": "p-034",
+        "reasons": [
+          "member of owner team team-payments"
+        ],
+        "score": 12.2852,
+        "teams": [
+          "team-payments"
+        ],
+        "harmonic": 12.2852,
+        "responded": 0.0,
+        "blended": 0.3509
+      }
+    ],
+    "evidence": {
+      "preferences": "ev_8e39761d44",
+      "responders": "ev_53977a26ac"
+    }
+  },
   "memory": {
     "recalled": [
       {
@@ -723,50 +2523,10 @@
         ]
       },
       {
-        "id": "inc-h018",
+        "id": "inc-h027",
         "title": "Spike in failed orders from payment charge errors",
-        "similarity": 0.751269423028146,
-        "recency": 0.196495672435646,
-        "salience": 1.0,
-        "shared": [
-          "sym-error_rate-checkout"
-        ],
-        "actions": [
-          {
-            "kind": "flip_flag",
-            "verdict": "APPLIED",
-            "target": "paymentGate"
-          }
-        ],
-        "cause_targets": [
-          "payment"
-        ]
-      },
-      {
-        "id": "inc-h008",
-        "title": "Payment charge failures surface at checkout",
-        "similarity": 0.746046954218263,
-        "recency": 0.132265126402533,
-        "salience": 1.0,
-        "shared": [
-          "sym-error_rate-checkout"
-        ],
-        "actions": [
-          {
-            "kind": "flip_flag",
-            "verdict": "APPLIED",
-            "target": "paymentGate"
-          }
-        ],
-        "cause_targets": [
-          "payment"
-        ]
-      },
-      {
-        "id": "inc-h015",
-        "title": "Spike in failed orders from payment charge errors",
-        "similarity": 0.741663646856102,
-        "recency": 0.179287551039125,
+        "similarity": 0.741630042665349,
+        "recency": 0.459304603378205,
         "salience": 1.0,
         "shared": [
           "sym-error_rate-checkout"
@@ -775,7 +2535,47 @@
           {
             "kind": "rollback_deploy",
             "verdict": "APPLIED",
-            "target": "dep-136"
+            "target": "dep-263"
+          }
+        ],
+        "cause_targets": [
+          "payment"
+        ]
+      },
+      {
+        "id": "inc-h037",
+        "title": "Payment charge failures surface at checkout",
+        "similarity": 0.733225832064324,
+        "recency": 0.798836535431845,
+        "salience": 1.0,
+        "shared": [
+          "sym-error_rate-checkout"
+        ],
+        "actions": [
+          {
+            "kind": "rollback_deploy",
+            "verdict": "APPLIED",
+            "target": "dep-336"
+          }
+        ],
+        "cause_targets": [
+          "payment"
+        ]
+      },
+      {
+        "id": "inc-h039",
+        "title": "Payment charge failures surface at checkout",
+        "similarity": 0.731777823382534,
+        "recency": 0.944768263185724,
+        "salience": 1.0,
+        "shared": [
+          "sym-error_rate-checkout"
+        ],
+        "actions": [
+          {
+            "kind": "rollback_deploy",
+            "verdict": "APPLIED",
+            "target": "dep-355"
           }
         ],
         "cause_targets": [
@@ -787,20 +2587,20 @@
       {
         "kind": "flip_flag",
         "verdict": "APPLIED",
-        "n": 3,
+        "n": 1,
         "incidents": [
-          "inc-h005",
-          "inc-h008",
-          "inc-h018"
+          "inc-h005"
         ]
       },
       {
         "kind": "rollback_deploy",
         "verdict": "APPLIED",
-        "n": 2,
+        "n": 4,
         "incidents": [
-          "inc-h015",
-          "inc-h030"
+          "inc-h027",
+          "inc-h030",
+          "inc-h037",
+          "inc-h039"
         ]
       }
     ]

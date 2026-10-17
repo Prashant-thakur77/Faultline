@@ -1,6 +1,6 @@
 [
   {
-    "id": "gr-inc-s2-fe1681b0-4bca2416",
+    "id": "gr-inc-s2-99a4f2f6-b984be4a",
     "cause": "D-cutover-1",
     "passed": true,
     "confident": false,
@@ -40,10 +40,10 @@
     ],
     "attempt": 0,
     "origin": "sweep",
-    "at": 1791988503384
+    "at": 1792279125588
   },
   {
-    "id": "gr-inc-s2-fe1681b0-3327d78e",
+    "id": "gr-inc-s2-99a4f2f6-e2b89f58",
     "cause": "D-fx-pause-7",
     "passed": false,
     "confident": false,
@@ -83,10 +83,10 @@
     ],
     "attempt": 0,
     "origin": "sweep",
-    "at": 1791988503387
+    "at": 1792279125593
   },
   {
-    "id": "gr-inc-s2-fe1681b0-bc2c0e6f",
+    "id": "gr-inc-s2-99a4f2f6-61d42206",
     "cause": "D-cutover-1",
     "passed": true,
     "confident": true,
@@ -106,7 +106,7 @@
           "ids": [
             "D-cutover-1"
           ],
-          "run": "run-s2-fe1681b0"
+          "run": "run-s2-99a4f2f6"
         },
         "passed": true,
         "template": "Q-GATE-G1"
@@ -164,7 +164,7 @@
             "ev_201daec0f6",
             "ev_41900686e1"
           ],
-          "run": "run-s2-fe1681b0"
+          "run": "run-s2-99a4f2f6"
         },
         "passed": true,
         "template": "Q-GATE-4"
@@ -194,7 +194,7 @@
             "ev_201daec0f6",
             "ev_41900686e1"
           ],
-          "run": "run-s2-fe1681b0"
+          "run": "run-s2-99a4f2f6"
         },
         "passed": true,
         "template": "Q-GATE-4"
@@ -208,9 +208,15 @@
         ],
         "name": "G4 upstream",
         "params": {
+          "base_since": 1792027500000,
+          "base_until": 1792029000000,
           "ids": [
             "payment"
-          ]
+          ],
+          "min_excess": 0.01,
+          "since": 1792029300000,
+          "slack": 1.25,
+          "until": 1792029660000
         },
         "passed": true,
         "template": "Q-GATE-UPSTREAM-UB"
@@ -240,7 +246,7 @@
         "evidence_ids": [],
         "name": "G6 competitors",
         "params": {
-          "inc": "inc-s2-fe1681b0"
+          "inc": "inc-s2-99a4f2f6"
         },
         "passed": true,
         "template": "Q-HYP-1"
@@ -268,7 +274,7 @@
             "ev_41900686e1",
             "ev_f7f81dcffd"
           ],
-          "run": "run-s2-fe1681b0"
+          "run": "run-s2-99a4f2f6"
         },
         "passed": true,
         "template": "Q-GATE-7"
@@ -295,7 +301,7 @@
             "code",
             "data"
           ],
-          "run": "run-s2-fe1681b0"
+          "run": "run-s2-99a4f2f6"
         },
         "passed": true,
         "template": "Q-GATE-CORR"
@@ -315,6 +321,6 @@
     ],
     "attempt": 1,
     "origin": "confirm",
-    "at": 1791988503436
+    "at": 1792279125626
   }
 ]

@@ -7,8 +7,8 @@
     "output": 0
   },
   "usd": 0.0,
-  "tool_calls": 49,
-  "wall_s_to_decision": 1.149,
-  "wall_s_total": 1.149,
+  "tool_calls": 51,
+  "wall_s_to_decision": 1.156,
+  "wall_s_total": 1.156,
   "note": "wall time from the graph's event timestamps (decision = AWAITING_APPROVAL or a terminal stage; total includes the time a human took to approve)"
 }

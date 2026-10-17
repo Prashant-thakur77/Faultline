@@ -1,31 +1,31 @@
-{"seq": 0, "role": "meta", "investigator": "baseline-policy (deterministic, no LLM)", "model": null, "scenario": "S4S", "incident": "inc-s4s-b5a476e0", "run": "run-s4s-b5a476e0", "note": "deterministic investigator (keyless): no model turns; the transcript is the ordered stage changes, tool calls and gate verdicts recorded in the graph for this run"}
-{"role": "system", "stage": "INTAKE", "at": 1791988505473, "note": "alerts: ['al-s4s-checkout']", "seq": 1}
-{"role": "system", "stage": "RECALL", "at": 1791988505541, "note": "", "seq": 2}
-{"role": "investigator", "stage": "RECALL", "at": 1791988505552, "call": "similar_incidents", "template": "Q-MEM-1", "params": {"current": "inc-s4s-b5a476e0", "half_life_ms": 2592000000.0, "now": 1792065600000}, "seq": 3}
-{"role": "tool", "stage": "RECALL", "at": 1791988505552, "tool": "similar_incidents", "rows": 5, "ms": 2.87, "evidence_id": "ev_83e0e71366", "summary": "5 structurally confirmed precedents: inc-h005, inc-h015, inc-h039", "seq": 4}
-{"role": "investigator", "stage": "RECALL", "at": 1791988505583, "call": "runbook_for", "template": "Q-MEM-3", "params": {"ids": ["checkout", "sym-error_rate-checkout"]}, "seq": 5}
-{"role": "tool", "stage": "RECALL", "at": 1791988505583, "tool": "runbook_for", "rows": 3, "ms": 1.04, "evidence_id": "ev_bd954fbe79", "summary": "3 runbooks", "seq": 6}
-{"role": "system", "stage": "LOCALIZE", "at": 1791988505586, "note": "", "seq": 7}
-{"role": "investigator", "stage": "LOCALIZE", "at": 1791988505591, "call": "service_context", "template": "Q-CTX-1", "params": {"id": "checkout", "now": 1792065600000}, "seq": 8}
-{"role": "tool", "stage": "LOCALIZE", "at": 1791988505591, "tool": "service_context", "rows": 1, "ms": 1.19, "evidence_id": "ev_ea0ca5e481", "summary": "context of checkout", "seq": 9}
-{"role": "investigator", "stage": "LOCALIZE", "at": 1791988505596, "call": "upstream_scope", "template": "Q-LIN-1", "params": {"symptom": "checkout"}, "seq": 10}
-{"role": "tool", "stage": "LOCALIZE", "at": 1791988505596, "tool": "upstream_scope", "rows": 12, "ms": 1.09, "evidence_id": "ev_53feac831e", "summary": "12 upstream nodes", "seq": 11}
-{"role": "system", "stage": "BLAST", "at": 1791988505599, "note": "", "seq": 12}
-{"role": "investigator", "stage": "BLAST", "at": 1791988505605, "call": "blast_radius", "template": "Q-BLAST-1", "params": {"id": "checkout"}, "seq": 13}
-{"role": "tool", "stage": "BLAST", "at": 1791988505605, "tool": "blast_radius", "rows": 5, "ms": 1.44, "evidence_id": "ev_42ca9b7ff2", "summary": "5 impacted nodes", "seq": 14}
-{"role": "investigator", "stage": "BLAST", "at": 1791988505611, "call": "chokepoints", "template": "Q-CHOKE-1", "params": {}, "seq": 15}
-{"role": "tool", "stage": "BLAST", "at": 1791988505611, "tool": "chokepoints", "rows": 10, "ms": 1.35, "evidence_id": "ev_2c9a86d8e7", "summary": "top chokepoints", "seq": 16}
-{"role": "system", "stage": "HYPOTHESIZE", "at": 1791988505614, "note": "", "seq": 17}
-{"role": "investigator", "stage": "HYPOTHESIZE", "at": 1791988505623, "call": "upstream_suspects", "template": "Q-SUS-1", "params": {"onset": 1792065600000, "symptom": "checkout", "window_ms": 1800000}, "seq": 18}
-{"role": "tool", "stage": "HYPOTHESIZE", "at": 1791988505623, "tool": "upstream_suspects", "rows": 0, "ms": 1.51, "evidence_id": "ev_552e8e27de", "summary": "0 upstream changes", "seq": 19}
-{"role": "investigator", "stage": "HYPOTHESIZE", "at": 1791988505628, "call": "window_changes", "template": "Q-SUS-2", "params": {"onset": 1792065600000, "window_ms": 1800000}, "seq": 20}
-{"role": "tool", "stage": "HYPOTHESIZE", "at": 1791988505628, "tool": "window_changes", "rows": 1, "ms": 1.13, "evidence_id": "ev_759a353a7a", "summary": "1 changes in window", "seq": 21}
-{"role": "investigator", "stage": "HYPOTHESIZE", "at": 1791988505640, "call": "rank_causes", "template": "Q-RANK-1", "params": {}, "seq": 22}
-{"role": "tool", "stage": "HYPOTHESIZE", "at": 1791988505640, "tool": "rank_causes", "rows": 13, "ms": 1.43, "evidence_id": "ev_cc396fde5d", "summary": "pageRank over 13 nodes, 13 edges", "seq": 23}
-{"role": "system", "stage": "INVESTIGATE", "at": 1791988505644, "note": "", "seq": 24}
-{"role": "investigator", "stage": "INVESTIGATE", "at": 1791988505660, "call": "metric_window", "template": null, "params": {"onset_ms": 1792065600000, "target_id": "checkout"}, "seq": 25}
-{"role": "tool", "stage": "INVESTIGATE", "at": 1791988505660, "tool": "metric_window", "rows": 1, "ms": 1.62, "evidence_id": "ev_ce987ccf87", "summary": "checkout error rate 0.61% vs baseline 0.69% (\u00d70.9, band 1.5745)", "seq": 26}
-{"role": "investigator", "stage": "INVESTIGATE", "at": 1791988505689, "call": "reachable_from_changes", "template": "Q-NEG-1", "params": {"anomalous_ids": [], "now": 1792065600000, "window_ms": 1800000}, "seq": 27}
-{"role": "tool", "stage": "INVESTIGATE", "at": 1791988505689, "tool": "reachable_from_changes", "rows": 0, "ms": 1.13, "evidence_id": "ev_f1f9cc47d0", "summary": "negative proof: none_reachable", "seq": 28}
-{"role": "gate", "stage": "INVESTIGATE", "at": 1791988505690, "gate_run": "gr-inc-s4s-b5a476e0-309093ee", "cause": "NO_INCIDENT", "origin": "no_incident", "passed": true, "confident": true, "failed": [], "seq": 29}
-{"role": "system", "stage": "NO_INCIDENT", "at": 1791988505696, "note": "negative proof accepted", "seq": 30}
+{"seq": 0, "role": "meta", "investigator": "baseline-policy (deterministic, no LLM)", "model": null, "scenario": "S4S", "incident": "inc-s4s-b9eb0990", "run": "run-s4s-b9eb0990", "note": "deterministic investigator (keyless): no model turns; the transcript is the ordered stage changes, tool calls and gate verdicts recorded in the graph for this run"}
+{"role": "system", "stage": "INTAKE", "at": 1792279127896, "note": "alerts: ['al-s4s-checkout']", "seq": 1}
+{"role": "system", "stage": "RECALL", "at": 1792279127962, "note": "", "seq": 2}
+{"role": "investigator", "stage": "RECALL", "at": 1792279127970, "call": "similar_incidents", "template": "Q-MEM-1", "params": {"current": "inc-s4s-b9eb0990", "half_life_ms": 2592000000.0, "now": 1792065600000, "w_recency": 0.2}, "seq": 3}
+{"role": "tool", "stage": "RECALL", "at": 1792279127970, "tool": "similar_incidents", "rows": 5, "ms": 3.46, "evidence_id": "ev_de34035d70", "summary": "5 structurally confirmed precedents: inc-h039, inc-h037, inc-h030", "seq": 4}
+{"role": "investigator", "stage": "RECALL", "at": 1792279127995, "call": "runbook_for", "template": "Q-MEM-3", "params": {"ids": ["checkout", "sym-error_rate-checkout"]}, "seq": 5}
+{"role": "tool", "stage": "RECALL", "at": 1792279127995, "tool": "runbook_for", "rows": 3, "ms": 0.84, "evidence_id": "ev_bd954fbe79", "summary": "3 runbooks", "seq": 6}
+{"role": "system", "stage": "LOCALIZE", "at": 1792279127998, "note": "", "seq": 7}
+{"role": "investigator", "stage": "LOCALIZE", "at": 1792279128002, "call": "service_context", "template": "Q-CTX-1", "params": {"id": "checkout", "now": 1792065600000}, "seq": 8}
+{"role": "tool", "stage": "LOCALIZE", "at": 1792279128002, "tool": "service_context", "rows": 1, "ms": 0.79, "evidence_id": "ev_ea0ca5e481", "summary": "context of checkout", "seq": 9}
+{"role": "investigator", "stage": "LOCALIZE", "at": 1792279128005, "call": "upstream_scope", "template": "Q-LIN-1", "params": {"symptom": "checkout"}, "seq": 10}
+{"role": "tool", "stage": "LOCALIZE", "at": 1792279128005, "tool": "upstream_scope", "rows": 12, "ms": 0.66, "evidence_id": "ev_53feac831e", "summary": "12 upstream nodes", "seq": 11}
+{"role": "system", "stage": "BLAST", "at": 1792279128007, "note": "", "seq": 12}
+{"role": "investigator", "stage": "BLAST", "at": 1792279128010, "call": "blast_radius", "template": "Q-BLAST-1", "params": {"id": "checkout"}, "seq": 13}
+{"role": "tool", "stage": "BLAST", "at": 1792279128010, "tool": "blast_radius", "rows": 5, "ms": 0.86, "evidence_id": "ev_42ca9b7ff2", "summary": "5 impacted nodes", "seq": 14}
+{"role": "investigator", "stage": "BLAST", "at": 1792279128014, "call": "chokepoints", "template": "Q-CHOKE-1", "params": {}, "seq": 15}
+{"role": "tool", "stage": "BLAST", "at": 1792279128014, "tool": "chokepoints", "rows": 10, "ms": 0.93, "evidence_id": "ev_2c9a86d8e7", "summary": "top chokepoints", "seq": 16}
+{"role": "system", "stage": "HYPOTHESIZE", "at": 1792279128016, "note": "", "seq": 17}
+{"role": "investigator", "stage": "HYPOTHESIZE", "at": 1792279128023, "call": "upstream_suspects", "template": "Q-SUS-1", "params": {"onset": 1792065600000, "symptom": "checkout", "window_ms": 1800000}, "seq": 18}
+{"role": "tool", "stage": "HYPOTHESIZE", "at": 1792279128023, "tool": "upstream_suspects", "rows": 0, "ms": 1.18, "evidence_id": "ev_552e8e27de", "summary": "0 upstream changes", "seq": 19}
+{"role": "investigator", "stage": "HYPOTHESIZE", "at": 1792279128028, "call": "window_changes", "template": "Q-SUS-2", "params": {"onset": 1792065600000, "window_ms": 1800000}, "seq": 20}
+{"role": "tool", "stage": "HYPOTHESIZE", "at": 1792279128028, "tool": "window_changes", "rows": 1, "ms": 1.05, "evidence_id": "ev_759a353a7a", "summary": "1 changes in window", "seq": 21}
+{"role": "investigator", "stage": "HYPOTHESIZE", "at": 1792279128040, "call": "rank_causes", "template": "Q-RANK-1", "params": {}, "seq": 22}
+{"role": "tool", "stage": "HYPOTHESIZE", "at": 1792279128040, "tool": "rank_causes", "rows": 13, "ms": 1.16, "evidence_id": "ev_cc396fde5d", "summary": "pageRank over 13 nodes, 13 edges", "seq": 23}
+{"role": "system", "stage": "INVESTIGATE", "at": 1792279128043, "note": "", "seq": 24}
+{"role": "investigator", "stage": "INVESTIGATE", "at": 1792279128061, "call": "metric_window", "template": null, "params": {"onset_ms": 1792065600000, "target_id": "checkout"}, "seq": 25}
+{"role": "tool", "stage": "INVESTIGATE", "at": 1792279128061, "tool": "metric_window", "rows": 1, "ms": 2.89, "evidence_id": "ev_55ea3c2eae", "summary": "checkout error rate 0.61% vs baseline 0.69% (\u00d70.9, band 1.5745)", "seq": 26}
+{"role": "investigator", "stage": "INVESTIGATE", "at": 1792279128088, "call": "reachable_from_changes", "template": "Q-NEG-1", "params": {"anomalous_ids": [], "now": 1792065600000, "window_ms": 1800000}, "seq": 27}
+{"role": "tool", "stage": "INVESTIGATE", "at": 1792279128088, "tool": "reachable_from_changes", "rows": 0, "ms": 1.14, "evidence_id": "ev_f1f9cc47d0", "summary": "negative proof: none_reachable", "seq": 28}
+{"role": "gate", "stage": "INVESTIGATE", "at": 1792279128090, "gate_run": "gr-inc-s4s-b9eb0990-3c5d4d10", "cause": "NO_INCIDENT", "origin": "no_incident", "passed": true, "confident": true, "failed": [], "seq": 29}
+{"role": "system", "stage": "NO_INCIDENT", "at": 1792279128095, "note": "negative proof accepted", "seq": 30}

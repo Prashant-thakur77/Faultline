@@ -2,20 +2,20 @@
   "name": "s1-hero",
   "recorded": {
     "scenario": "S1",
-    "incident": "inc-s1-ee6d96e6",
-    "run": "run-s1-ee6d96e6",
-    "graph": "eval_acme_api_v2_s1_9462_ee6d96e6",
+    "incident": "inc-s1-66af9843",
+    "run": "run-s1-66af9843",
+    "graph": "eval_acme_api_v2_s1_3811_66af9843",
     "final_stage": "RESOLVED",
     "github": "simulated",
     "investigator": "baseline-policy (deterministic, no LLM)",
-    "events": 81,
+    "events": 83,
     "gate_runs": 4,
-    "tool_calls": 60
+    "tool_calls": 62
   },
-  "incident": "inc-s1-ee6d96e6",
+  "incident": "inc-s1-66af9843",
   "outcome": "CONFIRMED",
   "cause": "D-pay-417",
-  "events": 81,
+  "events": 83,
   "files": [
     "events.jsonl",
     "gate_runs.json",
@@ -31,7 +31,7 @@
   ],
   "snapshot": {
     "api": "http://localhost:8400",
-    "at": "2026-10-14T14:35:19.043Z",
+    "at": "2026-10-17T23:19:18.943Z",
     "templates": true,
     "graph": "graph.json from the recorded export"
   }

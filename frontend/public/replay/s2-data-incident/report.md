@@ -1,4 +1,4 @@
-# Incident inc-s2-fe1681b0: CONFIRMED
+# Incident inc-s2-99a4f2f6: CONFIRMED
 
 **Cause (gate-accepted):** `D-cutover-1` · confident: **True**
 
@@ -77,7 +77,7 @@ Customers reached through the failure: 5 (each counted once), 28,600 MRR at risk
 
 ## Rejected by the gate (first-class, with the failing checks)
 
-- `D-fx-pause-7` (sweep, gr-inc-s2-fe1681b0-3327d78e): G5 sufficiency: G5: max flow 0.0692 < needed 0.8000 (observed 1.0000 × 0.8); another suspect alone can carry 1.0000
+- `D-fx-pause-7` (sweep, gr-inc-s2-99a4f2f6-e2b89f58): G5 sufficiency: G5: max flow 0.0692 < needed 0.8000 (observed 1.0000 × 0.8); another suspect alone can carry 1.0000
 
 ## Evidence
 

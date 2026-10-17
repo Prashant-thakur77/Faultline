@@ -1,5 +1,5 @@
 {
-  "incident_id": "inc-s1-ee6d96e6",
+  "incident_id": "inc-s1-66af9843",
   "outcome": "CONFIRMED",
   "confident": true,
   "cause_id": "D-pay-417",
@@ -25,17 +25,17 @@
       "check": "G3 time"
     },
     {
-      "claim": "G4 quantitative: ev_9dc2e8c800 on checkout; ev_d3ce0adb65 on payment",
+      "claim": "G4 quantitative: ev_c76e4a5cc9 on checkout; ev_e41db01ee2 on payment",
       "evidence_ids": [
-        "ev_9dc2e8c800",
-        "ev_d3ce0adb65"
+        "ev_c76e4a5cc9",
+        "ev_e41db01ee2"
       ],
       "check": "G4 quantitative"
     },
     {
-      "claim": "G4 origin: ev_d3ce0adb65 on payment",
+      "claim": "G4 origin: ev_e41db01ee2 on payment",
       "evidence_ids": [
-        "ev_d3ce0adb65"
+        "ev_e41db01ee2"
       ],
       "check": "G4 origin"
     },
@@ -49,7 +49,7 @@
     {
       "claim": "G5 sufficiency: checkout: max flow 1.0000 ≥ needed 0.2433",
       "evidence_ids": [
-        "ev_d3ce0adb65",
+        "ev_e41db01ee2",
         "ev_edbfd9c531"
       ],
       "check": "G5 sufficiency"
@@ -135,15 +135,6 @@
   },
   "futures": [
     {
-      "option": "roll back D-pay-417",
-      "predicted": "contains",
-      "line": "contains if the confirmed cause is the cause (removing the origin's fault; assumed, not measured)",
-      "exposed": [],
-      "evidence_id": "ev_cfe3b16bdb",
-      "verdict": null,
-      "agrees": null
-    },
-    {
       "option": "flag paymentGate → off",
       "predicted": "contains",
       "line": "contains: every symptom predicted back in band",
@@ -153,6 +144,15 @@
       "evidence_id": "ev_cfe3b16bdb",
       "verdict": "APPLIED",
       "agrees": true
+    },
+    {
+      "option": "roll back D-pay-417",
+      "predicted": "contains",
+      "line": "contains if the confirmed cause is the cause (removing the origin's fault; assumed, not measured)",
+      "exposed": [],
+      "evidence_id": "ev_cfe3b16bdb",
+      "verdict": null,
+      "agrees": null
     },
     {
       "option": "open an issue for D-pay-417",
@@ -367,7 +367,7 @@
     {
       "cause": "D-email-88",
       "origin": "sweep",
-      "gate_run": "gr-inc-s1-ee6d96e6-fd66562c",
+      "gate_run": "gr-inc-s1-66af9843-40f35aed",
       "failed": [
         "G5 sufficiency: G5: max flow 0.0200 < needed 0.2433 (observed 0.3041 × 0.8); another suspect alone can carry 1.0000"
       ]
@@ -375,7 +375,7 @@
     {
       "cause": "D-rec-12",
       "origin": "sweep",
-      "gate_run": "gr-inc-s1-ee6d96e6-3c169941",
+      "gate_run": "gr-inc-s1-66af9843-b9423fe3",
       "failed": [
         "G2 path: G2: no path to any primary symptom (no path, no claim)"
       ]
@@ -450,35 +450,19 @@
       ]
     },
     {
-      "id": "ev_9dc2e8c800",
+      "id": "ev_c76e4a5cc9",
       "kind": "error_rate",
       "source": "simulator",
       "tool": "metric_window",
       "template": null,
       "cypher": null,
       "summary": "checkout error rate 30.69% vs baseline 0.69% (×44.5, band 1.5745)",
-      "digest": "82f122b158836c5aad2aeff0cde84945719feae57b6dd9a04b10712f2acceb4c",
+      "digest": "07aee281707d5f53c59e6ed62831a147cfeb0a69f8e90c3bb0183b890631425b",
       "value": 0.30691,
       "baseline": 0.00689,
       "anomalous": true,
       "about": [
         "checkout"
-      ]
-    },
-    {
-      "id": "ev_d3ce0adb65",
-      "kind": "error_rate",
-      "source": "simulator",
-      "tool": "metric_window",
-      "template": null,
-      "cypher": null,
-      "summary": "payment error rate 30.91% vs baseline 0.71% (×43.6, band 1.4575)",
-      "digest": "b07c05195a403505fdefbface33de1adb12c843e6c47c472f009e7c21cba4c62",
-      "value": 0.30906,
-      "baseline": 0.00709,
-      "anomalous": true,
-      "about": [
-        "payment"
       ]
     },
     {
@@ -496,6 +480,22 @@
       "about": [
         "checkout",
         "D-pay-417"
+      ]
+    },
+    {
+      "id": "ev_e41db01ee2",
+      "kind": "error_rate",
+      "source": "simulator",
+      "tool": "metric_window",
+      "template": null,
+      "cypher": null,
+      "summary": "payment error rate 30.91% vs baseline 0.71% (×43.6, band 1.4575)",
+      "digest": "67c8446e7768fcb935e401e174bd415ce9d82a19ac9f3ec42b593f8f8062e2c9",
+      "value": 0.30906,
+      "baseline": 0.00709,
+      "anomalous": true,
+      "about": [
+        "payment"
       ]
     },
     {

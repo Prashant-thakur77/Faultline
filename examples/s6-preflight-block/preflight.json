@@ -15,7 +15,7 @@
   },
   "result": {
     "pr": "pr:Prashant-thakur77/faultline-demo-app#9900",
-    "run_id": "pre-920d3a4dd7",
+    "run_id": "pre-746efb2ff5",
     "verdict": "block",
     "risk": 0.8,
     "thresholds": {
@@ -96,6 +96,35 @@
       }
     ],
     "reversals": [],
+    "freeze": {
+      "rows": [
+        {
+          "component": "payment",
+          "policy": "POL-freeze-payment-weekend",
+          "title": "No payment changes from Friday 16:00 to Monday 09:00 (IST)",
+          "effect": "block",
+          "why": "Weekend checkout volume peaks while the payments on-call is one person; a bad payment change then waits hours for a fix.",
+          "url": "data/gen/policies/acme.yaml",
+          "decided_by": "p-004",
+          "at": 1792279135321,
+          "local_time": "2026-10-18T04:48:55",
+          "day": 7,
+          "hour": 4,
+          "minute": 48,
+          "utc_offset_min": 330
+        }
+      ],
+      "template": "Q-PRE-FREEZE",
+      "cypher": "UNWIND $components AS cid\nMATCH (p:Policy {kind:'change_freeze', status:'active'})-[:FREEZES]->(c:Node {id: cid})\nWITH p, c, coalesce($at, timestamp()) AS at\nWITH p, c, at, localdatetime('1970-01-01T00:00:00') + duration({seconds: toInteger(at / 1000) + p.utc_offset_min * 60}) AS t\nWITH p, c, at, t, CASE WHEN t.dayOfWeek = 0 THEN 7 ELSE t.dayOfWeek END AS day\nWITH p, c, at, t, day, (day - 1) * 1440 + t.hour * 60 + t.minute AS wm,\n     (p.from_day - 1) * 1440 + p.from_hour * 60 AS ws, (p.to_day - 1) * 1440 + p.to_hour * 60 AS we\nWHERE (ws <= we AND wm >= ws AND wm < we) OR (ws > we AND (wm >= ws OR wm < we))\nRETURN c.id AS component, p.id AS policy, p.title AS title, p.effect AS effect, p.why AS why, p.url AS url,\n       p.decided_by AS decided_by, at, toString(t) AS local_time, day, t.hour AS hour, t.minute AS minute,\n       p.utc_offset_min AS utc_offset_min\nORDER BY component, policy\nLIMIT 50",
+      "params": {
+        "components": [
+          "payment"
+        ],
+        "at": null
+      },
+      "served_by": "FalkorDB 6.0.2 \u00b7 eval_acme_preflight_da11b502 \u00b7 GRAPH.RO_QUERY as default-user"
+    },
+    "score_verdict": "block",
     "assessment": {
       "changed": [
         "payment"
@@ -201,14 +230,14 @@
       "params": {
         "pr": "pr:Prashant-thakur77/faultline-demo-app#9900"
       },
-      "served_by": "FalkorDB 6.0.2 \u00b7 eval_acme_preflight_ef6833a5 \u00b7 GRAPH.RO_QUERY as default-user",
+      "served_by": "FalkorDB 6.0.2 \u00b7 eval_acme_preflight_da11b502 \u00b7 GRAPH.RO_QUERY as default-user",
       "digest": "6fafdc5e23696da4ec92ede0b163a243584d4bf255fea69f529df0a1274be954",
-      "ms": 1.14
+      "ms": 1.54
     },
-    "ms": 13.5
+    "ms": 27.8
   },
   "recorded": {
-    "run": "pre-920d3a4dd7",
+    "run": "pre-746efb2ff5",
     "evidence_id": "ev_a960834a70",
     "payload": {
       "decision_links": [
@@ -223,6 +252,34 @@
           "url": "data/gen/docs/adr-013.md"
         }
       ],
+      "freeze": {
+        "cypher": "UNWIND $components AS cid\nMATCH (p:Policy {kind:'change_freeze', status:'active'})-[:FREEZES]->(c:Node {id: cid})\nWITH p, c, coalesce($at, timestamp()) AS at\nWITH p, c, at, localdatetime('1970-01-01T00:00:00') + duration({seconds: toInteger(at / 1000) + p.utc_offset_min * 60}) AS t\nWITH p, c, at, t, CASE WHEN t.dayOfWeek = 0 THEN 7 ELSE t.dayOfWeek END AS day\nWITH p, c, at, t, day, (day - 1) * 1440 + t.hour * 60 + t.minute AS wm,\n     (p.from_day - 1) * 1440 + p.from_hour * 60 AS ws, (p.to_day - 1) * 1440 + p.to_hour * 60 AS we\nWHERE (ws <= we AND wm >= ws AND wm < we) OR (ws > we AND (wm >= ws OR wm < we))\nRETURN c.id AS component, p.id AS policy, p.title AS title, p.effect AS effect, p.why AS why, p.url AS url,\n       p.decided_by AS decided_by, at, toString(t) AS local_time, day, t.hour AS hour, t.minute AS minute,\n       p.utc_offset_min AS utc_offset_min\nORDER BY component, policy\nLIMIT 50",
+        "params": {
+          "at": null,
+          "components": [
+            "payment"
+          ]
+        },
+        "rows": [
+          {
+            "at": 1792279135321,
+            "component": "payment",
+            "day": 7,
+            "decided_by": "p-004",
+            "effect": "block",
+            "hour": 4,
+            "local_time": "2026-10-18T04:48:55",
+            "minute": 48,
+            "policy": "POL-freeze-payment-weekend",
+            "title": "No payment changes from Friday 16:00 to Monday 09:00 (IST)",
+            "url": "data/gen/policies/acme.yaml",
+            "utc_offset_min": 330,
+            "why": "Weekend checkout volume peaks while the payments on-call is one person; a bad payment change then waits hours for a fix."
+          }
+        ],
+        "served_by": "FalkorDB 6.0.2 \u00b7 eval_acme_preflight_da11b502 \u00b7 GRAPH.RO_QUERY as default-user",
+        "template": "Q-PRE-FREEZE"
+      },
       "reversals": [],
       "reviewers": [
         "p-004",
@@ -315,6 +372,7 @@
           ]
         }
       ],
+      "score_verdict": "block",
       "terms": {
         "betweenness": {
           "value": 0.0,
@@ -377,6 +435,6 @@
     },
     "params": "{\"pr\": \"pr:Prashant-thakur77/faultline-demo-app#9900\"}",
     "cypher": "MATCH (pr:PR {id:$pr})-[:TOUCHES]->(:File)-[:PART_OF]->(s)\nWITH DISTINCT s\nCALL algo.BFS(s, 6, 'PROPAGATES_TO') YIELD nodes\nUNWIND nodes AS n\nRETURN s.id AS changed, n.id AS impacted, n.tier AS tier, coalesce(n.revenue_path, false) AS revenue\nORDER BY revenue DESC, coalesce(tier, 9), changed, impacted\nLIMIT 100",
-    "at": 1791988512550
+    "at": 1792279135324
   }
 }

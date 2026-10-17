@@ -3,20 +3,20 @@
     "name": "s1-hero",
     "recorded": {
       "scenario": "S1",
-      "incident": "inc-s1-ee6d96e6",
-      "run": "run-s1-ee6d96e6",
-      "graph": "eval_acme_api_v2_s1_9462_ee6d96e6",
+      "incident": "inc-s1-66af9843",
+      "run": "run-s1-66af9843",
+      "graph": "eval_acme_api_v2_s1_3811_66af9843",
       "final_stage": "RESOLVED",
       "github": "simulated",
       "investigator": "baseline-policy (deterministic, no LLM)",
-      "events": 81,
+      "events": 83,
       "gate_runs": 4,
-      "tool_calls": 60
+      "tool_calls": 62
     },
-    "incident": "inc-s1-ee6d96e6",
+    "incident": "inc-s1-66af9843",
     "outcome": "CONFIRMED",
     "cause": "D-pay-417",
-    "events": 81,
+    "events": 83,
     "files": [
       "events.jsonl",
       "gate_runs.json",
@@ -32,7 +32,7 @@
     ],
     "snapshot": {
       "api": "http://localhost:8400",
-      "at": "2026-10-14T14:35:19.043Z",
+      "at": "2026-10-17T23:19:18.943Z",
       "templates": true,
       "graph": "graph.json from the recorded export"
     }
@@ -41,20 +41,20 @@
     "name": "s2-data-incident",
     "recorded": {
       "scenario": "S2",
-      "incident": "inc-s2-fe1681b0",
-      "run": "run-s2-fe1681b0",
-      "graph": "eval_acme_api_v2_s2_7856_fe1681b0",
+      "incident": "inc-s2-99a4f2f6",
+      "run": "run-s2-99a4f2f6",
+      "graph": "eval_acme_api_v2_s2_4150_99a4f2f6",
       "final_stage": "AWAITING_APPROVAL",
       "github": "simulated",
       "investigator": "baseline-policy (deterministic, no LLM)",
-      "events": 63,
+      "events": 65,
       "gate_runs": 3,
-      "tool_calls": 49
+      "tool_calls": 51
     },
-    "incident": "inc-s2-fe1681b0",
+    "incident": "inc-s2-99a4f2f6",
     "outcome": "CONFIRMED",
     "cause": "D-cutover-1",
-    "events": 63,
+    "events": 65,
     "files": [
       "events.jsonl",
       "gate_runs.json",
@@ -70,7 +70,7 @@
     ],
     "snapshot": {
       "api": "http://localhost:8400",
-      "at": "2026-10-14T14:35:19.116Z",
+      "at": "2026-10-17T23:19:19.010Z",
       "templates": true,
       "graph": "graph.json from the recorded export"
     }

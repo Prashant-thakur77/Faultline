@@ -1,4 +1,4 @@
-preflight run pre-920d3a4dd7 · pr:Prashant-thakur77/faultline-demo-app#9900 · scenario S6
+preflight run pre-746efb2ff5 · pr:Prashant-thakur77/faultline-demo-app#9900 · scenario S6
 
 verdict: block (risk 0.8); contradicts ADR-012, ADR-013
 action: none (a preflight gates a PR; it executes nothing)

@@ -1,4 +1,4 @@
-run run-s2-fe1681b0 · incident inc-s2-fe1681b0 · scenario S2 · final stage AWAITING_APPROVAL
+run run-s2-99a4f2f6 · incident inc-s2-99a4f2f6 · scenario S2 · final stage AWAITING_APPROVAL
 
 action: none (awaiting a human: no option was approved in this recording)
 verdict: n/a

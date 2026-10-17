@@ -1,6 +1,6 @@
 [
   {
-    "id": "hyp-inc-s1-ee6d96e6-D-email-88",
+    "id": "hyp-inc-s1-66af9843-D-email-88",
     "cause": "D-email-88",
     "status": "eliminated",
     "score": 0.3256,
@@ -8,28 +8,28 @@
     "origin": "code",
     "supports": [],
     "refutes": [
-      "ev_d3ce0adb65",
+      "ev_e41db01ee2",
       "ev_1a986a73de",
       "ev_03b4535c58"
     ]
   },
   {
-    "id": "hyp-inc-s1-ee6d96e6-D-pay-417",
+    "id": "hyp-inc-s1-66af9843-D-pay-417",
     "cause": "D-pay-417",
     "status": "confirmed",
-    "score": 0.3495,
+    "score": 0.3602,
     "reason": "gate passed",
     "origin": "code",
     "supports": [
-      "ev_9dc2e8c800",
-      "ev_d3ce0adb65",
+      "ev_c76e4a5cc9",
+      "ev_e41db01ee2",
       "ev_edbfd9c531",
       "ev_0d9b87053a"
     ],
     "refutes": []
   },
   {
-    "id": "hyp-inc-s1-ee6d96e6-D-rec-12",
+    "id": "hyp-inc-s1-66af9843-D-rec-12",
     "cause": "D-rec-12",
     "status": "eliminated",
     "score": 0.3112,

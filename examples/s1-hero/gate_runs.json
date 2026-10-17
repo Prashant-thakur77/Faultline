@@ -1,6 +1,6 @@
 [
   {
-    "id": "gr-inc-s1-ee6d96e6-fd66562c",
+    "id": "gr-inc-s1-66af9843-40f35aed",
     "cause": "D-email-88",
     "passed": false,
     "confident": false,
@@ -12,7 +12,7 @@
         "evidence_ids": [
           "ev_1a986a73de",
           "ev_03b4535c58",
-          "ev_d3ce0adb65"
+          "ev_e41db01ee2"
         ],
         "name": "G2 path",
         "params": {
@@ -40,10 +40,10 @@
     ],
     "attempt": 0,
     "origin": "sweep",
-    "at": 1791988500665
+    "at": 1792279121988
   },
   {
-    "id": "gr-inc-s1-ee6d96e6-8813ba56",
+    "id": "gr-inc-s1-66af9843-70f81725",
     "cause": "D-pay-417",
     "passed": true,
     "confident": false,
@@ -55,7 +55,7 @@
         "evidence_ids": [
           "ev_d9c05ffae8",
           "ev_edbfd9c531",
-          "ev_d3ce0adb65"
+          "ev_e41db01ee2"
         ],
         "name": "G2 path",
         "params": {
@@ -83,10 +83,10 @@
     ],
     "attempt": 0,
     "origin": "sweep",
-    "at": 1791988500667
+    "at": 1792279121992
   },
   {
-    "id": "gr-inc-s1-ee6d96e6-3c169941",
+    "id": "gr-inc-s1-66af9843-b9423fe3",
     "cause": "D-rec-12",
     "passed": false,
     "confident": false,
@@ -109,10 +109,10 @@
     ],
     "attempt": 0,
     "origin": "sweep",
-    "at": 1791988500669
+    "at": 1792279121996
   },
   {
-    "id": "gr-inc-s1-ee6d96e6-539c7ad4",
+    "id": "gr-inc-s1-66af9843-8c458ff6",
     "cause": "D-pay-417",
     "passed": true,
     "confident": true,
@@ -125,16 +125,16 @@
         "name": "G1 grounded",
         "params": {
           "evidence": [
-            "ev_9dc2e8c800",
-            "ev_fec5a56292",
-            "ev_d3ce0adb65",
-            "ev_41cc30c06d",
-            "ev_45d09e4d6a"
+            "ev_c76e4a5cc9",
+            "ev_870bebbb6c",
+            "ev_e41db01ee2",
+            "ev_eb6cfdc1d6",
+            "ev_4ca98f0946"
           ],
           "ids": [
             "D-pay-417"
           ],
-          "run": "run-s1-ee6d96e6"
+          "run": "run-s1-66af9843"
         },
         "passed": true,
         "template": "Q-GATE-G1"
@@ -168,11 +168,11 @@
       },
       {
         "attach_only": false,
-        "detail": "ev_9dc2e8c800 on checkout; ev_d3ce0adb65 on payment",
+        "detail": "ev_c76e4a5cc9 on checkout; ev_e41db01ee2 on payment",
         "downgrade_only": false,
         "evidence_ids": [
-          "ev_9dc2e8c800",
-          "ev_d3ce0adb65"
+          "ev_c76e4a5cc9",
+          "ev_e41db01ee2"
         ],
         "name": "G4 quantitative",
         "params": {
@@ -182,23 +182,23 @@
             "checkout"
           ],
           "evidence": [
-            "ev_9dc2e8c800",
-            "ev_fec5a56292",
-            "ev_d3ce0adb65",
-            "ev_41cc30c06d",
-            "ev_45d09e4d6a"
+            "ev_c76e4a5cc9",
+            "ev_870bebbb6c",
+            "ev_e41db01ee2",
+            "ev_eb6cfdc1d6",
+            "ev_4ca98f0946"
           ],
-          "run": "run-s1-ee6d96e6"
+          "run": "run-s1-66af9843"
         },
         "passed": true,
         "template": "Q-GATE-4"
       },
       {
         "attach_only": false,
-        "detail": "ev_d3ce0adb65 on payment",
+        "detail": "ev_e41db01ee2 on payment",
         "downgrade_only": true,
         "evidence_ids": [
-          "ev_d3ce0adb65"
+          "ev_e41db01ee2"
         ],
         "name": "G4 origin",
         "params": {
@@ -208,13 +208,13 @@
             "checkout"
           ],
           "evidence": [
-            "ev_9dc2e8c800",
-            "ev_fec5a56292",
-            "ev_d3ce0adb65",
-            "ev_41cc30c06d",
-            "ev_45d09e4d6a"
+            "ev_c76e4a5cc9",
+            "ev_870bebbb6c",
+            "ev_e41db01ee2",
+            "ev_eb6cfdc1d6",
+            "ev_4ca98f0946"
           ],
-          "run": "run-s1-ee6d96e6"
+          "run": "run-s1-66af9843"
         },
         "passed": true,
         "template": "Q-GATE-4"
@@ -228,9 +228,15 @@
         ],
         "name": "G4 upstream",
         "params": {
+          "base_since": 1792031100000,
+          "base_until": 1792032600000,
           "ids": [
             "payment"
-          ]
+          ],
+          "min_excess": 0.01,
+          "since": 1792032900000,
+          "slack": 1.25,
+          "until": 1792033260000
         },
         "passed": true,
         "template": "Q-GATE-UPSTREAM-UB"
@@ -240,7 +246,7 @@
         "detail": "checkout: max flow 1.0000 \u2265 needed 0.2433",
         "downgrade_only": false,
         "evidence_ids": [
-          "ev_d3ce0adb65",
+          "ev_e41db01ee2",
           "ev_edbfd9c531"
         ],
         "name": "G5 sufficiency",
@@ -260,7 +266,7 @@
         "evidence_ids": [],
         "name": "G6 competitors",
         "params": {
-          "inc": "inc-s1-ee6d96e6"
+          "inc": "inc-s1-66af9843"
         },
         "passed": true,
         "template": "Q-HYP-1"
@@ -278,15 +284,15 @@
             "checkout"
           ],
           "evidence": [
-            "ev_9dc2e8c800",
-            "ev_fec5a56292",
-            "ev_d3ce0adb65",
-            "ev_41cc30c06d",
-            "ev_45d09e4d6a",
-            "ev_d3ce0adb65",
+            "ev_c76e4a5cc9",
+            "ev_870bebbb6c",
+            "ev_e41db01ee2",
+            "ev_eb6cfdc1d6",
+            "ev_4ca98f0946",
+            "ev_e41db01ee2",
             "ev_edbfd9c531"
           ],
-          "run": "run-s1-ee6d96e6"
+          "run": "run-s1-66af9843"
         },
         "passed": true,
         "template": "Q-GATE-7"
@@ -309,7 +315,7 @@
             "code",
             "data"
           ],
-          "run": "run-s1-ee6d96e6"
+          "run": "run-s1-66af9843"
         },
         "passed": true,
         "template": "Q-GATE-CORR"
@@ -329,6 +335,6 @@
     ],
     "attempt": 1,
     "origin": "confirm",
-    "at": 1791988500707
+    "at": 1792279122045
   }
 ]

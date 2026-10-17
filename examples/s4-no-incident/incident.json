@@ -1,10 +1,10 @@
 {
   "incident": {
-    "id": "inc-s4s-b5a476e0",
-    "title": "service_control_no_incident",
+    "id": "inc-s4s-b9eb0990",
+    "title": "Checkout alert fired, but customers are not complaining",
     "stage": "NO_INCIDENT",
     "onset_at": 1792065600000,
-    "opened_at": 1791988505464,
+    "opened_at": 1792279127890,
     "confident": false,
     "targets": [
       "checkout"
@@ -14,8 +14,8 @@
     ]
   },
   "run": {
-    "run": "run-s4s-b5a476e0",
-    "graph": "eval_acme_api_v2_s4s_4432_b5a476e0",
+    "run": "run-s4s-b9eb0990",
+    "graph": "eval_acme_api_v2_s4s_8368_b9eb0990",
     "scenario": "S4S",
     "outcome": "NO_INCIDENT",
     "cause": null,
@@ -23,80 +23,81 @@
   },
   "stages": [
     {
-      "id": "run-s4s-b5a476e0-se-INTAKE-1-03a4a3",
+      "id": "run-s4s-b9eb0990-se-INTAKE-1-9caf08",
       "stage": "INTAKE",
       "ord": 1,
-      "at": 1791988505473,
+      "at": 1792279127896,
       "note": "alerts: ['al-s4s-checkout']"
     },
     {
-      "id": "run-s4s-b5a476e0-se-RECALL-2-0ff4a6",
+      "id": "run-s4s-b9eb0990-se-RECALL-2-21b784",
       "stage": "RECALL",
       "ord": 2,
-      "at": 1791988505541,
+      "at": 1792279127962,
       "note": ""
     },
     {
-      "id": "run-s4s-b5a476e0-se-LOCALIZE-3-ac63da",
+      "id": "run-s4s-b9eb0990-se-LOCALIZE-3-7252e5",
       "stage": "LOCALIZE",
       "ord": 3,
-      "at": 1791988505586,
+      "at": 1792279127998,
       "note": ""
     },
     {
-      "id": "run-s4s-b5a476e0-se-BLAST-4-264c91",
+      "id": "run-s4s-b9eb0990-se-BLAST-4-d9e02f",
       "stage": "BLAST",
       "ord": 4,
-      "at": 1791988505599,
+      "at": 1792279128007,
       "note": ""
     },
     {
-      "id": "run-s4s-b5a476e0-se-HYPOTHESIZE-5-99ee5d",
+      "id": "run-s4s-b9eb0990-se-HYPOTHESIZE-5-b318bf",
       "stage": "HYPOTHESIZE",
       "ord": 5,
-      "at": 1791988505614,
+      "at": 1792279128016,
       "note": ""
     },
     {
-      "id": "run-s4s-b5a476e0-se-INVESTIGATE-6-ae0a48",
+      "id": "run-s4s-b9eb0990-se-INVESTIGATE-6-cae40d",
       "stage": "INVESTIGATE",
       "ord": 6,
-      "at": 1791988505644,
+      "at": 1792279128043,
       "note": ""
     },
     {
-      "id": "run-s4s-b5a476e0-se-NO_INCIDENT-100-5dd511",
+      "id": "run-s4s-b9eb0990-se-NO_INCIDENT-100-e56c9b",
       "stage": "NO_INCIDENT",
       "ord": 100,
-      "at": 1791988505696,
+      "at": 1792279128095,
       "note": "negative proof accepted"
     }
   ],
   "tool_calls": [
     {
-      "id": "run-s4s-b5a476e0-tc0001",
+      "id": "run-s4s-b9eb0990-tc0001",
       "tool": "similar_incidents",
       "template": "Q-MEM-1",
-      "ms": 2.87,
+      "ms": 3.46,
       "rows": 5,
-      "at": 1791988505552,
-      "evidence_id": "ev_83e0e71366",
+      "at": 1792279127970,
+      "evidence_id": "ev_de34035d70",
       "kind": "recall",
-      "summary": "5 structurally confirmed precedents: inc-h005, inc-h015, inc-h039",
+      "summary": "5 structurally confirmed precedents: inc-h039, inc-h037, inc-h030",
       "params": {
-        "current": "inc-s4s-b5a476e0",
+        "current": "inc-s4s-b9eb0990",
         "half_life_ms": 2592000000.0,
-        "now": 1792065600000
+        "now": 1792065600000,
+        "w_recency": 0.2
       },
-      "digest": "b836b0a2ce8d9837d30c9ba923813c48e9ac11871bcb869d958dd4aa4c766e56"
+      "digest": "db5d6c4e56edc85dcd8c93d956afe205bcebbfb1780c55310b52081a9d438146"
     },
     {
-      "id": "run-s4s-b5a476e0-tc0002",
+      "id": "run-s4s-b9eb0990-tc0002",
       "tool": "runbook_for",
       "template": "Q-MEM-3",
-      "ms": 1.04,
+      "ms": 0.84,
       "rows": 3,
-      "at": 1791988505583,
+      "at": 1792279127995,
       "evidence_id": "ev_bd954fbe79",
       "kind": "recall",
       "summary": "3 runbooks",
@@ -109,12 +110,12 @@
       "digest": "c13948b9f49e56463748ce79125ede8d2fa1b237f88711b9efea515aa820362a"
     },
     {
-      "id": "run-s4s-b5a476e0-tc0003",
+      "id": "run-s4s-b9eb0990-tc0003",
       "tool": "service_context",
       "template": "Q-CTX-1",
-      "ms": 1.19,
+      "ms": 0.79,
       "rows": 1,
-      "at": 1791988505591,
+      "at": 1792279128002,
       "evidence_id": "ev_ea0ca5e481",
       "kind": "context",
       "summary": "context of checkout",
@@ -125,12 +126,12 @@
       "digest": "bfc00eb07ae85ce297f14b0482f66d3747116c23ad3b18cbfb558d0fa58efd60"
     },
     {
-      "id": "run-s4s-b5a476e0-tc0004",
+      "id": "run-s4s-b9eb0990-tc0004",
       "tool": "upstream_scope",
       "template": "Q-LIN-1",
-      "ms": 1.09,
+      "ms": 0.66,
       "rows": 12,
-      "at": 1791988505596,
+      "at": 1792279128005,
       "evidence_id": "ev_53feac831e",
       "kind": "lineage",
       "summary": "12 upstream nodes",
@@ -140,12 +141,12 @@
       "digest": "0294de7c2ebc8881f15990486879598ca5e80cdda68fbcb5e15ab6a38149f050"
     },
     {
-      "id": "run-s4s-b5a476e0-tc0005",
+      "id": "run-s4s-b9eb0990-tc0005",
       "tool": "blast_radius",
       "template": "Q-BLAST-1",
-      "ms": 1.44,
+      "ms": 0.86,
       "rows": 5,
-      "at": 1791988505605,
+      "at": 1792279128010,
       "evidence_id": "ev_42ca9b7ff2",
       "kind": "blast",
       "summary": "5 impacted nodes",
@@ -155,12 +156,12 @@
       "digest": "3de9a3d411bbc45477fdcf734d321b53be43ff68dc45d519c46ce76e2a398f9f"
     },
     {
-      "id": "run-s4s-b5a476e0-tc0006",
+      "id": "run-s4s-b9eb0990-tc0006",
       "tool": "chokepoints",
       "template": "Q-CHOKE-1",
-      "ms": 1.35,
+      "ms": 0.93,
       "rows": 10,
-      "at": 1791988505611,
+      "at": 1792279128014,
       "evidence_id": "ev_2c9a86d8e7",
       "kind": "centrality",
       "summary": "top chokepoints",
@@ -168,12 +169,12 @@
       "digest": "43f129377bd342896a12f190339d1a5f8bb511f765fa525e23d31cc988039c96"
     },
     {
-      "id": "run-s4s-b5a476e0-tc0007",
+      "id": "run-s4s-b9eb0990-tc0007",
       "tool": "upstream_suspects",
       "template": "Q-SUS-1",
-      "ms": 1.51,
+      "ms": 1.18,
       "rows": 0,
-      "at": 1791988505623,
+      "at": 1792279128023,
       "evidence_id": "ev_552e8e27de",
       "kind": "change",
       "summary": "0 upstream changes",
@@ -185,12 +186,12 @@
       "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     },
     {
-      "id": "run-s4s-b5a476e0-tc0008",
+      "id": "run-s4s-b9eb0990-tc0008",
       "tool": "window_changes",
       "template": "Q-SUS-2",
-      "ms": 1.13,
+      "ms": 1.05,
       "rows": 1,
-      "at": 1791988505628,
+      "at": 1792279128028,
       "evidence_id": "ev_759a353a7a",
       "kind": "change",
       "summary": "1 changes in window",
@@ -201,12 +202,12 @@
       "digest": "30fa148c0be1e0af244478320aa40288c0d4abadfa56e781fdec9e59821f3ec8"
     },
     {
-      "id": "run-s4s-b5a476e0-tc0009",
+      "id": "run-s4s-b9eb0990-tc0009",
       "tool": "rank_causes",
       "template": "Q-RANK-1",
-      "ms": 1.43,
+      "ms": 1.16,
       "rows": 13,
-      "at": 1791988505640,
+      "at": 1792279128040,
       "evidence_id": "ev_cc396fde5d",
       "kind": "rank",
       "summary": "pageRank over 13 nodes, 13 edges",
@@ -214,28 +215,28 @@
       "digest": "2e8fa7849469c415e84d450b3718ae39ba92ae7cf4e60b1df7d398d305087d4b"
     },
     {
-      "id": "run-s4s-b5a476e0-tc0010",
+      "id": "run-s4s-b9eb0990-tc0010",
       "tool": "metric_window",
       "template": null,
-      "ms": 1.62,
+      "ms": 2.89,
       "rows": 1,
-      "at": 1791988505660,
-      "evidence_id": "ev_ce987ccf87",
+      "at": 1792279128061,
+      "evidence_id": "ev_55ea3c2eae",
       "kind": "error_rate",
       "summary": "checkout error rate 0.61% vs baseline 0.69% (\u00d70.9, band 1.5745)",
       "params": {
         "onset_ms": 1792065600000,
         "target_id": "checkout"
       },
-      "digest": "b2899403ecac6eaceba74ded2cad22e158dc8a4ebf3ef1077d99500e62379984"
+      "digest": "7818776f25d5a6b0ceffda676c012e6b790de0f2d010976acff2d223042db6a4"
     },
     {
-      "id": "run-s4s-b5a476e0-tc0011",
+      "id": "run-s4s-b9eb0990-tc0011",
       "tool": "reachable_from_changes",
       "template": "Q-NEG-1",
-      "ms": 1.13,
+      "ms": 1.14,
       "rows": 0,
-      "at": 1791988505689,
+      "at": 1792279128088,
       "evidence_id": "ev_f1f9cc47d0",
       "kind": "path",
       "summary": "negative proof: none_reachable",
@@ -250,7 +251,7 @@
   "hypotheses": [],
   "gate_runs": [
     {
-      "id": "gr-inc-s4s-b5a476e0-309093ee",
+      "id": "gr-inc-s4s-b9eb0990-3c5d4d10",
       "cause": "NO_INCIDENT",
       "passed": true,
       "confident": true,
@@ -263,10 +264,10 @@
           "name": "G1 grounded",
           "params": {
             "evidence": [
-              "ev_ce987ccf87"
+              "ev_55ea3c2eae"
             ],
             "ids": [],
-            "run": "run-s4s-b5a476e0"
+            "run": "run-s4s-b9eb0990"
           },
           "passed": true,
           "template": "Q-GATE-G1"
@@ -276,7 +277,7 @@
           "detail": "all 1 symptom(s) measured",
           "downgrade_only": false,
           "evidence_ids": [
-            "ev_ce987ccf87"
+            "ev_55ea3c2eae"
           ],
           "name": "N0 every symptom measured",
           "params": {
@@ -296,9 +297,9 @@
               "shipping"
             ],
             "evidence": [
-              "ev_ce987ccf87"
+              "ev_55ea3c2eae"
             ],
-            "run": "run-s4s-b5a476e0"
+            "run": "run-s4s-b9eb0990"
           },
           "passed": true,
           "template": "Q-GATE-4"
@@ -308,7 +309,7 @@
           "detail": "1 measurements in band",
           "downgrade_only": false,
           "evidence_ids": [
-            "ev_ce987ccf87"
+            "ev_55ea3c2eae"
           ],
           "name": "N1 measurements normal",
           "params": {
@@ -328,9 +329,9 @@
               "shipping"
             ],
             "evidence": [
-              "ev_ce987ccf87"
+              "ev_55ea3c2eae"
             ],
-            "run": "run-s4s-b5a476e0"
+            "run": "run-s4s-b9eb0990"
           },
           "passed": true,
           "template": "Q-GATE-4"
@@ -354,7 +355,7 @@
       ],
       "attempt": 1,
       "origin": "no_incident",
-      "at": 1791988505690
+      "at": 1792279128090
     }
   ],
   "crew": {
@@ -525,6 +526,7 @@
           "bus_factor",
           "escalation_tree",
           "finish",
+          "learned_responders",
           "notify_set",
           "obligation_clock",
           "owner_at",
@@ -544,6 +546,7 @@
         ],
         "tools": [
           "finish",
+          "learned_preferences",
           "propose_plan",
           "remedy_stats"
         ],
@@ -600,27 +603,27 @@
     ],
     "steps": [
       {
-        "task": "crew-run-s4s-b5a476e0-triage-intake",
+        "task": "crew-run-s4s-b9eb0990-triage-intake",
         "kind": "crew",
         "role": "triage",
         "stage": "INTAKE",
         "agent": "crew-triage",
         "state": "done",
         "status": "done",
-        "claimed_at": 1791988505476,
-        "done_at": 1791988505478,
-        "summary": "opened inc-s4s-b5a476e0 from 1 alert(s) on checkout",
+        "claimed_at": 1792279127899,
+        "done_at": 1792279127901,
+        "summary": "opened inc-s4s-b9eb0990 from 1 alert(s) on checkout",
         "after": [],
         "names": [],
         "cites": 0,
         "calls": [
           {
-            "id": "run-s4s-b5a476e0-intake-tc0001",
+            "id": "run-s4s-b9eb0990-intake-tc0001",
             "tool": "group_alerts",
             "template": "Q-ALERT-1+Q-STORM-EDGES+Q-STORM-ORIGINS+Q-STORM-WCC+Q-STORM-ATTACH",
-            "ms": 6.03,
+            "ms": 6.39,
             "rows": 1,
-            "at": 1791988505460
+            "at": 1792279127887
           }
         ],
         "unknowns": null,
@@ -628,37 +631,37 @@
         "reaps": 0
       },
       {
-        "task": "crew-run-s4s-b5a476e0-historian-recall",
+        "task": "crew-run-s4s-b9eb0990-historian-recall",
         "kind": "crew",
         "role": "historian",
         "stage": "RECALL",
         "agent": "crew-historian",
         "state": "done",
         "status": "done",
-        "claimed_at": 1791988505547,
-        "done_at": 1791988505587,
+        "claimed_at": 1792279127964,
+        "done_at": 1792279127999,
         "summary": "5 precedent(s), 3 runbook(s) recalled; prior on payment",
         "after": [
-          "crew-run-s4s-b5a476e0-triage-intake"
+          "crew-run-s4s-b9eb0990-triage-intake"
         ],
         "names": [],
         "cites": 0,
         "calls": [
           {
-            "id": "run-s4s-b5a476e0-tc0001",
+            "id": "run-s4s-b9eb0990-tc0001",
             "tool": "similar_incidents",
             "template": "Q-MEM-1",
-            "ms": 2.87,
+            "ms": 3.46,
             "rows": 5,
-            "at": 1791988505552
+            "at": 1792279127970
           },
           {
-            "id": "run-s4s-b5a476e0-tc0002",
+            "id": "run-s4s-b9eb0990-tc0002",
             "tool": "runbook_for",
             "template": "Q-MEM-3",
-            "ms": 1.04,
+            "ms": 0.84,
             "rows": 3,
-            "at": 1791988505583
+            "at": 1792279127995
           }
         ],
         "unknowns": null,
@@ -666,53 +669,53 @@
         "reaps": 0
       },
       {
-        "task": "crew-run-s4s-b5a476e0-cartographer-localize",
+        "task": "crew-run-s4s-b9eb0990-cartographer-localize",
         "kind": "crew",
         "role": "cartographer",
         "stage": "LOCALIZE",
         "agent": "crew-cartographer",
         "state": "done",
         "status": "done",
-        "claimed_at": 1791988505588,
-        "done_at": 1791988505616,
+        "claimed_at": 1792279128000,
+        "done_at": 1792279128017,
         "summary": "12 upstream node(s) in scope; blast radius of 1 symptom(s): 5 node(s); top chokepoint frontend",
         "after": [
-          "crew-run-s4s-b5a476e0-historian-recall"
+          "crew-run-s4s-b9eb0990-historian-recall"
         ],
         "names": [],
         "cites": 0,
         "calls": [
           {
-            "id": "run-s4s-b5a476e0-tc0003",
+            "id": "run-s4s-b9eb0990-tc0003",
             "tool": "service_context",
             "template": "Q-CTX-1",
-            "ms": 1.19,
+            "ms": 0.79,
             "rows": 1,
-            "at": 1791988505591
+            "at": 1792279128002
           },
           {
-            "id": "run-s4s-b5a476e0-tc0004",
+            "id": "run-s4s-b9eb0990-tc0004",
             "tool": "upstream_scope",
             "template": "Q-LIN-1",
-            "ms": 1.09,
+            "ms": 0.66,
             "rows": 12,
-            "at": 1791988505596
+            "at": 1792279128005
           },
           {
-            "id": "run-s4s-b5a476e0-tc0005",
+            "id": "run-s4s-b9eb0990-tc0005",
             "tool": "blast_radius",
             "template": "Q-BLAST-1",
-            "ms": 1.44,
+            "ms": 0.86,
             "rows": 5,
-            "at": 1791988505605
+            "at": 1792279128010
           },
           {
-            "id": "run-s4s-b5a476e0-tc0006",
+            "id": "run-s4s-b9eb0990-tc0006",
             "tool": "chokepoints",
             "template": "Q-CHOKE-1",
-            "ms": 1.35,
+            "ms": 0.93,
             "rows": 10,
-            "at": 1791988505611
+            "at": 1792279128014
           }
         ],
         "unknowns": null,
@@ -720,45 +723,45 @@
         "reaps": 0
       },
       {
-        "task": "crew-run-s4s-b5a476e0-profiler-hypothesize",
+        "task": "crew-run-s4s-b9eb0990-profiler-hypothesize",
         "kind": "crew",
         "role": "profiler",
         "stage": "HYPOTHESIZE",
         "agent": "crew-profiler",
         "state": "done",
         "status": "done",
-        "claimed_at": 1791988505619,
-        "done_at": 1791988505646,
+        "claimed_at": 1792279128020,
+        "done_at": 1792279128045,
         "summary": "no change upstream of the symptoms in the window",
         "after": [
-          "crew-run-s4s-b5a476e0-cartographer-localize"
+          "crew-run-s4s-b9eb0990-cartographer-localize"
         ],
         "names": [],
         "cites": 0,
         "calls": [
           {
-            "id": "run-s4s-b5a476e0-tc0007",
+            "id": "run-s4s-b9eb0990-tc0007",
             "tool": "upstream_suspects",
             "template": "Q-SUS-1",
-            "ms": 1.51,
+            "ms": 1.18,
             "rows": 0,
-            "at": 1791988505623
+            "at": 1792279128023
           },
           {
-            "id": "run-s4s-b5a476e0-tc0008",
+            "id": "run-s4s-b9eb0990-tc0008",
             "tool": "window_changes",
             "template": "Q-SUS-2",
-            "ms": 1.13,
+            "ms": 1.05,
             "rows": 1,
-            "at": 1791988505628
+            "at": 1792279128028
           },
           {
-            "id": "run-s4s-b5a476e0-tc0009",
+            "id": "run-s4s-b9eb0990-tc0009",
             "tool": "rank_causes",
             "template": "Q-RANK-1",
-            "ms": 1.43,
+            "ms": 1.16,
             "rows": 13,
-            "at": 1791988505640
+            "at": 1792279128040
           }
         ],
         "unknowns": null,
@@ -766,18 +769,18 @@
         "reaps": 0
       },
       {
-        "task": "crew-run-s4s-b5a476e0-lead-investigate",
+        "task": "crew-run-s4s-b9eb0990-lead-investigate",
         "kind": "crew",
         "role": "lead",
         "stage": "INVESTIGATE",
         "agent": "crew-lead",
         "state": "done",
         "status": "done",
-        "claimed_at": 1791988505649,
-        "done_at": 1791988505693,
+        "claimed_at": 1792279128048,
+        "done_at": 1792279128092,
         "summary": "baseline-policy (deterministic, no LLM): 5 specialist(s) dispatched, 1 complete; 0 cause(s) put to the gate",
         "after": [
-          "crew-run-s4s-b5a476e0-profiler-hypothesize"
+          "crew-run-s4s-b9eb0990-profiler-hypothesize"
         ],
         "names": [],
         "cites": 0,
@@ -787,15 +790,15 @@
         "reaps": 0
       },
       {
-        "task": "spec-run-s4s-b5a476e0-topology-87a760a9",
+        "task": "spec-run-s4s-b9eb0990-topology-87a760a9",
         "kind": "specialist",
         "role": "topology",
         "stage": null,
-        "agent": "topology-specialist-be888ddb",
+        "agent": "topology-specialist-1df4e8fc",
         "state": "done",
         "status": "insufficient",
-        "claimed_at": 1791988505650,
-        "done_at": 1791988505654,
+        "claimed_at": 1792279128049,
+        "done_at": 1792279128053,
         "summary": null,
         "after": [],
         "names": [],
@@ -810,27 +813,27 @@
         "reaps": 0
       },
       {
-        "task": "spec-run-s4s-b5a476e0-telemetry-87a760a9",
+        "task": "spec-run-s4s-b9eb0990-telemetry-87a760a9",
         "kind": "specialist",
         "role": "telemetry",
         "stage": null,
-        "agent": "telemetry-specialist-be888ddb",
+        "agent": "telemetry-specialist-1df4e8fc",
         "state": "done",
         "status": "complete",
-        "claimed_at": 1791988505656,
-        "done_at": 1791988505665,
+        "claimed_at": 1792279128055,
+        "done_at": 1792279128065,
         "summary": null,
         "after": [],
         "names": [],
         "cites": 1,
         "calls": [
           {
-            "id": "run-s4s-b5a476e0-tc0010",
+            "id": "run-s4s-b9eb0990-tc0010",
             "tool": "metric_window",
             "template": null,
-            "ms": 1.62,
+            "ms": 2.89,
             "rows": 1,
-            "at": 1791988505660
+            "at": 1792279128061
           }
         ],
         "unknowns": [],
@@ -840,15 +843,15 @@
         "reaps": 0
       },
       {
-        "task": "spec-run-s4s-b5a476e0-data-87a760a9",
+        "task": "spec-run-s4s-b9eb0990-data-87a760a9",
         "kind": "specialist",
         "role": "data",
         "stage": null,
-        "agent": "data-specialist-be888ddb",
+        "agent": "data-specialist-1df4e8fc",
         "state": "done",
         "status": "insufficient",
-        "claimed_at": 1791988505666,
-        "done_at": 1791988505669,
+        "claimed_at": 1792279128066,
+        "done_at": 1792279128069,
         "summary": null,
         "after": [],
         "names": [],
@@ -863,15 +866,15 @@
         "reaps": 0
       },
       {
-        "task": "spec-run-s4s-b5a476e0-change-87a760a9",
+        "task": "spec-run-s4s-b9eb0990-change-87a760a9",
         "kind": "specialist",
         "role": "change",
         "stage": null,
-        "agent": "change-specialist-be888ddb",
+        "agent": "change-specialist-1df4e8fc",
         "state": "done",
         "status": "insufficient",
-        "claimed_at": 1791988505671,
-        "done_at": 1791988505675,
+        "claimed_at": 1792279128071,
+        "done_at": 1792279128073,
         "summary": null,
         "after": [],
         "names": [],
@@ -886,15 +889,15 @@
         "reaps": 0
       },
       {
-        "task": "spec-run-s4s-b5a476e0-code-87a760a9",
+        "task": "spec-run-s4s-b9eb0990-code-87a760a9",
         "kind": "specialist",
         "role": "code",
         "stage": null,
-        "agent": "code-specialist-be888ddb",
+        "agent": "code-specialist-1df4e8fc",
         "state": "done",
         "status": "insufficient",
-        "claimed_at": 1791988505676,
-        "done_at": 1791988505679,
+        "claimed_at": 1792279128075,
+        "done_at": 1792279128078,
         "summary": null,
         "after": [],
         "names": [],
@@ -911,18 +914,18 @@
         "reaps": 0
       },
       {
-        "task": "crew-run-s4s-b5a476e0-gatekeeper-gate",
+        "task": "crew-run-s4s-b9eb0990-gatekeeper-gate",
         "kind": "crew",
         "role": "gatekeeper",
         "stage": "GATE",
         "agent": "crew-gatekeeper",
         "state": "done",
         "status": "done",
-        "claimed_at": 1791988505695,
-        "done_at": 1791988505698,
+        "claimed_at": 1792279128094,
+        "done_at": 1792279128097,
         "summary": "negative proof accepted: no incident",
         "after": [
-          "crew-run-s4s-b5a476e0-lead-investigate"
+          "crew-run-s4s-b9eb0990-lead-investigate"
         ],
         "names": [],
         "cites": 0,
@@ -935,7 +938,7 @@
     "template": "Q-CREW-1"
   },
   "report": {
-    "incident_id": "inc-s4s-b5a476e0",
+    "incident_id": "inc-s4s-b9eb0990",
     "outcome": "NO_INCIDENT",
     "confident": true,
     "cause_id": null,
@@ -949,14 +952,14 @@
       {
         "claim": "N0 every symptom measured: all 1 symptom(s) measured",
         "evidence_ids": [
-          "ev_ce987ccf87"
+          "ev_55ea3c2eae"
         ],
         "check": "N0 every symptom measured"
       },
       {
         "claim": "N1 measurements normal: 1 measurements in band",
         "evidence_ids": [
-          "ev_ce987ccf87"
+          "ev_55ea3c2eae"
         ],
         "check": "N1 measurements normal"
       },
@@ -979,14 +982,14 @@
     "rejected": [],
     "evidence": [
       {
-        "id": "ev_ce987ccf87",
+        "id": "ev_55ea3c2eae",
         "kind": "error_rate",
         "source": "simulator",
         "tool": "metric_window",
         "template": null,
         "cypher": null,
         "summary": "checkout error rate 0.61% vs baseline 0.69% (\u00d70.9, band 1.5745)",
-        "digest": "b2899403ecac6eaceba74ded2cad22e158dc8a4ebf3ef1077d99500e62379984",
+        "digest": "7818776f25d5a6b0ceffda676c012e6b790de0f2d010976acff2d223042db6a4",
         "value": 0.00608,
         "baseline": 0.00689,
         "anomalous": false,

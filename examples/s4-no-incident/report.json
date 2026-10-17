@@ -1,5 +1,5 @@
 {
-  "incident_id": "inc-s4s-b5a476e0",
+  "incident_id": "inc-s4s-b9eb0990",
   "outcome": "NO_INCIDENT",
   "confident": true,
   "cause_id": null,
@@ -13,14 +13,14 @@
     {
       "claim": "N0 every symptom measured: all 1 symptom(s) measured",
       "evidence_ids": [
-        "ev_ce987ccf87"
+        "ev_55ea3c2eae"
       ],
       "check": "N0 every symptom measured"
     },
     {
       "claim": "N1 measurements normal: 1 measurements in band",
       "evidence_ids": [
-        "ev_ce987ccf87"
+        "ev_55ea3c2eae"
       ],
       "check": "N1 measurements normal"
     },
@@ -43,14 +43,14 @@
   "rejected": [],
   "evidence": [
     {
-      "id": "ev_ce987ccf87",
+      "id": "ev_55ea3c2eae",
       "kind": "error_rate",
       "source": "simulator",
       "tool": "metric_window",
       "template": null,
       "cypher": null,
       "summary": "checkout error rate 0.61% vs baseline 0.69% (×0.9, band 1.5745)",
-      "digest": "b2899403ecac6eaceba74ded2cad22e158dc8a4ebf3ef1077d99500e62379984",
+      "digest": "7818776f25d5a6b0ceffda676c012e6b790de0f2d010976acff2d223042db6a4",
       "value": 0.00608,
       "baseline": 0.00689,
       "anomalous": false,

@@ -1,4 +1,4 @@
-# Incident inc-s1-b0472ed3: 
+# Incident inc-s1-f3885826: 
 
 **Cause (gate-accepted):** `D-pay-417` · confident: **True**
 
@@ -9,10 +9,10 @@
 - G1 grounded: cause seen in a graph result this run; all cited evidence produced by this run
 - G2 path: D-pay-417 → payment → checkout
 - G3 time: change 3.0 min before onset (window 30 min)
-- G4 quantitative: ev_9dc2e8c800 on checkout; ev_d3ce0adb65 on payment [ev_9dc2e8c800, ev_d3ce0adb65]
-- G4 origin: ev_d3ce0adb65 on payment [ev_d3ce0adb65]
+- G4 quantitative: ev_c76e4a5cc9 on checkout; ev_e41db01ee2 on payment [ev_c76e4a5cc9, ev_e41db01ee2]
+- G4 origin: ev_e41db01ee2 on payment [ev_e41db01ee2]
 - G4 upstream: no anomalous component upstream can carry the changed component's excess [ev_0d9b87053a]
-- G5 sufficiency: checkout: max flow 1.0000 ≥ needed 0.2433 [ev_d3ce0adb65, ev_edbfd9c531]
+- G5 sufficiency: checkout: max flow 1.0000 ≥ needed 0.2433 [ev_e41db01ee2, ev_edbfd9c531]
 - G6 competitors: every competitor eliminated with evidence
 - G7 agreement: independent channels on the chain: ['falkordb', 'simulator']
 - G7 correlation: change and code specialists both name D-pay-417 (CHANGED → payment)
@@ -52,8 +52,8 @@ the confirmed cause explains 3 of 4 anomalous components; another fault may be a
 
 | option | predicted | why | verified | came true |
 |---|---|---|---|---|
-| roll back D-pay-417 | contains | contains if the confirmed cause is the cause (removing the origin's fault; assumed, not measured) [ev_cfe3b16bdb] | — | — |
 | flag paymentGate → off | contains | contains: every symptom predicted back in band; leaves kpi.exec_revenue exposed [ev_cfe3b16bdb] | — | — |
+| roll back D-pay-417 | contains | contains if the confirmed cause is the cause (removing the origin's fault; assumed, not measured) [ev_cfe3b16bdb] | — | — |
 | open an issue for D-pay-417 | does not contain | does not contain: checkout residual 0.4029 over its band, frontend residual 0.4029 over its band; leaves frontend-proxy, kpi.exec_revenue exposed [ev_cfe3b16bdb] | — | — |
 
 ## Obligations at risk (obligation clock; decides urgency, never the cause)
@@ -79,8 +79,8 @@ Customers reached through the failure: 5 (each counted once), 28,600 MRR at risk
 
 ## Rejected by the gate (first-class, with the failing checks)
 
-- `D-email-88` (sweep, gr-inc-s1-b0472ed3-d2668e95): G5 sufficiency: G5: max flow 0.0200 < needed 0.2433 (observed 0.3041 × 0.8); another suspect alone can carry 1.0000
-- `D-rec-12` (sweep, gr-inc-s1-b0472ed3-0db43d36): G2 path: G2: no path to any primary symptom (no path, no claim)
+- `D-email-88` (sweep, gr-inc-s1-f3885826-9ae18a45): G5 sufficiency: G5: max flow 0.0200 < needed 0.2433 (observed 0.3041 × 0.8); another suspect alone can carry 1.0000
+- `D-rec-12` (sweep, gr-inc-s1-f3885826-b7d3960e): G2 path: G2: no path to any primary symptom (no path, no claim)
 
 ## Evidence
 
@@ -90,7 +90,7 @@ Customers reached through the failure: 5 (each counted once), 28,600 MRR at risk
 | ev_0d9b87053a | upstream | falkordb | payment | bound: no anomalous component upstream accounts for payment |
 | ev_1a986a73de | path | falkordb | checkout, D-email-88 | D-email-88 → email → checkout |
 | ev_5b8e92d948 | path | falkordb | checkout, D-rec-12 | no path D-rec-12 → checkout (≤ 8 hops) |
-| ev_9dc2e8c800 | error_rate | simulator | checkout | checkout error rate 30.69% vs baseline 0.69% (×44.5, band 1.5745) |
-| ev_d3ce0adb65 | error_rate | simulator | payment | payment error rate 30.91% vs baseline 0.71% (×43.6, band 1.4575) |
+| ev_c76e4a5cc9 | error_rate | simulator | checkout | checkout error rate 30.69% vs baseline 0.69% (×44.5, band 1.5745) |
 | ev_d9c05ffae8 | path | falkordb | checkout, D-pay-417 | D-pay-417 → payment → checkout |
+| ev_e41db01ee2 | error_rate | simulator | payment | payment error rate 30.91% vs baseline 0.71% (×43.6, band 1.4575) |
 | ev_edbfd9c531 | flow | falkordb | checkout, payment | bound 1.0000 (max flow 1.0000, up to 1 path(s)) vs needed 0.2433 (sufficient) |
