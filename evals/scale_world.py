@@ -42,7 +42,7 @@ from faultline.ingest.lineage_to_graph import flow  # noqa: E402
 
 BASE_SEED = 42                       # unit 0 = globex itself (seed 42)
 UNIT_PRODUCERS = (topology, org, obligations, history, docs, embeddings)   # scripts/seed.py PRODUCERS["globex"] order
-SIZES = {"1k": 1_000, "10k": 10_000, "25k": 25_000, "50k": 50_000}
+SIZES = {"1k": 1_000, "3k": 3_000, "5k": 5_000, "10k": 10_000, "25k": 25_000, "50k": 50_000}   # 3k/5k: M20 curve
 FED_SHARE = 0.2                       # share of a regional platform anchor's inbound traffic sent to the global one
 FED_WHY = "regional platform front calls the global platform service synchronously"
 # text and team-key properties are never namespaced, even when a value happens to equal a node id
@@ -178,6 +178,16 @@ def bundle_hash(b: Bundle) -> str:
 
 
 # ------------------------------------------------------------------ seeding (same writers as scripts/seed.py)
+def ensure_key(db, name: str) -> None:
+    """Create graph `name` (no nodes) when it does not exist yet, so `writes.apply_schema` can read its indexes first.
+    On 2026-10-17 apply_schema briefly failed on a missing key ("Invalid graph operation on empty key"; since fixed in
+    writes.py). An empty projection write creates the key and nothing else, so this guard is harmless either way."""
+    from faultline.graph import writes
+
+    if name not in set(db.list_graphs()):
+        writes.build_scratch(db.select_graph(name), nodes=[], edges=[])
+
+
 def seed(services: int, tenant: str, graph: str, progress: bool = False) -> dict:
     """Seed `graph` from scratch: schema, every unit bundle (UNWIND … MERGE batches via graph/writes), federation edges,
     normalised flow props, the Intent constraint, seed-time LEARN (derived runbooks), then the ready flag. Returns timings
@@ -190,6 +200,7 @@ def seed(services: int, tenant: str, graph: str, progress: bool = False) -> dict
     gcopy.delete_if_exists(db, graph)
     g = db.select_graph(graph)
     t0 = time.perf_counter()
+    ensure_key(db, graph)
     writes.apply_schema(g)
     gen_s = write_s = 0.0
     nodes = edges = 0

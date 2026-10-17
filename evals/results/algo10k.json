@@ -1,0 +1,935 @@
+{
+  "bench": "algo10k",
+  "engine": "6.0.2",
+  "digest": "sha256:107455e862a824e45e8e9f5a7fbfdf5e00a08b14e13eae2577c72fd9e3f59ba6",
+  "size": "10k",
+  "services": 10000,
+  "runs": 20,
+  "nx_runs": 5,
+  "networkx": "3.7",
+  "reason": "M20 Wave B pre-registered run (PREREGISTRATION addendum 2026-10-17 21:10 IST)",
+  "started": "2026-10-17T19:21:42+00:00",
+  "procedures": {
+    "bfs": "algo.BFS",
+    "sppaths": "algo.SPpaths",
+    "sspaths": "algo.SSpaths",
+    "pagerank": "algo.pageRank",
+    "betweenness": "algo.betweenness",
+    "harmonic": "algo.HarmonicCentrality",
+    "wcc": "algo.WCC",
+    "cdlp": "algo.labelPropagation",
+    "maxflow": "algo.maxFlow",
+    "msf": "algo.MSF"
+  },
+  "seed": {
+    "graph": "golden_scale10k",
+    "units": 50,
+    "data_hash": "fb175f9dfc9b",
+    "node_rows": 311261,
+    "edge_rows": 1094024,
+    "generate_s": 8.47,
+    "write_s": 31.56,
+    "finalise_s": 0.16,
+    "learn_s": 0.91,
+    "derived_runbooks": 349,
+    "seed_s": 41.16
+  },
+  "graph": {
+    "name": "golden_scale10k",
+    "nodes": 296261,
+    "edges": 1097675
+  },
+  "targets": {
+    "cause_component": "card-gateway-u025",
+    "symptom": "order-orchestrator-u025",
+    "hub": "experiment-service",
+    "deploy_on_cause": "gx-dep-1030-u025",
+    "deploy_on_hub": "gx-dep-166"
+  },
+  "extract_s": 19.7,
+  "params_pool": {
+    "centrality_nodes": 10300
+  },
+  "memory": {
+    "falkordb": {
+      "graph": "scratch_scale10k_algoproj_42bc933d",
+      "nodes": 81408,
+      "edges": 185983,
+      "build_s": 3.92,
+      "used_mb_delta": 86.698,
+      "bytes": 90909552,
+      "graph_memory_usage_mb": 68
+    },
+    "networkx": {
+      "bytes": 112982549,
+      "nodes": 81408,
+      "edges": 185983,
+      "impl": "networkx.MultiDiGraph"
+    },
+    "falkordb_bytes_per_elem": 340.0,
+    "networkx_bytes_per_elem": 422.5,
+    "ratio_nx_over_falkordb": 1.24
+  },
+  "workloads": [
+    {
+      "procedure": "bfs",
+      "tag": "hub",
+      "instance": "from the hub experiment-service, 8 hops",
+      "params": {
+        "src": "experiment-service"
+      },
+      "criterion": "the same set of reached ids",
+      "falkor": {
+        "runs": 20,
+        "engine_ms": {
+          "n": 20,
+          "p50": 1.999,
+          "p95": 3.213,
+          "p99": 4.121,
+          "max": 4.121
+        },
+        "wall_ms": {
+          "n": 20,
+          "p50": 6.312,
+          "p95": 7.75,
+          "p99": 9.379,
+          "max": 9.379
+        }
+      },
+      "falkor_projection": {
+        "runs": 20,
+        "engine_ms": {
+          "n": 20,
+          "p50": 1.759,
+          "p95": 2.0,
+          "p99": 2.067,
+          "max": 2.067
+        },
+        "wall_ms": {
+          "n": 20,
+          "p50": 6.191,
+          "p95": 6.57,
+          "p99": 6.65,
+          "max": 6.65
+        }
+      },
+      "nx": {
+        "runs": 5,
+        "ms": {
+          "n": 5,
+          "p50": 1.427,
+          "p95": 1.658,
+          "p99": 1.658,
+          "max": 1.658
+        },
+        "graph_bytes": 5733608,
+        "algo_peak_bytes": 300876,
+        "input": {
+          "nodes": 9830,
+          "edges": 17357
+        }
+      },
+      "equal": true,
+      "falkor_count": 3088,
+      "nx_count": 3088,
+      "equal_on_projection": true
+    },
+    {
+      "procedure": "sppaths",
+      "tag": "cause",
+      "instance": "gx-dep-1030-u025 \u2192 order-orchestrator-u025",
+      "params": {
+        "src": "gx-dep-1030-u025",
+        "dst": "order-orchestrator-u025"
+      },
+      "criterion": "the same path weights in order, and the same paths where a weight is unique",
+      "falkor": {
+        "runs": 20,
+        "engine_ms": {
+          "n": 20,
+          "p50": 0.037,
+          "p95": 0.061,
+          "p99": 0.113,
+          "max": 0.113
+        },
+        "wall_ms": {
+          "n": 20,
+          "p50": 0.174,
+          "p95": 0.569,
+          "p99": 1.144,
+          "max": 1.144
+        }
+      },
+      "falkor_projection": {
+        "runs": 20,
+        "engine_ms": {
+          "n": 20,
+          "p50": 0.021,
+          "p95": 0.044,
+          "p99": 0.045,
+          "max": 0.045
+        },
+        "wall_ms": {
+          "n": 20,
+          "p50": 0.094,
+          "p95": 0.215,
+          "p99": 0.223,
+          "max": 0.223
+        }
+      },
+      "nx": {
+        "runs": 5,
+        "ms": {
+          "n": 5,
+          "p50": 0.192,
+          "p95": 0.414,
+          "p99": 0.414,
+          "max": 0.414
+        },
+        "graph_bytes": 42700416,
+        "algo_peak_bytes": 18719,
+        "input": {
+          "nodes": 64500,
+          "edges": 71265
+        }
+      },
+      "equal": true,
+      "falkor_weights": [
+        2.0
+      ],
+      "nx_weights": [
+        2.0
+      ],
+      "same_unique_paths": true,
+      "parallel_edges_collapsed": 0,
+      "equal_on_projection": true
+    },
+    {
+      "procedure": "sppaths",
+      "tag": "hub",
+      "instance": "gx-dep-166 \u2192 order-orchestrator-u025 (a deploy on the global hub)",
+      "params": {
+        "src": "gx-dep-166",
+        "dst": "order-orchestrator-u025"
+      },
+      "criterion": "the same path weights in order, and the same paths where a weight is unique",
+      "falkor": {
+        "runs": 20,
+        "engine_ms": {
+          "n": 20,
+          "p50": 7.422,
+          "p95": 7.915,
+          "p99": 8.397,
+          "max": 8.397
+        },
+        "wall_ms": {
+          "n": 20,
+          "p50": 8.096,
+          "p95": 8.795,
+          "p99": 9.201,
+          "max": 9.201
+        }
+      },
+      "falkor_projection": {
+        "runs": 20,
+        "engine_ms": {
+          "n": 20,
+          "p50": 6.764,
+          "p95": 6.869,
+          "p99": 7.02,
+          "max": 7.02
+        },
+        "wall_ms": {
+          "n": 20,
+          "p50": 7.353,
+          "p95": 7.546,
+          "p99": 7.549,
+          "max": 7.549
+        }
+      },
+      "nx": {
+        "runs": 5,
+        "ms": {
+          "n": 5,
+          "p50": 8.019,
+          "p95": 8.189,
+          "p99": 8.189,
+          "max": 8.189
+        },
+        "graph_bytes": 42700400,
+        "algo_peak_bytes": 621432,
+        "input": {
+          "nodes": 64500,
+          "edges": 71265
+        }
+      },
+      "equal": true,
+      "falkor_weights": [
+        3.0,
+        5.0,
+        5.0
+      ],
+      "nx_weights": [
+        3.0,
+        5.0,
+        5.0
+      ],
+      "same_unique_paths": true,
+      "parallel_edges_collapsed": 0,
+      "equal_on_projection": true
+    },
+    {
+      "procedure": "sspaths",
+      "tag": "hub",
+      "instance": "from the hub experiment-service, pathCount 1000",
+      "params": {
+        "src": "experiment-service"
+      },
+      "criterion": "every target whose NetworkX distance (\u2264 8 hops) is below the largest returned weight is returned at that distance",
+      "falkor": {
+        "runs": 20,
+        "engine_ms": {
+          "n": 20,
+          "p50": 3.385,
+          "p95": 3.942,
+          "p99": 3.97,
+          "max": 3.97
+        },
+        "wall_ms": {
+          "n": 20,
+          "p50": 10.566,
+          "p95": 37.792,
+          "p99": 38.753,
+          "max": 38.753
+        }
+      },
+      "falkor_projection": {
+        "runs": 20,
+        "engine_ms": {
+          "n": 20,
+          "p50": 3.159,
+          "p95": 3.66,
+          "p99": 3.683,
+          "max": 3.683
+        },
+        "wall_ms": {
+          "n": 20,
+          "p50": 10.384,
+          "p95": 37.698,
+          "p99": 38.303,
+          "max": 38.303
+        }
+      },
+      "nx": {
+        "runs": 5,
+        "ms": {
+          "n": 5,
+          "p50": 3.848,
+          "p95": 4.139,
+          "p99": 4.139,
+          "max": 4.139
+        },
+        "graph_bytes": 8242440,
+        "algo_peak_bytes": 1073668,
+        "input": {
+          "nodes": 9830,
+          "edges": 17357
+        }
+      },
+      "equal": true,
+      "paths": 1000,
+      "targets_returned": 1000,
+      "targets_checked": 71,
+      "missing": [],
+      "wrong": [],
+      "not_reachable_in_nx": [],
+      "over_8_hops": 0,
+      "largest_weight": 2.0,
+      "nx_reachable": 3088,
+      "equal_on_projection": true
+    },
+    {
+      "procedure": "pagerank",
+      "tag": "all",
+      "instance": "Service / CALLS",
+      "params": {},
+      "criterion": "the same top 10 in order",
+      "falkor": {
+        "runs": 20,
+        "engine_ms": {
+          "n": 20,
+          "p50": 3.638,
+          "p95": 3.916,
+          "p99": 5.086,
+          "max": 5.086
+        },
+        "wall_ms": {
+          "n": 20,
+          "p50": 38.447,
+          "p95": 69.003,
+          "p99": 69.197,
+          "max": 69.197
+        }
+      },
+      "falkor_projection": {
+        "runs": 20,
+        "engine_ms": {
+          "n": 20,
+          "p50": 2.832,
+          "p95": 2.919,
+          "p99": 3.01,
+          "max": 3.01
+        },
+        "wall_ms": {
+          "n": 20,
+          "p50": 38.448,
+          "p95": 70.666,
+          "p99": 71.114,
+          "max": 71.114
+        }
+      },
+      "nx": {
+        "runs": 5,
+        "ms": {
+          "n": 5,
+          "p50": 16.979,
+          "p95": 150.906,
+          "p99": 150.906,
+          "max": 150.906
+        },
+        "graph_bytes": 6949064,
+        "algo_peak_bytes": 6149278,
+        "impl": "networkx.pagerank (scipy)",
+        "input": {
+          "nodes": 10000,
+          "edges": 26851
+        }
+      },
+      "equal": false,
+      "falkor_top": [
+        "infra-quota",
+        "infra-auditor",
+        "audit-log",
+        "infra-admin",
+        "infra-adapter",
+        "config-service",
+        "service-registry",
+        "flag-service",
+        "secrets-broker",
+        "infra-webhooks"
+      ],
+      "nx_top": [
+        "infra-quota",
+        "infra-auditor",
+        "audit-log",
+        "infra-admin",
+        "infra-adapter",
+        "config-service",
+        "service-registry",
+        "flag-service",
+        "secrets-broker",
+        "experiment-service"
+      ],
+      "max_abs_diff": 0.0009212320063515869,
+      "nodes_compared": 10000,
+      "equal_on_projection": false
+    },
+    {
+      "procedure": "betweenness",
+      "tag": "all",
+      "instance": "Service + Datastore / CALLS, exact (samplingSize 10300)",
+      "params": {
+        "n": 10300
+      },
+      "criterion": "every score within 1e-06 relative",
+      "falkor": {
+        "runs": 20,
+        "engine_ms": {
+          "n": 20,
+          "p50": 255.217,
+          "p95": 279.474,
+          "p99": 280.769,
+          "max": 280.769
+        },
+        "wall_ms": {
+          "n": 20,
+          "p50": 310.474,
+          "p95": 330.472,
+          "p99": 356.196,
+          "max": 356.196
+        }
+      },
+      "falkor_projection": {
+        "runs": 20,
+        "engine_ms": {
+          "n": 20,
+          "p50": 266.349,
+          "p95": 285.978,
+          "p99": 302.865,
+          "max": 302.865
+        },
+        "wall_ms": {
+          "n": 20,
+          "p50": 308.266,
+          "p95": 354.521,
+          "p99": 359.297,
+          "max": 359.297
+        }
+      },
+      "nx": {
+        "runs": 1,
+        "ms": {
+          "n": 1,
+          "p50": 54707.892,
+          "p95": 54707.892,
+          "p99": 54707.892,
+          "max": 54707.892
+        },
+        "graph_bytes": 7174664,
+        "algo_peak_bytes": null,
+        "input": {
+          "nodes": 10300,
+          "edges": 28170
+        }
+      },
+      "equal": true,
+      "mismatched": 0,
+      "examples": [],
+      "falkor_top": [
+        "config-service",
+        "event-collector",
+        "report-builder",
+        "user-directory",
+        "auth-service",
+        "audit-log",
+        "session-service",
+        "experiment-service",
+        "flag-service",
+        "service-registry"
+      ],
+      "nx_top": [
+        "config-service",
+        "event-collector",
+        "report-builder",
+        "user-directory",
+        "auth-service",
+        "audit-log",
+        "session-service",
+        "experiment-service",
+        "flag-service",
+        "service-registry"
+      ],
+      "equal_on_projection": true
+    },
+    {
+      "procedure": "harmonic",
+      "tag": "all",
+      "instance": "Service + Datastore / CALLS",
+      "params": {},
+      "criterion": "the same top-10 set (FalkorDB's harmonic centrality is approximate; max relative error reported)",
+      "falkor": {
+        "runs": 20,
+        "engine_ms": {
+          "n": 20,
+          "p50": 134.04,
+          "p95": 149.661,
+          "p99": 151.068,
+          "max": 151.068
+        },
+        "wall_ms": {
+          "n": 20,
+          "p50": 212.394,
+          "p95": 242.623,
+          "p99": 249.429,
+          "max": 249.429
+        }
+      },
+      "falkor_projection": {
+        "runs": 20,
+        "engine_ms": {
+          "n": 20,
+          "p50": 132.25,
+          "p95": 135.896,
+          "p99": 138.577,
+          "max": 138.577
+        },
+        "wall_ms": {
+          "n": 20,
+          "p50": 215.263,
+          "p95": 229.942,
+          "p99": 236.566,
+          "max": 236.566
+        }
+      },
+      "nx": {
+        "runs": 5,
+        "ms": {
+          "n": 5,
+          "p50": 157.378,
+          "p95": 170.126,
+          "p99": 170.126,
+          "max": 170.126
+        },
+        "graph_bytes": 7189392,
+        "algo_peak_bytes": 2382164,
+        "direction": "NetworkX on the reversed graph (FalkorDB sums distances from the node)",
+        "input": {
+          "nodes": 10300,
+          "edges": 28170
+        }
+      },
+      "equal": false,
+      "falkor_top": [
+        "storefront-bff-u025",
+        "storefront-bff-u030",
+        "storefront-bff-u029",
+        "storefront-bff-u012",
+        "edge-gateway-u021",
+        "edge-gateway-u030",
+        "storefront-bff-u043",
+        "storefront-bff-u037",
+        "storefront-bff-u031",
+        "storefront-bff-u019"
+      ],
+      "nx_top": [
+        "storefront-bff-u012",
+        "storefront-bff-u025",
+        "storefront-bff-u021",
+        "edge-gateway-u021",
+        "storefront-bff-u030",
+        "edge-gateway-u030",
+        "storefront-bff-u009",
+        "storefront-bff-u031",
+        "storefront-bff-u039",
+        "edge-gateway-u012"
+      ],
+      "max_rel_error": 0.283825,
+      "mean_rel_error": 0.011898,
+      "approximate": true,
+      "equal_on_projection": false
+    },
+    {
+      "procedure": "wcc",
+      "tag": "all",
+      "instance": "failure-flow layer (Service, Datastore, Table, KPI, Dashboard)",
+      "params": {},
+      "criterion": "an identical partition",
+      "falkor": {
+        "runs": 20,
+        "engine_ms": {
+          "n": 20,
+          "p50": 4.549,
+          "p95": 4.949,
+          "p99": 5.065,
+          "max": 5.065
+        },
+        "wall_ms": {
+          "n": 20,
+          "p50": 36.53,
+          "p95": 71.343,
+          "p99": 72.689,
+          "max": 72.689
+        }
+      },
+      "falkor_projection": {
+        "runs": 20,
+        "engine_ms": {
+          "n": 20,
+          "p50": 4.052,
+          "p95": 4.319,
+          "p99": 4.637,
+          "max": 4.637
+        },
+        "wall_ms": {
+          "n": 20,
+          "p50": 36.764,
+          "p95": 76.162,
+          "p99": 77.376,
+          "max": 77.376
+        }
+      },
+      "nx": {
+        "runs": 5,
+        "ms": {
+          "n": 5,
+          "p50": 7.225,
+          "p95": 7.856,
+          "p99": 7.856,
+          "max": 7.856
+        },
+        "graph_bytes": 5794000,
+        "algo_peak_bytes": 1233380,
+        "input": {
+          "nodes": 10300,
+          "edges": 17207
+        }
+      },
+      "equal": true,
+      "falkor_components": 702,
+      "nx_components": 702,
+      "equal_on_projection": true
+    },
+    {
+      "procedure": "cdlp",
+      "tag": "all",
+      "instance": "incident families layer",
+      "params": {},
+      "criterion": "n/a: NetworkX has no label propagation with the same update rule (community counts and time shown)",
+      "falkor": {
+        "runs": 20,
+        "engine_ms": {
+          "n": 20,
+          "p50": 66.486,
+          "p95": 85.125,
+          "p99": 111.993,
+          "max": 111.993
+        },
+        "wall_ms": {
+          "n": 20,
+          "p50": 468.776,
+          "p95": 492.462,
+          "p99": 493.643,
+          "max": 493.643
+        }
+      },
+      "falkor_projection": {
+        "runs": 20,
+        "engine_ms": {
+          "n": 20,
+          "p50": 60.479,
+          "p95": 89.204,
+          "p99": 145.872,
+          "max": 145.872
+        },
+        "wall_ms": {
+          "n": 20,
+          "p50": 478.985,
+          "p95": 522.929,
+          "p99": 534.239,
+          "max": 534.239
+        }
+      },
+      "nx": {
+        "runs": 5,
+        "ms": {
+          "n": 5,
+          "p50": 345.997,
+          "p95": 355.078,
+          "p99": 355.078,
+          "max": 355.078
+        },
+        "graph_bytes": 26609320,
+        "algo_peak_bytes": 13212720,
+        "impl": "networkx.community.label_propagation_communities (semi-synchronous; another update rule)",
+        "input": {
+          "nodes": 71658,
+          "edges": 68458
+        }
+      },
+      "equal": null,
+      "falkor_communities": 20442,
+      "nx_communities": 17591,
+      "equal_on_projection": null
+    },
+    {
+      "procedure": "maxflow",
+      "tag": "single",
+      "instance": "card-gateway-u025 \u2192 order-orchestrator-u025",
+      "params": {
+        "srcs": [
+          "card-gateway-u025"
+        ],
+        "dst": "order-orchestrator-u025"
+      },
+      "criterion": "the same value within 1e-9",
+      "falkor": {
+        "runs": 20,
+        "engine_ms": {
+          "n": 20,
+          "p50": 8.592,
+          "p95": 10.124,
+          "p99": 10.754,
+          "max": 10.754
+        },
+        "wall_ms": {
+          "n": 20,
+          "p50": 9.159,
+          "p95": 10.864,
+          "p99": 11.413,
+          "max": 11.413
+        }
+      },
+      "falkor_projection": {
+        "runs": 20,
+        "engine_ms": {
+          "n": 20,
+          "p50": 5.955,
+          "p95": 7.781,
+          "p99": 8.155,
+          "max": 8.155
+        },
+        "wall_ms": {
+          "n": 20,
+          "p50": 6.558,
+          "p95": 8.418,
+          "p99": 8.809,
+          "max": 8.809
+        }
+      },
+      "nx": {
+        "runs": 5,
+        "ms": {
+          "n": 5,
+          "p50": 163.826,
+          "p95": 198.304,
+          "p99": 198.304,
+          "max": 198.304
+        },
+        "graph_bytes": 7826392,
+        "algo_peak_bytes": 28263692,
+        "impl": "networkx.maximum_flow_value (preflow-push) with a super-source",
+        "input": {
+          "nodes": 9830,
+          "edges": 17357
+        }
+      },
+      "equal": true,
+      "falkor_value": 1.0,
+      "nx_value": 1.0,
+      "equal_on_projection": true
+    },
+    {
+      "procedure": "maxflow",
+      "tag": "joint",
+      "instance": "joint {card-gateway-u025, experiment-service} \u2192 order-orchestrator-u025",
+      "params": {
+        "srcs": [
+          "card-gateway-u025",
+          "experiment-service"
+        ],
+        "dst": "order-orchestrator-u025"
+      },
+      "criterion": "the same value within 1e-9",
+      "falkor": {
+        "runs": 20,
+        "engine_ms": {
+          "n": 20,
+          "p50": 12.939,
+          "p95": 13.968,
+          "p99": 14.242,
+          "max": 14.242
+        },
+        "wall_ms": {
+          "n": 20,
+          "p50": 13.516,
+          "p95": 14.625,
+          "p99": 15.055,
+          "max": 15.055
+        }
+      },
+      "falkor_projection": {
+        "runs": 20,
+        "engine_ms": {
+          "n": 20,
+          "p50": 8.864,
+          "p95": 12.386,
+          "p99": 14.714,
+          "max": 14.714
+        },
+        "wall_ms": {
+          "n": 20,
+          "p50": 9.54,
+          "p95": 13.117,
+          "p99": 15.543,
+          "max": 15.543
+        }
+      },
+      "nx": {
+        "runs": 5,
+        "ms": {
+          "n": 5,
+          "p50": 163.5,
+          "p95": 169.662,
+          "p99": 169.662,
+          "max": 169.662
+        },
+        "graph_bytes": 7826576,
+        "algo_peak_bytes": 28264108,
+        "impl": "networkx.maximum_flow_value (preflow-push) with a super-source",
+        "input": {
+          "nodes": 9830,
+          "edges": 17357
+        }
+      },
+      "equal": true,
+      "falkor_value": 3.0,
+      "nx_value": 3.0,
+      "equal_on_projection": true
+    },
+    {
+      "procedure": "msf",
+      "tag": "all",
+      "instance": "Person / COLLABORATES, maximise w",
+      "params": {},
+      "criterion": "the same total weight and edge count (edge sets may differ on ties)",
+      "falkor": {
+        "runs": 20,
+        "engine_ms": {
+          "n": 20,
+          "p50": 11.705,
+          "p95": 12.751,
+          "p99": 16.51,
+          "max": 16.51
+        },
+        "wall_ms": {
+          "n": 20,
+          "p50": 24.915,
+          "p95": 31.481,
+          "p99": 55.359,
+          "max": 55.359
+        }
+      },
+      "falkor_projection": {
+        "runs": 20,
+        "engine_ms": {
+          "n": 20,
+          "p50": 10.055,
+          "p95": 10.702,
+          "p99": 11.009,
+          "max": 11.009
+        },
+        "wall_ms": {
+          "n": 20,
+          "p50": 23.234,
+          "p95": 55.694,
+          "p99": 55.757,
+          "max": 55.757
+        }
+      },
+      "nx": {
+        "runs": 5,
+        "ms": {
+          "n": 5,
+          "p50": 43.044,
+          "p95": 46.908,
+          "p99": 46.908,
+          "max": 46.908
+        },
+        "graph_bytes": 10149632,
+        "algo_peak_bytes": 3918208,
+        "input": {
+          "nodes": 9000,
+          "edges": 35774
+        }
+      },
+      "equal": true,
+      "falkor_edges": 8950,
+      "nx_edges": 8950,
+      "falkor_total": 8048.87,
+      "nx_total": 8048.87,
+      "equal_on_projection": true
+    }
+  ],
+  "kept": [],
+  "finished": "2026-10-17T19:24:47+00:00"
+}

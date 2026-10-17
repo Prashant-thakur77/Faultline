@@ -19,6 +19,9 @@ Per size (tenant `scale<k>`, graphs `golden_scale<k>` + one `eval_scale<k>_*` cl
 4. PROFILE (graph/ro.profile, engine ms) and RO.run (wall ms, truncation flag) N times each for the hero templates
    (Q-GATE-1, Q-GATE-3, Q-GATE-MULT, Q-SUS-1/2, Q-BLAST-1/2, Q-CUT-1/2, Q-NEG-1) on the incident's own params and on
    the hub's, plus every other template the run executed; GRAPH.SLOWLOG of the clean room, mapped to template ids.
+5. the gate path's tail (M20): Q-GATE-1, Q-GATE-3 and Q-BLAST-1, TAIL_N runs per hero instance through GRAPH.RO_QUERY,
+   engine-reported and wall ms, nearest-rank p50 / p95 / p99 (`tail`). `--merge` folds one size per invocation into
+   the same file (`make compact` in between), e.g. `make scale SIZES=3k MERGE=1`.
 Graphs are deleted afterwards (`--keep` keeps them). A size whose estimated memory does not fit the machine is skipped
 and reported as such, never silently shrunk.
 """
@@ -57,6 +60,10 @@ HERO = ("Q-GATE-1", "Q-GATE-3", "Q-GATE-MULT", "Q-SUS-1", "Q-SUS-2", "Q-BLAST-1"
         "Q-NEG-1")
 EXPECT_REASON = {"G2": "G2", "G5": "G5", "origin": "G4 origin"}
 SCRATCH = {"Q-RANK-1", "Q-ORG-HARM", "Q-ORG-MSF"}   # run on a temporary projection graph (scripts/profile_templates.py)
+# M20 (PREREGISTRATION addendum 2026-10-17 21:10 IST): p99 needs more than PROFILE_N runs (nearest-rank p99 of 20 is the
+# maximum), so the gate path's three reads also run TAIL_N times each on every hero instance.
+TAIL = ("Q-GATE-1", "Q-GATE-3", "Q-BLAST-1")
+TAIL_N = 200
 
 
 # ------------------------------------------------------------------ pure helpers (unit-tested)
@@ -71,6 +78,37 @@ def pct(xs: list[float], q: float) -> float | None:
 def stats(xs: list[float]) -> dict:
     return {"n": len(xs), "p50": round(statistics.median(xs), 3) if xs else None, "p95": pct(xs, 0.95),
             "max": round(max(xs), 3) if xs else None}
+
+
+def tail_stats(xs: list[float]) -> dict:
+    """Nearest-rank p50 / p95 / p99 and the maximum (for the TAIL_N-run block)."""
+    return {"n": len(xs), "p50": pct(xs, 0.5), "p95": pct(xs, 0.95), "p99": pct(xs, 0.99),
+            "max": round(max(xs), 3) if xs else None}
+
+
+def engine_ms(res) -> float:
+    """The engine's own "Query internal execution time" of a GRAPH.RO_QUERY result. falkordb-py's `run_time_ms` only
+    parses decoded replies; the RO connections (graph/client.ro_graph) return bytes, so the statistics are read here."""
+    for stat in getattr(res, "_raw_stats", None) or []:
+        txt = stat.decode() if isinstance(stat, bytes) else str(stat)
+        if "internal execution time" in txt.lower():
+            return float(txt.split(": ")[1].split(" ")[0])
+    raise ValueError("no internal execution time in the reply's statistics")
+
+
+def merge_runs(old: dict | None, new: dict) -> dict:
+    """`--merge`: one size per invocation (with `make compact` in between) into one file. Sizes measured now replace
+    the same sizes in the old file; the old file only counts when it was made on the same engine digest. The series
+    keeps the earliest start, the latest finish and every invocation's reason."""
+    if not old or old.get("digest") != new.get("digest"):
+        return {**new, "invocations": [{k: new.get(k) for k in ("started", "finished", "reason")}]}
+    sizes = {**(old.get("sizes") or {}), **(new.get("sizes") or {})}
+    sizes = dict(sorted(sizes.items(), key=lambda kv: kv[1].get("services") or 0))
+    inv = (old.get("invocations") or [{k: old.get(k) for k in ("started", "finished", "reason")}])
+    return {**new, "sizes": sizes, "started": min(str(old.get("started")), str(new.get("started"))),
+            "finished": max(str(old.get("finished")), str(new.get("finished"))),
+            "invocations": inv + [{k: new.get(k) for k in ("started", "finished", "reason")}],
+            "analysis": analyse(sizes)}
 
 
 def ambient_count(units: int, window_min: int) -> int:
@@ -476,6 +514,46 @@ def profile_all(tenant: str, graph: str, instances: list[tuple[str, str, dict]],
     return dict(sorted(out.items()))
 
 
+def tail_all(tenant: str, graph: str, instances: list[tuple[str, str, dict]], n: int = TAIL_N) -> dict:
+    """The gate path's tail: each TAIL template, on each of its hero instances, `n` times through GRAPH.RO_QUERY with
+    the template's exact executable text and the RO wrapper's timeout (graph/ro.py), recording the engine's own
+    reported execution time and the client wall time. The headline per template is its slowest instance by engine
+    p99. A timeout or engine error stops that instance and is recorded (never dropped)."""
+    from faultline.config import settings
+    from faultline.graph import client
+    from faultline.graph.templates import load
+
+    g = client.ro_graph(tenant, graph)
+    timeout = max(1, min(int(settings.falkordb_timeout_ms), settings.falkordb_timeout_max_ms))
+    out: dict[str, dict] = {}
+    for tid, inst, params in instances:
+        if tid not in TAIL:
+            continue
+        x = out.setdefault(tid, {"instances": []})
+        if any(i["params"] == params for i in x["instances"]):
+            continue
+        text = load(tid).text
+        eng, wall, err = [], [], None
+        for _ in range(n):
+            t0 = time.perf_counter()
+            try:
+                res = g.ro_query(text, params=params, timeout=timeout)
+            except Exception as e:  # noqa: BLE001 - a TIMEOUT or engine error is a finding
+                err = f"{type(e).__name__}: {str(e)[:160]}"
+                break
+            wall.append((time.perf_counter() - t0) * 1000)
+            eng.append(engine_ms(res))
+        x["instances"].append({"instance": inst, "params": params, "engine_ms": tail_stats(eng),
+                               "wall_ms": tail_stats(wall), **({"error": err} if err else {})})
+    for tid, x in out.items():
+        ok = [i for i in x["instances"] if i["engine_ms"]["p99"] is not None]
+        if ok:
+            worst = max(ok, key=lambda i: i["engine_ms"]["p99"])
+            x.update({"instance": worst["instance"], "engine_ms": worst["engine_ms"], "wall_ms": worst["wall_ms"]})
+        x["errors"] = sum(1 for i in x["instances"] if i.get("error"))
+    return dict(sorted(out.items()))
+
+
 def run_size(label: str, profile_n: int = PROFILE_N, keep: bool = False, progress: bool = True,
              prior_mb_per_service: float | None = None) -> dict:
     from faultline.agent.weights import weights
@@ -486,7 +564,8 @@ def run_size(label: str, profile_n: int = PROFILE_N, keep: bool = False, progres
 
     tenant, services = W.tenant_for(label), W.SIZES[label]
     U = W.n_units(services)
-    res: dict = {"label": label, "tenant": tenant, "services": U * W.unit_services(), "units": U}
+    res: dict = {"label": label, "tenant": tenant, "services": U * W.unit_services(), "units": U,
+                 "started": datetime.now(timezone.utc).isoformat(timespec="seconds")}
     db = _engine()
     avail = mem_available_mb()
     eng = engine_memory()
@@ -516,7 +595,11 @@ def run_size(label: str, profile_n: int = PROFILE_N, keep: bool = False, progres
         seeded_into = golden if copy_mode else room
         if progress:
             print(f"[{label}] seeding {seeded_into} ({U} units) …", file=sys.stderr, flush=True)
+        # M20: GRAPH.MEMORY USAGE misses part of what a graph adds to the engine (tenants bench: 2 MB reported for a
+        # graph whose copy adds ~14 MB of used_memory), so the settled used_memory growth across the seed is kept too
+        used0 = _settled_used_mb()
         res["seed"] = W.seed(services, tenant, seeded_into, progress=progress)
+        res["engine_used_mb_seed_delta"] = round(_settled_used_mb() - used0, 1)
         res["clean_room"] = "GRAPH.COPY of the golden graph" if copy_mode else \
             "seeded directly into the clean room (no golden kept: a copy would not fit in memory)"
         mem = engine_info.memory(seeded_into)
@@ -558,9 +641,13 @@ def run_size(label: str, profile_n: int = PROFILE_N, keep: bool = False, progres
         if progress:
             print(f"[{label}] profiling templates ({profile_n} runs each) …", file=sys.stderr, flush=True)
         res["templates"] = profile_all(tenant, room, inst, profile_n)
+        if progress:
+            print(f"[{label}] tail: {', '.join(TAIL)} x {TAIL_N} runs per hero instance …", file=sys.stderr, flush=True)
+        res["tail"] = tail_all(tenant, room, inst, TAIL_N)
         res["slowlog"] = [{k: s[k] for k in ("template", "ms", "command")} for s in engine_info.slowlog(room)[:10]]
         res["memory_mb_after_run"] = engine_info.memory(room).get("total_graph_sz_mb")
         res["wall_s"] = round(time.perf_counter() - t0, 1)
+        res["finished"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
         return res
     finally:
         if not keep:
@@ -571,15 +658,24 @@ def run_size(label: str, profile_n: int = PROFILE_N, keep: bool = False, progres
         res["engine_used_mb_after_cleanup"] = _settled_used_mb() if not keep else engine_memory()["used_mb"]
 
 
-def run(labels: list[str], profile_n: int = PROFILE_N, keep: bool = False, progress: bool = True) -> dict:
+def prior_per_service(old: dict | None) -> float | None:
+    """MB per service from the largest size an earlier (merged) run measured, to size the memory check."""
+    done = [v for v in ((old or {}).get("sizes") or {}).values() if v.get("memory_mb") and v.get("services")]
+    if not done:
+        return None
+    big = max(done, key=lambda v: v["services"])
+    return float(big["memory_mb"]) / big["services"]
+
+
+def run(labels: list[str], profile_n: int = PROFILE_N, keep: bool = False, progress: bool = True,
+        per_service: float | None = None, reason: str = "") -> dict:
     from faultline.graph.algo import registry
 
     meta = registry.resolved_meta()
     out: dict = {"engine": meta.get("engine"), "digest": meta.get("digest"),
                  "started": datetime.now(timezone.utc).isoformat(timespec="seconds"), "profile_runs": profile_n,
-                 "seed": SEED, "machine": {"mem_available_mb": round(mem_available_mb() or 0), "cpus": _cpus()},
-                 "sizes": {}}
-    per_service = None
+                 "tail_runs": TAIL_N, "seed": SEED, "reason": reason,
+                 "machine": {"mem_available_mb": round(mem_available_mb() or 0), "cpus": _cpus()}, "sizes": {}}
     for label in sorted(labels, key=lambda x: W.SIZES[x]):
         res = run_size(label, profile_n, keep, progress, per_service)
         out["sizes"][label] = res
@@ -614,12 +710,19 @@ def main() -> int:
     ap.add_argument("--profile-n", type=int, default=PROFILE_N)
     ap.add_argument("--keep", action="store_true", help="keep the golden and clean-room graphs (default: delete)")
     ap.add_argument("--out", default=str(OUT))
+    ap.add_argument("--merge", action="store_true",
+                    help="merge these sizes into an existing --out file made on the same engine digest (one size per "
+                         "invocation, `make compact` in between)")
+    ap.add_argument("--reason", default="", help="why this run was made (recorded in the file)")
     ap.add_argument("--quiet", action="store_true")
     a = ap.parse_args()
     labels = [x.strip() for x in a.sizes.split(",") if x.strip()]
     for x in labels:
         W.tenant_for(x)
-    out = run(labels, a.profile_n, a.keep, not a.quiet)
+    old = json.loads(Path(a.out).read_text()) if a.merge and Path(a.out).exists() else None
+    out = run(labels, a.profile_n, a.keep, not a.quiet, prior_per_service(old), a.reason)
+    if a.merge:
+        out = merge_runs(old, out)
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
     Path(a.out).write_text(json.dumps(out, indent=2, default=str) + "\n")
     for label, s in out["sizes"].items():

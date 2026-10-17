@@ -90,9 +90,17 @@ def wait(base: str, inc: str, stages: set[str], timeout: float = 300.0) -> tuple
     raise RuntimeError(f"{inc} did not reach {sorted(stages)} within {timeout:.0f} s (last {stage(base, inc)!r})")
 
 
-def listed(base: str, inc: str) -> dict:
-    _, rows, _ = http(base, "GET", f"/api/incidents?tenant={TENANT}")
-    return next((r for r in rows if r.get("incident") == inc), {}) if isinstance(rows, list) else {}
+def listed(base: str, inc: str, timeout: float = 30.0) -> dict:
+    """The incident's row in the run index. The index (audit graph) records the outcome a moment after the incident's
+    own graph reaches its stage, so wait until it leaves RUNNING: reading it earlier graded a confirmed run as wrong."""
+    t0, row = time.perf_counter(), {}
+    while time.perf_counter() - t0 < timeout:
+        _, rows, _ = http(base, "GET", f"/api/incidents?tenant={TENANT}")
+        row = next((r for r in rows if r.get("incident") == inc), {}) if isinstance(rows, list) else {}
+        if row.get("outcome") not in (None, "RUNNING"):
+            return row
+        time.sleep(0.25)
+    return row
 
 
 def start(base: str, sid: str) -> tuple[str, dict]:

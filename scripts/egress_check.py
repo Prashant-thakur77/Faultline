@@ -1,11 +1,11 @@
-"""The engine has no internet egress in the prod topology (M20 #9; docs/SECURITY.md).
+"""The engine has no internet egress in the prod topology (M20 #9; SECURITY.md).
 
-FalkorDB 6.0.2 runs `LOAD CSV FROM 'https://…'` even under GRAPH.RO_QUERY (verified: docs/FALKORDB_COMPAT.md; reported
-privately upstream, docs/upstream/22-load-csv-egress.md), and no config key or ACL category disables it. Prod therefore puts FalkorDB on an `internal: true` Docker network (deploy/docker-compose.prod.yml).
+Defence in depth: prod puts FalkorDB on an `internal: true` Docker network (deploy/docker-compose.prod.yml), so no query
+can fetch from the internet or send data out. This script checks that with a remote `LOAD CSV`.
 
     uv run python scripts/egress_check.py --docker     # throwaway same-digest container on an internal network
     docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.prod.yml exec falkordb \\
-        redis-cli GRAPH.RO_QUERY egress_probe "LOAD CSV FROM 'https://example.com/' AS r RETURN count(r)"   # after a deploy
+        redis-cli GRAPH.QUERY egress_probe "LOAD CSV FROM 'https://example.com/' AS r RETURN count(r)"   # after a deploy
 
 `--docker` starts the pinned image (the digest in deploy/docker-compose.yml) on a fresh `docker network create --internal`
 network with a 384 MB cap, asserts that the LOAD CSV fails (PASS = it fails; the text is not asserted), then connects the
@@ -70,11 +70,11 @@ def docker_check(mem_cap: int) -> dict:
             raise RuntimeError("the throwaway engine did not answer PING")
         out["query_mem_capacity_load_time"] = cli(name, "GRAPH.CONFIG", "GET", "QUERY_MEM_CAPACITY").split()[-1:]
         cli(name, "GRAPH.QUERY", "egress_probe", "CREATE (:X)")
-        replies = {k: cli(name, "GRAPH.RO_QUERY", "egress_probe", q, timeout=60) for k, q in PROBES.items()}
+        replies = {k: cli(name, "GRAPH.QUERY", "egress_probe", q, timeout=60) for k, q in PROBES.items()}
         out["internal"] = {"refused": not any(fetched(t) for t in replies.values()),
                            "reply": "; ".join(f"{k}: {t[:90]}" for k, t in replies.items())}
         sh("docker", "network", "connect", "bridge", name)                    # control: the same engine WITH egress
-        ctl = {k: cli(name, "GRAPH.RO_QUERY", "egress_probe", q, timeout=60) for k, q in PROBES.items()}
+        ctl = {k: cli(name, "GRAPH.QUERY", "egress_probe", q, timeout=60) for k, q in PROBES.items()}
         out["control"] = {"fetched": any(fetched(t) for t in ctl.values()),
                           "by_probe": {k: fetched(t) for k, t in ctl.items()}}
     finally:

@@ -2,23 +2,23 @@
 <title>The live deployment, measured over HTTPS</title>
 <rect x="0.5" y="0.5" width="819" height="297" rx="12" fill="#fcfcfb" stroke="#e7e6e2"/>
 <text x="24" y="34" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#0b0b0b">The live deployment, measured over HTTPS</text>
-<text x="24" y="56" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" fill="#52514e">Hero incident, 5 runs from outside the server (2026-10-15T19:56:12Z): right cause 5/5, verified APPLIED 5/5. Milliseconds, p50; lower is better.</text>
+<text x="24" y="56" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" fill="#52514e">Hero incident, 5 runs from outside the server (2026-10-17T19:40:27Z): right cause 5/5, verified APPLIED 5/5. Milliseconds, p50; lower is better.</text>
 <line x1="290.0" y1="76" x2="290.0" y2="262" stroke="#e7e6e2"/>
 <line x1="480.0" y1="76" x2="480.0" y2="262" stroke="#e7e6e2"/>
 <line x1="670.0" y1="76" x2="670.0" y2="262" stroke="#e7e6e2"/>
 <text x="276" y="98" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">Alert to gate verdict</text>
-<g><title>p50 ms to a verdict</title><rect x="290" y="84" width="221.4" height="18" rx="4" fill="#2a78d6"/></g>
-<text x="519.4" y="98" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">1,584 ms</text>
+<g><title>p50 ms to a verdict</title><rect x="290" y="84" width="173.8" height="18" rx="4" fill="#2a78d6"/></g>
+<text x="471.8" y="98" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">1,747 ms</text>
 <text x="276" y="136" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">Approve to verified write-back</text>
-<g><title>p50 ms</title><rect x="290" y="122" width="111.5" height="18" rx="4" fill="#2a78d6"/></g>
-<text x="409.5" y="136" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">798 ms</text>
+<g><title>p50 ms</title><rect x="290" y="122" width="139.4" height="18" rx="4" fill="#2a78d6"/></g>
+<text x="437.4" y="136" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">1,402 ms</text>
 <text x="276" y="174" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">Alert to RESOLVED, end to end</text>
 <g><title>p50 ms</title><rect x="290" y="160" width="380.0" height="18" rx="4" fill="#2a78d6"/></g>
-<text x="678.0" y="174" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">2,719 ms</text>
+<text x="678.0" y="174" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">3,821 ms</text>
 <text x="276" y="212" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Company brain answer</text>
-<g><title>p50 ms</title><rect x="290" y="198" width="21.7" height="18" rx="4" fill="#8c8a84"/></g>
-<text x="319.7" y="212" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">156 ms</text>
+<g><title>p50 ms</title><rect x="290" y="198" width="18.7" height="18" rx="4" fill="#8c8a84"/></g>
+<text x="316.7" y="212" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">188 ms</text>
 <text x="276" y="250" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Page, time to first byte</text>
-<g><title>p50 ms over pages</title><rect x="290" y="236" width="19.4" height="18" rx="4" fill="#8c8a84"/></g>
-<text x="317.4" y="250" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">139 ms</text>
+<g><title>p50 ms over pages</title><rect x="290" y="236" width="15.6" height="18" rx="4" fill="#8c8a84"/></g>
+<text x="313.6" y="250" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">157 ms</text>
 </svg>

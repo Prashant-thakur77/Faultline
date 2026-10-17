@@ -1,5 +1,5 @@
 """Live (M20 #9): in the prod topology (FalkorDB alone on an internal Docker network) the engine cannot fetch from the
-internet: `LOAD CSV FROM 'https://…'` under GRAPH.RO_QUERY fails, by host name and by IP literal. Runs
+internet: a remote `LOAD CSV` fails, by host name and by IP literal. Runs
 scripts/egress_check.py --docker (a throwaway container of the pinned digest, 384 MB, removed afterwards)."""
 
 import json

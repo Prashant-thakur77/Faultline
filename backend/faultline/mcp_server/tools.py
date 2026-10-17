@@ -123,7 +123,7 @@ _FIND = {"Service": "Q-FIND-SERVICE", "Table": "Q-FIND-TABLE", "Runbook": "Q-FIN
 
 
 def _ft_query(text: str) -> str:
-    """Full-text query string: alphanumeric tokens with prefix matching (Drift's sanitiser)."""
+    """Full-text query string: alphanumeric tokens with prefix matching."""
     toks = ["".join(ch for ch in t if ch.isalnum()) for t in text.lower().split()]
     toks = [t for t in toks if len(t) >= 2][:6]
     if not toks:

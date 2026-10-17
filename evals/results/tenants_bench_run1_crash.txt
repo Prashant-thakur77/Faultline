@@ -1,0 +1,19 @@
+scripts/memguard.sh 3000 PYTHONPATH=backend uv run python evals/tenants_bench.py
+[tenants] product: 25 tenant graphs in all (25 of this kind): engine used 798 MB, 15.01 MB/tenant, copy p50 69.313 ms
+[tenants] product: 50 tenant graphs in all (50 of this kind): engine used 1172 MB, 15.00 MB/tenant, copy p50 68.578 ms
+[tenants] small: 250 tenant graphs in all (200 of this kind): engine used 1771 MB, 2.98 MB/tenant, copy p50 64.127 ms
+[tenants] isolation: 1000/1000 cross-tenant reads denied, 0 leaks; own-graph reads 1000/1000; forbidden 300/300 denied
+Traceback (most recent call last):
+  File "/home/prashant/projects/Faultline/evals/tenants_bench.py", line 726, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/prashant/projects/Faultline/evals/tenants_bench.py", line 709, in main
+    out = run(steps, levels, a.k, a.cmd_sample, a.warmup, a.duration, a.reason, not a.quiet, total_steps)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prashant/projects/Faultline/evals/tenants_bench.py", line 683, in run
+    out["concurrency"] = concurrency(tenants, password, levels, pool, warmup, duration, progress)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/prashant/projects/Faultline/evals/tenants_bench.py", line 602, in concurrency
+    raise RuntimeError(f"client process {msg['idx']}: {msg['error']}")
+RuntimeError: client process 0: warm-up failed: GraphUnavailable: Q-META-1: FalkorDB unreachable: invalid username-password pair or user is disabled.
+make: *** [Makefile:100: tenants-bench] Error 1

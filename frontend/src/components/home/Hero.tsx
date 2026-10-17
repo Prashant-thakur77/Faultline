@@ -160,12 +160,13 @@ function Numbers() {
         </>
       ) },
     // the real OpenTelemetry Demo with its own fault flags (evals/faultbench_otel.py): real services, real telemetry
-    { big: get("otel.faultline.wrong.k"), unit: "wrong blames on a real system", tag: "Real system", good: "lower is better",
+    { big: get("otel.faultline.wrong.k"), unit: "wrong blames on real services", tag: "Real services", good: "lower is better",
       text: (
         <>
-          wrong blames in {get("otel.faultline.wrong.n")} windows of the real OpenTelemetry Demo, broken with its own
-          fault flags: {get("otel.faultline.right_cause.k")}/{get("otel.faultline.right_cause.n")} right causes. A
-          threshold on the same telemetry: {get("otel.Tplus.wrong.k")} wrong
+          wrong blames in {get("otel.faultline.wrong.n")} windows of the OpenTelemetry Demo&apos;s real services and
+          telemetry, broken with its own fault flags (our topology and decoys):{" "}
+          {get("otel.faultline.right_cause.k")}/{get("otel.faultline.right_cause.n")} right causes. A threshold on the same
+          telemetry: {get("otel.Tplus.wrong.k")} wrong
         </>
       ) },
   ];

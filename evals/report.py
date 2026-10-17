@@ -3,6 +3,7 @@ and the generated evals/RESULTS.md (never hand-edited)."""
 
 from __future__ import annotations
 
+import re
 import statistics
 from collections import defaultdict
 
@@ -547,6 +548,7 @@ def side_summaries(s: dict) -> dict:
         if wb:
             k.update(_world_keys(prefix, wb))
     k.update(_seeds2_keys(sb))
+    k.update(_deep_fresh_hop_keys())
     k.update(llm_deep_keys())
     k.update(faultbench_otel_keys())
     k.update(oncall_keys())
@@ -658,6 +660,28 @@ def _pooled_deep_keys(p: str, pooled: dict) -> dict:
         k.update(wilson_keys(f"{q}.right_strict", a["right_strict"], pooled["cause_cases"]))
         k.update(wilson_keys(f"{q}.wrong_any", a["wrong_any"], pooled["cases"]))
         k.update(wilson_keys(f"{q}.abstained", a["abstained"], pooled["cases"]))
+    return k
+
+
+def _deep_fresh_hop_keys() -> dict:
+    """deep.fresh.hops.<k>.cause_cases: the headline deep worlds that have a cause, per hop count (the right_cause
+    denominator; hops.<k>.cases counts causeless worlds too), and deep.fresh.nohops.*: worlds with a cause but no hop
+    count (weak_link). Hops come from the seeded generator, joined to deep_fresh_detail.json by world id."""
+    import deep_bench
+
+    d = _side("deep_fresh_detail.json")
+    if not (d and d.get("rows") and d.get("seed") is not None):
+        return {}
+    hops = {w["id"]: w["hops"] for w in deep_bench.generate(seed=int(d["seed"]))}
+    k: dict = {}
+    for r in d["rows"]:
+        if not r.get("has_cause"):
+            continue
+        h = hops.get(r["id"])
+        p = f"deep.fresh.hops.{h}" if h is not None else "deep.fresh.nohops"
+        k[f"{p}.cause_cases"] = k.get(f"{p}.cause_cases", 0) + 1
+        if h is None:
+            k[f"{p}.right_cause"] = k.get(f"{p}.right_cause", 0) + int(bool(r.get("right_cause")))
     return k
 
 
@@ -785,6 +809,29 @@ def faultbench_otel_keys(x: dict | None = None, dry: dict | None = None) -> dict
     k["otel.accepted_nc.bystander"] = sum(1 for r, c in acc if c != r.get("cause"))
     for arm in ("faultline", "faultline_prefix"):   # fault windows the product called NO_INCIDENT (a miss, not an abstention)
         k[f"otel.{arm}.no_incident_fault"] = sum(r[arm]["no_incident"] for r in faults)
+    # what the gate's sweep did with each decoy (every recorded change but the cause) in the shipped product, and with
+    # T+'s wrong picks: the graph's share of the work on a real system (G2 = no causal path; G4 = origin test)
+    def step(why: str) -> str:
+        m = re.match(r"eliminated: (G\d)", why or "")
+        return m.group(1) if m else ("candidate" if (why or "").startswith("candidate") else "not_swept")
+    decoys: dict[str, int] = {}
+    tplus_wrong: dict[str, int] = {}
+    for r in scored:
+        sweep = {c: w for inc in (r.get("product") or {}).get("incidents") or [] for c, w in (inc.get("sweep") or {}).items()}
+        for ch in r.get("changes") or []:
+            if ch["change"] != r.get("cause"):
+                s_ = step(sweep.get(ch["change"], ""))
+                decoys[s_] = decoys.get(s_, 0) + 1
+        if r["tplus"]["wrong"]:
+            for pick in r["tplus"].get("tied") or []:
+                if pick != r.get("cause"):
+                    s_ = step(sweep.get(pick, ""))
+                    tplus_wrong[s_] = tplus_wrong.get(s_, 0) + 1
+    k["otel.gate.decoys"] = sum(decoys.values())
+    for s_ in ("G2", "G4", "G5", "candidate", "not_swept"):
+        k[f"otel.gate.decoys.{s_}"] = decoys.get(s_, 0)
+        k[f"otel.gate.tplus_wrong_picks.{s_}"] = tplus_wrong.get(s_, 0)
+    k["otel.gate.tplus_wrong_picks"] = sum(tplus_wrong.values())
     # windows whose end-of-slot container snapshot shows a restarted or OOM-killed container (the stack as it ran)
     k["otel.windows_after_restart"] = sum(1 for r in rows if any(h.get("restarts") or h.get("oom")
                                                                  for h in (r.get("health") or {}).values()))
@@ -1867,6 +1914,10 @@ def tenants_markdown(s: dict) -> list[str]:
 
 
 ALGO_ORDER = ("bfs", "sppaths", "sspaths", "pagerank", "betweenness", "harmonic", "wcc", "cdlp", "maxflow", "msf")
+ALGO_DETAIL = ("falkor_count", "nx_count", "max_abs_diff", "max_rel_error", "mean_rel_error", "mismatched", "paths",
+               "targets_returned", "targets_checked", "nx_reachable", "largest_weight", "falkor_components",
+               "nx_components", "falkor_communities", "nx_communities", "falkor_value", "nx_value", "falkor_edges",
+               "nx_edges", "falkor_total", "nx_total")
 
 
 def _algo_prefix(w: dict, counts: dict) -> str:
@@ -1890,7 +1941,7 @@ def algo10k_keys(x: dict | None = None) -> dict:
                "algo10k.comparable": len(comp), "algo10k.same": sum(1 for w in comp if w["equal"]),
                "algo10k.same_projection": sum(1 for w in comp if w.get("equal_on_projection")),
                "algo10k.errors": sum(1 for w in ws if (w.get("falkor") or {}).get("error"))}
-    faster = []
+    faster, faster_eng = [], []
     for w in ws:
         p = _algo_prefix(w, counts)
         f = w.get("falkor") or {}
@@ -1906,6 +1957,14 @@ def algo10k_keys(x: dict | None = None) -> dict:
         k[f"{p}.equal"] = w.get("equal")
         if w.get("equal_on_projection") is not None:
             k[f"{p}.equal_projection"] = w["equal_on_projection"]
+        for fld in ALGO_DETAIL:   # what the comparison found, next to the pre-registered pass/fail
+            if isinstance(w.get(fld), (int, float)) and not isinstance(w.get(fld), bool):
+                k[f"{p}.{fld}"] = round(float(w[fld]), 6) if isinstance(w[fld], float) else w[fld]
+        if w.get("falkor_top") and w.get("nx_top"):
+            ft, nt = w["falkor_top"], w["nx_top"]
+            k[f"{p}.top_same_prefix"] = next((i for i, (a, b) in enumerate(zip(ft, nt)) if a != b), min(len(ft), len(nt)))
+            k[f"{p}.top_overlap"] = len(set(ft) & set(nt))
+            k[f"{p}.top_n"] = len(nt)
         nx = w.get("nx") or {}
         if nx:
             nx50 = (nx.get("ms") or {}).get("p50")
@@ -1920,7 +1979,9 @@ def algo10k_keys(x: dict | None = None) -> dict:
                 faster.append(nx50 > wl["p50"])
             if nx50 and e.get("p50"):
                 k[f"{p}.x_engine"] = round(nx50 / e["p50"], 1)
+                faster_eng.append(nx50 > e["p50"])
     k["algo10k.faster_wall"] = sum(faster)
+    k["algo10k.faster_engine"] = sum(faster_eng)
     k["algo10k.timed_pairs"] = len(faster)
     m = x.get("memory") or {}
     if m:
@@ -1969,9 +2030,11 @@ def algo10k_markdown(s: dict, x: dict | None = None) -> list[str]:
                  f"{_c(p + '.nx_ms_p50', s.get(p + '.nx_ms_p50'))} | "
                  f"{_c(p + '.x_wall', s[p + '.x_wall']) if p + '.x_wall' in s else '—'} | {mb} | {eqs} |")
     L += ["", f"Same answers on {_c('algo10k.same', s.get('algo10k.same'))} of {_c('algo10k.comparable', s.get('algo10k.comparable'))} "
-          f"comparable workloads (projection: {_c('algo10k.same_projection', s.get('algo10k.same_projection'))}); FalkorDB's wall "
-          f"p50 below NetworkX's on {_c('algo10k.faster_wall', s.get('algo10k.faster_wall'))} of "
-          f"{_c('algo10k.timed_pairs', s.get('algo10k.timed_pairs'))}. Criteria: "
+          f"comparable workloads (projection: {_c('algo10k.same_projection', s.get('algo10k.same_projection'))}). FalkorDB's engine "
+          f"p50 is below NetworkX's on {_c('algo10k.faster_engine', s.get('algo10k.faster_engine'))} of "
+          f"{_c('algo10k.timed_pairs', s.get('algo10k.timed_pairs'))} workloads, its client wall p50 on "
+          f"{_c('algo10k.faster_wall', s.get('algo10k.faster_wall'))}: for whole-graph procedures the Python client's parsing of a "
+          "10,000-row result dominates the wall time, while NetworkX returns an in-process dict. Criteria: "
           + "; ".join(f"{kk}: {v}" for kk, v in sorted({w['procedure']: w['criterion'] for w in ws}.items())) + "."]
     if s.get("algo10k.mem.falkordb_mb") is not None:
         L += ["", f"**The same graph in memory** (every workload's input together: {_c('algo10k.mem.nodes', s['algo10k.mem.nodes'])} "

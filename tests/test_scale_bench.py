@@ -82,7 +82,7 @@ def test_scale_tenants_have_their_own_graphs(label):
 
 
 def test_unit_count_follows_the_size():
-    assert [W.n_units(n) for n in W.SIZES.values()] == [5, 50, 125, 250]
+    assert [W.n_units(n) for n in W.SIZES.values()] == [5, 15, 25, 50, 125, 250]
     with pytest.raises(ValueError):
         W.tenant_for("7k")
 

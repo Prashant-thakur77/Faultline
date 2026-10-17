@@ -2,9 +2,9 @@
 #   cp .env.example .env  (fill secrets on the VM only)   ·   docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.prod.yml up -d --build
 # Public mode is keyless by default: simulated GitHub, deterministic investigator, no LLM spend.
 # Networks (M20 #9): FalkorDB sits ONLY on `engine`, an internal network with no route out, so the engine cannot reach
-# the internet: `LOAD CSV FROM 'https://…'` (which 6.0.2 runs even under GRAPH.RO_QUERY, with a URL built from graph
-# data, and which no config or ACL switch disables) fails. api and mcp join `engine` and `default` (they need GitHub and
-# Telegram); ui and caddy stay on `default` only. Check after a deploy: scripts/egress_check.py (docs/SECURITY.md).
+# the internet (defence in depth: no query can fetch from outside or send data out). api and mcp join `engine` and
+# `default` (they need GitHub and Telegram); ui and caddy stay on `default` only. Check after a deploy:
+# scripts/egress_check.py (SECURITY.md).
 networks:
   engine: {internal: true}
   default: {}
