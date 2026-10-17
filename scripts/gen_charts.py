@@ -181,6 +181,20 @@ def main() -> int:
                              f"Deep bench, {d.get('deep.fresh.all.cases')} adversarial worlds ({d.get('deep.fresh.all.cause_cases')} "
                              "with a cause). Whiskers: 95 % interval.", [r for r in dr if r[1] is not None], pct, 1.0,
                              note="LLM alone: claude-opus-5-5, the same telemetry and change list, one trial per world. Ties never count.")
+    if d.get("otel.faultline.right_cause.n"):
+        orows = [rate_row("Right cause · Faultline", "otel.faultline.right_cause", True, "fault windows"),
+                 rate_row("Right cause · telemetry threshold (T+)", "otel.Tplus.right_cause", False, "fault windows"),
+                 rate_row("Right cause · recency", "otel.N.right_cause", False, "fault windows"),
+                 rate_row("Wrong blames · Faultline", "otel.faultline.wrong", True, "windows"),
+                 rate_row("Wrong blames · telemetry threshold (T+)", "otel.Tplus.wrong", False, "windows"),
+                 rate_row("Wrong blames · recency", "otel.N.wrong", False, "windows"),
+                 rate_row("Abstained · Faultline", "otel.faultline.abstained", True, "windows")]
+        files["otel.svg"] = bars("On a real system: the OpenTelemetry Demo",
+                                 f"Its own fault flags and its real telemetry: {d.get('otel.fault_windows')} fault windows "
+                                 f"and {d.get('otel.controls')} no-fault controls, our decoy changes in each. Whiskers: 95 % "
+                                 "interval.", [r for r in orows if r[1] is not None], pct, 1.0,
+                                 note="Pre-registered, one laptop, five faults. Recency looks strong on faults only because "
+                                      "the flag flip lands just before the page; it blames a change in every control.")
     nopath = d.get("perf.acme.shortest_causal_path.falkordb_engine_p50")
     cost = [("FalkorDB proving \"no path\" (G2)", 0, True, f"0 model tokens; engine time p50 {nopath} ms", None,
              f"0 tokens · {nopath} ms engine time")]

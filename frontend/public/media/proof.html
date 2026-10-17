@@ -5,7 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Faultline: proof charts</title>
 <!-- Demo-video proof beats (frontend/scripts/record_demo_video.py): one chart at a time, full screen, chosen by the URL
-     hash (#outcome, #false_blame, #ladder, #context_mrr, #vs_sql, #live, #deep, #cost). The SVGs under charts/ are byte-for-byte
+     hash (#outcome, #false_blame, #ladder, #context_mrr, #vs_sql, #live, #deep, #cost, and the hooks #otel, #tenants and
+     #algo for the OpenTelemetry Demo, tenants and algorithms-at-scale benches once scripts/gen_charts.py draws them). A
+     name whose SVG is missing says so instead of drawing anything. The SVGs under charts/ are byte-for-byte
      copies of docs/media/charts/ (drawn from evals/results/latest.json by scripts/gen_charts.py); docs/ is the
      source and the recorder refuses to run when a copy differs.
      #llm is the language-model comparison: it has no numbers of its own. The recorder passes the values it read from
@@ -61,7 +63,11 @@
     vs_sql: "Same graph questions, same answers: FalkorDB and recursive SQL",
     live: "The live deployment, measured over HTTPS",
     deep: "Faultline trades recall for safety",
-    cost: "The cost of a decision"
+    cost: "The cost of a decision",
+    // hooks for the newer benches: shown only once their SVGs exist (the recorder lists the ones a take uses)
+    otel: "The OpenTelemetry Demo bench",
+    tenants: "Many tenants on one FalkorDB",
+    algo: "FalkorDB's algorithms at scale"
   };
   var fig = document.getElementById("fig"), img = document.getElementById("chart"), err = document.getElementById("err");
   var llm = document.getElementById("llm");

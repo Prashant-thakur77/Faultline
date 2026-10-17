@@ -1,5 +1,6 @@
 """Narration for the demo video: story first (the problem → the idea → how FalkorDB makes it possible, over the 3D
-explainer → the product, live → the proof, with its limits), synthesized with Kokoro (built-in voices, Apache-2.0) or
+explainer → the product, live → on call: the page, the ack, a standing approval, what it learned → inside FalkorDB →
+the proof, with its limits), synthesized with Kokoro (built-in voices, Apache-2.0) or
 Chatterbox. Every number spoken is filled from
 evals/results/latest.json at generation time (never typed here); third-party facts are attributed in the words.
 
@@ -84,20 +85,45 @@ SEGMENTS: list[tuple[str, float, str]] = [
      "A human approves the exact change, bound to its plan hash. Faultline opens a real pull request on GitHub, "
      "merges it, and verifies it through a second channel. Applied. Then it writes the decision back into FalkorDB, so "
      "the next incident starts warm."),
+    # --- 3b. on call, then the same graph's other jobs (v4). The recorder checks each claim against the page and the
+    # graph: "on call for the owning team" (the paged person is the on-call the incident's who_fixes evidence names),
+    # the ack stopping the escalation, "one use" / "seven days" (the contract's scope), "zero people woken" (the repeat
+    # incident's pages), "contradicts two decisions" (preflight), "moved up from number two" (the plan). Beats time
+    # their actions to cue words with a fallback; a number or claim the page does not back stops the take.
+    ("oc_page", 0.8,
+     "Faultline also runs the pager. The moment the gate confirms a cause, it pages whoever the graph says is on call "
+     "for the owning team. On their phone: the verdict, the proof path, and who should fix it."),
+    ("oc_ack", 0.5,
+     "One tap acknowledges it. The escalation stops, and the graph records who answered."),
+    ("oc_telegram", 0.5,
+     "The same page reaches Telegram, on the on-call's own phone."),
+    ("oc_contract", 0.6,
+     "After a verified fix, the on-call can grant a standing approval for exactly this repeat: one use, seven days. "
+     "When the same fault comes back, the gate still has to prove the cause. Then the same fix runs, a second real "
+     "pull request merges, and it verifies. Handled while you slept. Zero people woken."),
     ("preflight", 0.6,
      "The same graph guards the next deploy. This pull request drops payment retries, and it contradicts two "
      "decisions the team already made. Blocked, before it ships."),
     ("brain", 0.5,
      "And it's the team's memory. Who decided the payment timeout, and are they still here? Every name in the answer "
      "comes from a query."),
+    ("learn", 0.6,
+     "It learns from the people using it, too: the fixes your team prefers, and why, the guidelines they set, and who "
+     "actually answers the page. The next plan puts your team's choice first: moved up from number two."),
+    ("engine", 0.6,
+     "And FalkorDB shows its own work. From inside the engine: the memory each graph takes, every query's timing from "
+     "the engine's own telemetry, and the live tail as queries run."),
     # --- 4. the proof, honestly
     ("numbers", 0.8,
      "Now, the numbers, honestly. We generated {deep.fresh.all.cases} worlds built to fool it. Faultline made "
      "{deep.fresh.all.wrong_confident} confident wrong blames. It named the right cause in "
      "{deep.fresh.all.right_cause} of the {deep.fresh.all.cause_cases} worlds with a real cause, and on the rest it said: "
      "not sure. A strong language model, given the same telemetry on the same worlds, found more causes, and blamed an "
-     "innocent change {llm_deep.deep.all.wrong_confident} times. On call, a wrong rollback costs far more than an "
-     "honest not sure."),
+     "innocent change {llm_deep.deep.all.wrong_confident} times. Then we broke a real system: the OpenTelemetry Demo, "
+     "with its own fault flags and its real telemetry. Faultline named the right cause in "
+     "{otel.faultline.right_cause.k} of {otel.faultline.right_cause.n} faults, with {otel.faultline.wrong.k} wrong blames "
+     "in {otel.faultline.wrong.n} windows. A threshold on the same telemetry was wrong {otel.Tplus.wrong.k} times. On "
+     "call, a wrong rollback costs far more than an honest not sure."),
     ("cost", 0.5,
      "And refusing is cheap. Proving there is no path takes FalkorDB "
      "{perf.acme.shortest_causal_path.falkordb_engine_p50} milliseconds, and zero tokens. A language model just "

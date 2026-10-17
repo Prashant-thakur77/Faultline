@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Faultline: a page, at a phone's size</title>
+<!-- Demo-video on-call beats (frontend/scripts/record_demo_video.py): a real, live Faultline page view
+     (/oncall/page/<id>) framed at a phone's size, 390 × 844 CSS px, inside the 1536 × 864 video. The recorder sets what
+     the frame shows with window.__phone({src, title, note, kicker}); src must be a same-origin path. The frame is plain
+     on purpose: no status bar, no notch, no operating-system chrome. It is the web page rendered at a phone's width,
+     not a picture of a phone, and the label says so. Opened without a src, the page says that instead of showing an
+     empty frame. The page link's ack token travels only in the frame's src and is never written on screen. -->
+<style>
+  :root { --bg:#08090a; --ink:#fafafa; --muted:#8a8f98; --ember:oklch(0.72 0.19 45); --iris:oklch(0.66 0.19 290); --red:oklch(0.68 0.2 25); }
+  html, body { height:100%; margin:0; background:var(--bg); color:var(--ink); overflow:hidden; }
+  body {
+    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+    background:
+      radial-gradient(40% 46% at 12% 8%, color-mix(in oklch, var(--iris) 16%, transparent), transparent 78%),
+      radial-gradient(36% 40% at 92% 96%, color-mix(in oklch, var(--ember) 12%, transparent), transparent 78%),
+      var(--bg);
+  }
+  main { height:100%; display:flex; align-items:center; justify-content:center; gap:84px; box-sizing:border-box; padding:0 48px; }
+  .side { max-width:520px; display:flex; flex-direction:column; gap:18px; }
+  .kicker { display:flex; align-items:center; gap:12px; margin:0; font:500 14px/1 ui-monospace, "Geist Mono", monospace;
+            letter-spacing:.22em; text-transform:uppercase; color:#c4c7cc; }
+  .kicker .dot { width:10px; height:10px; border-radius:50%; background:var(--red); box-shadow:0 0 18px var(--red); }
+  h1 { margin:0; font-size:44px; font-weight:750; letter-spacing:-0.035em; line-height:1.06; }
+  .note { margin:0; font-size:19px; line-height:1.45; color:#d4d4d8; }
+  .size { margin:6px 0 0; font:500 13px/1.4 ui-monospace, "Geist Mono", monospace; letter-spacing:.04em; color:var(--muted); }
+  /* the frame: 390 × 844 of real page plus a thin bezel, 860 px tall in an 864 px frame */
+  .phone { flex:none; padding:7px; border-radius:46px; background:#050506;
+           box-shadow:0 0 0 1px rgba(255,255,255,.16), 0 0 0 2px rgba(0,0,0,.9), 0 40px 90px -30px rgba(0,0,0,.9); }
+  iframe { display:block; width:390px; height:844px; border:0; border-radius:39px; background:var(--bg); }
+  .err { position:fixed; left:50%; bottom:28px; transform:translateX(-50%); margin:0; border:1px solid rgba(248,113,113,.6);
+         background:rgba(239,68,68,.14); color:#fecaca; padding:12px 16px; border-radius:10px; font-size:15px; }
+  [hidden] { display:none !important; }
+</style>
+</head>
+<body data-state="empty">
+  <main>
+    <section class="side" aria-labelledby="title">
+      <p class="kicker"><span class="dot" aria-hidden="true"></span><span id="kicker">On call</span></p>
+      <h1 id="title">The page, on a phone</h1>
+      <p id="note" class="note"></p>
+      <p class="size">The live page view at a phone's width: 390 × 844</p>
+    </section>
+    <div class="phone"><iframe id="phone" title="The Faultline page view at a phone's size"></iframe></div>
+  </main>
+  <p id="err" class="err" role="alert" hidden></p>
+<script>
+  var frame = document.getElementById("phone"), err = document.getElementById("err");
+  function fail(text) { err.textContent = text; err.hidden = false; document.body.dataset.state = "error"; }
+  function text(id, v) { if (typeof v === "string") document.getElementById(id).textContent = v; }
+  // o: {src: "/oncall/page/<id>?tenant=…&t=…", title, note, kicker}. Only a same-origin path is accepted.
+  window.__phone = function (o) {
+    o = o || {};
+    if (typeof o.src !== "string" || o.src.charAt(0) !== "/" || o.src.charAt(1) === "/") {
+      fail("No page to show: the recorder passes a same-origin path to window.__phone({src}).");
+      return false;
+    }
+    text("title", o.title); text("note", o.note); text("kicker", o.kicker);
+    err.hidden = true;
+    document.body.dataset.state = "loading";
+    frame.onload = function () { document.body.dataset.state = "ready"; };
+    frame.src = o.src;
+    return true;
+  };
+  setTimeout(function () {
+    if (document.body.dataset.state === "empty") fail("No page to show: this frame is driven by the demo recorder (window.__phone).");
+  }, 4000);
+</script>
+</body>
+</html>

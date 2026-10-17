@@ -1,11 +1,28 @@
 """
 Records the narrated demo video (docs/DEMO_SCRIPT.md) from the real UI with Playwright, timed to the voice.
 
-Story first: the problem (a card), the website (the hero and its 3D cube, the system map, the proof story, the product
-tour), then a live run of the hero incident in the incident room, Break it, preflight, the company brain, the proof
-charts, the live deployment and the end card. Every beat keys to a narration segment (tmp/narration/timing.json,
-written by frontend/scripts/narrate.py) and starts at that segment's start; actions inside a beat are timed to the
-words they show (the share of the segment's text before the word).
+Story first (cut v4): the problem (a card), the website's hero and its 3D cube, the FalkorDB explainer, then a live run
+of the hero incident in the incident room through to a real pull request, then on call (the page, at a phone's size;
+the ack; the Telegram still; a standing approval and the same fault fixed while nobody is woken), what Faultline
+learned, FalkorDB observing itself (/engine), the proof charts, the live deployment and the end card. Every beat keys
+to a narration segment (tmp/narration/timing.json, written by frontend/scripts/narrate.py) and starts at that
+segment's start; actions inside a beat are timed to the words they show (the share of the segment's text before the
+word). The on-call, learn and engine beats use cue words with a fallback share of the segment (their narration is
+still being worded), so rewording never stops a take; what the voice claims is still checked against the page.
+The preflight and brain beats of earlier cuts are kept and run only when the narration has those segments.
+
+On call (v4): by the time the oc_* beats air, the take's own incident is RESOLVED and its pages are settled, so right
+after its fix is APPLIED the recorder opens incident B (a second run of the hero scenario, through the API, off
+screen) whose page still waits for an ack; oc_page shows it in /oncall and, at a phone's size, in media/phone.html
+(the live page view in a 390x844 frame); oc_ack taps Acknowledge there. oc_contract grants a standing approval on the
+take's incident (two steps, in the incident room), then runs the same fault again as incident C (through the API, as
+evals/oncall_night.py does) and shows it handled under the contract with nobody woken (/oncall's contracts panel, the
+stat tile, the contract-notice page). A real take needs --real-repeat for that: after the take's fix the flag is off
+at GitHub main, so the recorder turns it back on (one commit to flags.json on main of the demo infra repo: the fault
+comes back) before B and C open; C's contract then merges a second real pull request. The recorder refuses to start
+with an active contract (it would fix the take's own incident without a human) and when the ack window is shorter than
+the beats need. oc_telegram shows media/telegram.html: the real screenshot frontend/public/media/telegram.png, or a
+"screenshot pending" card (a dry run warns; a real take refuses to start without the screenshot).
 
 Pre-roll (trimmed): it checks the API, re-arms the tenant (with its confirm step), runs the hero scenario once to read
 and check every value the take depends on, and confirms WebGL works for the cube. Only then does the kept footage
@@ -22,10 +39,12 @@ beat actually started (adelay per segment), so the voice never drifts from the p
 plus any such pushes plus a 2 s tail.
 
 Real GitHub (--real-github): the API must run with FAULTLINE_GITHUB=real and FAULTLINE_APPROVER_KEY. The recorder reads
-the approver key from the file in $FAULTLINE_APPROVER_KEY_FILE, types it into the password-type approver key field
-(masked with CSS if it were ever plain text) and never prints it. It refuses to start unless the flag is "on" at main
-of the demo infra repo (gh api). Without --real-github the take uses the simulated GitHub: a "dry run" badge is shown
-from the approval on, and the github.com shot shows the real PR an earlier real take merged (checked with gh).
+the approver key from the file in $FAULTLINE_APPROVER_KEY_FILE, types it into the password-type approver key fields
+(the approval and the contract grant; masked with CSS if one were ever plain text) and never prints it. It refuses to
+start unless the flag is "on" at main of the demo infra repo (gh api). Without --real-github the take uses the
+simulated GitHub: a "dry run" badge is shown from the approval on, and the github.com shot shows the real PR an
+earlier real take merged (checked with gh). On a public API (FAULTLINE_PUBLIC) the scripted runs B and C are trusted
+runs only with the approver key: a dry run then reads it from the same file and sends it as a header, never printed.
 
 Outputs:
   --out (real: docs/media/demo.mp4; simulated: tmp/demo-video/narrated_sim.mp4)
@@ -34,17 +53,21 @@ Outputs:
   docs/media/hero.gif        G2 rejection -> G5 rejection -> proof path; only with --gif
   <work>/meta.json           segment starts, pushes, the facts read from the page
 With --no-encode (dry run) only <work>/ is written: the raw .webm, captions.srt and meta.json.
+--from-segment SID [--to-segment SID] (simulated takes only; implies --no-encode) records part of the take: the beats
+before SID still run, fast and untimed, so the state the later beats need is real (the run, the approval, B, ...);
+the kept footage starts at SID. For trying beats without a whole take.
 
 Usage (API on --api, production UI on --ui):
   .venv/bin/python frontend/scripts/record_demo_video.py --ui http://localhost:3000 --api http://localhost:8400 \
       --narration tmp/narration --chromium ~/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome \
-      [--real-github] [--gif] [--no-encode] [--out PATH]
+      [--real-github --real-repeat] [--gif] [--no-encode] [--from-segment oc_page --to-segment engine] [--out PATH]
 """
 
 from __future__ import annotations
 
 import argparse
 import base64
+import hashlib
 import html
 import json
 import math
@@ -55,13 +78,15 @@ import subprocess
 import sys
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
 
-from playwright.sync_api import Locator, Page, expect, sync_playwright
+from playwright.sync_api import Frame, FrameLocator, Locator, Page, expect, sync_playwright
+from playwright.sync_api import TimeoutError as PlaywrightTimeout
 
 ROOT = Path(__file__).resolve().parents[2]
 PUBLIC_MEDIA = ROOT / "frontend" / "public" / "media"
@@ -75,13 +100,23 @@ MUSIC_GAIN = 0.30  # the music bed under the voice, before ducking
 GITHUB_SHOT = 4.0  # silent seconds on the merged PR at github.com after the approval beat
 MIN_GAP = 0.25  # the shortest pause between two segments when a beat ran long
 
-# The beats, in narration order. The recorder refuses a narration whose segments differ.
-SEGMENT_IDS = ["problem", "whyhard", "idea", "cube", "x_tenant", "x_matrices", "x_blast", "x_path", "x_flow", "x_cut",
-               "x_who", "x_readonly", "x_unplug", "run", "g2", "g5", "proof", "contain", "act", "preflight", "brain",
-               "numbers", "cost", "close"]
-CHARTS = ["deep", "cost", "live"]  # the proof beats (live: the close)
 EXPLAINER = ["x_tenant", "x_matrices", "x_blast", "x_path", "x_flow", "x_cut", "x_who", "x_readonly", "x_unplug"]  # /explainer scenes, in order
+ONCALL = ["oc_page", "oc_ack", "oc_telegram", "oc_contract"]  # v4: the page, the ack, the Telegram still, a contract
+# The beats, in narration order (cut v4). The recorder refuses a narration whose segments differ.
+SEGMENT_IDS = ["problem", "whyhard", "idea", "cube", *EXPLAINER, "run", "g2", "g5", "proof", "contain", "act", *ONCALL,
+               "preflight", "brain", "learn", "engine", "numbers", "cost", "close"]
+# The proof beats' charts (media/proof.html#<name>), per segment, in the order shown; several in one segment share it
+# evenly, or "name@word" shows it when the voice reaches that word. "close" shows its charts before "Any agent".
+# Every name listed must be drawn into docs/media/charts/<name>.svg (scripts/gen_charts.py), copied byte for byte to
+# frontend/public/media/charts/ and known to proof.html's CHARTS; the recorder refuses to start otherwise.
+PROOF_CHARTS: dict[str, list[str]] = {"numbers": ["deep", "otel@real system"], "cost": ["cost"], "close": ["live"]}
+# Hooks for the newer benches' charts: proof.html knows these names; list one above (e.g. "numbers": ["deep", "otel"])
+# once scripts/gen_charts.py draws it, and the check above applies to it.
+CHART_HOOKS = ["otel", "tenants", "algo"]
+CHARTS = [c.split("@")[0] for cs in PROOF_CHARTS.values() for c in cs]
 NUM_WORDS = {w: i for i, w in enumerate("zero one two three four five six seven eight nine ten eleven twelve".split())}
+MIN_ACK_WINDOW_S = 150  # a page must wait at least this long for its ack, or B escalates before the oc_ack beat taps it
+PAGE_POLL_S = 2.5  # GET /api/pages is limited to 60 a minute per address, and the UI polls it too
 
 DEFAULTS = {
     "infra_repo": "Prashant-thakur77/faultline-demo-infra",
@@ -95,6 +130,8 @@ DEFAULTS = {
     "distractor_path": "D-rec-12",    # rejected by G2 (no path)
     "distractor_flow": "D-email-88",  # rejected by G5 (not enough flow)
     "pg_choice": r"^Remove the call payment",
+    "contract_uses": "1",   # the standing approval granted in oc_contract: one repeat (used up by incident C) ...
+    "contract_days": "7",   # ... for a week; the narration's "one use, seven days" is checked against these
 }
 
 # Before any page script: skip the home intro (odometer) except when a beat asks for it, and draw a visible pointer
@@ -226,6 +263,9 @@ class Director:
         self.chips: dict[str, tuple[str, str]] = {}
         self.mouse = (VIEW["width"] / 2, VIEW["height"] / 2)
         self.offset = 0.0
+        # partial takes (--from-segment): until `live_from` begins, beats run fast and untimed (nothing is kept)
+        self.fast = False
+        self.live_from: str | None = None
 
     def now(self) -> float:
         return time.monotonic() - (self.t0 or time.monotonic())
@@ -234,6 +274,8 @@ class Director:
         self.t0 = time.monotonic()
 
     def until(self, t: float) -> None:
+        if self.fast:
+            return
         d = t - self.now()
         if d > 0:
             self.page.wait_for_timeout(int(d * 1000))
@@ -242,11 +284,17 @@ class Director:
         """Start a beat at its segment's start, or right after the previous segment's audio if that ran late
         (a push is won back inside the narration's gaps; two segments never overlap)."""
         seg = self.segs[sid]
+        if self.fast and sid == self.live_from:   # a partial take: the kept footage starts here, on its cue
+            self.fast = False
+            self.t0 = time.monotonic() - seg.start
+            self.actual.clear()
+            self.cur = None
+            self.marks = {"sync": 0.0}
         prev = self.cur
         target = seg.start if prev is None else max(seg.start, self.actual[prev.id] + prev.length + MIN_GAP)
         self.until(target)
         a = self.now()
-        if a - target > 0.3:
+        if a - target > 0.3 and not self.fast:
             print(f"  segment {sid} starts {a - target:.1f} s after its cue (the previous beat ran long)", file=sys.stderr)
         self.shift = a - seg.start
         self.actual[sid] = a
@@ -276,12 +324,28 @@ class Director:
     def at_word(self, w: str, lead: float = 0.0, nth: int = 1) -> None:
         self.at(max(0.0, self.word(w, nth) - lead))
 
+    def says(self, w: str) -> bool:
+        assert self.cur
+        return re.search(rf"(?<!\w){re.escape(w)}(?!\w)", self.cur.text, re.I) is not None
+
+    def at_cue(self, words: tuple[str, ...], frac: float, lead: float = 0.0) -> None:
+        """at_word for beats whose narration is still being worded: the first of `words` the segment says, else
+        `frac` of the segment (said once on stderr, so the beat can be re-timed). Claims are checked elsewhere."""
+        assert self.cur
+        for w in words:
+            if self.says(w):
+                self.at_word(w, lead)
+                return
+        if not self.fast:
+            print(f"  note: segment {self.cur.id} says none of {list(words)}; cued at {frac:.0%} of it", file=sys.stderr)
+        self.at(max(0.0, self.cur.length * frac - lead))
+
     def end(self, slack: float = 0.0) -> None:
         assert self.cur
         self.at(self.cur.length - slack)
 
     def wait(self, ms: int) -> None:
-        self.page.wait_for_timeout(ms)
+        self.page.wait_for_timeout(min(ms, 120) if self.fast else ms)
 
     def chip(self, key: str, text: str | None, where: str = "badge") -> None:
         if text:
@@ -319,6 +383,8 @@ class Director:
         self.move_xy(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2, ms)
 
     def move_xy(self, x: float, y: float, ms: int = 420) -> None:
+        if self.fast:
+            ms = min(ms, 60)
         x0, y0 = self.mouse
         n = max(4, ms // 30)
         for i in range(1, n + 1):
@@ -449,11 +515,144 @@ def check_api(api: str, tenant: str, real: bool) -> dict:
 
 def check_media(ui: str) -> None:
     """The static pages must be served by the running UI (Next serves public/ files present at build time)."""
-    for name in ["hook.html", "proof.html", "open.html", "end.html", *[f"charts/{c}.svg" for c in CHARTS]]:
+    for name in ["hook.html", "proof.html", "open.html", "end.html", "phone.html", "telegram.html",
+                 *[f"charts/{c}.svg" for c in CHARTS]]:
         http_get(f"{ui.rstrip('/')}/media/{name}")
-    if b"__step" not in http_get(f"{ui.rstrip('/')}/media/hook.html") or \
-            b"__llm" not in http_get(f"{ui.rstrip('/')}/media/proof.html"):
-        raise fail("the UI serves older hook.html/proof.html than frontend/public/media; rebuild and restart it")
+    proof = http_get(f"{ui.rstrip('/')}/media/proof.html").decode("utf-8", "replace")
+    if b"__step" not in http_get(f"{ui.rstrip('/')}/media/hook.html") or "__llm" not in proof or \
+            b"__phone" not in http_get(f"{ui.rstrip('/')}/media/phone.html") or \
+            b"telegram.png" not in http_get(f"{ui.rstrip('/')}/media/telegram.html"):
+        raise fail("the UI serves older media pages than frontend/public/media; rebuild and restart it")
+    for c in CHARTS:
+        if not re.search(rf"^\s*{re.escape(c)}\s*:\s*\"", proof, re.M):
+            raise fail(f"media/proof.html does not know the chart {c!r}: add it to its CHARTS (title = the alt text)")
+    # media/phone.html frames the live page view: a UI behind a proxy that forbids framing (the deployment's Caddy
+    # sends X-Frame-Options DENY) would show an empty phone, so record on a UI without it (next start)
+    try:
+        with urllib.request.urlopen(f"{ui.rstrip('/')}/oncall", timeout=15) as r:  # noqa: S310 - our own UI
+            xfo, csp = (r.headers.get("X-Frame-Options") or "").upper(), r.headers.get("Content-Security-Policy") or ""
+    except (urllib.error.URLError, OSError) as e:
+        raise fail(f"GET {ui}/oncall failed: {e}") from None
+    if xfo == "DENY" or re.search(r"frame-ancestors\s+'none'", csp):
+        raise fail(f"{ui} forbids framing its pages (X-Frame-Options/frame-ancestors), so media/phone.html cannot show "
+                   "the page at a phone's size: record against the UI itself (next start), not the proxy")
+
+
+def http_try(url: str, timeout: float = 15.0) -> tuple[int, bytes]:
+    """GET that reports a 404 instead of raising (an unreachable server still fails loudly)."""
+    try:
+        with urllib.request.urlopen(url, timeout=timeout) as r:  # noqa: S310 - our own servers
+            return r.status, r.read()
+    except urllib.error.HTTPError as e:
+        return e.code, b""
+    except (urllib.error.URLError, OSError) as e:
+        raise fail(f"GET {url} failed: {e}") from None
+
+
+def check_telegram(ui: str, real: bool) -> dict:
+    """The oc_telegram still: frontend/public/media/telegram.png, served as it is on disk. Missing: a real take refuses
+    (the final cut never shows the pending card); a dry run warns and shows the pending card."""
+    disk = PUBLIC_MEDIA / "telegram.png"
+    code, body = http_try(f"{ui.rstrip('/')}/media/telegram.png")
+    if not disk.exists():
+        if code == 200:
+            raise fail("the UI serves a media/telegram.png that frontend/public/media no longer has: rebuild and restart it")
+        if real:
+            raise fail("the oc_telegram beat needs the real screenshot from the on-call's phone: save it as "
+                       "frontend/public/media/telegram.png, rebuild and restart the UI (a real take never shows the "
+                       "'screenshot pending' card)")
+        print("  warning: frontend/public/media/telegram.png is missing; oc_telegram shows the 'screenshot pending' card",
+              file=sys.stderr)
+        return {"state": "pending"}
+    data = disk.read_bytes()
+    if not data.startswith(b"\x89PNG\r\n\x1a\n"):
+        raise fail("frontend/public/media/telegram.png is not a PNG (telegram.html loads exactly that file)")
+    if code != 200:
+        raise fail(f"frontend/public/media/telegram.png exists but the UI answers HTTP {code} for it: rebuild and "
+                   "restart the UI (Next serves only public files present when it started)")
+    if body != data:
+        raise fail("the UI serves an older media/telegram.png than frontend/public/media has: rebuild and restart it")
+    return {"state": "shot", "sha256": hashlib.sha256(data).hexdigest()[:16], "bytes": len(data)}
+
+
+# ------------------------------------------------------------------ the API, for the scripted steps (B, C) and checks
+
+def api_req(api: str, method: str, path: str, body: dict | None = None, headers: dict | None = None,
+            timeout: float = 30.0) -> Any:
+    """One JSON call to our API. Errors name the method, path, status and the server's detail, never a header (the
+    approver key and run tokens only ever travel in headers)."""
+    req = urllib.request.Request(f"{api.rstrip('/')}{path}", method=method,
+                                 data=None if body is None else json.dumps(body).encode(),
+                                 headers={"Content-Type": "application/json", **(headers or {})})
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:  # noqa: S310 - our own API
+            raw = r.read()
+    except urllib.error.HTTPError as e:
+        try:
+            detail = json.loads(e.read() or b"{}").get("detail")
+        except (ValueError, AttributeError):
+            detail = None
+        raise fail(f"{method} {path.split('?')[0]} answered HTTP {e.code}: {detail or e.reason}") from None
+    except (urllib.error.URLError, OSError) as e:
+        raise fail(f"{method} {path.split('?')[0]} failed: {e}") from None
+    return json.loads(raw) if raw else None
+
+
+def open_page(p: dict) -> bool:
+    return p.get("kind") in ("page", "escalation") and p.get("status") in ("sent", "delivery_failed")
+
+
+def check_oncall_api(api: str, tenant: str, S: dict[str, Seg]) -> dict:
+    """Before the browser starts, for the v4 beats: no active contract (it would fix the take's own incident without a
+    human), what the learn beat's voice names is in the graph, /engine answers, and the counters the take compares
+    against later. Returns {"public", "handled_before", "channels"}."""
+    q = f"tenant={urllib.parse.quote(tenant)}"
+    out: dict[str, Any] = {"public": False, "handled_before": None, "channels": []}
+    if any(s in S for s in ONCALL) or "learn" in S:
+        active = [c for c in api_req(api, "GET", f"/api/contracts?{q}")["rows"] if c.get("status") == "active"]
+        if active:
+            raise fail(f"active contract(s) {', '.join(c['id'] for c in active)}: one would fix the take's own incident "
+                       "without a human. Revoke them on /oncall (Contracts, Revoke) first")
+        learned = api_req(api, "GET", f"/api/learned?{q}")
+        out["public"] = bool((learned.get("trust") or {}).get("public"))
+        out["handled_before"] = api_req(api, "GET", f"/api/oncall/stats?{q}&days=7").get("handled_under_contract")
+        out["channels"] = [c.get("channel") for c in api_req(api, "GET", f"/api/pages?{q}&status=open").get("channels")
+                           or [] if c.get("configured")]
+        if "learn" in S:
+            text = S["learn"].text.lower()
+            need = [("preferences", "prefer", lambda r: r.get("line")),
+                    ("guidelines", "guideline", lambda r: r.get("status") in ("proposed", "active")),
+                    ("responders", "respond", lambda r: True)]
+            for sec, word, ok in need:
+                if word in text and not any(ok(r) for r in (learned.get(sec) or {}).get("rows") or []):
+                    raise fail(f"the learn narration speaks of {sec}, and the tenant has learned none yet "
+                               "(GET /api/learned): run incidents with trusted approvals, acks and rejections first")
+    if "engine" in S:
+        api_req(api, "GET", f"/api/engine/insight?{q}")
+    return out
+
+
+def numbers_said(text: str, pattern: str) -> list[int]:
+    """Every number the text says where `pattern` (one group: the number, as digits or a word) matches."""
+    out = []
+    for m in re.finditer(pattern, text, re.I):
+        w = m.group(1).lower()
+        n = int(w) if w.isdigit() else NUM_WORDS.get(w)
+        if n is not None:
+            out.append(n)
+    return out
+
+
+def check_contract_scope(S: dict[str, Seg], uses: int, days: int) -> None:
+    """The scope typed into the grant (--contract-uses/--contract-days) is the one the voice says."""
+    if "oc_contract" not in S:
+        return
+    if not (1 <= uses <= 10 and 1 <= days <= 30):
+        raise fail(f"contract scope {uses} uses / {days} days is outside the grant form's limits (1-10 uses, 1-30 days)")
+    for pat, n, what in ((r"\b(\w+) uses?\b", uses, "--contract-uses"), (r"\b(\w+) days?\b", days, "--contract-days")):
+        said = numbers_said(S["oc_contract"].text, pat)
+        if said and any(x != n for x in said):
+            raise fail(f"the oc_contract narration says {said}, the take grants {n} ({what})")
 
 
 def check_charts() -> None:
@@ -522,6 +721,30 @@ def flag_state(repo: str, flag: str) -> str | None:
     return ((doc.get("flags") or {}).get(flag) or {}).get("state")
 
 
+def flag_back_on(repo: str, flag: str) -> str | None:
+    """--real-repeat (real take): the fault comes back. One commit to flags.json on main of the demo infra repo that
+    sets `flag` back to "on" (only that value changes), so incidents B and C find on at main what the take's fix turned
+    off, and C's contract merges a real pull request again. Returns the commit's URL (None: it was on already)."""
+    d = gh("api", f"repos/{repo}/contents/flags.json?ref=main")
+    raw = base64.b64decode(d["content"]).decode()
+    doc = json.loads(raw)
+    state = ((doc.get("flags") or {}).get(flag) or {}).get("state")
+    if state == "on":
+        return None
+    if state is None:
+        raise fail(f"{flag} is not in flags.json at main of {repo}")
+    new, n = re.subn(rf'("{re.escape(flag)}"\s*:\s*\{{[^{{}}]*?"state"\s*:\s*)"{re.escape(state)}"', r'\1"on"', raw,
+                     count=1)
+    want = json.loads(raw)
+    want["flags"][flag]["state"] = "on"
+    if n != 1 or json.loads(new) != want:
+        raise fail(f"could not change only {flag}'s state in flags.json at main of {repo}; turn it on by hand")
+    res = gh("api", "-X", "PUT", f"repos/{repo}/contents/flags.json",
+             "-f", f"message=demo take: {flag} back on (the same fault again, for the standing-approval beat)",
+             "-f", f"content={base64.b64encode(new.encode()).decode()}", "-f", f"sha={d['sha']}", "-f", "branch=main")
+    return ((res or {}).get("commit") or {}).get("html_url") or "committed"
+
+
 def pr_merged(url: str, wait_s: float = 0.0) -> dict:
     t_end = time.monotonic() + wait_s
     while True:
@@ -539,10 +762,10 @@ def issue_info(ref: str) -> dict:
     return gh("issue", "view", num, "-R", repo, "--json", "title,state,url,number")
 
 
-def read_key() -> str:
+def read_key(why: str = "--real-github") -> str:
     path = os.environ.get("FAULTLINE_APPROVER_KEY_FILE")
     if not path:
-        raise fail("--real-github needs FAULTLINE_APPROVER_KEY_FILE (a file holding the approver key)")
+        raise fail(f"{why} needs FAULTLINE_APPROVER_KEY_FILE (a file holding the approver key)")
     try:
         key = Path(path).expanduser().read_text().strip()
     except OSError as e:
@@ -574,7 +797,12 @@ def read_room(page: Page, a: argparse.Namespace) -> tuple[SimpleNamespace, dict]
         "els => els.map(e => e.getAttribute('aria-label'))")
     suspects = sorted({re.match(r"Checks for (\S+)", x).group(1) for x in labels if x} - {"NO_INCIDENT"})
     L.root = page.locator("section[aria-labelledby='root-h']")
-    chain = L.root.get_by_role("list", name="Mechanism chain").get_by_role("button").all_inner_texts()
+    links = L.root.get_by_role("list", name="Mechanism chain").get_by_role("button")
+    try:   # the root-cause card can render a moment after the pause line (the check below says what is missing)
+        expect(links.nth(1)).to_be_visible(timeout=20_000)
+    except AssertionError:
+        pass
+    chain = links.all_inner_texts()
     if len(chain) < 2:
         raise fail(f"no mechanism chain on the page: {chain}")
     L.cause = L.gate.get_by_role("list", name=re.compile(rf"^Checks for {re.escape(chain[0])}\b")).first
@@ -609,13 +837,652 @@ def first_changed(page: Page) -> tuple[str, str, str]:
     return name, before[:80], after[:80]
 
 
+# ------------------------------------------------------------------ v4 beats: on call, what it learned, the engine
+
+@dataclass
+class Take:
+    """What the v4 beats share. `key`: the real-GitHub approver key (typed into password fields only). `api_key`: sent
+    as a header on the scripted calls of a public API only (trusted runs B and C). Run tokens stay in `tokens`. None of
+    them is printed or kept in facts."""
+    a: argparse.Namespace
+    page: Page
+    d: Director
+    S: dict[str, Seg]
+    facts: dict
+    ui: str
+    key: str | None
+    api_key: str | None
+    public: bool
+    handled_before: int | None
+    inc_a: str | None = None          # the take's incident, fixed and APPLIED: the contract is granted on it
+    b: dict | None = None             # incident B (a page that still waits for an ack): {"incident", "job", "graph"}
+    c: dict | None = None             # incident C: the same fault again, handled under the contract
+    pg: dict | None = None            # B's page: shown in oc_page, acked in oc_ack
+    phone: FrameLocator | None = None
+    tokens: dict[str, str] = field(default_factory=dict)
+
+    @property
+    def q(self) -> str:
+        return f"tenant={urllib.parse.quote(self.a.tenant)}"
+
+    def api(self, method: str, path: str, body: dict | None = None, run_token: str | None = None,
+            keyed: bool = False, timeout: float = 30.0) -> Any:
+        h = {"X-Faultline-Run-Token": run_token} if run_token else {}
+        if keyed and self.public and self.api_key:
+            h["X-Faultline-Approver-Key"] = self.api_key
+        return api_req(self.a.api, method, path, body, h, timeout)
+
+
+def incident_of(url: str) -> str:
+    m = re.search(r"/incidents/([^/?#]+)", url)
+    if not m:
+        raise fail(f"not an incident room: {url}")
+    return urllib.parse.unquote(m.group(1))
+
+
+def start_run(t: Take, why: str) -> dict:
+    """The hero scenario once more, through the API exactly as evals/oncall_night.py drives it (the deterministic
+    investigator). Off the public demo a run is trusted; on it, the approver key header makes it so. The run token is
+    kept for this incident only, never shown."""
+    r = t.api("POST", f"/api/scenarios/{urllib.parse.quote(t.a.scenario)}/run", {"llm": "baseline"}, keyed=True)
+    inc = r.get("incident")
+    if not inc:
+        raise fail(f"{why}: the run opened no incident (job state {r.get('state')!r})")
+    if r.get("run_token"):
+        t.tokens[inc] = r["run_token"]
+    return {"incident": inc, "job": r.get("job"), "graph": r.get("graph")}
+
+
+def stage_of(t: Take, inc: str) -> str:
+    return t.api("GET", f"/api/incidents/{urllib.parse.quote(inc)}?{t.q}")["incident"]["stage"]
+
+
+def wait_stage(t: Take, inc: str, stages: tuple[str, ...], timeout: float, why: str) -> str:
+    end = time.monotonic() + timeout
+    while True:
+        st = stage_of(t, inc)
+        if st in stages:
+            return st
+        if time.monotonic() > end:
+            raise fail(f"{why}: {inc} is still {st} after {timeout:.0f} s")
+        t.page.wait_for_timeout(500)
+
+
+def wait_job(t: Take, job: str, timeout: float, why: str) -> dict:
+    """Until the run job is done: a standing contract acts BEFORE the job reads done (api._run_job)."""
+    end = time.monotonic() + timeout
+    while True:
+        j = t.api("GET", f"/api/jobs/{job}?{t.q}")
+        if j.get("state") != "running":
+            return j
+        if time.monotonic() > end:
+            raise fail(f"{why}: job {job} still running after {timeout:.0f} s")
+        t.page.wait_for_timeout(700)
+
+
+def pages_of(t: Take, inc: str) -> list[dict]:
+    return t.api("GET", f"/api/pages?{t.q}&incident={urllib.parse.quote(inc)}")["rows"]
+
+
+def page_row(t: Take, pid: str, inc: str | None = None) -> dict:
+    d = t.api("GET", f"/api/pages/{urllib.parse.quote(pid)}?{t.q}", run_token=t.tokens.get(inc or ""))
+    return d.get("page") or {}
+
+
+def woken(rows: list[dict]) -> list[str]:
+    """People woken for an incident: paged or escalated to (a contract notice informs, it never wakes)."""
+    return sorted({(p.get("person") or {}).get("id") or "?" for p in rows if p.get("kind") in ("page", "escalation")})
+
+
+def expect_text(loc: Locator, pattern: str, what: str, timeout: float = 20.0) -> str:
+    """Wait for an element of `loc` whose text matches `pattern` (re.search) to be visible; its text, or fail."""
+    hit = loc.filter(has_text=re.compile(pattern)).first
+    try:
+        expect(hit).to_be_visible(timeout=timeout * 1000)
+    except AssertionError:
+        got = " | ".join(x.strip() for x in loc.all_inner_texts()) or "(not on the page)"
+        raise fail(f"{what}: the page shows {got!r}, expected /{pattern}/") from None
+    return hit.inner_text().strip()
+
+
+SETTLE_JS = """(s) => {
+  const n = document.querySelectorAll(s).length, now = performance.now();
+  if (n !== 1) { window.__settle = null; return false; }
+  if (!window.__settle || window.__settle.s !== s) { window.__settle = {s, t: now}; return false; }
+  return now - window.__settle.t > 600;
+}"""
+
+
+def settle(where: Page | Frame, sel: str, what: str, timeout: float = 25.0) -> None:
+    """Until exactly one `sel` has been on the page for 0.6 s. A route's first mount can briefly hold two copies of its
+    tree (the second still reading), and strict locators, flashes and clicks must act on the one that stays."""
+    try:
+        where.wait_for_function(SETTLE_JS, arg=sel, polling=100, timeout=timeout * 1000)
+    except PlaywrightTimeout:
+        n = where.locator(sel).count()
+        raise fail(f"{what}: {n} copies of {sel} after {timeout:.0f} s (the page never settled)") from None
+
+
+def said_alert(scope: Page | FrameLocator | Locator) -> Locator:
+    """Alerts that say something (Next's route announcer is an always-present, empty role=alert)."""
+    return scope.get_by_role("alert").filter(has_text=re.compile(r"\S"))
+
+
+def show_phone(t: Take, src: str, title: str, note: str, kicker: str) -> FrameLocator:
+    """media/phone.html: the live page view at a phone's size (390x844), framed inside the video."""
+    t.d.go(f"{t.ui}/media/phone.html")
+    if not t.page.evaluate("(o) => window.__phone(o)", {"src": src, "title": title, "note": note, "kicker": kicker}):
+        raise fail("media/phone.html refused the page path")
+    expect(t.page.locator("body[data-state='ready']")).to_be_attached(timeout=20_000)
+    inner = next((f for f in t.page.frames if f.parent_frame is not None and "/oncall/page/" in f.url), None)
+    if inner is None:
+        raise fail("media/phone.html shows no page view in its frame")
+    fr = t.page.frame_locator("#phone")
+    try:
+        settle(inner, "article[aria-labelledby='page-title']", "the page view at a phone's size", 30)
+    except SystemExit:
+        said = " | ".join(x.strip() for x in said_alert(fr).all_inner_texts())
+        raise fail(f"the page view at a phone's size did not load{': ' + said if said else ''}") from None
+    return fr
+
+
+def after_act(t: Take) -> None:
+    """Off screen, right after the take's fix is APPLIED (the take's own incident is RESOLVED, its pages settled): a
+    real take with --real-repeat turns the flag back on at main (the fault comes back), then incident B opens, so the
+    on-call beats have a page that still waits for an ack."""
+    if not any(s in t.S for s in (*ONCALL, "learn")):
+        return
+    if t.key is not None and t.a.real_repeat and "oc_contract" in t.S:
+        t.facts["repeat_commit"] = flag_back_on(t.a.infra_repo, t.a.flag)
+    t.b = start_run(t, "incident B")
+    t.facts["incident_b"] = t.b["incident"]
+
+
+def owner_oncall(t: Take, inc: str) -> tuple[str | None, str | None, list[str]]:
+    """The failing component's owner team, its name and who is on call for it, as the incident's ROUTE recorded them
+    (who_fixes evidence, GET .../plan; team names from GET /api/oncall/now)."""
+    w = (t.api("GET", f"/api/incidents/{urllib.parse.quote(inc)}/plan?{t.q}").get("who_fixes") or {}).get("payload") or {}
+    team = w.get("owner_team")
+    names = {r.get("team"): r.get("team_name") for r in t.api("GET", f"/api/oncall/now?{t.q}").get("rows") or []}
+    return team, names.get(team) or team, [str(x) for x in w.get("oncall_now") or []]
+
+
+def b_page(t: Take) -> dict:
+    """B's page for the beats: the open page to the owning team's on-call (one person is paged once, so it may carry
+    the learned-responder reason instead), else the newest open page."""
+    inc = t.b["incident"]
+    st = wait_stage(t, inc, ("AWAITING_APPROVAL", "RESOLVED", "FAILED", "UNKNOWN_ESCALATED", "NO_INCIDENT"), 90,
+                    "incident B")
+    if st != "AWAITING_APPROVAL":
+        raise fail(f"incident B ({inc}) ended {st}, not awaiting approval: no page of it waits for an ack")
+    team, team_name, oncall = owner_oncall(t, inc)
+    for _ in range(10):
+        rows = [p for p in pages_of(t, inc) if open_page(p)]
+        if rows:
+            rows.sort(key=lambda p: ((p.get("person") or {}).get("id") not in oncall,
+                                     "(the failing component)" not in (p.get("reason") or ""), -(p.get("sent_at") or 0)))
+            pg = dict(rows[0])
+            pg["_owner"] = {"team": team, "team_name": team_name, "oncall": oncall,
+                            "is_owner_oncall": (pg.get("person") or {}).get("id") in oncall}
+            return pg
+        t.page.wait_for_timeout(int(PAGE_POLL_S * 1000))
+    raise fail(f"incident B ({inc}) is awaiting approval but paged nobody (GET /api/pages?incident=)")
+
+
+def beat_oc_page(t: Take) -> None:
+    """The incident pages the on-call: /oncall (the verdict line, B's page in the pager inbox), then the page's own
+    link at a phone's size. Checks: the page waits for an ack; it went to the owning team's on-call when the voice says
+    so; the page count when the voice says one; the proof path and who fixes it when the voice names them."""
+    d, page, seg = t.d, t.page, t.S["oc_page"]
+    inc = t.b["incident"]
+    pg = t.pg = b_page(t)   # before the beat: any wait here is a pause, not narration
+    pid, reason, owner = pg["id"], pg.get("reason") or "", pg["_owner"]
+    name = (pg.get("person") or {}).get("name") or (pg.get("person") or {}).get("id") or "?"
+    if re.search(r"\bon[ -]call\b|owning team|owner team|team that owns", seg.text, re.I) and not owner["is_owner_oncall"]:
+        raise fail(f"the voice says the owning team's on-call is paged; B's open page went to {name} ({reason!r}), and "
+                   f"{owner['team_name']}'s on-call is {owner['oncall'] or 'nobody'} (who_fixes evidence)")
+    note = (f"To {name}, on call for {owner['team_name']}, which owns the failing component" if owner["is_owner_oncall"]
+            else f"To {name}: {reason}") + (" (and the person who usually answers it)." if "learned responder" in reason
+                                             else ".")
+    d.begin("oc_page")
+    d.go(f"{t.ui}/oncall?{t.q}")
+    settle(page, "#oncall-verdict", "/oncall")
+    head = expect_text(page.locator("#oncall-verdict"), r"^\d+ pages? waiting for an ack$", "the /oncall verdict line")
+    said = numbers_said(seg.text, r"\b(\w+) pages? (?:is |are )?waiting")
+    if said and said[0] != int(head.split()[0]):
+        raise fail(f"the voice says {said[0]} page(s) waiting; /oncall says {head!r}")
+    inbox = page.locator("section[aria-labelledby='pager-h']")
+    item = inbox.get_by_role("listitem").filter(
+        has=page.get_by_role("link", name=f"Open page {pid}, as the person paged sees it"))
+    expect(item).to_be_visible(timeout=20_000)   # the inbox re-reads every 5 s
+    d.show(item, "center")
+    d.at_cue(("pages", "paged", "page"), 0.3, lead=0.2)
+    d.flash(item)
+    d.hover(item.get_by_role("link", name=inc, exact=True))
+    token = page_row(t, pid, inc).get("ack_token")
+    if not token:
+        raise fail(f"the API gives no ack token for B's page {pid} (a public API gives it to the run's owner only)")
+    src = f"/oncall/page/{urllib.parse.quote(pid)}?{t.q}&t={urllib.parse.quote(token, safe='')}"
+    d.at_cue(("on a phone", "phone", "opens"), 0.55, lead=0.4)
+    link = item.get_by_role("link", name=f"Open page {pid}, as the person paged sees it")
+    d.hover(link)
+    d.flash(link)
+    d.wait(350)
+    fr = t.phone = show_phone(t, src, "The page, on a phone", note, "On call · the page link")
+    title, alert = fr.locator("#page-title"), said_alert(fr)
+    expect(title.or_(alert).first).to_be_visible(timeout=30_000)
+    if not title.is_visible():
+        raise fail(f"the phone page view says {alert.first.inner_text()!r}")
+    ack = fr.get_by_role("button", name="Acknowledge this page")
+    if not ack.is_visible():
+        raise fail(f"the phone page view of {pid} offers no Acknowledge: it no longer waits for an ack")
+    facts: dict[str, Any] = {"incident": inc, "page": pid, "to": name, "reason": reason, "urgency": pg.get("urgency"),
+                             "owner_team": owner["team"], "owner_oncall": owner["is_owner_oncall"], "verdict_line": head}
+    if re.search(r"proof path", seg.text, re.I):
+        proof = fr.get_by_role("list", name="Proof path, cause first")
+        expect(proof).to_be_visible(timeout=20_000)
+        hops = proof.get_by_role("listitem").all_inner_texts()
+        if len(hops) < 2:
+            raise fail(f"the voice names the proof path; the phone page shows {hops}")
+        facts["proof"] = [h.split("\n")[0] for h in hops]
+        d.at_cue(("proof path",), 0.7, lead=0.3)
+        sec = fr.locator("section[aria-labelledby='proof-h']")
+        d.show(sec, "center")
+        d.flash(sec)
+    if re.search(r"who fixes", seg.text, re.I):
+        ranked = fr.get_by_role("list", name="People ranked by the graph")
+        expect(ranked).to_be_visible(timeout=20_000)
+        if not ranked.get_by_role("listitem").count():
+            raise fail("the voice names who fixes it; the phone page ranks nobody")
+        d.at_cue(("who fixes",), 0.85, lead=0.3)
+        sec = fr.locator("section[aria-labelledby='pagewho-h']")
+        d.show(sec, "center")
+        d.flash(sec)
+    d.end(0.5)
+    d.show(ack, "center")   # back up to the Acknowledge button for the next beat
+    t.facts["oc_page"] = facts
+
+
+def beat_oc_ack(t: Take) -> None:
+    """One tap on Acknowledge (the page link's signed token). Checks: the page says the escalation stopped; the graph
+    says the page is acked by the person paged and no page of B waits; off the public demo, the engine's own escalation
+    pass a day later (scripted clock, scoped to B) escalates nothing."""
+    d, fr, pg, inc = t.d, t.phone, t.pg, t.b["incident"]
+    if fr is None or pg is None:
+        raise fail("oc_ack needs the oc_page beat before it (the page on the phone)")
+    pid = pg["id"]
+    before = page_row(t, pid, inc)
+    if not open_page(before):
+        raise fail(f"B's page {pid} is {before.get('status')} before the ack beat (did its ack window pass?)")
+    d.begin("oc_ack")
+    btn = fr.get_by_role("button", name="Acknowledge this page")
+    d.show(btn, "center")
+    d.at_cue(("tap", "acknowledges", "acknowledge"), 0.08, lead=0.25)
+    d.click(btn)
+    done = fr.get_by_role("status").filter(has_text=re.compile(r"Acked: the escalation (stops here|stopped)"))
+    bad = said_alert(fr)
+    expect(done.or_(bad).first).to_be_visible(timeout=20_000)
+    if not done.count():
+        raise fail(f"the ack failed on the phone page: {bad.first.inner_text()!r}")
+    after = page_row(t, pid, inc)
+    by = ((after.get("ack") or {}).get("by") or {})
+    if after.get("status") != "acked" or not by.get("id"):
+        raise fail(f"after the tap the graph says page {pid} is {after.get('status')} (ack {after.get('ack')})")
+    left = [p["id"] for p in pages_of(t, inc) if open_page(p)]
+    if left:
+        raise fail(f"after the ack, B still has pages waiting: {left}")
+    later = None
+    if not t.public:
+        later = t.api("POST", f"/api/oncall/tick?{t.q}", {"now": int(time.time() * 1000) + 86_400_000,
+                                                            "incident": inc}).get("escalated")
+        if later:
+            raise fail(f"after the ack, an escalation pass a day later still escalates {later}")
+    d.at_cue(("escalation stops", "escalation", "stops"), 0.45, lead=0.2)
+    d.wait(300)
+    d.show(done.first, "center")
+    d.flash(done.first)
+    t.facts["oc_ack"] = {"page": pid, "by": by.get("id"), "via": (after.get("ack") or {}).get("via"),
+                         "escalated_a_day_later": None if later is None else len(later)}
+
+
+def beat_oc_telegram(t: Take) -> None:
+    """The real Telegram still (media/telegram.html). A real take never reaches this with the pending card
+    (check_telegram); a dry run shows the card that says so."""
+    d, page = t.d, t.page
+    d.begin("oc_telegram")
+    d.go(f"{t.ui}/media/telegram.html")
+    expect(page.locator("body[data-state='shot'], body[data-state='pending']")).to_be_attached(timeout=10_000)
+    state = page.locator("body").get_attribute("data-state")
+    if state != "shot":
+        if t.key is not None:
+            raise fail("the Telegram screenshot did not load on media/telegram.html")
+        print("  warning: oc_telegram shows the 'screenshot pending' card (dry run)", file=sys.stderr)
+    t.facts.setdefault("telegram", {})["shown"] = state
+    d.end(0.2)
+
+
+def beat_oc_contract(t: Take) -> None:
+    """A standing approval, then the same fault again with nobody woken. In the take's incident room: Grant a contract
+    for repeats (step 1: the scope typed, the exact contract shown; step 2: granted). Off screen: incident C (the same
+    scenario, through the API). On screen while it runs and after: /oncall's contracts panel, the 'Handled while you
+    slept' tile, the pager's entries for C, and C's contract-notice page at a phone's size. Checks: the scope is the one
+    the voice says; C is RESOLVED with its fix APPLIED under this contract; nobody was paged or escalated to for C (the
+    graph and the page agree); the tile counts one more incident handled under a contract."""
+    d, page, a, seg = t.d, t.page, t.a, t.S["oc_contract"]
+    uses, days = int(a.contract_uses), int(a.contract_days)
+    if not t.inc_a:
+        raise fail("oc_contract needs the take's fixed incident")
+    d.begin("oc_contract")
+    d.go(f"{t.ui}/incidents/{urllib.parse.quote(t.inc_a)}?{t.q}")
+    settle(page, "section[aria-labelledby='plan-h']", "the take's incident room")
+    plan = page.locator("section[aria-labelledby='plan-h']")
+    open_btn = plan.get_by_role("button", name=re.compile(r"^Grant a contract for repeats"))
+    expect(open_btn).to_be_visible(timeout=30_000)
+    d.show(open_btn, "center")
+    d.at_cue(("standing approval", "grant"), 0.08, lead=0.3)
+    d.click(open_btn)
+    form = plan.get_by_role("region", name="Grant a contract for repeats")
+    err = said_alert(form)
+    for label, n in ((r"^Max uses", uses), (r"^For how many days", days)):
+        box = form.get_by_label(re.compile(label))
+        expect(box).to_be_visible()
+        d.click(box, flash=False)
+        box.press("Control+a")
+        box.press_sequentially(str(n), delay=60)
+    d.click(form.get_by_role("button", name=re.compile(r"^Choose this scope")))
+    exact = form.get_by_role("region", name="Exact contract")
+    expect(exact.or_(err).first).to_be_visible(timeout=20_000)
+    if not exact.count():
+        raise fail(f"choosing the contract scope failed: {err.first.inner_text()!r}")
+    d.show(exact, "center")
+    d.flash(exact)
+    k = t.key if t.key is not None else (t.api_key if t.public else None)
+    if k is not None:
+        field_ = form.get_by_label(re.compile(r"^Approver key \(sent with this grant only"))
+        try:
+            expect(field_).to_be_visible()
+            if field_.get_attribute("type") != "password":
+                field_.evaluate(MASK_JS)
+                t.facts["key_field_masked"] = True
+            field_.press_sequentially(k, delay=20)
+        except Exception as e:  # noqa: BLE001 - never let an error message carry the key
+            raise fail(f"could not enter the approver key for the grant ({type(e).__name__}; value not shown)") from None
+    d.click(form.get_by_role("button", name="Grant this exact contract"))
+    granted = plan.get_by_role("status").filter(has_text=re.compile(r"Contract ct-[0-9a-f]{16} granted"))
+    expect(granted.or_(err).first).to_be_visible(timeout=20_000)
+    if not granted.count():
+        raise fail(f"the grant failed: {err.first.inner_text()!r}")
+    cid = re.search(r"ct-[0-9a-f]{16}", granted.first.inner_text()).group(0)
+    d.show(granted.first, "center")
+    d.flash(granted.first)
+    ct = next((c for c in t.api("GET", f"/api/contracts?{t.q}")["rows"] if c["id"] == cid), None)
+    if not ct or ct.get("status") != "active" or ct.get("max_uses") != uses or ct.get("uses") \
+            or float(ct.get("days") or 0) != days:
+        raise fail(f"the graph does not hold contract {cid} as granted (active, {uses} use(s) over {days} days, none "
+                   f"used): {ct}")
+
+    # ---- the same fault again: incident C, off screen, through the API
+    d.at_cue(("same fault", "comes back", "again"), 0.42, lead=0.2)
+    t.c = start_run(t, "incident C (the same fault again)")
+    inc = t.c["incident"]
+    d.chip("repeat", f"The same fault again: {inc}, started through the API", "url")
+    d.go(f"{t.ui}/oncall?{t.q}")
+    settle(page, "section[aria-labelledby='contracts-h']", "/oncall")
+    cards = page.locator("section[aria-labelledby='contracts-h']")
+    mine = cards.get_by_role("listitem").filter(has_text=cid)
+    expect(mine.first).to_be_visible(timeout=20_000)
+    d.show(mine.first, "center")
+    d.flash(mine.first)
+    j = wait_job(t, t.c["job"], 300 if t.key is not None else 150, "incident C")
+    st = stage_of(t, inc)
+    rows = pages_of(t, inc)
+    ct = next((c for c in t.api("GET", f"/api/contracts?{t.q}")["rows"] if c["id"] == cid), {})
+    used = (ct.get("used_in") or [{}])[0]
+    awake = woken(rows)
+    notices = [p for p in rows if p.get("kind") == "contract_notice"]
+    if st != "RESOLVED" or used.get("incident") != inc or used.get("verdict") != "APPLIED":
+        raise fail(f"the same fault again was not fixed under {cid}: {inc} is {st} (job {j.get('state')}), the "
+                   f"contract's last use is {used or 'none'}; pages: {[(p.get('kind'), p.get('status')) for p in rows]}")
+    if awake or not notices:
+        raise fail(f"{inc} under contract {cid} woke {awake or 'nobody'} and sent {len(notices)} contract notice(s)")
+    if uses == 1 and ct.get("status") != "exhausted":
+        raise fail(f"contract {cid} had one use and reads {ct.get('status')} after it")
+    handled = t.api("GET", f"/api/oncall/stats?{t.q}&days=7").get("handled_under_contract")
+    if t.handled_before is not None and (handled is None or handled < t.handled_before + 1):
+        raise fail(f"'handled under a contract' (7 days) went from {t.handled_before} to {handled}, not up by one")
+
+    # ---- on screen: what the graph says now
+    d.at_cue(("verifies", "verified", "runs"), 0.66, lead=0.2)
+    d.go(f"{t.ui}/oncall?{t.q}")
+    settle(page, "section[aria-labelledby='contracts-h']", "/oncall")
+    cards = page.locator("section[aria-labelledby='contracts-h']")
+    if ct.get("status") != "active":   # used up: listed under "Past contracts", folded
+        past = cards.get_by_role("button", name=re.compile(r"^Past contracts"))
+        expect(past).to_be_visible(timeout=20_000)
+        if past.get_attribute("aria-expanded") != "true":
+            d.click(past)
+    mine = cards.get_by_role("listitem").filter(has_text=cid)
+    expect(mine.first).to_be_visible(timeout=20_000)
+    expect_text(mine.first, rf"used on\s*{re.escape(inc)}\s*\(APPLIED\)", f"contract {cid} on /oncall")
+    d.show(mine.first, "center")
+    d.flash(mine.first)
+    tile = page.locator("section[aria-labelledby='oncall-stats-h'] dl > div").filter(has_text="Handled while you slept")
+    value = expect_text(tile.locator("dd").first, r"^\d[\d,]*$", "the 'Handled while you slept' tile")
+    if int(value.replace(",", "")) != handled:
+        raise fail(f"the 'Handled while you slept' tile shows {value}; the API says {handled}")
+    d.at_cue(("while you slept", "slept"), 0.8, lead=0.3)
+    d.show(tile, "center")
+    d.flash(tile)
+    inbox = page.locator("section[aria-labelledby='pager-h']")
+    d.click(inbox.get_by_role("button", name=re.compile(r"^All · \d+")))
+    mine_pages = inbox.get_by_role("list", name="All pages").get_by_role("listitem").filter(
+        has=page.get_by_role("link", name=inc, exact=True))
+    expect(mine_pages.first).to_be_visible(timeout=20_000)
+    on_page = mine_pages.all_inner_texts()
+    awake_page = [x for x in on_page if "contract notice" not in x]
+    if awake_page or len(on_page) != len(rows):
+        raise fail(f"the pager lists {len(on_page)} page(s) for {inc}, {len(awake_page)} of them not a contract notice; "
+                   f"the graph has {len(rows)}")
+    said = numbers_said(seg.text, r"\b(\w+) (?:people|persons?|humans?) (?:were |was )?(?:woken|woke|paged)")
+    if said and said[0] != len(awake):
+        raise fail(f"the voice says {said[0]} people woken; the graph and the pager say {len(awake)}")
+    d.at_cue(("woken", "nobody", "no one"), 0.9, lead=0.4)
+    d.show(mine_pages.first, "center")
+    d.flash(mine_pages.first)
+    n = notices[0]
+    nname = (n.get("person") or {}).get("name") or (n.get("person") or {}).get("id") or "the on-call"
+    d.chip("repeat", None)   # the phone frame's top line sits where the chip is
+    fr = show_phone(t, f"/oncall/page/{urllib.parse.quote(n['id'])}?{t.q}", "A note, not a wake-up",
+                    f"To {nname}: {inc} was fixed under contract {cid}. Nobody was paged.", "On call · contract notice")
+    try:
+        expect(fr.get_by_text(re.compile(r"Faultline page · contract notice"))).to_be_visible(timeout=30_000)
+        if n.get("status") != "delivery_failed":   # a notice an external channel did not take says that instead
+            expect(fr.get_by_text("FYI · no wake").first).to_be_visible()
+    except AssertionError:
+        raise fail(f"the contract-notice page {n['id']} does not read as a notice ('FYI · no wake') at a phone's size") \
+            from None
+    d.end(0.2)
+    t.facts["oc_contract"] = {"contract": cid, "uses": uses, "days": days, "incident_c": inc, "stage": st,
+                              "verdict": used.get("verdict"), "woken": len(awake), "notices": len(notices),
+                              "handled_7d": [t.handled_before, handled]}
+
+
+def moved_up(options: list[dict]) -> list[tuple[str, int, int]]:
+    """(option, place now, place without learning) for each option learning moved up, from GET .../plan."""
+    out = []
+    for i, o in enumerate(options, start=1):
+        lr = o.get("learned")
+        if isinstance(lr, str):
+            try:
+                lr = json.loads(lr)
+            except ValueError:
+                lr = None
+        r = (lr or {}).get("rank_without_learning") if isinstance(lr, dict) else None
+        if isinstance(r, int) and r > i:
+            out.append((o.get("option") or o.get("id") or "?", i, r))
+    return out
+
+
+def beat_learn(t: Take) -> None:
+    """What Faultline learned (/memory#learned): preferences with their why lines, guidelines, learned responders,
+    each flashed as the voice names it; then incident B's plan, where an option learning moved shows "moved up from #N".
+    Checks: every section the voice names has rows; the moved-up number is the one the voice says."""
+    d, page, seg = t.d, t.page, t.S["learn"]
+    text = seg.text
+    want_n = numbers_said(text, r"moved up from (?:number |#)?(\w+)")
+    d.begin("learn")
+    d.go(f"{t.ui}/memory?{t.q}#learned")
+    settle(page, "section#learned", "/memory#learned")
+    panel = page.locator("section#learned")
+    expect_text(panel.locator("p[aria-live='polite']").first, r"^Learned from \d+ events?", "What Faultline has learned")
+    d.glide(panel, "start", 900)
+    learned = t.api("GET", f"/api/learned?{t.q}")
+    shown: dict[str, int] = {}
+    for words, sec, list_name, frac in ((("prefers", "prefer", "preferences"), "preferences",
+                                         "Learned preferences by family", 0.15),
+                                        (("guidelines", "guideline"), "guidelines", "Proposed and active guidelines", 0.4),
+                                        (("responds", "responders", "respond"), "responders", "Learned responders", 0.55)):
+        if not any(re.search(rf"\b{w}\b", text, re.I) for w in words):
+            continue
+        lst = panel.get_by_role("list", name=list_name)
+        try:
+            expect(lst).to_be_visible(timeout=20_000)
+        except AssertionError:
+            raise fail(f"the voice names learned {sec}; /memory#learned has no list {list_name!r}") from None
+        items = lst.get_by_role("listitem")
+        if not items.count():
+            raise fail(f"the voice names learned {sec}; /memory#learned lists none")
+        shown[sec] = items.count()
+        if sec == "preferences":   # "and why": the why line the server wrote is on the page
+            lines = [r["line"] for r in (learned.get("preferences") or {}).get("rows") or [] if r.get("line")]
+            if re.search(r"\bwhy\b", text, re.I) and not any(ln in lst.inner_text() for ln in lines):
+                raise fail("the voice says why; no preference's why line is on /memory#learned")
+        d.at_cue(words, frac, lead=0.3)
+        d.show(items.first, "center")
+        d.flash(items.first)
+    t.facts["learn"] = {"shown": shown}
+    if not want_n and not re.search(r"\bmoved up\b", text, re.I):
+        d.end(0.2)
+        return
+    inc = t.b["incident"] if t.b else None
+    if not inc:
+        raise fail("the learn beat shows incident B's plan; B was not opened")
+    wait_stage(t, inc, ("AWAITING_APPROVAL",), 90, "incident B (its plan is shown)")
+    opts = t.api("GET", f"/api/incidents/{urllib.parse.quote(inc)}/plan?{t.q}").get("options") or []
+    moved = moved_up(opts)
+    hit = [m for m in moved if not want_n or m[2] == want_n[0]]
+    if not hit:
+        raise fail(f"the voice says an option moved up from #{want_n[0] if want_n else '?'}; B's plan moved {moved or 'none'}"
+                   " (the family needs learn.pref_min_n trusted choices; see /memory#learned)")
+    d.at_cue(("next plan", "plan", "moved up"), 0.7, lead=0.4)
+    d.go(f"{t.ui}/incidents/{urllib.parse.quote(inc)}?{t.q}")
+    settle(page, "section[aria-labelledby='plan-h']", "incident B's room")
+    plan = page.locator("section[aria-labelledby='plan-h']")
+    chip = plan.get_by_text(f"moved up from #{hit[0][2]}", exact=True)
+    expect(chip.first).to_be_visible(timeout=30_000)
+    opt = plan.get_by_role("list", name="Action options").get_by_role("listitem").filter(
+        has=page.get_by_text(f"moved up from #{hit[0][2]}", exact=True))
+    d.show(opt.first, "center")
+    d.at_cue(("moved up",), 0.85, lead=0.4)
+    d.flash(opt.first)
+    t.facts["learn"]["moved"] = {"incident": inc, "option": hit[0][0], "now": hit[0][1], "without_learning": hit[0][2]}
+    d.end(0.2)
+
+
+def beat_engine(t: Take) -> None:
+    """Inside FalkorDB, right now (/engine): the verdict line, the memory per graph, the queries per template from the
+    engine's own telemetry, the live tail. Checks: each has rows; a graph count the voice says matches the page."""
+    d, page, seg = t.d, t.page, t.S["engine"]
+    d.begin("engine")
+    d.go(f"{t.ui}/engine?{t.q}")
+    settle(page, "#engine-verdict", "/engine")
+    head = expect_text(page.locator("#engine-verdict"), r"^FalkorDB\b.*\b\d+ graphs? for ", "the /engine verdict line", 30)
+    n_graphs = int(re.search(r"\b(\d+) graphs? for ", head).group(1))
+    said = numbers_said(seg.text, r"\b(\w+) graphs\b")
+    if said and said[0] != n_graphs:
+        raise fail(f"the voice says {said[0]} graphs; /engine says {head!r}")
+    mem = page.locator("section[aria-labelledby='engine-memory-h']")
+    graphs = mem.get_by_role("list", name="Graphs of this tenant").get_by_role("listitem")
+    queries = page.locator("section[aria-labelledby='engine-queries-h']")
+    rows = queries.locator("table tbody tr")
+    tail = page.locator("section[aria-labelledby='engine-tail-h']")
+    recent = tail.get_by_role("list", name="Most recent queries, newest first").get_by_role("listitem")
+    for loc, what in ((graphs, "memory per graph"), (rows, "queries by template"), (recent, "the live tail")):
+        expect(loc.first).to_be_visible(timeout=20_000)
+    d.at_cue(("memory",), 0.3, lead=0.3)
+    d.show(mem, "start")
+    d.flash(mem)
+    d.at_cue(("template", "templates", "query"), 0.55, lead=0.3)
+    d.show(queries, "start")
+    d.flash(rows.first)
+    d.at_cue(("live tail", "tail"), 0.8, lead=0.3)
+    d.show(tail, "start")
+    d.flash(recent.first)
+    t.facts["engine"] = {"verdict": head, "graphs": graphs.count(), "templates": rows.count(), "tail": recent.count()}
+    d.end(0.2)
+
+
+def beat_preflight(d: Director, page: Page, ui: str) -> None:
+    """(Earlier cuts; runs only when the narration has a "preflight" segment.) The same graph blocks the risky PR; its
+    numbers were checked against the page in the pre-roll."""
+    d.begin("preflight")
+    d.go(f"{ui}/preflight")
+    d.click(page.get_by_role("button", name=re.compile(r"^S6: payment timeout 5000 ms")))
+    pv = page.locator("[data-verdict]").first
+    expect(pv).to_be_visible(timeout=30_000)
+    d.show(pv, "center")
+    assess = page.locator("section[aria-labelledby='pf-assess-h']")
+    d.at_word("contradicts", lead=0.3)
+    d.show(assess)
+    for li in assess.get_by_role("listitem").filter(has_text="contradicted").all()[:3]:
+        d.flash(li)
+    d.at_word("Blocked", lead=0.3)
+    d.show(pv, "center")
+    d.flash(pv)
+
+
+def beat_brain(d: Director, page: Page, ui: str, question: str) -> str:
+    """(Earlier cuts; runs only when the narration has a "brain" segment.) Who decided, and are they still here: the
+    answer must pass its citation guard."""
+    d.begin("brain")
+    d.go(f"{ui}/brain")
+    box = page.get_by_label("Question", exact=True)
+    expect(box).to_be_visible(timeout=20_000)
+    d.click(box)
+    box.press_sequentially(question, delay=12)
+    box.press("Enter")
+    answer = page.locator("section[aria-labelledby='brain-answer-h']")
+    guard = answer.get_by_text(re.compile(r"^citation guard [✓✗]$")).first
+    berr = answer.get_by_role("alert")
+    expect(guard.or_(berr).first).to_be_visible(timeout=30_000)
+    if not guard.count() or "✓" not in guard.inner_text():
+        raise fail(f"brain answer not cited cleanly: {(berr.first.inner_text() if berr.count() else guard.inner_text())!r}")
+    ag = answer.get_by_role("group", name=re.compile(r"^Answer graph: \d+ nodes"))
+    expect(ag).to_be_visible(timeout=20_000)
+    d.at_word("comes from a query", lead=0.2)
+    d.show(ag, "center")
+    return question
+
+
 # ------------------------------------------------------------------ the recording
 
 def record(a: argparse.Namespace, work: Path, segs: list[Seg], llm: dict, issue: dict,
-           key: str | None) -> tuple[Path, Director, dict]:
+           key: str | None, oc: dict, api_key: str | None) -> tuple[Path, Director, dict]:
     ui = a.ui.rstrip("/")
     S = {s.id: s for s in segs}
-    facts: dict[str, Any] = {"real_github": a.real_github, "key_field_masked": False}
+    order = [s.id for s in segs]
+    partial = a.from_segment is not None
+    last = a.to_segment or order[-1]
+
+    def want(sid: str) -> bool:
+        """Does this beat run? (A partial take runs every beat up to --to-segment; those before --from-segment fast.)"""
+        return sid in S and order.index(sid) <= order.index(last)
+
+    facts: dict[str, Any] = {"real_github": a.real_github, "key_field_masked": False,
+                             "oncall_api": {"public": oc.get("public"), "channels": oc.get("channels"),
+                                            "handled_under_contract_7d": oc.get("handled_before")}}
+    if oc.get("telegram"):
+        facts["telegram"] = dict(oc["telegram"])
     with sync_playwright() as p:
         if a.gpu:   # the NVIDIA GPU through ANGLE/EGL (PRIME offload): the 3D renders at full frame rate
             args = ["--use-gl=angle", "--use-angle=gl-egl", "--ignore-gpu-blocklist", "--enable-gpu"]
@@ -682,89 +1549,125 @@ def record(a: argparse.Namespace, work: Path, segs: list[Seg], llm: dict, issue:
         if said_flow not in S["x_flow"].text:
             raise fail(f"the page's max flow {v['flow']} is {said_flow}, which the x_flow narration does not say")
         facts.update(suspects=v["suspects"], g5={"flow": v["flow"], "needed": v["needed"]}, chain=v["chain"])
-        page.goto(f"{ui}/preflight")
-        page.get_by_role("button", name=re.compile(r"^S6: payment timeout 5000 ms")).click()
-        expect(page.locator("[data-verdict]").first).to_be_visible(timeout=30_000)
-        pf_verdict = page.locator("[data-verdict]").first.get_attribute("data-verdict")
-        adrs = sorted({m.group(0) for t in page.locator("section[aria-labelledby='pf-assess-h']").get_by_role("listitem")
-                       .filter(has_text="contradicted").all_inner_texts() if (m := re.search(r"\b[A-Z]+-\d+\b", t))})
-        said = number_said(S["preflight"].text, r"contradicts (\w+) decisions")
-        if said is not None and said != len(adrs):
-            raise fail(f"the narration says the PR contradicts {said} decisions; the page shows {adrs}")
-        if pf_verdict != "block" and re.search(r"\bBlocked\b", S["preflight"].text):
-            raise fail(f"the narration says blocked; the preflight verdict is {pf_verdict}")
-        facts["preflight"] = {"verdict": pf_verdict, "contradicted": adrs}
+        t = Take(a, page, d, S, facts, ui, key, api_key, bool(oc.get("public")), oc.get("handled_before"))
+        if any(s in S for s in ONCALL) or "learn" in S:
+            # the validation incident paged the on-call: its ack window must outlast oc_page (B escalates otherwise)
+            inc_v = incident_of(page.url)
+            facts["validation_incident"] = inc_v
+            open_v = [p for p in pages_of(t, inc_v) if open_page(p) and p.get("ack_due_at") and p.get("sent_at")]
+            if not open_v:
+                raise fail(f"the validation incident {inc_v} paged nobody (GET /api/pages): the on-call beats need a page")
+            win = min((p["ack_due_at"] - p["sent_at"]) / 1000 for p in open_v)
+            facts["ack_window_s"] = round(win)
+            if win < MIN_ACK_WINDOW_S:
+                raise fail(f"pages wait only {win:.0f} s for an ack (FAULTLINE_ONCALL_DEMO_WINDOWS?): B would escalate "
+                           f"before oc_ack; restart the API without it (at least {MIN_ACK_WINDOW_S} s)")
+            if "learn" in S and numbers_said(S["learn"].text, r"moved up from (?:number |#)?(\w+)"):
+                mv = moved_up(t.api("GET", f"/api/incidents/{urllib.parse.quote(inc_v)}/plan?{t.q}").get("options") or [])
+                facts["moved_on_validation_plan"] = mv
+                if not mv:   # B's plan (the one shown) also counts the take's approval, so this is only a warning
+                    print("  warning: the validation incident's plan has no option moved up by learning; the learn beat "
+                          "fails unless incident B's plan has one", file=sys.stderr)
+        if "preflight" in S:
+            page.goto(f"{ui}/preflight")
+            page.get_by_role("button", name=re.compile(r"^S6: payment timeout 5000 ms")).click()
+            expect(page.locator("[data-verdict]").first).to_be_visible(timeout=30_000)
+            pf_verdict = page.locator("[data-verdict]").first.get_attribute("data-verdict")
+            adrs = sorted({m.group(0) for t_ in page.locator("section[aria-labelledby='pf-assess-h']")
+                           .get_by_role("listitem").filter(has_text="contradicted").all_inner_texts()
+                           if (m := re.search(r"\b[A-Z]+-\d+\b", t_))})
+            said = number_said(S["preflight"].text, r"contradicts (\w+) decisions")
+            if said is not None and said != len(adrs):
+                raise fail(f"the narration says the PR contradicts {said} decisions; the page shows {adrs}")
+            if pf_verdict != "block" and re.search(r"\bBlocked\b", S["preflight"].text):
+                raise fail(f"the narration says blocked; the preflight verdict is {pf_verdict}")
+            facts["preflight"] = {"verdict": pf_verdict, "contradicted": adrs}
+        # the v4 pages must be the live server's (a static replay build shows "live server only" cards instead)
+        for sid, path, ready_sel in (("oc_page", "/oncall", "#oncall-verdict"), ("learn", "/memory", "#learned-h"),
+                                     ("engine", "/engine", "#engine-verdict")):
+            if sid in S:
+                page.goto(f"{ui}{path}?tenant={a.tenant}")
+                try:
+                    expect(page.locator(ready_sel)).to_be_attached(timeout=30_000)
+                except AssertionError:
+                    raise fail(f"{ui}{path} shows no {ready_sel}: is the UI the live build, and as new as the API?") from None
+                if page.get_by_text(re.compile(r"live server only", re.I)).count():
+                    raise fail(f"{ui}{path} is the static replay build ('live server only'); record on the live UI")
 
         # ---------------- 0:00 problem, then use case: the hook card, line by line with the voice
-        d.go(f"{ui}/media/hook.html")
-        page.evaluate("() => document.fonts.ready")
-        if not page.evaluate("() => [...document.fonts].some((x) => x.family.replace(/[\"']/g, '') === 'Mona Sans'"
-                             " && x.status === 'loaded')"):
-            print("  warning: Mona Sans did not load on the hook card (offline?); a fallback face is shown",
-                  file=sys.stderr)
-        d.move_xy(VIEW["width"] + 40, VIEW["height"] / 2, 30)  # the pointer waits off screen
-        step = lambda n: page.evaluate("(n) => window.__step(n)", n)  # noqa: E731
-        # sync marker, still in the trimmed pre-roll: a white square, timed once it has painted; the encoder finds
-        # it in the video to know exactly where the kept footage starts
-        page.evaluate(SYNC_ON_JS)
-        t_mark = time.monotonic()
-        d.wait(400)
-        page.evaluate("() => document.getElementById('__demo_sync')?.remove()")
-        d.wait(600)
-        d.start()
-        d.marks["sync"] = t_mark - (d.t0 or t_mark)  # negative: seconds before the kept footage
-        d.begin("problem")
-        step(1)
-        d.at_word("three changes", lead=0.2)
-        step(2)
-        d.at_word("Which one", lead=0.1)
-        step(3)
-        d.at_word("Roll back", lead=0.2)
-        step(4)
-        d.begin("whyhard")
-        step(5)
-        d.at_word("Dashboards", lead=0.2)
-        step(6)
-        d.at_word("today's", lead=0.2)
-        step(7)
-        d.begin("idea")
-        step(8)
-        d.at_word("That's Faultline", lead=0.2)
-        step(9)
-        d.at_word("the engine", lead=0.2)
-        step(10)
+        if partial:   # a partial take: no opening; the beats before --from-segment run fast and untimed
+            d.fast, d.live_from = True, a.from_segment
+            d.start()
+        else:
+            d.go(f"{ui}/media/hook.html")
+            page.evaluate("() => document.fonts.ready")
+            if not page.evaluate("() => [...document.fonts].some((x) => x.family.replace(/[\"']/g, '') === 'Mona Sans'"
+                                 " && x.status === 'loaded')"):
+                print("  warning: Mona Sans did not load on the hook card (offline?); a fallback face is shown",
+                      file=sys.stderr)
+            d.move_xy(VIEW["width"] + 40, VIEW["height"] / 2, 30)  # the pointer waits off screen
+            step = lambda n: page.evaluate("(n) => window.__step(n)", n)  # noqa: E731
+            # sync marker, still in the trimmed pre-roll: a white square, timed once it has painted; the encoder finds
+            # it in the video to know exactly where the kept footage starts
+            page.evaluate(SYNC_ON_JS)
+            t_mark = time.monotonic()
+            d.wait(400)
+            page.evaluate("() => document.getElementById('__demo_sync')?.remove()")
+            d.wait(600)
+            d.start()
+            d.marks["sync"] = t_mark - (d.t0 or t_mark)  # negative: seconds before the kept footage
+            d.begin("problem")
+            step(1)
+            d.at_word("three changes", lead=0.2)
+            step(2)
+            d.at_word("Which one", lead=0.1)
+            step(3)
+            d.at_word("Roll back", lead=0.2)
+            step(4)
+            d.begin("whyhard")
+            step(5)
+            d.at_word("Dashboards", lead=0.2)
+            step(6)
+            d.at_word("today's", lead=0.2)
+            step(7)
+            d.begin("idea")
+            step(8)
+            d.at_word("That's Faultline", lead=0.2)
+            step(9)
+            d.at_word("the engine", lead=0.2)
+            step(10)
 
-        # ---------------- cube: the website's hero; the cube opens into the hero incident's graph
-        d.begin("cube")
-        d.go(f"{ui}/?tenant={a.tenant}")
-        expect(page.get_by_role("heading", name=re.compile(r"No path,\s*no claim"))).to_be_visible(timeout=20_000)
-        cube = page.get_by_role("button", name=re.compile(r"^Click the cube"))
-        expect(cube).to_be_visible(timeout=20_000)
-        d.move_xy(VIEW["width"] * 0.27, VIEW["height"] * 0.42, 700)
-        d.hover(cube)  # the closed cube's seams widen under the pointer: it can open
-        d.at_word("Open it", lead=0.2)
-        d.click(cube, flash=False)  # an outline would box the 3D canvas
-        expect(page.get_by_role("button", name=re.compile(r"^Click to close"))).to_be_visible(timeout=5_000)
-        box = page.get_by_role("button", name=re.compile(r"^Click to close")).bounding_box()
-        if box:  # sweep across the open graph: the block under the pointer names itself
-            for fx, fy in ((0.3, 0.42), (0.5, 0.55), (0.66, 0.4)):
-                if d.left() < 1.2:
-                    break
-                d.move_xy(box["x"] + box["width"] * fx, box["y"] + box["height"] * fy, 800)
-                d.wait(250)
+            # ---------------- cube: the website's hero; the cube opens into the hero incident's graph
+            d.begin("cube")
+            d.go(f"{ui}/?tenant={a.tenant}")
+            expect(page.get_by_role("heading", name=re.compile(r"No path,\s*no claim"))).to_be_visible(timeout=20_000)
+            cube = page.get_by_role("button", name=re.compile(r"^Click the cube"))
+            expect(cube).to_be_visible(timeout=20_000)
+            d.move_xy(VIEW["width"] * 0.27, VIEW["height"] * 0.42, 700)
+            d.hover(cube)  # the closed cube's seams widen under the pointer: it can open
+            d.at_word("Open it", lead=0.2)
+            d.click(cube, flash=False)  # an outline would box the 3D canvas
+            expect(page.get_by_role("button", name=re.compile(r"^Click to close"))).to_be_visible(timeout=5_000)
+            box = page.get_by_role("button", name=re.compile(r"^Click to close")).bounding_box()
+            if box:  # sweep across the open graph: the block under the pointer names itself
+                for fx, fy in ((0.3, 0.42), (0.5, 0.55), (0.66, 0.4)):
+                    if d.left() < 1.2:
+                        break
+                    d.move_xy(box["x"] + box["width"] * fx, box["y"] + box["height"] * fy, 800)
+                    d.wait(250)
 
-        # ---------------- x_*: how FalkorDB does it, one explainer scene per narration segment
-        # the stage fills the frame; it shows each scene's FalkorDB calls, and the video's subtitles carry the words
-        d.go(f"{ui}/explainer?view=stage&autoplay=0&captions=chips")
-        expect(page.locator("[data-scene]").first).to_be_attached(timeout=20_000)
-        page.wait_for_function("() => !!window.__explainer && window.__explainer.state().mode === 'animated'",
-                               timeout=20_000)
-        if page.evaluate("() => window.__explainer.sceneCount") != len(EXPLAINER):
-            raise fail("the explainer's scenes differ from the narration's x_* segments")
-        d.move_xy(VIEW["width"] + 40, VIEW["height"] / 2, 30)
-        for i, sid in enumerate(EXPLAINER, start=1):
-            d.begin(sid)   # each scene plays across its whole narration line, then holds its last frame
-            page.evaluate("([n, s]) => window.__explainer.playScene(n, s)", [i, max(1.0, S[sid].length - 0.4)])
+            # ---------------- x_*: how FalkorDB does it, one explainer scene per narration segment
+            # the stage fills the frame; it shows each scene's FalkorDB calls, and the video's subtitles carry the words
+            d.go(f"{ui}/explainer?view=stage&autoplay=0&captions=chips")
+            expect(page.locator("[data-scene]").first).to_be_attached(timeout=20_000)
+            page.wait_for_function("() => !!window.__explainer && window.__explainer.state().mode === 'animated'",
+                                   timeout=20_000)
+            if page.evaluate("() => window.__explainer.sceneCount") != len(EXPLAINER):
+                raise fail("the explainer's scenes differ from the narration's x_* segments")
+            d.move_xy(VIEW["width"] + 40, VIEW["height"] / 2, 30)
+            for i, sid in enumerate(EXPLAINER, start=1):
+                d.begin(sid)   # each scene plays across its whole narration line, then holds its last frame
+                page.evaluate("([n, s]) => window.__explainer.playScene(n, s)", [i, max(1.0, S[sid].length - 0.4)])
 
         # ---------------- run: the hero incident, live from the launcher
         d.begin("run")
@@ -918,50 +1821,40 @@ def record(a: argparse.Namespace, work: Path, segs: list[Seg], llm: dict, issue:
                 raise fail("no PR reference on the page after APPLIED")
             pr = a.real_pr_info
             d.chip("badge", f"Dry run: showing PR #{pr['number']}, merged by an earlier real take")
-        d.go(pr["url"])
-        d.chip("url", page.url, "url")
         facts["pr"] = pr["url"]
-        d.wait(int(GITHUB_SHOT * 1000))
+        # off screen, while the PR shows: (--real-repeat) the flag back on at main, then incident B opens (its page
+        # waits for an ack in oc_page: this incident is RESOLVED and its pages are settled by then)
+        t.inc_a = incident_of(facts["incident_url"])
+        if any(want(s) for s in (*ONCALL, "learn")):
+            after_act(t)
+        if not d.fast:
+            d.go(pr["url"])
+            d.chip("url", page.url, "url")
+            d.wait(int(GITHUB_SHOT * 1000))
         d.chip("url", None)
         d.chip("badge", None)
 
-        # ---------------- preflight: the same graph blocks the risky PR
-        d.begin("preflight")
-        d.go(f"{ui}/preflight")
-        d.click(page.get_by_role("button", name=re.compile(r"^S6: payment timeout 5000 ms")))
-        pv = page.locator("[data-verdict]").first
-        expect(pv).to_be_visible(timeout=30_000)
-        d.show(pv, "center")
-        assess = page.locator("section[aria-labelledby='pf-assess-h']")
-        d.at_word("contradicts", lead=0.3)
-        d.show(assess)
-        for li in assess.get_by_role("listitem").filter(has_text="contradicted").all()[:3]:
-            d.flash(li)
-        d.at_word("Blocked", lead=0.3)
-        d.show(pv, "center")
-        d.flash(pv)
+        # ---------------- oc_*: on call. The page, at a phone's size; the ack; the Telegram still; a standing
+        # approval and the same fault fixed with nobody woken (beat_* above: each checks what the voice claims)
+        for sid, beat in (("oc_page", beat_oc_page), ("oc_ack", beat_oc_ack), ("oc_telegram", beat_oc_telegram),
+                          ("oc_contract", beat_oc_contract)):
+            if want(sid):
+                beat(t)
 
-        # ---------------- brain: who decided, and are they still here
-        d.begin("brain")
-        d.go(f"{ui}/brain")
-        box = page.get_by_label("Question", exact=True)
-        expect(box).to_be_visible(timeout=20_000)
-        d.click(box)
-        box.press_sequentially(a.brain_question, delay=12)
-        box.press("Enter")
-        answer = page.locator("section[aria-labelledby='brain-answer-h']")
-        guard = answer.get_by_text(re.compile(r"^citation guard [✓✗]$")).first
-        berr = answer.get_by_role("alert")
-        expect(guard.or_(berr).first).to_be_visible(timeout=30_000)
-        if not guard.count() or "✓" not in guard.inner_text():
-            raise fail(f"brain answer not cited cleanly: {(berr.first.inner_text() if berr.count() else guard.inner_text())!r}")
-        facts["brain"] = a.brain_question
-        ag = answer.get_by_role("group", name=re.compile(r"^Answer graph: \d+ nodes"))
-        expect(ag).to_be_visible(timeout=20_000)
-        d.at_word("comes from a query", lead=0.2)
-        d.show(ag, "center")
+        # ---------------- preflight: the same graph blocks the risky PR (earlier cuts; only with its segment)
+        if want("preflight"):
+            beat_preflight(d, page, ui)
+        # ---------------- brain: who decided, and are they still here (earlier cuts; only with its segment)
+        if want("brain"):
+            facts["brain"] = beat_brain(d, page, ui, a.brain_question)
 
-        # ---------------- numbers, llm, falkordb: the proof charts and the LLM card
+        # ---------------- learn: what Faultline learned from the people using it; engine: FalkorDB observing itself
+        if want("learn"):
+            beat_learn(t)
+        if want("engine"):
+            beat_engine(t)
+
+        # ---------------- numbers, cost: the proof charts (PROOF_CHARTS), then close: live now, any agent over MCP
         def chart(name: str) -> None:
             if page.url.split("#")[0].endswith("/media/proof.html"):
                 page.evaluate("(c) => { location.hash = c; }", name)
@@ -969,27 +1862,37 @@ def record(a: argparse.Namespace, work: Path, segs: list[Seg], llm: dict, issue:
                 d.go(f"{ui}/media/proof.html#{name}")
             expect(page.locator(f"body[data-state='ready'][data-chart='{name}']")).to_be_attached(timeout=10_000)
 
-        d.begin("numbers")
-        chart("deep")
-        d.begin("cost")
-        chart("cost")
+        def charts(sid: str, until: float | None = None) -> None:
+            """The segment's charts in order: evenly over its first `until` seconds, or each at its "@word" cue."""
+            names = PROOF_CHARTS.get(sid) or []
+            span = S[sid].length if until is None else until
+            for i, item in enumerate(names):
+                name, _, cue = item.partition("@")
+                if i:
+                    d.at_word(cue, lead=0.3) if cue else d.at(span * i / len(names))
+                chart(name)
 
-        # ---------------- close: live now, any agent over MCP, the end card
-        d.begin("close")
-        # the live site renders too slowly over the internet for a 4 s line (a fresh load shows a dark page); the live
-        # benchmark chart is the stronger evidence for "5 out of 5 real runs, verified", with the URL it measured
-        chart("live")
-        d.chip("url", a.live_url, "url")
-        facts["live"] = a.live_url
-        d.at_word("Any agent", lead=0.3)
-        d.chip("url", None)
-        d.go(f"{ui}/media/open.html")
-        page.evaluate("(t) => { document.getElementById('issue-meta').textContent = t; }",
-                      f"{issue['title']} · {issue['state'].lower()} · {issue['url']}")
-        facts["issue"] = {k: issue[k] for k in ("url", "state", "title")}
-        d.at_word("built on FalkorDB", lead=0.3)
-        d.go(f"{ui}/media/end.html")
-        d.end()
+        for sid in ("numbers", "cost"):
+            if want(sid):
+                d.begin(sid)
+                charts(sid)
+
+        if want("close"):
+            d.begin("close")
+            # the live site renders too slowly over the internet for a 4 s line (a fresh load shows a dark page); the
+            # live benchmark chart is the stronger evidence for "5 out of 5 real runs, verified", with the URL it measured
+            charts("close", until=d.word("Any agent"))
+            d.chip("url", a.live_url, "url")
+            facts["live"] = a.live_url
+            d.at_word("Any agent", lead=0.3)
+            d.chip("url", None)
+            d.go(f"{ui}/media/open.html")
+            page.evaluate("(t) => { document.getElementById('issue-meta').textContent = t; }",
+                          f"{issue['title']} · {issue['state'].lower()} · {issue['url']}")
+            facts["issue"] = {k: issue[k] for k in ("url", "state", "title")}
+            d.at_word("built on FalkorDB", lead=0.3)
+            d.go(f"{ui}/media/end.html")
+        d.end()   # the last beat's line (a partial take ends with --to-segment's)
         d.wait(int(TAIL * 1000))
         d.mark("end")
 
@@ -1001,7 +1904,7 @@ def record(a: argparse.Namespace, work: Path, segs: list[Seg], llm: dict, issue:
         raise fail("no video recorded")
     # Pre-roll to trim. Playwright's first frame arrives seconds after the page is created, so the start is not
     # page creation: find the sync marker in the video (fallback: the end, which lags the last frame a little).
-    d.offset = find_offset(Path(video), d.marks)
+    d.offset = 0.0 if partial else find_offset(Path(video), d.marks)
     return Path(video), d, facts
 
 
@@ -1099,9 +2002,34 @@ def main() -> int:
     ap.add_argument("--no-encode", action="store_true", help="dry run: keep the raw video and captions in --work only")
     ap.add_argument("--reencode", default=None, metavar="META",
                     help="encode an earlier take again from its meta.json (no browser, no checks of the live system)")
+    ap.add_argument("--real-repeat", action="store_true",
+                    help="real take: after the take's fix, turn the flag back on at main of the demo infra repo (one "
+                         "commit to flags.json: the same fault again) so incident C's contract merges a real PR too")
+    ap.add_argument("--from-segment", default=None, metavar="SID",
+                    help="simulated take only: keep the footage from this segment on (the beats before it run fast, "
+                         "untimed, so the state is real); implies --no-encode")
+    ap.add_argument("--to-segment", default=None, metavar="SID", help="with --from-segment: stop after this segment")
     for k, v in DEFAULTS.items():
         ap.add_argument(f"--{k.replace('_', '-')}", default=v)
     a = ap.parse_args()
+    for k in ("contract_uses", "contract_days"):
+        if not str(getattr(a, k)).isdigit():
+            raise fail(f"--{k.replace('_', '-')} must be a whole number")
+    if a.to_segment and not a.from_segment:
+        raise fail("--to-segment needs --from-segment")
+    if a.from_segment:
+        if a.real_github:
+            raise fail("a partial take (--from-segment) is for trying beats: simulated GitHub only")
+        for sid in filter(None, (a.from_segment, a.to_segment)):
+            if sid not in SEGMENT_IDS:
+                raise fail(f"unknown segment {sid!r}; the segments are {SEGMENT_IDS}")
+        if SEGMENT_IDS.index(a.from_segment) < SEGMENT_IDS.index("run"):
+            raise fail("--from-segment must be 'run' or later (the opening has no state to fast-forward)")
+        if a.to_segment and SEGMENT_IDS.index(a.to_segment) < SEGMENT_IDS.index(a.from_segment):
+            raise fail("--to-segment comes before --from-segment")
+        if a.to_segment and SEGMENT_IDS.index(a.to_segment) < SEGMENT_IDS.index("act"):
+            raise fail("--to-segment must be 'act' or later (run, g2, g5, proof, contain and act share one incident)")
+        a.no_encode = True
     work = Path(a.work)
     work.mkdir(parents=True, exist_ok=True)
     docs_out = ROOT / "docs" / "media" / "demo.mp4"
@@ -1114,11 +2042,20 @@ def main() -> int:
 
     # everything the take depends on is checked before the browser starts
     segs, _, ndir = load_narration(Path(a.narration))
+    S = {s.id: s for s in segs}
+    check_contract_scope(S, int(a.contract_uses), int(a.contract_days))
+    if a.real_github and "oc_contract" in S and not a.real_repeat:
+        raise fail("a real take's oc_contract beat runs the same fault again, but the take's fix leaves the flag off at "
+                   f"GitHub main, so nothing could be fixed under the contract: pass --real-repeat (the recorder then "
+                   f"turns {a.flag} back on at main of {a.infra_repo} with one commit, right after the fix)")
     check_charts()
     llm = llm_card()
     check_open_card(a.live_url)
     check_api(a.api, a.tenant, a.real_github)
+    oc = check_oncall_api(a.api, a.tenant, S)
     check_media(a.ui)
+    if "oc_telegram" in S:
+        oc["telegram"] = check_telegram(a.ui, a.real_github)
     http_get(a.live_url, timeout=20)
     issue = issue_info(a.issue)
     key = None
@@ -1130,19 +2067,26 @@ def main() -> int:
                        "turn it back on in that repo (a commit to flags.json on main) before a real take")
     else:
         a.real_pr_info = pr_merged(a.real_pr)
+    # scripted runs on a public API are trusted only with the approver key (read from the same file, never printed)
+    api_key = key if key is not None else (
+        read_key("a public API (the trusted runs B and C)") if oc["public"] and (any(s in S for s in ONCALL) or "learn" in S)
+        else None)
 
-    webm, d, facts = record(a, work, segs, llm, issue, key)
-    key = None
-    last = segs[-1]
+    webm, d, facts = record(a, work, segs, llm, issue, key, oc, api_key)
+    key = api_key = None
+    kept = [s for s in segs if s.id in d.actual]   # every segment, or a partial take's
+    last = kept[-1]
     total = d.actual[last.id] + last.length + TAIL
     caps = caption_track(segs, d.actual)
     srt_text = "".join(f"{i}\n{srt_time(s)} --> {srt_time(e)}\n{t}\n\n" for i, (s, e, t) in enumerate(caps, 1))
     srt = work / "captions.srt"
     srt.write_text(srt_text)
-    pushes = {s.id: round(d.actual[s.id] - s.start, 2) for s in segs if d.actual[s.id] - s.start > 0.3}
+    pushes = {s.id: round(d.actual[s.id] - s.start, 2) for s in kept if d.actual[s.id] - s.start > 0.3}
     meta = {"webm": str(webm), "offset_s": round(d.offset, 3), "length_s": round(total, 3), "captions": len(caps),
-            "segments": {s.id: round(d.actual[s.id], 3) for s in segs}, "marks": {k: round(v, 3) for k, v in d.marks.items()},
+            "segments": {s.id: round(d.actual[s.id], 3) for s in kept}, "marks": {k: round(v, 3) for k, v in d.marks.items()},
             "narration": str(ndir), "pushed_s": pushes, "facts": facts}
+    if a.from_segment:
+        meta["partial"] = [a.from_segment, last.id]
     (work / "meta.json").write_text(json.dumps(meta, indent=2, ensure_ascii=False))
     print(json.dumps({k: meta[k] for k in ("webm", "offset_s", "length_s", "captions", "pushed_s")}, indent=2))
     if a.no_encode:
@@ -1171,6 +2115,8 @@ def hero_gif(mp4: Path, marks: dict[str, float]) -> None:
 def reencode(meta_path: Path, out: Path, gif: bool) -> int:
     """Encode an earlier take again (captions, audio placement and trim from its meta.json)."""
     m = json.loads(meta_path.read_text())
+    if m.get("partial"):
+        raise fail(f"{meta_path} is a partial take ({m['partial'][0]}..{m['partial'][1]}): it is never encoded")
     webm, ndir = Path(m["webm"]), Path(m.get("narration") or ROOT / "tmp" / "narration")
     segs, _, _ = load_narration(ndir)
     d = SimpleNamespace(actual={k: float(v) for k, v in m["segments"].items()}, offset=float(m["offset_s"]))

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 396" width="820" height="396" role="img" aria-label="On a real system: the OpenTelemetry Demo">
+<title>On a real system: the OpenTelemetry Demo</title>
+<rect x="0.5" y="0.5" width="819" height="395" rx="12" fill="#fcfcfb" stroke="#e7e6e2"/>
+<text x="24" y="34" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#0b0b0b">On a real system: the OpenTelemetry Demo</text>
+<text x="24" y="56" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12.5" fill="#52514e">Its own fault flags and its real telemetry: 20 fault windows and 20 no-fault controls, our decoy changes in each. Whiskers: 95 % interval.</text>
+<line x1="290.0" y1="76" x2="290.0" y2="338" stroke="#e7e6e2"/>
+<line x1="480.0" y1="76" x2="480.0" y2="338" stroke="#e7e6e2"/>
+<line x1="670.0" y1="76" x2="670.0" y2="338" stroke="#e7e6e2"/>
+<text x="276" y="98" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">Right cause · Faultline</text>
+<g><title>Right cause · Faultline: 11/20 fault windows</title><rect x="290" y="84" width="209.0" height="18" rx="4" fill="#2a78d6"/></g>
+<g stroke="#0b0b0b" stroke-width="1.4"><title>Right cause · Faultline: 11/20 fault windows: 95 % interval 0.3421–0.7418</title><line x1="420.0" y1="93.0" x2="571.9" y2="93.0"/><line x1="420.0" y1="88.0" x2="420.0" y2="98.0"/><line x1="571.9" y1="88.0" x2="571.9" y2="98.0"/></g>
+<text x="579.9" y="98" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">11/20  (34–74 %)</text>
+<text x="276" y="136" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Right cause · telemetry threshold (T+)</text>
+<g><title>Right cause · telemetry threshold (T+): 13/20 fault windows</title><rect x="290" y="122" width="247.0" height="18" rx="4" fill="#8c8a84"/></g>
+<g stroke="#0b0b0b" stroke-width="1.4"><title>Right cause · telemetry threshold (T+): 13/20 fault windows: 95 % interval 0.4329–0.8188</title><line x1="454.5" y1="131.0" x2="601.1" y2="131.0"/><line x1="454.5" y1="126.0" x2="454.5" y2="136.0"/><line x1="601.1" y1="126.0" x2="601.1" y2="136.0"/></g>
+<text x="609.1" y="136" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">13/20  (43–82 %)</text>
+<text x="276" y="174" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Right cause · recency</text>
+<g><title>Right cause · recency: 17/20 fault windows</title><rect x="290" y="160" width="323.0" height="18" rx="4" fill="#8c8a84"/></g>
+<g stroke="#0b0b0b" stroke-width="1.4"><title>Right cause · recency: 17/20 fault windows: 95 % interval 0.6396–0.9476</title><line x1="533.0" y1="169.0" x2="650.1" y2="169.0"/><line x1="533.0" y1="164.0" x2="533.0" y2="174.0"/><line x1="650.1" y1="164.0" x2="650.1" y2="174.0"/></g>
+<text x="658.1" y="174" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">17/20  (64–95 %)</text>
+<text x="276" y="212" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">Wrong blames · Faultline</text>
+<g stroke="#0b0b0b" stroke-width="1.4"><title>Wrong blames · Faultline: 0/40 windows: 95 % interval 0.0–0.0876</title><line x1="290.0" y1="207.0" x2="323.3" y2="207.0"/><line x1="290.0" y1="202.0" x2="290.0" y2="212.0"/><line x1="323.3" y1="202.0" x2="323.3" y2="212.0"/></g>
+<text x="331.3" y="212" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">0/40  (0–9 %)</text>
+<text x="276" y="250" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Wrong blames · telemetry threshold (T+)</text>
+<g><title>Wrong blames · telemetry threshold (T+): 8/40 windows</title><rect x="290" y="236" width="76.0" height="18" rx="4" fill="#8c8a84"/></g>
+<g stroke="#0b0b0b" stroke-width="1.4"><title>Wrong blames · telemetry threshold (T+): 8/40 windows: 95 % interval 0.105–0.3476</title><line x1="329.9" y1="245.0" x2="422.1" y2="245.0"/><line x1="329.9" y1="240.0" x2="329.9" y2="250.0"/><line x1="422.1" y1="240.0" x2="422.1" y2="250.0"/></g>
+<text x="430.1" y="250" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">8/40  (10–35 %)</text>
+<text x="276" y="288" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#52514e">Wrong blames · recency</text>
+<g><title>Wrong blames · recency: 23/40 windows</title><rect x="290" y="274" width="218.5" height="18" rx="4" fill="#8c8a84"/></g>
+<g stroke="#0b0b0b" stroke-width="1.4"><title>Wrong blames · recency: 23/40 windows: 95 % interval 0.4219–0.7149</title><line x1="450.3" y1="283.0" x2="561.7" y2="283.0"/><line x1="450.3" y1="278.0" x2="450.3" y2="288.0"/><line x1="561.7" y1="278.0" x2="561.7" y2="288.0"/></g>
+<text x="569.7" y="288" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="400" fill="#0b0b0b">23/40  (42–71 %)</text>
+<text x="276" y="326" text-anchor="end" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">Abstained · Faultline</text>
+<g><title>Abstained · Faultline: 9/40 windows</title><rect x="290" y="312" width="85.5" height="18" rx="4" fill="#2a78d6"/></g>
+<g stroke="#0b0b0b" stroke-width="1.4"><title>Abstained · Faultline: 9/40 windows: 95 % interval 0.1232–0.375</title><line x1="336.8" y1="321.0" x2="432.5" y2="321.0"/><line x1="336.8" y1="316.0" x2="336.8" y2="326.0"/><line x1="432.5" y1="316.0" x2="432.5" y2="326.0"/></g>
+<text x="440.5" y="326" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#0b0b0b">9/40  (12–38 %)</text>
+<text x="24" y="378" font-family="Inter, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" fill="#77756f">Pre-registered, one laptop, five faults. Recency looks strong on faults only because the flag flip lands just before the page; it blames a change in every control.</text>
+</svg>
