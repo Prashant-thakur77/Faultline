@@ -327,7 +327,7 @@ The real API in-process, the keyless investigator, clean rooms, off the public d
 
 Choices (S1,S1b, N = 3 each): the top option was the rollback in 6 of 6 cold runs and the flag flip in 6 of 6 warm runs after the on-call approved the flag on 5 incidents; the top changed on plan 4 (after learn.pref_min_n = 3 choices). The standing-approval suggestion first appeared on plan 3 (K = 2; shown before K: 0). Paging: the responder who answers was paged in the first wave from incident 3 on; MTTA 16.0 min before → 1.0 min after (scripted clock: a check of the mechanism, not a response-time claim); the rota on-call was paged on every incident: True. Forgetting the on-call's influence deleted 14 events, left 0, and the plan's top went back to rollback_deploy. Knowledge gaps: 2. Recall (S1→S1b, S3→S3b, N = 3): warm top precedent = the first incident in 6 of 6, gate verdicts identical in 6 of 6.
 
-T2 go/no-go (WIN_PLAN §12.5, evals/t2_gonogo.py): 5 of 5 green.
+T2 go/no-go (evals/t2_gonogo.py): 5 of 5 green.
 
 ## Product checks
 

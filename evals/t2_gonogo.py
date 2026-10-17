@@ -1,4 +1,4 @@
-"""The T2 (Agent Memory & Coordination) go/no-go checklist of WIN_PLAN §12.5, run and recorded with its evidence.
+"""The T2 (Agent Memory & Coordination) go/no-go checklist of run and recorded with its evidence.
 
   1. cold vs warm measured on ≥ 2 scenarios with N ≥ 3      ← evals/results/learning_night.json (M21, pre-registered)
   2. S13 concurrency passes                                  ← evals/concurrency.py (16 workers × 100 rounds), re-run now

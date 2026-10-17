@@ -1,5 +1,5 @@
 {
-  "reason": "M20 #3: measure the HNSW index's recall@10 against an exact scan before setting efRuntime (docs/plans/M20.md; the default efRuntime 10 is what every graph used before)",
+  "reason": "M20 #3: measure the HNSW index's recall@10 against an exact scan before setting efRuntime (docs/API.md; the default efRuntime 10 is what every graph used before)",
   "efs": [
     10,
     20,

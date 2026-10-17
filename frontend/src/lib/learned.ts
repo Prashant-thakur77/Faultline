@@ -3,7 +3,7 @@ import { toMs, type PersonRef } from "./oncall";
 import type { EpochMs } from "./types";
 
 /**
- * Typed client for what Faultline learned from the people using it (M21, docs/plans/M21-learning.md "API"):
+ * Typed client for what Faultline learned from the people using it (M21, docs/API.md):
  * GET /api/learned, guideline promote / dismiss, knowledge-gap dismiss and forgetting a person's influence (dry run,
  * then the receipt token). Every value comes from these responses, which the backend reads from the tenant's on-call
  * home graph (`oncall_<tenant>`) in FalkorDB; nothing here invents one. A missing value stays null and the UI shows

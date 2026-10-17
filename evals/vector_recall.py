@@ -165,7 +165,7 @@ def main() -> int:
 
     chosen = choose(sets, keys_in_order())
     res = {"reason": "M20 #3: measure the HNSW index's recall@10 against an exact scan before setting efRuntime "
-                     "(docs/plans/M20.md; the default efRuntime 10 is what every graph used before)",
+                     "(docs/API.md; the default efRuntime 10 is what every graph used before)",
            "efs": list(EFS), "variants": [list(v) for v in VARIANTS], "configs": keys_in_order(), "target": TARGET,
            "chosen": chosen, "default": "10",
            "schema": writes.schema_vector_options().get("Incident") or {},

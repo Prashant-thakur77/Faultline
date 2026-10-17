@@ -52,7 +52,7 @@ class Constraint:
 
 
 CONSTRAINTS: tuple[Constraint, ...] = (
-    # ids: a second Run with the same id (the label-less Run writer, docs/plans/M20 #1) is refused instead of silently
+    # ids: a second Run with the same id (the label-less Run writer, M20) is refused instead of silently
     # splitting a run's tool calls. UNIQUE is only used on small labels: on 6.0.2 a UNIQUE check costs time proportional
     # to the label's size on every insert (see RETIRED), so `Node.id` (every node) is MANDATORY, not UNIQUE.
     Constraint("UNIQUE", "NODE", "Run", ("id",), "one run per id (its tool calls and stages hang off one node)"),

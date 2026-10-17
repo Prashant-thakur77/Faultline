@@ -224,7 +224,7 @@ def engine_config() -> dict[str, Any]:
 
 @_engine_call
 def insight(tenant: str) -> dict[str, Any]:
-    """FalkorDB observing itself for one tenant (GET /api/engine/insight; response shape in docs/plans/M20.md "API"):
+    """FalkorDB observing itself for one tenant (GET /api/engine/insight; response shape in docs/API.md):
     per graph of the tenant (tenant_, golden_, oncall_, audit_ and up to MAX_INSIGHT_ROOMS live eval clean rooms) its
     GRAPH.MEMORY USAGE and its telemetry stream aggregated per template id; a combined per-template table over those
     graphs; engine load (GRAPH.INFO) and limits (GRAPH.CONFIG). Never another tenant's graph, never query text or

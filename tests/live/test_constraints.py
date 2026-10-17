@@ -64,7 +64,7 @@ def test_missing_mandatory_edge_property_is_refused(cg, c):
 def test_unique_ids_are_refused_and_the_label_less_run_bug_is_loud(cg):
     with pytest.raises(Exception, match="mandatory constraint violation.*Node.*id"):
         cg.query("CREATE (:Node {name:'no id'})")
-    # the latent bug (docs/plans/M20 #1): a label-less Run, then a Run:Node writer with the same id. Before M20 the
+    # the latent bug (M20): a label-less Run, then a Run:Node writer with the same id. Before M20 the
     # second MERGE silently created a second Run; now FalkorDB refuses it. The product's writers all use Run:Node.
     cg.query("MERGE (r:Run {id:'run-x'}) RETURN r.id")
     with pytest.raises(Exception, match="unique constraint violation"):

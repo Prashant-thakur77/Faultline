@@ -1,7 +1,7 @@
 """The engine has no internet egress in the prod topology (M20 #9; docs/SECURITY.md).
 
 FalkorDB 6.0.2 runs `LOAD CSV FROM 'https://…'` even under GRAPH.RO_QUERY, with a URL that may be built from graph data
-(verified: docs/plans/M20-falkordb-depth.md, upstream draft docs/upstream/22-load-csv-egress.md), and no config key or
+(verified: docs/FALKORDB_COMPAT.md, upstream draft docs/upstream/22-load-csv-egress.md), and no config key or
 ACL category disables it. Prod therefore puts FalkorDB on an `internal: true` Docker network (deploy/docker-compose.prod.yml).
 
     uv run python scripts/egress_check.py --docker     # throwaway same-digest container on an internal network

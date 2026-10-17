@@ -2,7 +2,7 @@ import { ApiError, apiRequest, ensureRunToken, tokenHeader } from "./api";
 import type { EpochMs } from "./types";
 
 /**
- * Typed client for the M19 on-call API (docs/plans/M19.md "API"): who is on call, the pager, acks, contracts,
+ * Typed client for the M19 on-call API (docs/API.md): who is on call, the pager, acks, contracts,
  * the shift report, hand-offs and the on-call stats. Every value comes from these responses, which the backend
  * reads from the tenant's FalkorDB graph; nothing here invents one.
  *

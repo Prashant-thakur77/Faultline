@@ -84,7 +84,7 @@ A repair that fails verification is reverted (`NOT_APPLIED`).
 The stage sequence starts `INTAKE → RECALL → LOCALIZE …`. At write-back, recalled incidents whose cause changed the same component become `PRECEDENT_FOR` the new incident (Q-MEM-2). An APPLIED `flip_flag` also sets the `FeatureFlag` node's state in the same query.
 
 ### M19: on-call (pages, acknowledgements, escalation, standing contracts, hand-offs)
-Reads are catalogue templates through the RO wrapper (`actions/oncall.py`, `actions/contracts.py`); writes are single queries in `graph/writes.py`. Pages live with their incident (a run's clean room, or the tenant graph); contracts and hand-offs live in the tenant graph. Full response shapes: docs/plans/M19.md, "Contract changes".
+Reads are catalogue templates through the RO wrapper (`actions/oncall.py`, `actions/contracts.py`); writes are single queries in `graph/writes.py`. Pages live with their incident (a run's clean room, or the tenant graph); contracts and hand-offs live in the tenant graph. Full response shapes: docs/API.md, "Contract changes".
 
 | Method | Path | Returns |
 |---|---|---|
@@ -107,7 +107,7 @@ A page row's `delivery` is `{in_app, <channel>: {ok, error?, pages, coalesced_in
 ### M21: what Faultline learned
 Since the UI follow-ups (2026-10-17): every plan option row (`Q-ACT-1`) also carries `rank` (its integer place; options are ordered by it, never by the id string) and `override_guideline` / `override_reason` (written on the Approval and the Action by the approve query whenever an approval goes past an active guideline, trusted or not); an option's `learned.guideline` adds `decided_by_name` and `decided_at`; `GET /api/status` adds `constraints` (`{declared, present, operational, pending, missing, rows, template:'Q-SCHEMA-5', graph}`) and the `faultline://schema` MCP resource a `constraints` list. `GET /api/learned` is read-only (the home graphs are prepared at API startup).
 
-Everything learned lives in the tenant's on-call home graph (`oncall_<t>`) and is read through catalogue templates (`memory/learning.py`); writes are single queries in `graph/writes.py` (`W_LEARN_*`). Only trusted actors are learned from (a run off the public demo or started with the approver key, a keyed alert, the approver key, the operator-mapped Telegram bot). Full response shapes: [docs/plans/M21-learning.md](plans/M21-learning.md#api).
+Everything learned lives in the tenant's on-call home graph (`oncall_<t>`) and is read through catalogue templates (`memory/learning.py`); writes are single queries in `graph/writes.py` (`W_LEARN_*`). Only trusted actors are learned from (a run off the public demo or started with the approver key, a keyed alert, the approver key, the operator-mapped Telegram bot). Full response shapes: [docs/API.md](plans/M21-learning.md#api).
 
 | Method | Path | Returns |
 |---|---|---|
@@ -216,3 +216,52 @@ Events are graph-derived: the server polls the run's StageEvents, ToolCalls and 
 | `NO_INCIDENT` | negative proof accepted |
 | `UNKNOWN_ESCALATED` | no cause accepted; handed to a human |
 | `FAILED` | error, with its reason |
+
+
+## Engine insight: FalkorDB observing itself
+
+`GET /api/engine/insight?tenant=<t>`: read-only, rate-limited (20 per minute per IP, 300 per minute overall in public
+mode), `422` for a bad tenant, `503` when FalkorDB is unreachable or `FAULTLINE_DISABLE_GRAPH` is set (fail closed).
+Public-safe: template ids (`Q-…`), writer ids (`W-…`), timings and flags only; the stream's query text and parameters
+(another visitor's input) never leave `graph/engine_info.py`. Only the tenant's own graphs are reported.
+
+```jsonc
+{
+  "tenant": "acme",
+  "load": {"running": 0, "waiting": 0},                       // GRAPH.INFO, engine-wide
+  "config": {"QUERY_MEM_CAPACITY": 268435456, "TIMEOUT_MAX": 10000, "TIMEOUT_DEFAULT": 2000,
+             "MAX_QUEUED_QUERIES": 50, "CACHE_SIZE": 25, "MAX_INFO_QUERIES": 1000, "THREAD_COUNT": 20},
+  "rooms_not_reported": 0,                                     // eval clean rooms beyond the 10 reported
+  "source": "GRAPH.MEMORY USAGE + the engine's telemetry{graph} stream (FalkorDB 6.0)",
+  "privacy": "template and writer ids, timings and flags only; no query text, no parameters",
+  "graphs": {                                                  // tenant_, golden_, oncall_, audit_, up to 10 eval_<t>_*
+    "tenant_acme": {
+      "memory_mb": 2,                                          // GRAPH.MEMORY USAGE total_graph_sz_mb
+      "memory": {"total_graph_sz_mb": 2, "label_matrices_sz_mb": 0, "relation_matrices_sz_mb": 0,
+                 "amortized_node_block_sz_mb": 0, "amortized_node_attributes_by_label_sz_mb": {"Service": 0, "...": 0},
+                 "amortized_edge_attributes_by_type_sz_mb": {"PROPAGATES_TO": 0, "...": 0}, "indices_sz_mb": 0},
+      "telemetry": {
+        "entries": 1000, "from": 1792245970, "to": 1792252973,  // stream window (epoch s); MAX_INFO_QUERIES keeps 1000
+        "queries": [                                           // per id, most frequent first
+          {"id": "Q-META-1", "kind": "template", "n": 58,
+           "total_ms_p50": 0.15, "total_ms_p95": 0.38, "wait_ms_p50": 0.015, "wait_ms_p95": 0.13,
+           "exec_ms_p50": 0.025, "exec_ms_p95": 0.053, "report_ms_p50": 0.10,
+           "cache_pct": 15.5, "writes": 0, "timeouts": 0},
+          {"id": "W-STAGE", "kind": "write", "n": 12, "...": "same fields"}
+        ],
+        "unmapped": {"n": 225, "total_ms_p50": 0.29, "...": "same fields, no id"},   // ad-hoc / dynamic queries: counted only
+        "recent": [                                            // newest first, at most 20, mapped entries only
+          {"at": 1792252973, "id": "Q-ONCALL-NOW", "kind": "template", "total_ms": 0.94, "wait_ms": 0.07,
+           "exec_ms": 0.30, "report_ms": 0.57, "cache": false, "write": false, "timeout": false}
+        ]
+      }
+    }
+  },
+  "templates": {"entries": 4321, "from": 1792245000, "to": 1792252973, "queries": ["... the same rows, over all graphs above"],
+                "unmapped": {"n": 900}}
+}
+```
+
+Percentiles are nearest-rank over the stream window. Durations are milliseconds as the engine records them (`Wait` =
+queued before a thread took it, `Execution`, `Report` = serialising the reply). Tests: `tests/live/test_engine_insight.py`,
+`tests/test_engine_insight_units.py`.

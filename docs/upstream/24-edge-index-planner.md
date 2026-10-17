@@ -1,7 +1,7 @@
 # A relationship range index makes anchored and labelled traversals 13× to 240× slower, and one scan times out (6.0.2): performance cliff
 
 Found in the M20 FalkorDB depth pass (2026-10-17). Verified on the pinned 6.0.2 digest on a throwaway graph (numbers are
-single-run probes on a laptop, see docs/plans; re-measure before quoting). Draft only: not filed.
+single-run probes on a laptop, see docs/FALKORDB_COMPAT.md; re-measure before quoting). Draft only: not filed.
 
 ```cypher
 UNWIND range(1, 3000) AS i CREATE (:N {id: i});
@@ -28,4 +28,4 @@ the index is used even when an anchored or labelled node scan would bound the wo
 against the expansion from a bound node; at least document that an edge index can slow anchored traversals.
 
 **Impact for Faultline:** none shipped. Almost every template is anchored on an id, so Faultline creates no relationship
-index (docs/plans/M20-falkordb-depth.md §3); revisit after a fix, behind a PROFILE A/B.
+index (docs/FALKORDB_COMPAT.md); revisit after a fix, behind a PROFILE A/B.

@@ -1,5 +1,5 @@
 /**
- * GET /api/learned and the forget responses, shaped exactly as docs/plans/M21-learning.md "API" documents them.
+ * GET /api/learned and the forget responses, shaped exactly as docs/API.md documents them.
  * Test-only: production code never renders these.
  */
 export const NOW = 1_792_250_000_000;

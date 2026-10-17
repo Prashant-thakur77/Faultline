@@ -954,7 +954,7 @@ def vector_recall_keys(x: dict | None = None) -> dict:
 
 
 def t2_keys(x: dict | None = None) -> dict:
-    """t2.* : the T2 go/no-go checklist of WIN_PLAN §12.5 as run by evals/t2_gonogo.py (evals/results/t2_gonogo.json)."""
+    """t2.* : the T2 go/no-go checklist fixed before the hackathon as run by evals/t2_gonogo.py (evals/results/t2_gonogo.json)."""
     x = _side("t2_gonogo.json") if x is None else x
     if not x or not x.get("items"):
         return {}
@@ -1002,7 +1002,7 @@ def learn_markdown(s: dict) -> list[str]:
               f"warm top precedent = the first incident in {s['learn.recall.warm_top_first']} of {s['learn.recall.trials']}, "
               f"gate verdicts identical in {s['learn.recall.gate_identical']} of {s['learn.recall.trials']}."]
     if s.get("t2.items"):
-        L += ["", f"T2 go/no-go (WIN_PLAN §12.5, evals/t2_gonogo.py): {s['t2.green']} of {s['t2.items']} green."]
+        L += ["", f"T2 go/no-go (evals/t2_gonogo.py): {s['t2.green']} of {s['t2.items']} green."]
     return L
 
 

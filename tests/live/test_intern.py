@@ -1,6 +1,6 @@
 """Live (M20 #11): MetricWindow's low-cardinality strings are written through intern() by writes.upsert_nodes: the
 values and equality matches are unchanged, the engine's ObjectPool holds them, and GRAPH.MEMORY reports less attribute
-memory than the same rows written plainly (30k nodes; measured at 100k: total 67 → 48 MB, docs/DECISIONS.md)."""
+memory than the same rows written plainly (30k nodes; measured at 100k: total 67 → 48 MB)."""
 
 import uuid
 

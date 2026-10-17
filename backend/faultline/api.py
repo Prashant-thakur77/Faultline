@@ -176,7 +176,7 @@ def engine_insight(request: Request, tenant: str = "acme") -> dict:
     """FalkorDB observing itself (M20 #8): per graph of this tenant its memory (GRAPH.MEMORY USAGE) and its telemetry
     stream (6.0: every query's wait / execution / report ms, plan-cache use, write and timeout flags) aggregated per
     template id, plus engine load and limits. Read-only, rate-limited, public-safe: ids and numbers only, never query
-    text or parameters. Response shape: docs/plans/M20.md "API"."""
+    text or parameters. Response shape: docs/API.md."""
     from .graph import engine_info
 
     _limit(f"insight:{_ip(request)}", 20, 60, global_n=300 if settings.faultline_public else None)
