@@ -15,6 +15,7 @@ import { IsolationBadge, TenantSwitch } from "./TenantSwitch";
 
 const NAV: { href: string; label: string; match: (p: string) => boolean; live?: boolean }[] = [
   { href: "/", label: "Incidents", match: (p) => p === "/" || p.startsWith("/incidents") },
+  { href: "/oncall", label: "On-call", match: (p) => p.startsWith("/oncall") },
   { href: "/preflight", label: "Preflight", match: (p) => p.startsWith("/preflight") },
   { href: "/memory", label: "Memory", match: (p) => p.startsWith("/memory") },
   { href: "/brain", label: "Brain", match: (p) => p.startsWith("/brain") },

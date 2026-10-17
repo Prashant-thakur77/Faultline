@@ -26,7 +26,7 @@ describe("TopBar", () => {
     render(<TopBar state={{ status, error: null, loading: false }} />);
     const sections = screen.getByRole("navigation", { name: "Sections" });
     const links = within(sections).getAllByRole("link").map((a) => a.textContent);
-    expect(links).toEqual(["Incidents", "Preflight", "Memory", "Brain", "Explore", "Break it", "Replay"]);
+    expect(links).toEqual(["Incidents", "On-call", "Preflight", "Memory", "Brain", "Explore", "Break it", "Replay"]);
     expect(within(sections).getByRole("link", { name: "Brain" }).getAttribute("aria-current")).toBe("page");
   });
 
@@ -37,7 +37,7 @@ describe("TopBar", () => {
     fireEvent.click(toggle);
     expect(screen.getByRole("button", { name: "Close menu" }).getAttribute("aria-expanded")).toBe("true");
     const menu = screen.getByRole("navigation", { name: "Sections (menu)" });
-    expect(within(menu).getAllByRole("link")).toHaveLength(7);
+    expect(within(menu).getAllByRole("link")).toHaveLength(8);
     expect(screen.getAllByText("FalkorDB 6.0.2 · sha256:107455e862a8").length).toBeGreaterThan(0);
   });
 

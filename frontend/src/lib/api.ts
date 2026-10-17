@@ -169,6 +169,9 @@ async function request<T>(
   return (await res.json()) as T;
 }
 
+/** The fetch wrapper for feature clients in other modules (src/lib/oncall.ts): same banner and error rules. */
+export const apiRequest = request;
+
 const enc = encodeURIComponent;
 const q = (tenant: string) => `tenant=${enc(tenant)}`;
 
@@ -296,7 +299,7 @@ export function brainUserId(): string | null {
   }
 }
 
-const tokenHeader = (incident: string): Record<string, string> => {
+export const tokenHeader = (incident: string): Record<string, string> => {
   const t = runTokens.get(incident);
   return t ? { "X-Faultline-Run-Token": t } : {};
 };
@@ -446,7 +449,14 @@ export const api = {
    */
   async approve(
     inc: string,
-    body: { action_id: string; plan_hash: string; approver: string },
+    body: {
+      action_id: string;
+      plan_hash: string;
+      approver: string;
+      /** M21: approving an option an ACTIVE learned guideline is against: the guideline's id and why (3–300 chars). */
+      override_guideline?: string;
+      override_reason?: string;
+    },
     approverKey?: string,
     tenant = DEFAULT_TENANT,
   ): Promise<ApproveResponse> {

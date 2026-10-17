@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useRef, useState } from "react";
+import Link from "next/link";
 import {
   Ban,
   Check,
@@ -18,6 +19,7 @@ import {
   Telescope,
   OctagonAlert,
   RotateCcw,
+  ShieldAlert,
   ShieldCheck,
   Stamp,
   ThumbsDown,
@@ -33,12 +35,16 @@ import {
 } from "@/lib/api";
 import { useTenant } from "@/lib/tenant";
 import { fmtValue } from "@/lib/format";
+import { guidelineFrom409 } from "@/lib/learned";
+import { useNow } from "@/hooks/usePolled";
 import type {
   OptionFuture,
   ActionOption,
   ApproveResponse,
   ExactAction,
   FixHistoryRow,
+  LearnedHook,
+  OptionGuideline,
   PlanResponse,
   RejectResponse,
   RemedySummary,
@@ -56,6 +62,18 @@ import { PlanPending } from "./ContainmentCard";
 import { DiffView } from "./DiffView";
 import { FixHistoryChip } from "./MemoryCard";
 import { Section } from "./Section";
+import { ContractGrant } from "@/components/oncall/ContractGrant";
+import {
+  GuidelineBanner,
+  LearnedPlanNote,
+  MovedLine,
+  movedFrom,
+  optionLearned,
+  OverrideFields,
+  PreferenceLine,
+  stripLearnedLines,
+  SuggestionChip,
+} from "./LearnedBits";
 
 const KIND_TEXT: Record<string, string> = {
   flip_flag: "feature flag",
@@ -117,6 +135,8 @@ interface Props {
   remedy?: RemedySummary | null;
   /** Opens the remedy_stats query (Q-REM-1) behind the ordering, when it was recorded. */
   onOpenRemedy?: (() => void) | null;
+  /** M21: the recorded learned_preferences read behind the learned order (template + opener), when it was recorded. */
+  learnedQuery?: { template: string | null; onOpen: () => void } | null;
 }
 
 /**
@@ -136,6 +156,7 @@ export function PlanApprovalCard({
   readOnly = false,
   remedy = null,
   onOpenRemedy = null,
+  learnedQuery = null,
 }: Props) {
   const tenant = useTenant();
   const options = plan?.options ?? [];
@@ -157,6 +178,11 @@ export function PlanApprovalCard({
   const [approvedBy, setApprovedBy] = useState<
     ApproveResponse["approver"] | null
   >(null);
+  // M21: the override this session's approval carried, and whether the approval was learned
+  const [approvalExtra, setApprovalExtra] = useState<Pick<
+    ApproveResponse,
+    "override" | "learned"
+  > | null>(null);
   const [rejection, setRejection] = useState<{
     option: string;
     res: RejectResponse;
@@ -211,12 +237,28 @@ export function PlanApprovalCard({
   let body: React.ReactNode;
   if (done) {
     body = (
-      <ActionOutcome
-        option={done}
-        stages={stages}
-        plan={plan!}
-        approvedBy={approvedBy}
-      />
+      <div className="space-y-3">
+        <ActionOutcome
+          option={done}
+          stages={stages}
+          plan={plan!}
+          approvedBy={approvedBy}
+          extra={approvalExtra}
+          paged={!readOnly}
+        />
+        {/* M19: a verified fix can become a standing approval for its repeats (live room only); M21: Faultline
+            suggests one when the same exact fix was approved and verified on enough incidents of this family */}
+        {!readOnly && done.verdict === "APPLIED" ? (
+          <ContractGrant
+            incidentId={incidentId}
+            actionId={done.id}
+            actionKind={done.kind}
+            candidates={candidates}
+            suggestion={optionLearned(done)?.contract_suggestion ?? null}
+            family={optionLearned(done)?.family ?? null}
+          />
+        ) : null}
+      </div>
     );
   } else if (!plan) {
     body = <PlanPending error={error} stage={stage} what="plan" />;
@@ -240,6 +282,7 @@ export function PlanApprovalCard({
             <FailedAttempts failed={failed} note={lastPause?.note ?? null} />
           ) : null}
           <RemedyNote remedy={remedy} onOpen={onOpenRemedy} />
+          <LearnedPlanNote learned={plan.learned} query={learnedQuery} />
           <OptionList
             options={options}
             history={history}
@@ -247,6 +290,7 @@ export function PlanApprovalCard({
             busyId={null}
             chooseErr={null}
             onChoose={null}
+            tenant={tenant}
           />
         </>
       );
@@ -272,11 +316,13 @@ export function PlanApprovalCard({
               (&ldquo;{rejection.res.reason}&rdquo;). The option is now disabled
               and recorded in the graph; the incident still awaits approval, so
               choose another option.
+              <RejectionLearned learned={rejection.res.learned} tenant={tenant} />
             </span>
           </p>
         ) : null}
         <StepHeading n={1} title="Choose an option" done={!!exact} />
         <RemedyNote remedy={remedy} onOpen={onOpenRemedy} />
+        <LearnedPlanNote learned={plan.learned} query={learnedQuery} />
         <OptionList
           options={options}
           history={history}
@@ -284,6 +330,7 @@ export function PlanApprovalCard({
           busyId={busyId}
           chooseErr={chooseErr}
           onChoose={(id) => void choose(id)}
+          tenant={tenant}
         />
         {exact ? (
           <>
@@ -295,6 +342,7 @@ export function PlanApprovalCard({
               actionId={exact.id}
               planHash={exact.action.plan_hash}
               candidates={candidates}
+              guideline={activeGuideline(options.find((o) => o.id === exact.id) ?? null)}
               onRechoose={() => void choose(exact.id)}
               onRejected={(res) => {
                 setRejection({
@@ -307,6 +355,7 @@ export function PlanApprovalCard({
               }}
               onApproved={(res) => {
                 setApprovedBy(res.approver ?? null);
+                setApprovalExtra({ override: res.override ?? null, learned: res.learned ?? null });
                 onApproved();
                 onRefresh();
               }}
@@ -367,6 +416,51 @@ function StepHeading({
         <span className="font-normal text-emerald-300">(done)</span>
       ) : null}
     </h3>
+  );
+}
+
+/** The ACTIVE guideline the option is against, as the plan recorded it (an override is needed to approve it). */
+function activeGuideline(o: ActionOption | null): OptionGuideline | null {
+  const g = o ? optionLearned(o)?.guideline : null;
+  return g && g.needs_override ? g : null;
+}
+
+/** What the rejection taught Faultline: a proposed guideline from the reason, or why it was not learned. */
+function RejectionLearned({
+  learned,
+  tenant,
+}: {
+  learned: LearnedHook | null | undefined;
+  tenant: string;
+}) {
+  if (!learned) return null;
+  if (!learned.learned) {
+    return (
+      <span className="mt-1 block text-amber-100/80">
+        Not learned: {learned.why}.
+      </span>
+    );
+  }
+  return (
+    <span className="mt-1 block text-amber-100/90">
+      {learned.guideline ? (
+        <>
+          Faultline proposed guideline{" "}
+          <span className="font-mono">{learned.guideline.id}</span> from your
+          reason: it shows on the next plan for {learned.family}. Promote or
+          dismiss it under{" "}
+          <Link
+            href={`/memory?tenant=${encodeURIComponent(tenant)}#learned`}
+            className="rounded text-sky-200 underline outline-none focus-visible:ring-2 focus-visible:ring-sky-400"
+          >
+            What Faultline has learned
+          </Link>
+          .
+        </>
+      ) : (
+        <>Learned as a rejection for {learned.family}.</>
+      )}
+    </span>
   );
 }
 
@@ -463,6 +557,7 @@ function OptionList({
   busyId,
   chooseErr,
   onChoose,
+  tenant,
 }: {
   options: ActionOption[];
   /** Q-MEM-5 rows: how each fix kind fared on the recalled precedents. */
@@ -471,15 +566,24 @@ function OptionList({
   busyId: string | null;
   chooseErr: { id: string; text: string } | null;
   onChoose: ((id: string) => void) | null;
+  tenant: string;
 }) {
+  const now = useNow(60_000);
   return (
     <ul className="space-y-1.5" aria-label="Action options">
-      {options.map((o) => {
+      {options.map((o, idx) => {
         const isChosen = o.id === exactId;
         const descId = `opt-${o.id}-why`;
-        const why = splitReason(o);
+        // M21: the learned why lines are shown on their own (moved line, guideline, suggestion), not inside the reason
+        const learned = optionLearned(o);
+        const moved = learned ? movedFrom(learned, idx + 1) !== null : false;
+        const why = splitReason({
+          ...o,
+          reason: o.reason ? stripLearnedLines(o.reason, learned) : o.reason,
+        });
         const fut = optionFuture(o);
         const ratio = why.learned ? workedRatio(o, why.learned) : null;
+        const prefInDetails = !!learned?.preference?.line && !moved;
         return (
           <li
             key={o.id}
@@ -557,6 +661,17 @@ function OptionList({
                 </Button>
               ) : null}
             </div>
+            {learned ? <MovedLine learned={learned} place={idx + 1} /> : null}
+            {learned?.guideline ? (
+              <GuidelineBanner g={learned.guideline} tenant={tenant} now={now} />
+            ) : null}
+            {learned?.contract_suggestion && o.enabled ? (
+              <SuggestionChip
+                s={learned.contract_suggestion}
+                tenant={tenant}
+                className="mt-1.5"
+              />
+            ) : null}
             {(o.enabled && history.some((h) => h.kind === o.kind)) || fut ? (
               <div
                 role="group"
@@ -582,7 +697,7 @@ function OptionList({
                   : null}
               </div>
             ) : null}
-            {why.base || why.learned || fut || (o.enabled && o.preview && Object.keys(o.preview).length) ? (
+            {why.base || why.learned || fut || prefInDetails || (o.enabled && o.preview && Object.keys(o.preview).length) ? (
               <Disclosure
                 className="mt-1.5"
                 size="xs"
@@ -616,6 +731,7 @@ function OptionList({
                     <span className="min-w-0 flex-1">{why.learned}</span>
                   </p>
                 ) : null}
+                {prefInDetails && learned ? <PreferenceLine learned={learned} /> : null}
                 {o.enabled && o.preview && Object.keys(o.preview).length ? (
                   <p className="font-mono text-[11px] break-all text-[var(--fl-subtle)]">
                     {Object.entries(o.preview)
@@ -805,6 +921,7 @@ function ApproveForm({
   actionId,
   planHash,
   candidates,
+  guideline = null,
   onRechoose,
   onApproved,
   onRejected,
@@ -814,6 +931,8 @@ function ApproveForm({
   planHash: string;
   /** Who-fixes ranking: the top person pre-fills the approver; all are offered as suggestions. */
   candidates: WhoFixesRow[];
+  /** M21: the ACTIVE guideline this option is against (as the plan recorded it): approving needs an explicit override. */
+  guideline?: OptionGuideline | null;
   onRechoose: () => void;
   onApproved: (res: ApproveResponse) => void;
   /** Called once /reject returns 200 (the option is disabled; the incident still awaits approval). */
@@ -842,14 +961,47 @@ function ApproveForm({
   const rejectBtn = useRef<HTMLButtonElement>(null);
   const reasonRef = useRef<HTMLTextAreaElement>(null);
   const reasonOk = reason.trim().length >= 3;
+  // M21: a guideline the server named when it refused the approval (promoted after the plan was made)
+  const [refused, setRefused] = useState<{
+    id: string;
+    text: string | null;
+    promotedBy: string | null;
+  } | null>(null);
+  const [overrideOn, setOverrideOn] = useState(false);
+  const [overrideReason, setOverrideReason] = useState("");
+  const override = refused
+    ? refused
+    : guideline
+      ? {
+          id: guideline.id,
+          text: guideline.text,
+          promotedBy: guideline.decided_by,
+        }
+      : null;
+  const overrideOk =
+    !override ||
+    (overrideOn &&
+      overrideReason.trim().length >= 3 &&
+      overrideReason.trim().length <= 300);
+  const overrideHintId = useId();
 
-  const fail = (e: unknown, op: "approve" | "reject") =>
+  const fail = (e: unknown, op: "approve" | "reject") => {
+    const g =
+      op === "approve" && e instanceof ApiError && e.status === 409
+        ? guidelineFrom409(e.detail)
+        : null;
+    if (g) {
+      // the server asks for an override: show it (never retried on the user's behalf)
+      if (g.id !== override?.id) setOverrideOn(false);
+      setRefused(g);
+    }
     setErr({
       status: e instanceof ApiError ? e.status : null,
       text: e instanceof ApiError ? e.detail : errorText(e),
       foreign: isForeignRun(e),
       op,
     });
+  };
 
   const reject = async () => {
     if (busy || !approver.trim() || !reasonOk) return;
@@ -880,7 +1032,17 @@ function ApproveForm({
     try {
       const res = await api.approve(
         incidentId,
-        { action_id: actionId, plan_hash: planHash, approver: approver.trim() },
+        {
+          action_id: actionId,
+          plan_hash: planHash,
+          approver: approver.trim(),
+          ...(override
+            ? {
+                override_guideline: override.id,
+                override_reason: overrideReason.trim(),
+              }
+            : {}),
+        },
         approverKey.trim() || undefined,
         tenant,
       );
@@ -896,9 +1058,21 @@ function ApproveForm({
       className="space-y-2"
       onSubmit={(e) => {
         e.preventDefault();
-        if (!busy && approver.trim() && !rejecting) void approve();
+        if (!busy && approver.trim() && !rejecting && overrideOk) void approve();
       }}
     >
+      {override ? (
+        <OverrideFields
+          guideline={override}
+          refusedByServer={!!refused}
+          checked={overrideOn}
+          reason={overrideReason}
+          onChecked={setOverrideOn}
+          onReason={setOverrideReason}
+          disabled={busy}
+          hintId={overrideHintId}
+        />
+      ) : null}
       <div className="flex flex-wrap items-end gap-2">
         <div className="flex flex-col gap-0.5">
           <label htmlFor={inputId} className="text-[11px] text-zinc-400">
@@ -947,7 +1121,8 @@ function ApproveForm({
         <Button
           type="submit"
           size="lg"
-          disabled={busy || !approver.trim() || rejecting}
+          disabled={busy || !approver.trim() || rejecting || !overrideOk}
+          aria-describedby={override ? overrideHintId : undefined}
           className="bg-emerald-700 text-white hover:bg-emerald-800"
         >
           {busy && !rejecting ? (
@@ -1089,6 +1264,16 @@ function ApproveForm({
                 <strong className="font-semibold">Not your run.</strong>{" "}
                 {FOREIGN_RUN_TEXT}
               </>
+            ) : err.status === 409 &&
+              err.op === "approve" &&
+              guidelineFrom409(err.text) ? (
+              <>
+                <strong className="font-semibold">
+                  Needs a guideline override:
+                </strong>{" "}
+                {err.text} (HTTP 409). Tick the override above and give a
+                reason, then approve again.
+              </>
             ) : err.status === 409 ? (
               <>
                 <strong className="font-semibold">
@@ -1133,7 +1318,7 @@ function ApproveForm({
               </>
             )}
           </p>
-          {err.status === 409 ? (
+          {err.status === 409 && !guidelineFrom409(err.text) ? (
             <Button size="xs" variant="outline" onClick={onRechoose}>
               <RotateCcw aria-hidden /> Re-choose
             </Button>
@@ -1175,13 +1360,20 @@ function ActionOutcome({
   stages,
   plan,
   approvedBy,
+  extra = null,
+  paged = true,
 }: {
   option: ActionOption;
   stages: StageRow[];
   plan: PlanResponse;
   /** The approver as the server checked it in the graph (this session's approval only). */
   approvedBy: ApproveResponse["approver"] | null;
+  /** M21: the guideline override this session's approval carried, and whether the approval was learned. */
+  extra?: Pick<ApproveResponse, "override" | "learned"> | null;
+  /** M19: a live run pages the on-call when an approved fix ends unresolved; a replay recording predates paging. */
+  paged?: boolean;
 }) {
+  const pageNote = paged ? "the on-call was paged" : "no page sent in this recording";
   const sorted = [...stages].sort((a, b) => a.at - b.at || a.ord - b.ord);
   const byStage = new Map<string, StageRow>();
   for (const st of sorted) byStage.set(st.stage, st);
@@ -1278,6 +1470,39 @@ function ActionOutcome({
               </dd>
             </>
           ) : null}
+          {extra?.override ? (
+            <>
+              <dt className="text-zinc-400">override</dt>
+              <dd className="break-words text-amber-100">
+                <ShieldAlert
+                  aria-hidden
+                  className="mr-1 inline size-3 align-[-2px] text-amber-300"
+                />
+                guideline{" "}
+                <span className="font-mono">{extra.override.id}</span>{" "}
+                (&ldquo;{extra.override.text}&rdquo;) overridden:{" "}
+                <span className="text-zinc-200">
+                  &ldquo;{extra.override.reason}&rdquo;
+                </span>
+              </dd>
+            </>
+          ) : null}
+          {extra?.learned ? (
+            <>
+              <dt className="text-zinc-400">learned</dt>
+              <dd className="break-words text-zinc-300">
+                {extra.learned.learned ? (
+                  <>
+                    recorded as{" "}
+                    <span className="font-mono">{extra.learned.event}</span> for{" "}
+                    {extra.learned.family}
+                  </>
+                ) : (
+                  <>not learned: {extra.learned.why}</>
+                )}
+              </dd>
+            </>
+          ) : null}
         </dl>
       </div>
 
@@ -1355,7 +1580,7 @@ function ActionOutcome({
                 {top
                   ? `${top.name ?? top.person} (${top.person})`
                   : "a human (no ranked person recorded)"}{" "}
-                <span className="font-normal text-red-100">(no page sent)</span>
+                <span className="font-normal text-red-100">({pageNote})</span>
               </span>
             ) : null}
           </div>
@@ -1444,7 +1669,7 @@ function ActionOutcome({
               <p className="text-[11px] font-semibold tracking-wide text-amber-300 uppercase">
                 {final.stage === "RESOLVED"
                   ? "Resolved, but write-back not fully verified"
-                  : "Write-back not fully verified: handed to a human (no page sent)"}
+                  : `Write-back not fully verified: handed to a human (${pageNote})`}
               </p>
               <p className="text-lg font-bold text-amber-50">{final.note}</p>
               <p className="text-xs text-amber-100">
@@ -1504,7 +1729,7 @@ function ActionOutcome({
               <p className="text-[11px] font-semibold tracking-wide text-red-300 uppercase">
                 {final.stage === "FAILED"
                   ? "Action failed"
-                  : "Unknown: handed to a human (no page sent)"}
+                  : `Unknown: handed to a human (${pageNote})`}
               </p>
               <p className="text-sm font-semibold break-words text-red-50">
                 {final.note || final.stage}

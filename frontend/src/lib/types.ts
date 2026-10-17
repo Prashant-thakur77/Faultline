@@ -717,7 +717,77 @@ export interface ActionOption {
     target: string;
     line: string;
   } | null;
+  /**
+   * M21: what the team taught Faultline about this option (the learned_preferences read, from the on-call home
+   * graph). An object from /plan (parsed server side); JSON text if a recording kept it raw. Absent: not consulted.
+   */
+  learned?: OptionLearned | string | null;
 }
+
+/** M21: a learned guideline as it applies to one option (an ACTIVE one needs an explicit override to approve). */
+export interface OptionGuideline {
+  id: string;
+  text: string;
+  status: string;
+  by: string | null;
+  by_name: string | null;
+  at: EpochMs | null;
+  incident: string | null;
+  event: string | null;
+  needs_override: boolean;
+  decided_by: string | null;
+  line: string;
+  /** Other guidelines on the same family and kind (ids), when there are several. */
+  others?: string[];
+}
+
+export interface OptionContractSuggestion {
+  n: number;
+  params_hash: string;
+  incidents: string[];
+  events: string[];
+  people: string[];
+  line: string;
+}
+
+/** M21: an option's learned annotations (`preference`, `guideline`, `contract_suggestion` only when they apply). */
+export interface OptionLearned {
+  family?: string | null;
+  /** Where the option would be without learning (1-based); differs from its place ⇒ learning moved it. */
+  rank_without_learning?: number | null;
+  score?: number | null;
+  preference?: {
+    pref: number;
+    n_approve: number;
+    n_reject: number;
+    n_family_approve: number;
+    last_at: EpochMs | null;
+    events: string[];
+    line: string;
+  } | null;
+  guideline?: OptionGuideline | null;
+  contract_suggestion?: OptionContractSuggestion | null;
+}
+
+/** M21: the plan's learning summary (`consulted: false` for runs with no on-call home: CLI, benches). */
+export interface PlanLearned {
+  consulted: boolean;
+  note?: string;
+  family?: string | null;
+  n_family?: number | null;
+  applies?: boolean | null;
+  pref_min_n?: number | null;
+  moved?: string[];
+  flagged?: string[];
+  suggested?: string[];
+  first_wave?: string[];
+  evidence?: { preferences: string | null; responders: string | null } | null;
+}
+
+/** M21: what an approve / reject / ack taught Faultline (null when the hook failed; it never fails the action). */
+export type LearnedHook =
+  | { learned: true; family: string; event: string; kind?: string; guideline?: { id: string; status: string } | null }
+  | { learned: false; why: string };
 
 export interface RecalledIncident {
   id: string;
@@ -756,6 +826,8 @@ export interface PlanResponse {
   notify_set?: PlanItem<NotifyPayload> | null;
   owner_at?: PlanItem<OwnerAtPayload> | null;
   options: ActionOption[];
+  /** M21: what learning did to this plan (absent on older backends and recordings). */
+  learned?: PlanLearned | null;
 }
 
 export interface ApproveResponse {
@@ -771,6 +843,10 @@ export interface ApproveResponse {
     owner_team: string | null;
     committed: boolean | number | null;
   };
+  /** M21: whether this approval was learned (and as which event), or why not. */
+  learned?: LearnedHook | null;
+  /** M21: the guideline override this approval carried (its id, the reason given and the guideline's text). */
+  override?: { id: string; reason: string; text: string } | null;
 }
 
 export interface RearmResponse {
@@ -1067,6 +1143,8 @@ export interface RejectResponse {
   stage: string;
   reason: string;
   approver: { id: string; name?: string | null; [k: string]: unknown };
+  /** M21: the rejection as a learning event; with a reason it proposes a guideline. */
+  learned?: LearnedHook | null;
 }
 
 /** A template result as the read-only view endpoints return it (re-runnable in the Cypher panel). */

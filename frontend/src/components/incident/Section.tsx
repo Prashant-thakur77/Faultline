@@ -24,9 +24,12 @@ export function Section({
   via,
   children,
   className,
+  level = 2,
 }: {
   id: string;
   title: string;
+  /** Heading level: 2 (default) for a page's cards; 3 for cards nested under a panel's own h2. */
+  level?: 2 | 3;
   /** Status chips / counts, right of the title. */
   aside?: React.ReactNode;
   /** The section's "via FalkorDB" affordance (one per card). */
@@ -37,10 +40,11 @@ export function Section({
   const foldable = useContext(SectionFoldContext);
   const [open, setOpen] = useState(!foldable);
   const bodyId = useId();
+  const H = level === 3 ? "h3" : "h2";
   return (
     <section aria-labelledby={`${id}-h`} className={cn("fl-card rounded-2xl px-5", foldable ? "py-3" : "py-4", className)}>
       <div className={cn("flex flex-wrap items-center gap-x-2 gap-y-1", open && "mb-3")}>
-        <h2 id={`${id}-h`} className="text-[15px] font-[560] tracking-[-0.01em] text-zinc-50">
+        <H id={`${id}-h`} className="text-[15px] font-[560] tracking-[-0.01em] text-zinc-50">
           {foldable ? (
             <button
               type="button"
@@ -61,7 +65,7 @@ export function Section({
           ) : (
             title
           )}
-        </h2>
+        </H>
         {aside ? <div className="flex flex-wrap items-center gap-1.5">{aside}</div> : null}
         {via ? (
           <div className="ml-auto flex items-center">{foldable ? <ViaCompactProvider>{via}</ViaCompactProvider> : via}</div>

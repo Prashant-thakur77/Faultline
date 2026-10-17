@@ -182,6 +182,7 @@ export function IncidentRoomLayout({ source }: { source: RoomSource }) {
   const showOwnership = !noIncident && !absent.has("ownership");
   const showNotify = !noIncident && !absent.has("notify");
   const remedyCall = actions.toolCallOf("remedy_stats");
+  const learnedCall = actions.toolCallOf("learned_preferences"); // M21: what the team taught Faultline (the plan's learned order)
   // A crew call is a ToolCall node: open the recorded row (with its params) when the view has it, else the call as the
   // crew query returned it (the panel then derives params and labels them so).
   const openCrewCall = (c: CrewCall) =>
@@ -572,6 +573,9 @@ export function IncidentRoomLayout({ source }: { source: RoomSource }) {
                 readOnly={source.mode === "replay"}
                 remedy={view.report?.remedy ?? null}
                 onOpenRemedy={remedyCall ? () => actions.openToolCall(remedyCall) : null}
+                learnedQuery={
+                  learnedCall ? { template: learnedCall.template, onOpen: () => actions.openToolCall(learnedCall) } : null
+                }
               />
             </>
           )}
@@ -603,7 +607,14 @@ export function IncidentRoomLayout({ source }: { source: RoomSource }) {
                 ) : (
                   <>
                     {showNotify ? (
-                      <NotifyCard plan={plan} error={source.planError} stage={stage} mode={source.mode} onOpenPlanItem={actions.openPlanItem} />
+                      <NotifyCard
+                        plan={plan}
+                        error={source.planError}
+                        stage={stage}
+                        mode={source.mode}
+                        onOpenPlanItem={actions.openPlanItem}
+                        incidentId={source.mode === "live" ? view.incident.id : null}
+                      />
                     ) : null}
                     <MemoryCard
                       plan={plan}

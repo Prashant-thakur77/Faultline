@@ -2,17 +2,20 @@
 
 import { Megaphone, PhoneCall, TriangleAlert } from "lucide-react";
 import { fmtValue } from "@/lib/format";
+import { useTenant } from "@/lib/tenant";
 import type { PlanItem, PlanResponse } from "@/lib/types";
 import { StatusChip } from "@/components/StatusChip";
 import { PlanPending } from "./ContainmentCard";
 import { FieldAbsent } from "./ReportBits";
 import { ViaFalkor } from "@/components/cypher/ViaFalkor";
+import { IncidentPages, IncidentPagesChip, useIncidentPages } from "@/components/oncall/IncidentPages";
 import { Section } from "./Section";
 
 /**
  * Notify (plan.notify_set, Q-NOTIFY-1 over the algo.SSpaths blast radius): the teams that own
  * something the failure reaches, with who is on call for each now. This is who to TELL, not who
  * fixes it (that ranking is the "Who fixes it" card). Ordered by weighted impact (code + weights).
+ * Live, it also lists the pages actually sent for the incident (GET /api/pages?incident=) and their ack state.
  */
 export function NotifyCard({
   plan,
@@ -20,13 +23,18 @@ export function NotifyCard({
   stage,
   mode,
   onOpenPlanItem,
+  incidentId = null,
 }: {
   plan: PlanResponse | null;
   error: string | null;
   stage: string;
   mode: "live" | "replay";
   onOpenPlanItem: (item: PlanItem<unknown>, title: string) => void;
+  /** Live room only: read the pages sent for this incident (replay has no pager to read). */
+  incidentId?: string | null;
 }) {
+  const tenant = useTenant();
+  const pages = useIncidentPages(mode === "live" ? incidentId : null, tenant);
   const item = plan?.notify_set;
   const rows = item?.payload?.rows ?? [];
   const target = typeof item?.params?.target_id === "string" ? (item.params.target_id as string) : null;
@@ -37,11 +45,14 @@ export function NotifyCard({
       title="Notify (who to tell)"
       via={item ? <ViaFalkor template={item.template} label="the notify list" onOpen={() => onOpenPlanItem(item, "who to notify")} /> : null}
       aside={
-        item ? (
+        item || pages.data ? (
           <>
-            <StatusChip tone="info" icon={Megaphone}>
-              {rows.length} team{rows.length === 1 ? "" : "s"}
-            </StatusChip>
+            {item ? (
+              <StatusChip tone="info" icon={Megaphone}>
+                {rows.length} team{rows.length === 1 ? "" : "s"}
+              </StatusChip>
+            ) : null}
+            <IncidentPagesChip polled={pages} />
           </>
         ) : null
       }
@@ -99,6 +110,7 @@ export function NotifyCard({
           ))}
         </ol>
       )}
+      {mode === "live" && incidentId ? <IncidentPages polled={pages} tenant={tenant} /> : null}
     </Section>
   );
 }

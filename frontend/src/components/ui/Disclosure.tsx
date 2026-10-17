@@ -32,6 +32,7 @@ export function Disclosure({
   className,
   bodyClassName,
   size = "sm",
+  onToggle,
 }: {
   summary: React.ReactNode;
   actions?: React.ReactNode;
@@ -41,6 +42,8 @@ export function Disclosure({
   className?: string;
   bodyClassName?: string;
   size?: "xs" | "sm";
+  /** Called with the new state after each toggle (e.g. read the body's data on first open). */
+  onToggle?: (open: boolean) => void;
 }) {
   const fold = useFold();
   const [open, setOpen] = useState(defaultOpen ?? !fold);
@@ -52,7 +55,10 @@ export function Disclosure({
           type="button"
           aria-expanded={open}
           aria-controls={id}
-          onClick={() => setOpen((o) => !o)}
+          onClick={() => {
+            setOpen(!open);
+            onToggle?.(!open);
+          }}
           className={cn(
             "group -mx-1 inline-flex min-h-7 min-w-0 items-center gap-1.5 rounded-md px-1 text-left outline-none transition-colors",
             "text-zinc-300 hover:text-zinc-50 focus-visible:ring-2 focus-visible:ring-sky-400",
