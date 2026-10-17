@@ -250,12 +250,14 @@ class Gate:
             # whole excess another component's own fault upstream accounts for is no carrier for G5 either
             upstream: dict[str, list[dict]] = {}
             up_ev: list[str] = []
+            up_params: dict[str, dict] = {}   # target → the exact params of the call that judged it (replayable record)
             cand_targets = sorted({t for v in cands.values() for t in v.targets})
             for i in range(0, len(cand_targets), 20):   # the tool's per-call bound (IMPACT_MAX_IDS)
                 up = T.upstream_explained(suspect_ids=cand_targets[i:i + 20], onset=int(inc["onset_at"]), mode="strict")
                 if "error" in up:
                     raise GraphError(f"G4 upstream: {up['error']}")
                 up_ev += [up["evidence_id"]] if up.get("evidence_id") else []
+                up_params.update({t: up.get("params") or {} for t in cand_targets[i:i + 20]})
                 for r in up["rows"]:
                     if r["u"] != r["s"]:
                         upstream.setdefault(r["s"], []).append(r)
@@ -349,7 +351,8 @@ class Gate:
                                         v.reason if v.reason.startswith("G5") else f"max flow {v.flow:.4f}", "Q-GATE-3",
                                         {"sources": v.targets or [v.target], "symptom": groups[0][0]}))
                 if v.reason.startswith("G4 upstream"):
-                    checks.append(Check("G4 upstream", False, v.reason, "Q-GATE-UPSTREAM", {"ids": v.targets},
+                    checks.append(Check("G4 upstream", False, v.reason, "Q-GATE-UPSTREAM",
+                                        up_params.get((v.targets or [v.target])[0]) or {"ids": v.targets},
                                         evidence_ids=list(up_ev)))
                 self._write_gate_run(v.change, v.status == "candidate", False, checks, 0, "sweep")
             return sorted(verdicts.values(), key=lambda v: (v.status != "candidate", v.change))
@@ -446,7 +449,7 @@ class Gate:
                            f"(excess {r['u_excess']:.4f}, upper-bound transfer {r['transfer']:.2f})" for r in ub_rows[:3])
                  + " → it may be a look-alike downstream of the real break → confident=false" if ub_rows else
                  "no anomalous component upstream can carry the changed component's excess"),
-                "Q-GATE-UPSTREAM-UB", {"ids": self.change_targets(cause_id)[:20]},
+                "Q-GATE-UPSTREAM-UB", ub.get("params") or {"ids": self.change_targets(cause_id)[:20]},
                 evidence_ids=[ub["evidence_id"]] if ub.get("evidence_id") else [], downgrade_only=True))
             # G5 sufficiency per independent alert (joint with other open suspects)
             targets = self.change_targets(cause_id)
