@@ -3939,7 +3939,7 @@
   "t2.s7.failed": 0,
   "t2.s7.acl_users_ok": true,
   "t2.s10.live_dry_run_status": 200,
-  "t2.s10.live_learned_status": 404,
+  "t2.s10.live_learned_status": 200,
   "t2.session.sessions": 2,
   "t2.session.turns": 4,
   "vector.acme_incident.vectors": 40,

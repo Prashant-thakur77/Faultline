@@ -1,5 +1,5 @@
 {
-  "at": "2026-10-17T15:40:57Z",
+  "at": "2026-10-17T19:45:11Z",
   "items": {
     "cold_vs_warm": {
       "green": true,
@@ -40,7 +40,7 @@
       "rounds": 100,
       "rounds_with_exactly_one_owner": 100,
       "lost_updates": 0,
-      "ro_p95_ms_during_writes": 6.702,
+      "ro_p95_ms_during_writes": 6.751,
       "evidence": "evals/results/t2_concurrency.json"
     },
     "s7_isolation": {
@@ -93,7 +93,7 @@
           "vectors": 0,
           "error": null
         },
-        "learned_endpoint_status": 404,
+        "learned_endpoint_status": 200,
         "note": "read-only on the live URL: the forget dry run (no token) deletes nothing; an executed forget there writes a receipt to the live audit graph, so it is run locally"
       },
       "evidence": "tests/memory, tests/live/test_forget_flip.py, learning_night forget step, the live dry run"
@@ -117,5 +117,5 @@
   },
   "green": 5,
   "total": 5,
-  "seconds": 25.7
+  "seconds": 11.4
 }

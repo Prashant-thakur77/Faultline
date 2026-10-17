@@ -127,7 +127,10 @@ SEGMENTS: list[tuple[str, float, str]] = [
     ("cost", 0.5,
      "And refusing is cheap. Proving there is no path takes FalkorDB "
      "{perf.acme.shortest_causal_path.falkordb_engine_p50} milliseconds, and zero tokens. A language model just "
-     "reading the same incident spends {arm.A0.tokens_median:approx} tokens to make a guess."),
+     "reading the same incident spends {arm.A0.tokens_median:approx} tokens to make a guess. And it scales: "
+     "{tenants.n} customer graphs on one FalkorDB engine, with {tenants.acl.leaks} leaks between them, and at "
+     "{scale.10k.services:approx} services the proof path still takes about "
+     "{scale.10k.tail.Q-GATE-1.engine_ms_p99:int} milliseconds."),
     ("close", 0.7,
      "And it's live right now: {live.hero.applied} out of {live.hero.n} real runs, verified. Any agent can use the "
      "same read-only tools over M.C.P. Faultline, built on FalkorDB. No path, no claim. Clone it, run make judge "

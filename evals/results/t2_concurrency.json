@@ -11,19 +11,19 @@
   "lost_updates": 0,
   "write_errors": 0,
   "read_errors": 0,
-  "claims_per_s": 569.7,
-  "storm_s": 2.81,
+  "claims_per_s": 1821.8,
+  "storm_s": 0.88,
   "ro_read_ms": {
     "quiet": {
-      "n": 2011,
-      "p50": 1.489,
-      "p95": 2.443
+      "n": 2173,
+      "p50": 1.31,
+      "p95": 3.032
     },
     "during_writes": {
-      "n": 3891,
-      "p50": 2.216,
-      "p95": 6.702,
-      "mean": 2.885
+      "n": 1157,
+      "p50": 2.556,
+      "p95": 6.751,
+      "mean": 3.038
     }
   },
   "engine": "FalkorDB (pinned; see backend/faultline/graph/algo/resolved.json)",
