@@ -1,5 +1,5 @@
 {
-  "ran_at": "2026-10-16T00:56:22+0530",
+  "ran_at": "2026-10-18T00:33:00+0530",
   "results": [
     {
       "id": "1a",
@@ -174,7 +174,7 @@
       "item": "ACL read-only tenant user (RO allowed; QUERY and other tenant denied)",
       "critical": true,
       "ok": true,
-      "notes": "RO on own tenant \u2192 1; GRAPH.QUERY denied (NoPermissionError: User ro_smokecefc has no permissions to ); other tenant denied (NoPermissionError: No permissions to access a key); GRAPH.LIST denied (NoPermissionError: User ro_smokecefc has no permi)",
+      "notes": "RO on own tenant \u2192 1; GRAPH.QUERY denied (NoPermissionError: User ro_smoke24ee has no permissions to ); other tenant denied (NoPermissionError: No permissions to access a key); GRAPH.LIST denied (NoPermissionError: User ro_smoke24ee has no permi)",
       "syntax": "ACL SETUSER ro_<t> on >pw resetkeys -@all +GRAPH.RO_QUERY +GRAPH.EXPLAIN +PING +HELLO ~tenant_<t> ~scratch_<t>_*  (connect with falkordb.Graph(redis.Redis(...)); FalkorDB() needs INFO)"
     },
     {
@@ -182,7 +182,7 @@
       "item": "Concurrency: 16 claimers \u00d7 10 rounds \u2192 1 owner; RO reads during writes",
       "critical": true,
       "ok": true,
-      "notes": "10/10 rounds with exactly 1 owner; RO read p50=0.46 ms p95=2.23 ms over 126 reads",
+      "notes": "10/10 rounds with exactly 1 owner; RO read p50=0.48 ms p95=1.51 ms over 139 reads",
       "syntax": "W-CLAIM-1 conditional claim"
     },
     {
@@ -192,6 +192,54 @@
       "ok": true,
       "notes": "under RO_QUERY: db.labels=['Empty', 'M', 'N']; db.relationshipTypes=['R', 'S']; db.propertyKeys=['cap', 'extra', 'id', 'w']; db.meta.stats labels={'N': 3, 'Empty': 0, 'M': 1} relTypes={'R': 2, 'S': 1} nodes=4 edges=3 (equals full scan: True; index-only label listed with 0); db.indexes labels=['Empty']; modes={'db.labels': 'READ', 'db.relationshipTypes': 'READ', 'db.propertyKeys': 'READ', 'db.meta.stats': 'READ', 'db.indexes': 'READ'}",
       "syntax": "CALL db.meta.stats() YIELD labels, relTypes, nodeCount, relCount, propertyKeyCount; CALL db.indexes() YIELD label, properties, types, entitytype, status; db.labels() / db.relationshipTypes() / db.propertyKeys() (no counts)"
+    },
+    {
+      "id": "25",
+      "item": "M20 MANDATORY/UNIQUE constraints on nodes and edges (+ GRAPH.COPY carries them)",
+      "critical": true,
+      "ok": true,
+      "notes": "3 constraints ['OPERATIONAL', 'OPERATIONAL', 'OPERATIONAL']; refused 4/4 (unique constraint violation on node of type Node; mandatory constraint violation: node with label Evidence missing prope; mandatory constraint violation: edge with relationship-type PROPAGATES; mandatory constraint violation: node with label Evidence missing prope); one bad row rolls the batch back: True; MERGE \u2026 ON CREATE SET passes; GRAPH.COPY carries 3 and enforces them: True",
+      "syntax": "GRAPH.CONSTRAINT CREATE g MANDATORY|UNIQUE NODE|RELATIONSHIP L PROPERTIES n p\u2026; CALL db.constraints() YIELD type, label, properties, entitytype, status (PENDING \u2192 OPERATIONAL)"
+    },
+    {
+      "id": "26",
+      "item": "M20 vector index HNSW options (M, efConstruction, efRuntime) + DROP + async build",
+      "critical": true,
+      "ok": true,
+      "notes": "options read back {'dimension': 4, 'similarityFunction': 'cosine', 'M': 32, 'efConstruction': 400, 'efRuntime': 100}; build status seen ['OPERATIONAL', '[Indexing] 0/200: UNDER CONSTRUCTION']; DROP VECTOR INDEX removes it: True. Query-time map form ({label, \u2026, efRuntime}) is refused (positional args only).",
+      "syntax": "CREATE VECTOR INDEX FOR (n:L) ON (n.p) OPTIONS {dimension, similarityFunction, M, efConstruction, efRuntime}; DROP VECTOR INDEX FOR (n:L) ON (n.p); poll db.indexes() status until OPERATIONAL"
+    },
+    {
+      "id": "27",
+      "item": "M20 avg / stDevP / percentileCont (the gate band in the engine)",
+      "critical": true,
+      "ok": true,
+      "notes": "nonzero n=4 avg=0.011975 stDevP=0.00165435032565657 (Python 0.0016543503256565707) p95=0.01417; aggregates skip CASE nulls; over no rows avg=None stDevP=0.0",
+      "syntax": "avg / stDevP / percentileCont(x, 0.95) over CASE WHEN \u2026 THEN x END (nulls skipped)"
+    },
+    {
+      "id": "28",
+      "item": "M20 temporal accessors for wall-clock rules (epoch ms \u2192 local time)",
+      "critical": true,
+      "ok": true,
+      "notes": "Fri 17:05 IST \u2192 ['2026-10-16T17:05:00', 5, 5, 17, 5]; Sunday \u2192 dayOfWeek 0, weekDay 7 (openCypher: 7); duration({milliseconds: 90000}) \u2192 PT0S; localdatetime({epochMillis}) \u2192 1970-01-01T00:00:00 (both silent, U8)",
+      "syntax": "localdatetime('1970-01-01T00:00:00') + duration({seconds: toInteger($ms / 1000) + offset_s}) then .dayOfWeek (Sunday 0) / .weekDay (Sunday 7) / .hour / .minute; never {epochMillis} or {milliseconds}"
+    },
+    {
+      "id": "29",
+      "item": "M20 engine catalogues: dbms.functions, telemetry{graph} stream, QUERY_MEM_CAPACITY",
+      "critical": false,
+      "ok": true,
+      "notes": "dbms.functions: 151 names, 41 UDFs (YIELD name, udf, aggregation); telemetry{graph} is a stream (entry visible after 0.05 s) with fields ['Execution duration', 'Query', 'Query parameters', 'Received at', 'Report duration', 'Timeout', 'Total duration', 'Utilized cache', 'Wait duration', 'Write']; QUERY_MEM_CAPACITY now 268435456 (set by configure_falkordb.py)",
+      "syntax": "CALL dbms.functions() YIELD name, udf; XREVRANGE telemetry{<graph>} + - COUNT n; GRAPH.CONFIG SET QUERY_MEM_CAPACITY <bytes> (error: Query's mem consumption exceeded capacity)"
+    },
+    {
+      "id": "30",
+      "item": "M20 WAITAOF after a write (durable before verified)",
+      "critical": false,
+      "ok": true,
+      "notes": "WAITAOF 1 0 3000 after a write on the same connection \u2192 [1, 0] in 1077 ms (appendfsync everysec waits for the next fsync)",
+      "syntax": "same connection: GRAPH.QUERY \u2026 then WAITAOF numlocal numreplicas timeout_ms \u2192 [local, replicas]"
     }
   ]
 }

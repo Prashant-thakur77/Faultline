@@ -256,29 +256,29 @@ Runs that ended NOT_CONFIDENT having accepted a change: the true cause 1, a byst
 
 ## FaultBench-OTel: the real OpenTelemetry Demo, real telemetry (evals/faultbench_otel.py)
 
-Real services (OpenTelemetry Demo 3.1.0, trimmed to fit one laptop), real per-minute server error rates from its span metrics in Prometheus, the demo's own flagd fault flags as causes, and our own decoy changes (a real harmless flag flip and recorded no-op deploys). 5 faults, 17 fault windows (17 paged by the pre-registered page rule) and 17 no-fault control windows, one machine. Topology and failure-edge capacities from data/topology/otel-demo.yaml.
+Real services (OpenTelemetry Demo 3.1.0, trimmed to fit one laptop), real per-minute server error rates from its span metrics in Prometheus, the demo's own flagd fault flags as causes, and our own decoy changes (a real harmless flag flip and recorded no-op deploys). 5 faults, 20 fault windows (20 paged by the pre-registered page rule) and 20 no-fault control windows, one machine. Topology and failure-edge capacities from data/topology/otel-demo.yaml.
 
 Faultline is the current product; *as registered* is the product before the zero-baseline fix this bench found (PREREGISTRATION amendment 2026-10-16 23:45 IST), run on the same windows.
 
 | arm | right cause (detected fault windows) | wrong blames (all scored windows) | abstained | missed as NO_INCIDENT | blame-free controls |
 |---|---|---|---|---|---|
-| Faultline | 11/17 (41–83 %) | 0/34 (0–10 %) | 6/34 (8–34 %) | 0 | 17/17 (82–100 %) |
-| Faultline as registered | 0/17 (0–18 %) | 0/34 (0–10 %) | 5/34 (6–30 %) | 12 | 17/17 (82–100 %) |
-| T | 11/17 (41–83 %) | 23/34 (51–81 %) | 0/34 (0–10 %) | — | 0/17 (0–18 %) |
-| T+ | 11/17 (41–83 %) | 7/34 (10–37 %) | 0/34 (0–10 %) | — | 16/17 (73–99 %) |
-| N (recency) | 14/17 (59–94 %) | 20/34 (42–74 %) | 0/34 (0–10 %) | — | 0/17 (0–18 %) |
+| Faultline | 11/20 (34–74 %) | 0/40 (0–9 %) | 9/40 (12–38 %) | 0 | 20/20 (84–100 %) |
+| Faultline as registered | 0/20 (0–16 %) | 0/40 (0–9 %) | 5/40 (5–26 %) | 15 | 20/20 (84–100 %) |
+| T | 13/20 (43–82 %) | 27/40 (52–80 %) | 0/40 (0–9 %) | — | 0/20 (0–16 %) |
+| T+ | 13/20 (43–82 %) | 8/40 (10–35 %) | 0/40 (0–9 %) | — | 19/20 (76–99 %) |
+| N (recency) | 17/20 (64–95 %) | 23/40 (42–71 %) | 0/40 (0–9 %) | — | 0/20 (0–16 %) |
 
 | fault | windows | paged | Faultline right / wrong / abstained | as registered | T | T+ | N |
 |---|---|---|---|---|---|---|---|
 | adFailure | 4 | 4 | 4 / 0 / 0 | 0 / 0 / 0 | 4 / 0 / 0 | 4 / 0 / 0 | 2 / 2 / 0 |
 | cartFailure | 4 | 4 | 2 / 0 / 2 | 0 / 0 / 0 | 2 / 2 / 0 | 2 / 2 / 0 | 4 / 0 / 0 |
-| paymentFailure | 3 | 3 | 3 / 0 / 0 | 0 / 0 / 1 | 2 / 1 / 0 | 2 / 1 / 0 | 3 / 0 / 0 |
-| paymentUnreachable | 3 | 3 | 0 / 0 / 3 | 0 / 0 / 2 | 3 / 0 / 0 | 3 / 0 / 0 | 3 / 0 / 0 |
-| productCatalogFailure | 3 | 3 | 2 / 0 / 1 | 0 / 0 / 2 | 0 / 3 / 0 | 0 / 3 / 0 | 2 / 1 / 0 |
+| paymentFailure | 4 | 4 | 3 / 0 / 1 | 0 / 0 / 1 | 3 / 1 / 0 | 3 / 1 / 0 | 4 / 0 / 0 |
+| paymentUnreachable | 4 | 4 | 0 / 0 / 4 | 0 / 0 / 2 | 4 / 0 / 0 | 4 / 0 / 0 | 4 / 0 / 0 |
+| productCatalogFailure | 4 | 4 | 2 / 0 / 2 | 0 / 0 / 2 | 0 / 4 / 0 | 0 / 4 / 0 | 3 / 1 / 0 |
 
-Runs that ended NOT_CONFIDENT having accepted a change without confidence (an abstention by outcome, reported apart as on every bench): the true cause 3, an innocent change 2.
+Runs that ended NOT_CONFIDENT having accepted a change without confidence (an abstention by outcome, reported apart as on every bench): the true cause 4, an innocent change 3.
 
-The LLM alone on these windows was built and estimated only (no API call): 2 windows, about $0.07 at list price.
+The LLM alone on these windows was built and estimated only (no API call): 40 windows, about $1.47 at list price.
 
 ## On-call: a scripted on-call night (evals/oncall_night.py)
 
@@ -328,6 +328,51 @@ The real API in-process, the keyless investigator, clean rooms, off the public d
 Choices (S1,S1b, N = 3 each): the top option was the rollback in 6 of 6 cold runs and the flag flip in 6 of 6 warm runs after the on-call approved the flag on 5 incidents; the top changed on plan 4 (after learn.pref_min_n = 3 choices). The standing-approval suggestion first appeared on plan 3 (K = 2; shown before K: 0). Paging: the responder who answers was paged in the first wave from incident 3 on; MTTA 16.0 min before → 1.0 min after (scripted clock: a check of the mechanism, not a response-time claim); the rota on-call was paged on every incident: True. Forgetting the on-call's influence deleted 14 events, left 0, and the plan's top went back to rollback_deploy. Knowledge gaps: 2. Recall (S1→S1b, S3→S3b, N = 3): warm top precedent = the first incident in 6 of 6, gate verdicts identical in 6 of 6.
 
 T2 go/no-go (evals/t2_gonogo.py): 5 of 5 green.
+
+## Company brain vs FalkorDB's GraphRAG-SDK, same questions (evals/graphrag_sdk_arm.py)
+
+GraphRAG-SDK 1.4.0 with its default ingestion and retrieval, on anthropic/claude-haiku-4-5, built its own graph in FalkorDB from the brain's 13 source documents and its facts as 7 text documents (8371 words): 489 entities, 879 relationships, 52 chunks, in 351.5 s (US$0.7957). Total model spend US$1.447 of a US$1.5 cap. Clean by the pre-registered criteria: True.
+
+**Blind set 2 (primary)** (40 questions, 3 unanswerable)
+
+| | Faultline brain | GraphRAG-SDK |
+|---|---|---|
+| correct of 40 [95 % CI] | 24/40 (45–74 %) | 32/40 (65–90 %) |
+| answerable correct | 21 | 29 |
+| unanswerable declined (of 3) | 3 | 3 |
+| … declined and nothing cited | 3 | 1 |
+| answers naming a source id (of 37) | 34 | 37 |
+| answers with a non-existent id | 0 | 0 |
+| false refusals on answerable questions | 2 | 2 |
+| citation precision (mean) | 0.2956 | 0.3479 |
+| latency p50 / p95 ms | 18.1 / 48.1 | 3091.8 / 4404.0 |
+| model US$ (per question) | 0 | 0.3623 (0.00906) |
+
+Paired: both right 18, brain only 6, SDK only 14, neither 2 (exact McNemar p 0.1153). Symmetry checks: the SDK's text rule on the brain's answers 24/40; the SDK with written ids only (no name mapping) 30/40.
+
+By question kind (brain / SDK of n): beliefs_at 1/3 of 3; blast_radius 4/3 of 5; decision_people 1/4 of 4; decisions 2/4 of 4; knowledge_health 2/1 of 3; missing_guardrails 3/1 of 3; owner 3/4 of 4; owner_at 2/3 of 3; people_who_worked_on 3/3 of 5; runbook 0/3 of 3; unanswerable 3/3 of 3.
+
+Post hoc, not pre-registered (evals/results/graphrag_sdk_audit.json): credited answers that also state something wrong or leave out the key fact: SDK 4 (B04,B15,B17,B19), brain 0. Credited and right: SDK 28/40, brain 24/40.
+
+**Original 33 (secondary)** (33 questions, 6 unanswerable)
+
+| | Faultline brain | GraphRAG-SDK |
+|---|---|---|
+| correct of 33 [95 % CI] | 33/33 (90–100 %) | 28/33 (69–93 %) |
+| answerable correct | 27 | 23 |
+| unanswerable declined (of 6) | 6 | 5 |
+| … declined and nothing cited | 6 | 5 |
+| answers naming a source id (of 27) | 27 | 26 |
+| answers with a non-existent id | 0 | 0 |
+| false refusals on answerable questions | 0 | 2 |
+| citation precision (mean) | 0.3118 | 0.291 |
+| latency p50 / p95 ms | 9.3 / 25.2 | 2778.9 / 6720.4 |
+| model US$ (per question) | 0 | 0.2891 (0.00876) |
+
+Paired: both right 28, brain only 5, SDK only 0, neither 0 (exact McNemar p 0.0625). Symmetry checks: the SDK's text rule on the brain's answers 33/33; the SDK with written ids only (no name mapping) 28/33.
+
+By question kind (brain / SDK of n): asof 1/1 of 1; blast 7/7 of 7; context 5/4 of 5; decision 5/5 of 5; gaps 1/1 of 1; history 1/1 of 1; knowledge 1/0 of 1; obligations 2/1 of 2; owner_then 3/2 of 3; people 7/6 of 7.
+
 
 ## Product checks
 

@@ -1,0 +1,1253 @@
+{
+ "bench": "FaultBench-OTel",
+ "seed": 20261171,
+ "demo": "3.1.0",
+ "windows": {
+  "otel-f01": {
+   "kind": "fault",
+   "slot": 1,
+   "flag": "adFailure",
+   "variant": "on",
+   "service": "ad",
+   "cause": "D-a35ca4cd",
+   "flip": {
+    "flag": "adFailure",
+    "variant": "on",
+    "written_at": 1792172088290,
+    "verified_at": 1792172089039
+   },
+   "complete": true,
+   "off": {
+    "flag": "adFailure",
+    "variant": "off",
+    "written_at": 1792172568293,
+    "verified_at": 1792172569083
+   },
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "off",
+    "written_at": 1792171983191,
+    "verified_at": 1792171983956
+   },
+   "decoys": {
+    "D-e8b4b6c2": "checkout",
+    "D-c344905c": "frontend",
+    "D-4cf24960": "currency"
+   },
+   "on_path": {
+    "D-e8b4b6c2": false,
+    "D-c344905c": true,
+    "D-4cf24960": false
+   }
+  },
+  "otel-c01": {
+   "kind": "control",
+   "slot": 1,
+   "cause": null,
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "on",
+    "written_at": 1792170965992,
+    "verified_at": 1792170967382
+   },
+   "complete": true,
+   "decoys": {
+    "D-e4868bd5": "checkout",
+    "D-eed5cfb5": "product-catalog",
+    "D-1f332db4": "quote"
+   }
+  },
+  "otel-f02": {
+   "kind": "fault",
+   "slot": 2,
+   "flag": "paymentFailure",
+   "variant": "50%",
+   "service": "payment",
+   "cause": "D-88e65894",
+   "flip": {
+    "flag": "paymentFailure",
+    "variant": "50%",
+    "written_at": 1792174833891,
+    "verified_at": 1792174834043
+   },
+   "complete": true,
+   "off": {
+    "flag": "paymentFailure",
+    "variant": "off",
+    "written_at": 1792175313891,
+    "verified_at": 1792175314023
+   },
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "off",
+    "written_at": 1792174298786,
+    "verified_at": 1792174298969
+   },
+   "decoys": {
+    "D-256c6307": "checkout",
+    "D-5d9c290c": "frontend",
+    "D-7ed233a7": "image-provider"
+   },
+   "on_path": {
+    "D-256c6307": false,
+    "D-5d9c290c": true,
+    "D-7ed233a7": false
+   }
+  },
+  "otel-c02": {
+   "kind": "control",
+   "slot": 2,
+   "cause": null,
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "on",
+    "written_at": 1792173719096,
+    "verified_at": 1792173719964
+   },
+   "complete": true,
+   "decoys": {
+    "D-6f047fa0": "checkout",
+    "D-e7494624": "flagd",
+    "D-ffb50291": "image-provider"
+   }
+  },
+  "otel-f03": {
+   "kind": "fault",
+   "slot": 3,
+   "flag": "productCatalogFailure",
+   "variant": "on",
+   "service": "product-catalog",
+   "cause": "D-82accf12",
+   "flip": {
+    "flag": "productCatalogFailure",
+    "variant": "on",
+    "written_at": 1792177633229,
+    "verified_at": 1792177633985
+   },
+   "complete": true,
+   "off": {
+    "flag": "productCatalogFailure",
+    "variant": "off",
+    "written_at": 1792178113228,
+    "verified_at": 1792178114078
+   },
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "off",
+    "written_at": 1792176993628,
+    "verified_at": 1792176994415
+   },
+   "decoys": {
+    "D-8cff62dc": "checkout",
+    "D-94ef0cf1": "frontend",
+    "D-76ad7f15": "currency"
+   },
+   "on_path": {
+    "D-8cff62dc": false,
+    "D-94ef0cf1": true,
+    "D-76ad7f15": false
+   }
+  },
+  "otel-c03": {
+   "kind": "control",
+   "slot": 3,
+   "cause": null,
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "on",
+    "written_at": 1792176573333,
+    "verified_at": 1792176574110
+   },
+   "complete": true,
+   "decoys": {
+    "D-47be1878": "checkout",
+    "D-2d924716": "quote",
+    "D-b32a989b": "image-provider"
+   }
+  },
+  "otel-f04": {
+   "kind": "fault",
+   "slot": 4,
+   "flag": "adFailure",
+   "variant": "on",
+   "service": "ad",
+   "cause": "D-50fd7738",
+   "flip": {
+    "flag": "adFailure",
+    "variant": "on",
+    "written_at": 1792180408780,
+    "verified_at": 1792180409536
+   },
+   "complete": true,
+   "off": {
+    "flag": "adFailure",
+    "variant": "off",
+    "written_at": 1792180888783,
+    "verified_at": 1792180889626
+   },
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "off",
+    "written_at": 1792180369280,
+    "verified_at": 1792180370059
+   },
+   "decoys": {
+    "D-79ad0f72": "checkout",
+    "D-649fd523": "frontend-proxy",
+    "D-c7800eee": "cart"
+   },
+   "on_path": {
+    "D-79ad0f72": false,
+    "D-649fd523": true,
+    "D-c7800eee": false
+   }
+  },
+  "otel-c04": {
+   "kind": "control",
+   "slot": 4,
+   "cause": null,
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "on",
+    "written_at": 1792179303283,
+    "verified_at": 1792179304056
+   },
+   "complete": true,
+   "decoys": {
+    "D-dd0df470": "checkout",
+    "D-829b1c4b": "cart",
+    "D-42cf32eb": "shipping"
+   }
+  },
+  "otel-f05": {
+   "kind": "fault",
+   "slot": 5,
+   "flag": "cartFailure",
+   "variant": "100%",
+   "service": "cart",
+   "cause": "D-a17130e7",
+   "flip": {
+    "flag": "cartFailure",
+    "variant": "100%",
+    "written_at": 1792183149531,
+    "verified_at": 1792183150339
+   },
+   "complete": true,
+   "off": {
+    "flag": "cartFailure",
+    "variant": "off",
+    "written_at": 1792183629531,
+    "verified_at": 1792183630271
+   },
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "off",
+    "written_at": 1792182830230,
+    "verified_at": 1792182831083
+   },
+   "decoys": {
+    "D-a29593f4": "checkout",
+    "D-459abcd5": "frontend-proxy",
+    "D-d90e0420": "shipping"
+   },
+   "on_path": {
+    "D-a29593f4": false,
+    "D-459abcd5": true,
+    "D-d90e0420": false
+   }
+  },
+  "otel-c05": {
+   "kind": "control",
+   "slot": 5,
+   "cause": null,
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "on",
+    "written_at": 1792182592931,
+    "verified_at": 1792182594435
+   },
+   "complete": true,
+   "decoys": {
+    "D-c4469914": "checkout",
+    "D-2d9845a7": "ad",
+    "D-f8f8ad67": "image-provider"
+   }
+  },
+  "otel-f06": {
+   "kind": "fault",
+   "slot": 6,
+   "flag": "cartFailure",
+   "variant": "100%",
+   "service": "cart",
+   "cause": "D-fb8f74bc",
+   "flip": {
+    "flag": "cartFailure",
+    "variant": "100%",
+    "written_at": 1792185931478,
+    "verified_at": 1792185932270
+   },
+   "complete": true,
+   "off": {
+    "flag": "cartFailure",
+    "variant": "off",
+    "written_at": 1792186411475,
+    "verified_at": 1792186412285
+   },
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "off",
+    "written_at": 1792185254877,
+    "verified_at": 1792185255063
+   },
+   "decoys": {
+    "D-21634e85": "checkout",
+    "D-902eee15": "frontend-proxy",
+    "D-e8eb4687": "ad"
+   },
+   "on_path": {
+    "D-21634e85": false,
+    "D-902eee15": true,
+    "D-e8eb4687": false
+   }
+  },
+  "otel-c06": {
+   "kind": "control",
+   "slot": 6,
+   "cause": null,
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "on",
+    "written_at": 1792185114475,
+    "verified_at": 1792185115239
+   },
+   "complete": true,
+   "decoys": {
+    "D-243c3c73": "checkout",
+    "D-d1be630e": "product-catalog",
+    "D-e99fdf7b": "email"
+   }
+  },
+  "otel-f07": {
+   "kind": "fault",
+   "slot": 7,
+   "flag": "paymentUnreachable",
+   "variant": "on",
+   "service": "checkout",
+   "cause": "D-8aabd323",
+   "flip": {
+    "flag": "paymentUnreachable",
+    "variant": "on",
+    "written_at": 1792188705887,
+    "verified_at": 1792188706016
+   },
+   "complete": true,
+   "off": {
+    "flag": "paymentUnreachable",
+    "variant": "off",
+    "written_at": 1792189185890,
+    "verified_at": 1792189186026
+   },
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "off",
+    "written_at": 1792188333690,
+    "verified_at": 1792188334458
+   },
+   "decoys": {
+    "D-e15a9020": "payment",
+    "D-df8fc90e": "frontend-proxy",
+    "D-9ade2dcb": "product-catalog"
+   },
+   "on_path": {
+    "D-e15a9020": false,
+    "D-df8fc90e": true,
+    "D-9ade2dcb": false
+   }
+  },
+  "otel-c07": {
+   "kind": "control",
+   "slot": 7,
+   "cause": null,
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "on",
+    "written_at": 1792188199417,
+    "verified_at": 1792188200256
+   },
+   "complete": true,
+   "decoys": {
+    "D-acdcd25c": "checkout",
+    "D-7b411a3c": "email",
+    "D-d6ff9053": "cart"
+   }
+  },
+  "otel-f08": {
+   "kind": "fault",
+   "slot": 8,
+   "flag": "productCatalogFailure",
+   "variant": "on",
+   "service": "product-catalog",
+   "cause": "D-a172cfec",
+   "flip": {
+    "flag": "productCatalogFailure",
+    "variant": "on",
+    "written_at": 1792191500728,
+    "verified_at": 1792191501499
+   },
+   "complete": true,
+   "off": {
+    "flag": "productCatalogFailure",
+    "variant": "off",
+    "written_at": 1792191980729,
+    "verified_at": 1792191981464
+   },
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "on",
+    "written_at": 1792190888336,
+    "verified_at": 1792190889147
+   },
+   "decoys": {
+    "D-e7fa3ae3": "checkout",
+    "D-cc4fa7a1": "frontend-proxy",
+    "D-357f12e9": "currency"
+   },
+   "on_path": {
+    "D-e7fa3ae3": false,
+    "D-cc4fa7a1": true,
+    "D-357f12e9": false
+   }
+  },
+  "otel-c08": {
+   "kind": "control",
+   "slot": 8,
+   "cause": null,
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "off",
+    "written_at": 1792190991531,
+    "verified_at": 1792190992290
+   },
+   "complete": true,
+   "decoys": {
+    "D-3a21b879": "checkout",
+    "D-6b732179": "shipping",
+    "D-ab1c8e00": "recommendation"
+   }
+  },
+  "otel-f09": {
+   "kind": "fault",
+   "slot": 9,
+   "flag": "paymentFailure",
+   "variant": "50%",
+   "service": "payment",
+   "cause": "D-bd52275d",
+   "flip": {
+    "flag": "paymentFailure",
+    "variant": "50%",
+    "written_at": 1792194192469,
+    "verified_at": 1792194193241
+   },
+   "complete": true,
+   "off": {
+    "flag": "paymentFailure",
+    "variant": "off",
+    "written_at": 1792194672472,
+    "verified_at": 1792194673254
+   },
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "off",
+    "written_at": 1792194010069,
+    "verified_at": 1792194011476
+   },
+   "decoys": {
+    "D-3bc979af": "checkout",
+    "D-479861a9": "frontend-proxy",
+    "D-05119a70": "currency"
+   },
+   "on_path": {
+    "D-3bc979af": false,
+    "D-479861a9": true,
+    "D-05119a70": false
+   }
+  },
+  "otel-c09": {
+   "kind": "control",
+   "slot": 9,
+   "cause": null,
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "on",
+    "written_at": 1792193716167,
+    "verified_at": 1792193716952
+   },
+   "complete": true,
+   "decoys": {
+    "D-0550ecb1": "checkout",
+    "D-39a2262a": "email",
+    "D-74facff3": "payment"
+   }
+  },
+  "otel-f10": {
+   "kind": "fault",
+   "slot": 10,
+   "flag": "paymentUnreachable",
+   "variant": "on",
+   "service": "checkout",
+   "cause": "D-1490ebd7",
+   "flip": {
+    "flag": "paymentUnreachable",
+    "variant": "on",
+    "written_at": 1792196923958,
+    "verified_at": 1792196925398
+   },
+   "complete": true,
+   "off": {
+    "flag": "paymentUnreachable",
+    "variant": "off",
+    "written_at": 1792197403957,
+    "verified_at": 1792197405334
+   },
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "off",
+    "written_at": 1792196536359,
+    "verified_at": 1792196537167
+   },
+   "decoys": {
+    "D-0d7729ca": "payment",
+    "D-a8f8e253": "frontend",
+    "D-54079966": "flagd"
+   },
+   "on_path": {
+    "D-0d7729ca": false,
+    "D-a8f8e253": true,
+    "D-54079966": false
+   }
+  },
+  "otel-c10": {
+   "kind": "control",
+   "slot": 10,
+   "cause": null,
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "on",
+    "written_at": 1792195903256,
+    "verified_at": 1792195903991
+   },
+   "complete": true,
+   "decoys": {
+    "D-6a40838e": "checkout",
+    "D-4644a1b5": "currency",
+    "D-b19b7d5a": "quote"
+   }
+  },
+  "otel-f11": {
+   "kind": "fault",
+   "slot": 11,
+   "flag": "paymentUnreachable",
+   "variant": "on",
+   "service": "checkout",
+   "cause": "D-84509876",
+   "flip": {
+    "flag": "paymentUnreachable",
+    "variant": "on",
+    "written_at": 1792199701736,
+    "verified_at": 1792199702488
+   },
+   "complete": true,
+   "off": {
+    "flag": "paymentUnreachable",
+    "variant": "off",
+    "written_at": 1792200181742,
+    "verified_at": 1792200182503
+   },
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "off",
+    "written_at": 1792199573636,
+    "verified_at": 1792199574397
+   },
+   "decoys": {
+    "D-ed0b6f6d": "payment",
+    "D-a80458bc": "frontend",
+    "D-c8061b96": "quote"
+   },
+   "on_path": {
+    "D-ed0b6f6d": false,
+    "D-a80458bc": true,
+    "D-c8061b96": false
+   }
+  },
+  "otel-c11": {
+   "kind": "control",
+   "slot": 11,
+   "cause": null,
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "on",
+    "written_at": 1792198773638,
+    "verified_at": 1792198774401
+   },
+   "complete": true,
+   "decoys": {
+    "D-3308bcf3": "checkout",
+    "D-7bcfee70": "product-catalog",
+    "D-0dd4e985": "currency"
+   }
+  },
+  "otel-f12": {
+   "kind": "fault",
+   "slot": 12,
+   "flag": "paymentFailure",
+   "variant": "50%",
+   "service": "payment",
+   "cause": "D-3e97d6a6",
+   "flip": {
+    "flag": "paymentFailure",
+    "variant": "50%",
+    "written_at": 1792202489707,
+    "verified_at": 1792202490452
+   },
+   "complete": true,
+   "off": {
+    "flag": "paymentFailure",
+    "variant": "off",
+    "written_at": 1792202969711,
+    "verified_at": 1792202970484
+   },
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "off",
+    "written_at": 1792201729209,
+    "verified_at": 1792201730049
+   },
+   "decoys": {
+    "D-ebea9406": "checkout",
+    "D-9f6c02b5": "frontend",
+    "D-f4a5524a": "cart"
+   },
+   "on_path": {
+    "D-ebea9406": false,
+    "D-9f6c02b5": true,
+    "D-f4a5524a": false
+   }
+  },
+  "otel-c12": {
+   "kind": "control",
+   "slot": 12,
+   "cause": null,
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "on",
+    "written_at": 1792201498607,
+    "verified_at": 1792201499381
+   },
+   "complete": true,
+   "decoys": {
+    "D-c4b40341": "checkout",
+    "D-35778547": "quote",
+    "D-64eec985": "shipping"
+   }
+  },
+  "otel-f13": {
+   "kind": "fault",
+   "slot": 13,
+   "flag": "adFailure",
+   "variant": "on",
+   "service": "ad",
+   "cause": "D-23c1deef",
+   "flip": {
+    "flag": "adFailure",
+    "variant": "on",
+    "written_at": 1792205211287,
+    "verified_at": 1792205212073
+   },
+   "complete": true,
+   "off": {
+    "flag": "adFailure",
+    "variant": "off",
+    "written_at": 1792205691287,
+    "verified_at": 1792205692059
+   },
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "off",
+    "written_at": 1792204653786,
+    "verified_at": 1792204654520
+   },
+   "decoys": {
+    "D-08d267ba": "checkout",
+    "D-0b1f86b4": "frontend-proxy",
+    "D-0c92270f": "cart"
+   },
+   "on_path": {
+    "D-08d267ba": false,
+    "D-0b1f86b4": true,
+    "D-0c92270f": false
+   }
+  },
+  "otel-c13": {
+   "kind": "control",
+   "slot": 13,
+   "cause": null,
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "on",
+    "written_at": 1792204623787,
+    "verified_at": 1792204624534
+   },
+   "complete": true,
+   "decoys": {
+    "D-0eff5141": "checkout",
+    "D-04c65c5d": "image-provider",
+    "D-bcc39807": "frontend"
+   }
+  },
+  "otel-f14": {
+   "kind": "fault",
+   "slot": 14,
+   "flag": "productCatalogFailure",
+   "variant": "on",
+   "service": "product-catalog",
+   "cause": "D-d6191011",
+   "flip": {
+    "flag": "productCatalogFailure",
+    "variant": "on",
+    "written_at": 1792207975865,
+    "verified_at": 1792207976031
+   },
+   "complete": true,
+   "off": {
+    "flag": "productCatalogFailure",
+    "variant": "off",
+    "written_at": 1792208455862,
+    "verified_at": 1792208455980
+   },
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "off",
+    "written_at": 1792207817962,
+    "verified_at": 1792207819356
+   },
+   "decoys": {
+    "D-cacba039": "checkout",
+    "D-fcbb8767": "frontend",
+    "D-5830d7e8": "cart"
+   },
+   "on_path": {
+    "D-cacba039": false,
+    "D-fcbb8767": true,
+    "D-5830d7e8": false
+   }
+  },
+  "otel-c14": {
+   "kind": "control",
+   "slot": 14,
+   "cause": null,
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "on",
+    "written_at": 1792207009161,
+    "verified_at": 1792207010510
+   },
+   "complete": true,
+   "decoys": {
+    "D-0ebfa76d": "checkout",
+    "D-1975dece": "cart",
+    "D-b3ce0c3f": "ad"
+   }
+  },
+  "otel-f15": {
+   "kind": "fault",
+   "slot": 15,
+   "flag": "cartFailure",
+   "variant": "100%",
+   "service": "cart",
+   "cause": "D-a93811fc",
+   "flip": {
+    "flag": "cartFailure",
+    "variant": "100%",
+    "written_at": 1792239336267,
+    "verified_at": 1792239336425
+   },
+   "complete": true,
+   "off": {
+    "flag": "cartFailure",
+    "variant": "off",
+    "written_at": 1792239816270,
+    "verified_at": 1792239816415
+   },
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "on",
+    "written_at": 1792238505367,
+    "verified_at": 1792238505513
+   },
+   "decoys": {
+    "D-6d3b0513": "checkout",
+    "D-702dcec2": "frontend-proxy",
+    "D-ffc4fdc6": "flagd"
+   },
+   "on_path": {
+    "D-6d3b0513": false,
+    "D-702dcec2": true,
+    "D-ffc4fdc6": false
+   }
+  },
+  "otel-c15": {
+   "kind": "control",
+   "slot": 15,
+   "cause": null,
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "off",
+    "written_at": 1792238590566,
+    "verified_at": 1792238591958
+   },
+   "complete": true,
+   "decoys": {
+    "D-0778f1c5": "checkout",
+    "D-010b3080": "frontend-proxy",
+    "D-13980320": "cart"
+   }
+  },
+  "otel-f16": {
+   "kind": "fault",
+   "slot": 16,
+   "flag": "cartFailure",
+   "variant": "100%",
+   "service": "cart",
+   "cause": "D-1322ce25",
+   "flip": {
+    "flag": "cartFailure",
+    "variant": "100%",
+    "written_at": 1792242087221,
+    "verified_at": 1792242087981
+   },
+   "complete": true,
+   "off": {
+    "flag": "cartFailure",
+    "variant": "off",
+    "written_at": 1792242567223,
+    "verified_at": 1792242568003
+   },
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "off",
+    "written_at": 1792241685419,
+    "verified_at": 1792241686799
+   },
+   "decoys": {
+    "D-5e8a1aa4": "checkout",
+    "D-23b5708c": "frontend",
+    "D-952508a3": "shipping"
+   },
+   "on_path": {
+    "D-5e8a1aa4": false,
+    "D-23b5708c": true,
+    "D-952508a3": false
+   }
+  },
+  "otel-c16": {
+   "kind": "control",
+   "slot": 16,
+   "cause": null,
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "on",
+    "written_at": 1792240897719,
+    "verified_at": 1792240898472
+   },
+   "complete": true,
+   "decoys": {
+    "D-0e730f1a": "checkout",
+    "D-08c13216": "cart",
+    "D-792d01ff": "flagd"
+   }
+  },
+  "otel-f19": {
+   "kind": "fault",
+   "slot": 19,
+   "flag": "adFailure",
+   "variant": "on",
+   "service": "ad",
+   "cause": "D-4c51bbf1",
+   "flip": {
+    "flag": "adFailure",
+    "variant": "on",
+    "written_at": 1792253077965,
+    "verified_at": 1792253078075
+   },
+   "complete": true,
+   "off": {
+    "flag": "adFailure",
+    "variant": "off",
+    "written_at": 1792253557963,
+    "verified_at": 1792253558083
+   },
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "off",
+    "written_at": 1792252673662,
+    "verified_at": 1792252674865
+   },
+   "decoys": {
+    "D-c8917bd3": "checkout",
+    "D-5e161e35": "frontend",
+    "D-32cdf8fb": "shipping"
+   },
+   "on_path": {
+    "D-c8917bd3": false,
+    "D-5e161e35": true,
+    "D-32cdf8fb": false
+   }
+  },
+  "otel-c19": {
+   "kind": "control",
+   "slot": 19,
+   "cause": null,
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "on",
+    "written_at": 1792251869961,
+    "verified_at": 1792251870130
+   },
+   "complete": true,
+   "decoys": {
+    "D-03b42c3e": "checkout",
+    "D-69359213": "currency",
+    "D-8d527762": "frontend"
+   }
+  },
+  "otel-f20": {
+   "kind": "fault",
+   "slot": 20,
+   "flag": "paymentFailure",
+   "variant": "50%",
+   "service": "payment",
+   "cause": "D-1c541f8c",
+   "flip": {
+    "flag": "paymentFailure",
+    "variant": "50%",
+    "written_at": 1792255839687,
+    "verified_at": 1792255840545
+   },
+   "complete": true,
+   "off": {
+    "flag": "paymentFailure",
+    "variant": "off",
+    "written_at": 1792256319693,
+    "verified_at": 1792256320492
+   },
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "off",
+    "written_at": 1792255151085,
+    "verified_at": 1792255152465
+   },
+   "decoys": {
+    "D-980475b4": "checkout",
+    "D-af7cd836": "frontend",
+    "D-4e1e33a4": "cart"
+   },
+   "on_path": {
+    "D-980475b4": false,
+    "D-af7cd836": true,
+    "D-4e1e33a4": false
+   }
+  },
+  "otel-c20": {
+   "kind": "control",
+   "slot": 20,
+   "cause": null,
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "on",
+    "written_at": 1792255047185,
+    "verified_at": 1792255048564
+   },
+   "complete": true,
+   "decoys": {
+    "D-3d77b668": "checkout",
+    "D-df89a288": "frontend-proxy",
+    "D-b1199378": "recommendation"
+   }
+  },
+  "otel-f17": {
+   "kind": "fault",
+   "slot": 17,
+   "flag": "paymentUnreachable",
+   "variant": "on",
+   "service": "checkout",
+   "cause": "D-9a7f1ea7",
+   "flip": {
+    "flag": "paymentUnreachable",
+    "variant": "on",
+    "written_at": 1792259515196,
+    "verified_at": 1792259516599
+   },
+   "complete": true,
+   "off": {
+    "flag": "paymentUnreachable",
+    "variant": "off",
+    "written_at": 1792259995202,
+    "verified_at": 1792259996050
+   },
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "off",
+    "written_at": 1792259053596,
+    "verified_at": 1792259054333
+   },
+   "decoys": {
+    "D-19d98ed6": "payment",
+    "D-207b15e7": "frontend",
+    "D-9dbd329c": "cart"
+   },
+   "on_path": {
+    "D-19d98ed6": false,
+    "D-207b15e7": true,
+    "D-9dbd329c": false
+   }
+  },
+  "otel-c17": {
+   "kind": "control",
+   "slot": 17,
+   "cause": null,
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "on",
+    "written_at": 1792258347097,
+    "verified_at": 1792258348512
+   },
+   "complete": true,
+   "decoys": {
+    "D-fab181b0": "checkout",
+    "D-a1c92e96": "frontend-proxy",
+    "D-2f4a2d62": "image-provider"
+   }
+  },
+  "otel-f18": {
+   "kind": "fault",
+   "slot": 18,
+   "flag": "productCatalogFailure",
+   "variant": "on",
+   "service": "product-catalog",
+   "cause": "D-40c480c9",
+   "flip": {
+    "flag": "productCatalogFailure",
+    "variant": "on",
+    "written_at": 1792262231852,
+    "verified_at": 1792262232597
+   },
+   "complete": true,
+   "off": {
+    "flag": "productCatalogFailure",
+    "variant": "off",
+    "written_at": 1792262711855,
+    "verified_at": 1792262712595
+   },
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "on",
+    "written_at": 1792261683255,
+    "verified_at": 1792261684056
+   },
+   "decoys": {
+    "D-07aca5d0": "checkout",
+    "D-e65b0ed1": "frontend-proxy",
+    "D-6518f404": "flagd"
+   },
+   "on_path": {
+    "D-07aca5d0": false,
+    "D-e65b0ed1": true,
+    "D-6518f404": false
+   }
+  },
+  "otel-c18": {
+   "kind": "control",
+   "slot": 18,
+   "cause": null,
+   "d1": {
+    "flag": "emitRawPii",
+    "variant": "off",
+    "written_at": 1792261725553,
+    "verified_at": 1792261726319
+   },
+   "complete": true,
+   "decoys": {
+    "D-4414c9fc": "checkout",
+    "D-5a2dc4c3": "frontend-proxy",
+    "D-a4d0b38e": "frontend"
+   }
+  }
+ },
+ "log": [
+  {
+   "at": "2026-10-16T22:26:18",
+   "event": "record start",
+   "reason": "FaultBench-OTel first and only pass (pre-registered 2026-10-16 23:00 IST)"
+  },
+  {
+   "at": "2026-10-17T17:08:02",
+   "event": "record start",
+   "reason": "resume after an infrastructure interruption: the recorder process was killed by a session restart after slot 14 (before any slot-15 injection); slots 15-20 recorded now, nothing re-recorded because of its result"
+  },
+  {
+   "at": "2026-10-17T19:25:14",
+   "event": "lost window (infrastructure interruption)",
+   "reason": "a session restart killed the recorder and restarted every demo container at about 19:24 IST, during slot 17's fault (paymentUnreachable on since 19:17:35); the fault was switched off by hand at resume. Slot 17 (control and fault) is re-recorded once from scratch under the pre-registered stopping rule; this attempt is not scored.",
+   "lost_attempt": {
+    "window": "otel-f17",
+    "kind": "fault",
+    "slot": 17,
+    "flag": "paymentUnreachable",
+    "variant": "on",
+    "service": "checkout",
+    "cause": "D-9a7f1ea7",
+    "flip": {
+     "flag": "paymentUnreachable",
+     "variant": "on",
+     "written_at": 1792244855205,
+     "verified_at": 1792244855950
+    },
+    "complete": false
+   }
+  },
+  {
+   "at": "2026-10-17T19:25:23",
+   "event": "record start",
+   "reason": "resume after an infrastructure interruption: a host reboot (~19:24 IST) killed the recorder during slot 17's fault; slot 17 is re-recorded once from scratch (stopping rule), then slots 18-20"
+  },
+  {
+   "at": "2026-10-17T22:33:40",
+   "event": "record stop"
+  },
+  {
+   "at": "2026-10-17T22:43:46",
+   "event": "windows excluded (infrastructure: broken baseline)",
+   "reason": "after the 19:24 host reboot checkout failed 100 % of orders until it restarted at 20:42; slots 17 and 18 measured a broken system (baseline error rate 1.0 on checkout). Raw files kept in evals/results/faultbench_otel_raw/excluded/; slots 17 and 18 recorded again now (PREREGISTRATION amendment 2026-10-17 21:00 IST).",
+   "excluded": {
+    "otel-c17": {
+     "kind": "control",
+     "slot": 17,
+     "cause": null,
+     "d1": {
+      "flag": "emitRawPii",
+      "variant": "on",
+      "written_at": 1792246442866,
+      "verified_at": 1792246443140
+     },
+     "complete": true,
+     "decoys": {
+      "D-fab181b0": "checkout",
+      "D-a1c92e96": "frontend-proxy",
+      "D-2f4a2d62": "image-provider"
+     }
+    },
+    "otel-f17": {
+     "kind": "fault",
+     "slot": 17,
+     "flag": "paymentUnreachable",
+     "variant": "on",
+     "service": "checkout",
+     "cause": "D-9a7f1ea7",
+     "flip": {
+      "flag": "paymentUnreachable",
+      "variant": "on",
+      "written_at": 1792247610963,
+      "verified_at": 1792247611096
+     },
+     "complete": true,
+     "off": {
+      "flag": "paymentUnreachable",
+      "variant": "off",
+      "written_at": 1792248090968,
+      "verified_at": 1792248091121
+     },
+     "d1": {
+      "flag": "emitRawPii",
+      "variant": "off",
+      "written_at": 1792247149365,
+      "verified_at": 1792247150324
+     },
+     "decoys": {
+      "D-19d98ed6": "payment",
+      "D-207b15e7": "frontend",
+      "D-9dbd329c": "cart"
+     },
+     "on_path": {
+      "D-19d98ed6": false,
+      "D-207b15e7": true,
+      "D-9dbd329c": false
+     }
+    },
+    "otel-c18": {
+     "kind": "control",
+     "slot": 18,
+     "cause": null,
+     "d1": {
+      "flag": "emitRawPii",
+      "variant": "off",
+      "written_at": 1792249820624,
+      "verified_at": 1792249821477
+     },
+     "complete": true,
+     "decoys": {
+      "D-4414c9fc": "checkout",
+      "D-5a2dc4c3": "frontend-proxy",
+      "D-a4d0b38e": "frontend"
+     }
+    },
+    "otel-f18": {
+     "kind": "fault",
+     "slot": 18,
+     "flag": "productCatalogFailure",
+     "variant": "on",
+     "service": "product-catalog",
+     "cause": "D-40c480c9",
+     "flip": {
+      "flag": "productCatalogFailure",
+      "variant": "on",
+      "written_at": 1792250326923,
+      "verified_at": 1792250327089
+     },
+     "complete": true,
+     "off": {
+      "flag": "productCatalogFailure",
+      "variant": "off",
+      "written_at": 1792250806925,
+      "verified_at": 1792250807059
+     },
+     "d1": {
+      "flag": "emitRawPii",
+      "variant": "on",
+      "written_at": 1792249778324,
+      "verified_at": 1792249779157
+     },
+     "decoys": {
+      "D-07aca5d0": "checkout",
+      "D-e65b0ed1": "frontend-proxy",
+      "D-6518f404": "flagd"
+     },
+     "on_path": {
+      "D-07aca5d0": false,
+      "D-e65b0ed1": true,
+      "D-6518f404": false
+     }
+    }
+   }
+  },
+  {
+   "at": "2026-10-17T22:43:47",
+   "event": "record start",
+   "reason": "re-record slots 17 and 18: their earlier recordings measured a broken system (checkout failing 100 % after the host reboot), PREREGISTRATION amendment 2026-10-17 21:00 IST"
+  },
+  {
+   "at": "2026-10-18T00:20:12",
+   "event": "record stop"
+  }
+ ]
+}

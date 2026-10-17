@@ -1,0 +1,5307 @@
+{
+ "started": "2026-10-18T00:10:10",
+ "finished": "2026-10-18T00:20:01",
+ "reason": "pre-registered GraphRAG-SDK comparison (PREREGISTRATION addendum 2026-10-17 23:35 IST): the one paid run, cap US$1.50, owner-approved",
+ "config": {
+  "sdk_version": "1.4.0",
+  "model": "anthropic/claude-haiku-4-5",
+  "max_tokens": 8192,
+  "temperature": 0.0,
+  "embedder": "fastembed/BAAI/bge-small-en-v1.5",
+  "embedding_dimension": 384,
+  "graph": "graphrag_acme",
+  "cap_usd": 1.5
+ },
+ "corpus": {
+  "docs": [
+   {
+    "id": "adr-004",
+    "file": "adr-004.md",
+    "kind": "document",
+    "words": 119,
+    "chars": 851,
+    "sha256": "eed5e72dd99b0bab89dee1bfb305e5bc37a3e7c09f2d55e0a8369bbb61513d59"
+   },
+   {
+    "id": "adr-009",
+    "file": "adr-009.md",
+    "kind": "document",
+    "words": 105,
+    "chars": 741,
+    "sha256": "0efc83b3abba0a3696f66cd31f489858bc4129ba2d87978d56f8ff91922ab229"
+   },
+   {
+    "id": "adr-012",
+    "file": "adr-012.md",
+    "kind": "document",
+    "words": 120,
+    "chars": 810,
+    "sha256": "c42897d987ef40a2d8ace4c62c7023113a3989fa8e430a2ff17949c21d4eb0eb"
+   },
+   {
+    "id": "adr-013",
+    "file": "adr-013.md",
+    "kind": "document",
+    "words": 99,
+    "chars": 709,
+    "sha256": "9459fb8cb9f56d82e8c4dcf551485bcee438e76110d165fcdc3d756a94255d6c"
+   },
+   {
+    "id": "adr-021",
+    "file": "adr-021.md",
+    "kind": "document",
+    "words": 125,
+    "chars": 893,
+    "sha256": "c3510344a45651fbf4a8ac5ee383739391accd13cd42a23f078cfe414d5c1299"
+   },
+   {
+    "id": "chat-catalog-migrations",
+    "file": "chat-catalog-migrations.md",
+    "kind": "document",
+    "words": 70,
+    "chars": 535,
+    "sha256": "6d6c27cf92c5c7477fb5bb9c0aa8a2070ebc25d223de4148980730f2c9b1a8b5"
+   },
+   {
+    "id": "chat-payment-timeouts",
+    "file": "chat-payment-timeouts.md",
+    "kind": "document",
+    "words": 121,
+    "chars": 822,
+    "sha256": "c9279b49e3b04e3c9ed7a7e998e1cd4e77bbd90e04a312a0db6c3aade4e99925"
+   },
+   {
+    "id": "issue-checkout-payment-isolation",
+    "file": "issue-checkout-payment-isolation.md",
+    "kind": "document",
+    "words": 72,
+    "chars": 519,
+    "sha256": "657286abb282cd6af47776c6c0434a18620c107661d4bb012a97d9525f19900c"
+   },
+   {
+    "id": "rb-catalog-lock",
+    "file": "rb-catalog-lock.md",
+    "kind": "document",
+    "words": 85,
+    "chars": 637,
+    "sha256": "a9b236c7a112c2b8f28bc9d306676e5b7b2791df3ff462211186a666ef6a992a"
+   },
+   {
+    "id": "rb-checkout-degraded",
+    "file": "rb-checkout-degraded.md",
+    "kind": "document",
+    "words": 94,
+    "chars": 702,
+    "sha256": "c2156b2feeacf89cec47dd9d7fb191b50cd40422ecb17a4c21efcc4a87eb738f"
+   },
+   {
+    "id": "rb-kafka-lag",
+    "file": "rb-kafka-lag.md",
+    "kind": "document",
+    "words": 91,
+    "chars": 658,
+    "sha256": "42a40a467277e899b7697d9d8e8a8765dbed97fa68dadd8d3f256da0768cc115"
+   },
+   {
+    "id": "rb-payment-errors",
+    "file": "rb-payment-errors.md",
+    "kind": "document",
+    "words": 108,
+    "chars": 734,
+    "sha256": "3cedc978ec759b4a5b9eab47c2ebe8ecef160a9701892652e0bec8398d2676db"
+   },
+   {
+    "id": "rb-recs-cache",
+    "file": "rb-recs-cache.md",
+    "kind": "document",
+    "words": 95,
+    "chars": 704,
+    "sha256": "0f6a1b2f0b584701ed3b136ef0345fc6dd2612bcdc7ac056abf8e4d9d44b5ff6"
+   },
+   {
+    "id": "facts-customers-slos-flags",
+    "file": "facts-customers-slos-flags.md",
+    "kind": "facts",
+    "words": 442,
+    "chars": 3347,
+    "sha256": "30841712673b009682399c35671541ce560c727d0ff358ba4509482cce49be05"
+   },
+   {
+    "id": "facts-decisions",
+    "file": "facts-decisions.md",
+    "kind": "facts",
+    "words": 199,
+    "chars": 1440,
+    "sha256": "2bcdde515726582ca0ba7f353c4e20442a956f4e9cf2894d57c9d6e63f8e0ad4"
+   },
+   {
+    "id": "facts-incidents",
+    "file": "facts-incidents.md",
+    "kind": "facts",
+    "words": 2945,
+    "chars": 22197,
+    "sha256": "af963a6cfd4d5ffd3e624bd151ddf4b86fe17c35ea1f6704348f6402be2dc209"
+   },
+   {
+    "id": "facts-ownership",
+    "file": "facts-ownership.md",
+    "kind": "facts",
+    "words": 408,
+    "chars": 3263,
+    "sha256": "b5b40abc661ee7be2137546fec10220b0e854d0b86db918add7505ed876e3862"
+   },
+   {
+    "id": "facts-people",
+    "file": "facts-people.md",
+    "kind": "facts",
+    "words": 1589,
+    "chars": 11047,
+    "sha256": "820db2df141b7a1a37bf70e14763b4030ad5a208098d7b72721a4b0ac1be94e0"
+   },
+   {
+    "id": "facts-runbooks",
+    "file": "facts-runbooks.md",
+    "kind": "facts",
+    "words": 250,
+    "chars": 2066,
+    "sha256": "6e8c7c2a8c90550b8d795407e33757f3f6944d5877c4558f48617cff4deae65f"
+   },
+   {
+    "id": "facts-services",
+    "file": "facts-services.md",
+    "kind": "facts",
+    "words": 1234,
+    "chars": 8929,
+    "sha256": "a5230e4572684ac50c490e7941efafe1cbaf383e2bb7440407fa01ad72cb6193"
+   }
+  ],
+  "documents": 13,
+  "facts_docs": 7,
+  "words": 8371
+ },
+ "chunks": 52,
+ "estimate": {
+  "ingest_usd": 0.6915,
+  "s2_usd": 0.5101,
+  "orig_usd": 0.4208,
+  "total_usd": 1.6224
+ },
+ "ingest": {
+  "docs": 20,
+  "seconds": 351.5,
+  "s_per_doc": 17.57,
+  "cost": {
+   "calls": 52,
+   "in": 61477,
+   "out": 146835,
+   "usd": 0.795652
+  },
+  "finalize": {
+   "s": 9.15,
+   "result": {
+    "null_stubs_removed": 0,
+    "entities_deduplicated": 0,
+    "entities_embedded": 489,
+    "relationships_embedded": 879,
+    "indexes": {
+     "vector_Chunk": true,
+     "vector_Entity": true,
+     "vector_RELATES": true,
+     "fulltext_Chunk": true,
+     "fulltext_Entity": true
+    }
+   },
+   "calls": 0,
+   "in": 0,
+   "out": 0,
+   "usd": 0
+  },
+  "doc_errors": []
+ },
+ "kg": {
+  "labels": {
+   "Chunk": 52,
+   "Concept": 40,
+   "Dataset": 23,
+   "Date": 85,
+   "Document": 20,
+   "Event": 92,
+   "Law": 7,
+   "Location": 5,
+   "Method": 8,
+   "Organization": 21,
+   "Person": 50,
+   "Product": 95,
+   "Technology": 54,
+   "Unknown": 9,
+   "__Entity__": 489,
+   "__GraphRAGConfig__": 1
+  },
+  "relationships": {
+   "MENTIONED_IN": 1045,
+   "NEXT_CHUNK": 32,
+   "PART_OF": 52,
+   "RELATES": 879
+  }
+ },
+ "meter": {
+  "spent_usd": 1.447035,
+  "refused": 0,
+  "truncated": 0,
+  "transport_retries": 0,
+  "calls": 198,
+  "in": 660110,
+  "out": 157385
+ },
+ "stopped": null,
+ "skipped_sets": [],
+ "warning_count": 6,
+ "step_failures": 1,
+ "graphs_deleted": {
+  "graphrag_acme": true,
+  "graphrag_acme__ontology": true
+ },
+ "name_map_universe": {
+  "name_labels": [
+   "Service",
+   "Datastore",
+   "Table",
+   "KPI",
+   "Dashboard",
+   "Team",
+   "Person",
+   "Customer",
+   "SLO"
+  ],
+  "title_labels": [
+   "Decision",
+   "Policy",
+   "Runbook"
+  ],
+  "names": 117
+ },
+ "sets": {
+  "s2": {
+   "questions": 40,
+   "answerable": 37,
+   "unanswerable": 3,
+   "fl": {
+    "answered": 40,
+    "complete": true,
+    "correct": 24,
+    "answerable_correct": 21,
+    "unanswerable_honest": 3,
+    "unanswerable_honest_strict": 3,
+    "names_sources": 34,
+    "answers_with_fabricated_ids": 0,
+    "false_abstain": 2,
+    "ms_p50": 18.1,
+    "ms_p95": 48.1,
+    "precision_mean": 0.2956,
+    "correct_ci": [
+     0.446,
+     0.7365
+    ],
+    "correct_textrule": 24
+   },
+   "sdk": {
+    "answered": 40,
+    "complete": true,
+    "correct": 32,
+    "answerable_correct": 29,
+    "unanswerable_honest": 3,
+    "unanswerable_honest_strict": 1,
+    "names_sources": 37,
+    "answers_with_fabricated_ids": 0,
+    "false_abstain": 2,
+    "ms_p50": 3091.8,
+    "ms_p95": 4404.0,
+    "precision_mean": 0.3479,
+    "correct_ci": [
+     0.6524,
+     0.895
+    ],
+    "correct_ids_only": 30,
+    "answers_with_name_mapping": 38,
+    "errors": 0,
+    "usd": 0.3623,
+    "usd_per_question": 0.00906,
+    "tokens_in": 334323,
+    "tokens_out": 5591
+   },
+   "paired": {
+    "both": 18,
+    "fl_only": 6,
+    "sdk_only": 14,
+    "neither": 2,
+    "mcnemar_p": 0.1153
+   },
+   "by_kind": {
+    "people_who_worked_on": {
+     "n": 5,
+     "fl": 3,
+     "sdk": 3
+    },
+    "owner": {
+     "n": 4,
+     "fl": 3,
+     "sdk": 4
+    },
+    "decisions": {
+     "n": 4,
+     "fl": 2,
+     "sdk": 4
+    },
+    "decision_people": {
+     "n": 4,
+     "fl": 1,
+     "sdk": 4
+    },
+    "missing_guardrails": {
+     "n": 3,
+     "fl": 3,
+     "sdk": 1
+    },
+    "blast_radius": {
+     "n": 5,
+     "fl": 4,
+     "sdk": 3
+    },
+    "owner_at": {
+     "n": 3,
+     "fl": 2,
+     "sdk": 3
+    },
+    "beliefs_at": {
+     "n": 3,
+     "fl": 1,
+     "sdk": 3
+    },
+    "knowledge_health": {
+     "n": 3,
+     "fl": 2,
+     "sdk": 1
+    },
+    "runbook": {
+     "n": 3,
+     "fl": 0,
+     "sdk": 3
+    },
+    "unanswerable": {
+     "n": 3,
+     "fl": 3,
+     "sdk": 3
+    }
+   }
+  },
+  "orig": {
+   "questions": 33,
+   "answerable": 27,
+   "unanswerable": 6,
+   "fl": {
+    "answered": 33,
+    "complete": true,
+    "correct": 33,
+    "answerable_correct": 27,
+    "unanswerable_honest": 6,
+    "unanswerable_honest_strict": 6,
+    "names_sources": 27,
+    "answers_with_fabricated_ids": 0,
+    "false_abstain": 0,
+    "ms_p50": 9.3,
+    "ms_p95": 25.2,
+    "precision_mean": 0.3118,
+    "correct_ci": [
+     0.8957,
+     1.0
+    ],
+    "correct_textrule": 33
+   },
+   "sdk": {
+    "answered": 33,
+    "complete": true,
+    "correct": 28,
+    "answerable_correct": 23,
+    "unanswerable_honest": 5,
+    "unanswerable_honest_strict": 5,
+    "names_sources": 26,
+    "answers_with_fabricated_ids": 0,
+    "false_abstain": 2,
+    "ms_p50": 2778.9,
+    "ms_p95": 6720.4,
+    "precision_mean": 0.291,
+    "correct_ci": [
+     0.6908,
+     0.9335
+    ],
+    "correct_ids_only": 28,
+    "answers_with_name_mapping": 27,
+    "errors": 0,
+    "usd": 0.2891,
+    "usd_per_question": 0.00876,
+    "tokens_in": 264310,
+    "tokens_out": 4959
+   },
+   "paired": {
+    "both": 28,
+    "fl_only": 5,
+    "sdk_only": 0,
+    "neither": 0,
+    "mcnemar_p": 0.0625
+   },
+   "by_kind": {
+    "people": {
+     "n": 7,
+     "fl": 7,
+     "sdk": 6
+    },
+    "decision": {
+     "n": 5,
+     "fl": 5,
+     "sdk": 5
+    },
+    "gaps": {
+     "n": 1,
+     "fl": 1,
+     "sdk": 1
+    },
+    "blast": {
+     "n": 7,
+     "fl": 7,
+     "sdk": 7
+    },
+    "context": {
+     "n": 5,
+     "fl": 5,
+     "sdk": 4
+    },
+    "owner_then": {
+     "n": 3,
+     "fl": 3,
+     "sdk": 2
+    },
+    "asof": {
+     "n": 1,
+     "fl": 1,
+     "sdk": 1
+    },
+    "history": {
+     "n": 1,
+     "fl": 1,
+     "sdk": 1
+    },
+    "knowledge": {
+     "n": 1,
+     "fl": 1,
+     "sdk": 0
+    },
+    "obligations": {
+     "n": 2,
+     "fl": 2,
+     "sdk": 1
+    }
+   }
+  }
+ },
+ "rows": [
+  {
+   "set": "s2",
+   "id": "B01",
+   "q": "who actually knows the recomendation code? need someone who's spent real time in it",
+   "expect": [
+    "p-010",
+    "p-013"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "p-010",
+     "p-013",
+     "p-020",
+     "p-031",
+     "p-035",
+     "recommendation",
+     "team-catalog",
+     "team-growth"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.25,
+    "ok_textrule": true,
+    "ms": 121.4,
+    "answer": "People who have worked on [recommendation], most work first:\n- Talia Yarrowby [p-020]: 16 commits, resolved 2 incident(s) there; [team-growth] (no longer active)\n- Jovan Ivybridge-Lane [p-010]: 10 commits, resolved 0 incident(s) there; [team-growth]\n- Mireille Zephyrine [p-013]: 10 commits, resolved 3 incident(s) there; [team-growth]\n- Esme Oldcastle-Pym [p-031]: 9 commits, resolved 1 incident(s) there; [team-growth]\n- Isak Juniper-Rowe [p-035]: 6 commits, resolved 1 incident(s) there; [team-catalog]",
+    "intent": "people"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "p-010",
+     "p-013",
+     "p-020",
+     "p-031",
+     "p-035",
+     "recommendation"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.3333,
+    "ok_ids_only": true,
+    "name_map": {
+     "talia-yarrowby": [
+      "p-020"
+     ],
+     "jovan-ivybridge-lane": [
+      "p-010"
+     ],
+     "mireille-zephyrine": [
+      "p-013"
+     ],
+     "esme-oldcastle-pym": [
+      "p-031"
+     ],
+     "isak-juniper-rowe": [
+      "p-035"
+     ]
+    },
+    "ms": 4223.1,
+    "answer": "Based on the commit history, the people who have spent the most time working on recommendation code are:\n\n1. **Talia Yarrowby** (p-020) \u2014 16 commits\n2. **Jovan Ivybridge-Lane** (p-010) \u2014 10 commits\n3. **Mireille Zephyrine** (p-013) \u2014 10 commits\n4. **Esme Oldcastle-Pym** (p-031) \u2014 9 commits\n5. **Isak Juniper-Rowe** (p-035) \u2014 6 commits\n\nTalia Yarrowby has by far the most commits to recommendation. However, note that Talia left Acme on 2026-08-30 and is now inactive, so she may not be available. Among currently active engineers, Jovan Ivybridge-Lane and Mireille Zephyrine have the deepest experience.",
+    "error": null,
+    "usd": 0.009282,
+    "in": 7932,
+    "out": 270,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B02",
+   "q": "anyone been hacking on the shopping basket service lately? got a question about it",
+   "expect": [
+    "p-028",
+    "p-038"
+   ],
+   "fl": {
+    "ok": false,
+    "ok_strict": false,
+    "abstained": false,
+    "missing": [
+     "p-028",
+     "p-038"
+    ],
+    "cited": [
+     "cart",
+     "team-storefront"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.0,
+    "ok_textrule": false,
+    "ms": 645.2,
+    "answer": "[cart] is owned by [team-storefront] now.\nOwnership history: [team-storefront] 2025-09-10 to now.",
+    "intent": "owner_then"
+   },
+   "sdk": {
+    "ok": false,
+    "ok_strict": false,
+    "abstained": false,
+    "missing": [
+     "p-028",
+     "p-038"
+    ],
+    "cited": [
+     "cache",
+     "cart",
+     "cartFailure",
+     "dep-12",
+     "dep-121",
+     "dep-196",
+     "dep-247",
+     "dep-319",
+     "inc-h001",
+     "inc-h013",
+     "inc-h021",
+     "inc-h024",
+     "inc-h033"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.0,
+    "ok_ids_only": false,
+    "name_map": {},
+    "ms": 4160.8,
+    "answer": "Yes, the cart service (shopping basket) has had several recent incidents. Here are the key ones:\n\n- **inc-h001** (June 20, 2026): Valkey cache refusing cart connections after deploy dep-12. Fixed by flipping the cartFailure flag.\n\n- **inc-h013** (July 27, 2026): Valkey cache refusing cart connections again after deploy dep-121. Also fixed with the cartFailure flag.\n\n- **inc-h021** (August 20, 2026): Cart service errors after cache config change (dep-196). The cache config evicted sessions and carts couldn't be loaded. Fixed by rolling back dep-196.\n\n- **inc-h024** (September 6, 2026): Cart errors from cache failure after deploy dep-247. Connections to cache were refused and cart error rate rose sharply. Fixed by rolling back dep-247.\n\n- **inc-h033** (September 29, 2026): Valkey cache refusing cart connections after deploy dep-319. Fixed by flipping the cartFailure flag.\n\nMost of these issues stem from cache-related problems. What's your question?",
+    "error": null,
+    "usd": 0.008935,
+    "in": 7595,
+    "out": 268,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B03",
+   "q": "who's the go-to person for the thing that calculates shipping quotes",
+   "expect": [
+    "p-035"
+   ],
+   "fl": {
+    "ok": false,
+    "ok_strict": false,
+    "abstained": false,
+    "missing": [
+     "p-035"
+    ],
+    "cited": [
+     "p-007",
+     "p-027",
+     "p-028",
+     "p-032",
+     "p-038",
+     "shipping",
+     "team-storefront"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.0,
+    "ok_textrule": false,
+    "ms": 18.1,
+    "answer": "People who have worked on [shipping], most work first:\n- Fabian Driftwood [p-032]: 10 commits, resolved 0 incident(s) there; [team-storefront] (no longer active)\n- Greta Greywater [p-007]: 8 commits, resolved 0 incident(s) there; [team-storefront]\n- Bram Jarrowmere [p-028]: 4 commits, resolved 0 incident(s) there; [team-storefront]\n- Anouk Pennyrigg [p-027]: 3 commits, resolved 0 incident(s) there; [team-storefront]\n- Lior Sablewood [p-038]: 1 commits, resolved 0 incident(s) there; [team-storefront]",
+    "intent": "people"
+   },
+   "sdk": {
+    "ok": false,
+    "ok_strict": false,
+    "abstained": false,
+    "missing": [
+     "p-035"
+    ],
+    "cited": [
+     "p-007",
+     "p-027",
+     "p-028",
+     "p-032",
+     "p-038",
+     "shipping",
+     "team-storefront"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.0,
+    "ok_ids_only": false,
+    "name_map": {
+     "fabian-driftwood": [
+      "p-032"
+     ],
+     "greta-greywater": [
+      "p-007"
+     ],
+     "bram-jarrowmere": [
+      "p-028"
+     ],
+     "anouk-pennyrigg": [
+      "p-027"
+     ],
+     "lior-sablewood": [
+      "p-038"
+     ],
+     "storefront": [
+      "team-storefront"
+     ]
+    },
+    "ms": 2678.5,
+    "answer": "Based on the commit history, **Fabian Driftwood** is the go-to person for shipping quotes, with 10 commits to the shipping service. He's followed by Greta Greywater (8 commits), Bram Jarrowmere (4 commits), Anouk Pennyrigg (3 commits), and Lior Sablewood (1 commit).\n\nThe shipping service is owned by Team Storefront.",
+    "error": null,
+    "usd": 0.008273,
+    "in": 7603,
+    "out": 134,
+    "context_items": 3
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B04",
+   "q": "who wrote most of the currency conversion svc and are they even still around?",
+   "expect": [
+    "p-032",
+    "p-038"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "currency",
+     "p-027",
+     "p-028",
+     "p-032",
+     "p-034",
+     "p-038",
+     "team-payments",
+     "team-storefront"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.25,
+    "ok_textrule": true,
+    "ms": 18.3,
+    "answer": "People who have worked on [currency], most work first:\n- Fabian Driftwood [p-032]: 19 commits, resolved 0 incident(s) there; [team-storefront] (no longer active)\n- Lior Sablewood [p-038]: 6 commits, resolved 0 incident(s) there; [team-storefront]\n- Anouk Pennyrigg [p-027]: 3 commits, resolved 0 incident(s) there; [team-storefront]\n- Bram Jarrowmere [p-028]: 1 commits, resolved 0 incident(s) there; [team-storefront]\n- Hester Hawksmere [p-034]: 1 commits, resolved 0 incident(s) there; [team-payments]",
+    "intent": "people"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": true,
+    "missing": [],
+    "cited": [
+     "currency",
+     "p-027",
+     "p-028",
+     "p-032",
+     "p-034",
+     "p-038"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.3333,
+    "ok_ids_only": false,
+    "name_map": {
+     "fabian-driftwood": [
+      "p-032"
+     ],
+     "currency-conversion": [
+      "currency"
+     ],
+     "lior-sablewood": [
+      "p-038"
+     ],
+     "anouk-pennyrigg": [
+      "p-027"
+     ],
+     "bram-jarrowmere": [
+      "p-028"
+     ],
+     "hester-hawksmere": [
+      "p-034"
+     ]
+    },
+    "ms": 3413.2,
+    "answer": "**Fabian Driftwood** wrote most of the currency conversion service, with 19 commits to currency\u2014significantly more than any other contributor (Lior Sablewood has 6, Anouk Pennyrigg has 3, Bram Jarrowmere has 1, and Hester Hawksmere has 1).\n\nYes, Fabian Driftwood is still around. The context indicates he is an active engineer at Acme, though his specific team membership and current status details are not provided in the available information.",
+    "error": null,
+    "usd": 0.009164,
+    "in": 8464,
+    "out": 140,
+    "context_items": 5
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B05",
+   "q": "which folks have touched the order confirmation email code",
+   "expect": [
+    "p-037",
+    "p-019"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "email",
+     "p-005",
+     "p-019",
+     "p-022",
+     "p-037",
+     "p-039",
+     "team-assistant",
+     "team-checkout"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.25,
+    "ok_textrule": true,
+    "ms": 27.2,
+    "answer": "People who have worked on [email], most work first:\n- Soren Orrinwood [p-019]: 4 commits, resolved 0 incident(s) there; [team-checkout] (no longer active)\n- Kestrel Quillon [p-037]: 4 commits, resolved 0 incident(s) there; [team-checkout]\n- Maren Calderwick [p-039]: 3 commits, resolved 0 incident(s) there; [team-assistant]\n- Elsbeth Birchley [p-005]: 2 commits, resolved 0 incident(s) there; [team-checkout]\n- Vesna Hollowell [p-022]: 2 commits, resolved 0 incident(s) there; [team-checkout]",
+    "intent": "people"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "email",
+     "p-005",
+     "p-018",
+     "p-019",
+     "p-022",
+     "p-037",
+     "p-039"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.2857,
+    "ok_ids_only": true,
+    "name_map": {
+     "soren-orrinwood": [
+      "p-019"
+     ],
+     "kestrel-quillon": [
+      "p-037"
+     ],
+     "maren-calderwick": [
+      "p-039"
+     ],
+     "elsbeth-birchley": [
+      "p-005"
+     ],
+     "vesna-hollowell": [
+      "p-022"
+     ],
+     "rosalind-coldharbour": [
+      "p-018"
+     ]
+    },
+    "ms": 3227.3,
+    "answer": "Based on the commit history provided, the following people have made commits to the email codebase:\n\n- Soren Orrinwood (p-019) - 4 commits\n- Kestrel Quillon (p-037) - 4 commits\n- Maren Calderwick (p-039) - 3 commits\n- Elsbeth Birchley (p-005) - 2 commits\n- Vesna Hollowell (p-022) - 2 commits\n- Rosalind Coldharbour (p-018) - 1 commit",
+    "error": null,
+    "usd": 0.009863,
+    "in": 9128,
+    "out": 147,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B06",
+   "q": "which team is on the hook for fraud detecton these days?",
+   "expect": [
+    "team-platform"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "fraud-detection",
+     "team-platform"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.5,
+    "ok_textrule": true,
+    "ms": 24.8,
+    "answer": "[fraud-detection] is a Service; owned by [team-platform].",
+    "intent": "context"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "fraud-detection",
+     "team-payments",
+     "team-platform"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.3333,
+    "ok_ids_only": true,
+    "name_map": {
+     "platform": [
+      "team-platform"
+     ],
+     "payments": [
+      "team-payments"
+     ]
+    },
+    "ms": 2339.9,
+    "answer": "Team Platform is currently responsible for fraud-detection. The service transferred to their ownership on 2026-08-06, after being owned by team Payments from the start (2025-09-10).",
+    "error": null,
+    "usd": 0.00908,
+    "in": 8710,
+    "out": 74,
+    "context_items": 3
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B07",
+   "q": "who owns the kafka order queue",
+   "expect": [
+    "team-checkout"
+   ],
+   "fl": {
+    "ok": false,
+    "ok_strict": false,
+    "abstained": false,
+    "missing": [
+     "team-checkout"
+    ],
+    "cited": [
+     "queue"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.0,
+    "ok_textrule": false,
+    "ms": 12.2,
+    "answer": "Nobody has committed to [queue] in the recorded history.",
+    "intent": "people"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "queue",
+     "team-checkout"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.5,
+    "ok_ids_only": true,
+    "name_map": {
+     "checkout": [
+      "team-checkout"
+     ],
+     "kafka-order-queue": [
+      "queue"
+     ]
+    },
+    "ms": 1688.1,
+    "answer": "Team Checkout owns the kafka order queue (queue component).",
+    "error": null,
+    "usd": 0.008855,
+    "in": 8755,
+    "out": 20,
+    "context_items": 5
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B08",
+   "q": "whose is the nginx image server? need to ping the owning team",
+   "expect": [
+    "team-storefront"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "image-provider",
+     "team-storefront"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.5,
+    "ok_textrule": true,
+    "ms": 39.2,
+    "answer": "[image-provider] is owned by [team-storefront] now.\nOwnership history: [team-storefront] 2025-09-10 to now.",
+    "intent": "owner_then"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "image-provider",
+     "team-storefront"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.5,
+    "ok_ids_only": true,
+    "name_map": {
+     "storefront": [
+      "team-storefront"
+     ]
+    },
+    "ms": 2035.9,
+    "answer": "Team Storefront owns the image-provider service (the nginx image server). They have owned it since 2025-09-10.",
+    "error": null,
+    "usd": 0.00926,
+    "in": 9080,
+    "out": 36,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B09",
+   "q": "ad serving - which team owns that now? thought it moved",
+   "expect": [
+    "team-growth"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ad",
+     "team-growth",
+     "team-storefront"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.3333,
+    "ok_textrule": true,
+    "ms": 32.4,
+    "answer": "[ad] is owned by [team-growth] now.\nOwnership history: [team-storefront] 2025-09-10 to 2026-08-31; [team-growth] 2026-08-31 to now.",
+    "intent": "owner_then"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ad",
+     "team-growth",
+     "team-storefront"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.3333,
+    "ok_ids_only": true,
+    "name_map": {
+     "growth": [
+      "team-growth"
+     ],
+     "ad-serving": [
+      "ad"
+     ],
+     "storefront": [
+      "team-storefront"
+     ]
+    },
+    "ms": 2011.8,
+    "answer": "Team Growth owns ad serving now. It was owned by Team Storefront from 2025-09-10 to 2026-08-31, then transferred to Team Growth on 2026-08-31.",
+    "error": null,
+    "usd": 0.009847,
+    "in": 9572,
+    "out": 55,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B10",
+   "q": "are we still doing catalog db migrations off-peak or did that change?",
+   "expect": [
+    "ADR-021",
+    "ADR-009"
+   ],
+   "fl": {
+    "ok": false,
+    "ok_strict": false,
+    "abstained": false,
+    "missing": [
+     "ADR-009",
+     "ADR-021"
+    ],
+    "cited": [
+     "accounting",
+     "ad",
+     "fraud-detection",
+     "p-004",
+     "p-007",
+     "p-017",
+     "p-027",
+     "p-028",
+     "p-030",
+     "queue",
+     "rb-kafka-lag",
+     "recommendation",
+     "team-growth",
+     "team-payments",
+     "team-platform",
+     "team-storefront"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.0,
+    "ok_textrule": false,
+    "ms": 14.0,
+    "answer": "7 places where what the organisation knows has decayed:\n- [accounting] stale runbook: runbook [rb-kafka-lag] not reviewed for 95 days\n- [fraud-detection] handover with no runbook since: moved from [team-payments] to [team-platform]; no runbook reviewed since; ask [p-004], [p-017], [p-030]\n- [ad] handover with no runbook since: moved from [team-storefront] to [team-growth]; no runbook reviewed since; ask [p-007], [p-027], [p-028]\n- [queue] graph probably missing an edge: 6 incidents caused at queue also hit accounting, but the graph has no failure path queue \u2192 accounting\n- [queue] graph probably missing an edge: 6 incidents caused at queue also hit fraud-detection, but the graph has no failure path queue \u2192 fraud-detection\n- [recommendation] graph probably missing an edge: 6 incidents caused at recommendation also hit product-catalog, but the graph has no failure path recommendation \u2192 product-catalog\n\u2026and 1 more of the same kinds.",
+    "intent": "knowledge"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ADR-009",
+     "ADR-021",
+     "astronomy-db",
+     "team-catalog"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.5,
+    "ok_ids_only": true,
+    "name_map": {
+     "catalog": [
+      "team-catalog"
+     ]
+    },
+    "ms": 3422.9,
+    "answer": "No, that changed. ADR-009 required catalog database migrations to run off-peak (02:00 to 05:00 UTC), but it was superseded by ADR-021 on 2026-06-03. \n\nThe reason for the change: off-peak migrations still caused table locking issues because regional traffic continued to reach the catalog at night. ADR-021 now requires all schema changes on astronomy-db to use an online migration tool that performs non-locking migrations. Migrations may now run at any hour, but must use the online mode\u2014plain `ALTER TABLE` statements are not allowed.",
+    "error": null,
+    "usd": 0.009201,
+    "in": 8481,
+    "out": 144,
+    "context_items": 5
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B11",
+   "q": "do we have a decision on whether checkout should wait for the confirmation email to send?",
+   "expect": [
+    "ADR-004"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ADR-004",
+     "checkout",
+     "p-019"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.3333,
+    "ok_textrule": true,
+    "ms": 17.2,
+    "answer": "Decisions about [checkout]:\n- [ADR-004] Order confirmation email is best-effort: active, and still current (nothing supersedes it). Decided by [p-019] Soren Orrinwood (has left).",
+    "intent": "decision"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ADR-004",
+     "checkout",
+     "email",
+     "team-checkout"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.25,
+    "ok_ids_only": true,
+    "name_map": {
+     "order-confirmation-email-is-best-effort": [
+      "ADR-004"
+     ],
+     "checkout": [
+      "team-checkout"
+     ]
+    },
+    "ms": 3448.5,
+    "answer": "Yes. ADR-004 establishes that order confirmation email is best-effort and must not block checkout. The decision specifies that checkout places the order and charges the customer before requesting the email service to send confirmation. Any failure or timeout in the email call is logged and retried asynchronously\u2014it never fails the order and never holds the checkout response open. The configuration rule `checkout.email.blocking` is set to `false` to enforce this. Any change to make the email call blocking requires a new decision.",
+    "error": null,
+    "usd": 0.008065,
+    "in": 7475,
+    "out": 118,
+    "context_items": 5
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B12",
+   "q": "how many retries is the payment client meant to keep, was that ever written down",
+   "expect": [
+    "ADR-013"
+   ],
+   "fl": {
+    "ok": false,
+    "ok_strict": false,
+    "abstained": false,
+    "missing": [
+     "ADR-013"
+    ],
+    "cited": [
+     "p-004",
+     "p-017",
+     "p-030",
+     "p-034",
+     "p-036",
+     "payment",
+     "team-payments"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.0,
+    "ok_textrule": false,
+    "ms": 23.1,
+    "answer": "People who have worked on [payment], most work first:\n- Quinn Lindqvane [p-017]: 32 commits, resolved 5 incident(s) there; [team-payments]\n- Juno Pellucid [p-036]: 22 commits, resolved 2 incident(s) there; [team-payments]\n- Desmond Brackwater [p-030]: 14 commits, resolved 1 incident(s) there; [team-payments]\n- Hester Hawksmere [p-034]: 8 commits, resolved 0 incident(s) there; [team-payments]\n- Dorian Marrowby [p-004]: 7 commits, resolved 1 incident(s) there; [team-payments]",
+    "intent": "people"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ADR-013",
+     "checkout",
+     "payment",
+     "team-checkout"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.25,
+    "ok_ids_only": true,
+    "name_map": {
+     "payment-client-keeps-\u2265-2-retries": [
+      "ADR-013"
+     ],
+     "checkout": [
+      "team-checkout"
+     ]
+    },
+    "ms": 2595.2,
+    "answer": "The payment client is meant to keep at least 2 retries. This was written down in ADR-013 (\"Payment client keeps \u2265 2 retries\"), decided on 2026-03-12. The decision specifies that the payment client retries a failed or timed-out charge at least twice with jittered backoff before reporting failure to checkout.",
+    "error": null,
+    "usd": 0.008464,
+    "in": 8014,
+    "out": 90,
+    "context_items": 5
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B13",
+   "q": "any ADRs that touch the postgres product database?",
+   "expect": [
+    "ADR-021",
+    "ADR-009"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ADR-009",
+     "ADR-021",
+     "p-006",
+     "p-016",
+     "p-025",
+     "product-catalog"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.3333,
+    "ok_textrule": true,
+    "ms": 45.6,
+    "answer": "Decisions about [product-catalog]:\n- [ADR-021] Catalog DB schema changes use online migrations: active, and still current (nothing supersedes it). Decided by [p-006] Florin Ashcombe (still on the owning team), [p-016] Pavel Kingsbarrow (still on the owning team).\n- [ADR-009] Catalog DB migrations run off-peak: superseded; the current decision is [ADR-021] (Catalog DB schema changes use online migrations). Decided by [p-025] Yara Umberfield (has left).",
+    "intent": "decision"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ADR-009",
+     "ADR-021",
+     "astronomy-db"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.6667,
+    "ok_ids_only": true,
+    "name_map": {
+     "postgres-product-database": [
+      "astronomy-db"
+     ],
+     "catalog-db-migrations-run-off-peak": [
+      "ADR-009"
+     ],
+     "catalog-db-schema-changes-use-online-migrations": [
+      "ADR-021"
+     ]
+    },
+    "ms": 3183.6,
+    "answer": "Two ADRs constrain astronomy-db (the postgres product database):\n\n1. **ADR-009** \u2013 \"Catalog DB migrations run off-peak\" (decided 2025-09-18, now superseded). Required schema migrations to run only during the off-peak window (02:00 to 05:00 UTC).\n\n2. **ADR-021** \u2013 \"Catalog DB schema changes use online migrations\" (decided 2026-06-03, active). Supersedes ADR-009. Requires schema changes to use an online migration tool that avoids long table locks.",
+    "error": null,
+    "usd": 0.008476,
+    "in": 7786,
+    "out": 138,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B14",
+   "q": "who made the call to do catalog schema changes online, and are they still here?",
+   "expect": [
+    "ADR-021",
+    "p-006",
+    "p-016"
+   ],
+   "fl": {
+    "ok": false,
+    "ok_strict": false,
+    "abstained": false,
+    "missing": [
+     "ADR-021",
+     "p-006"
+    ],
+    "cited": [
+     "p-012",
+     "p-015",
+     "p-016",
+     "p-025",
+     "p-035",
+     "product-catalog",
+     "team-catalog",
+     "team-data"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.125,
+    "ok_textrule": false,
+    "ms": 48.1,
+    "answer": "People who have worked on [product-catalog], most work first:\n- Pavel Kingsbarrow [p-016]: 11 commits, resolved 1 incident(s) there; [team-catalog]\n- Isak Juniper-Rowe [p-035]: 8 commits, resolved 1 incident(s) there; [team-catalog]\n- Leander Eastholm [p-012]: 7 commits, resolved 2 incident(s) there; [team-catalog]\n- Odessa Nettlefold [p-015]: 5 commits, resolved 0 incident(s) there; [team-data]\n- Yara Umberfield [p-025]: 5 commits, resolved 2 incident(s) there; [team-catalog] (no longer active)",
+    "intent": "people"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ADR-021",
+     "p-006",
+     "p-016",
+     "product-catalog",
+     "team-catalog"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.6,
+    "ok_ids_only": true,
+    "name_map": {
+     "florin-ashcombe": [
+      "p-006"
+     ],
+     "pavel-kingsbarrow": [
+      "p-016"
+     ],
+     "catalog-db-schema-changes-use-online-migrations": [
+      "ADR-021"
+     ],
+     "catalog": [
+      "team-catalog"
+     ]
+    },
+    "ms": 3091.8,
+    "answer": "Florin Ashcombe (p-006) and Pavel Kingsbarrow (p-016) decided on ADR-021 on 2026-06-03, which mandates that catalog DB schema changes use online migrations.\n\nYes, they are still here. Florin Ashcombe is a member of the Catalog team as of 2025-09-10, and Pavel Kingsbarrow has made 11 commits to product-catalog, indicating active involvement.",
+    "error": null,
+    "usd": 0.008617,
+    "in": 7927,
+    "out": 138,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B15",
+   "q": "who decided the order email is best effort? can I go ask them about it",
+   "expect": [
+    "ADR-004",
+    "p-019"
+   ],
+   "fl": {
+    "ok": false,
+    "ok_strict": false,
+    "abstained": false,
+    "missing": [
+     "p-019"
+    ],
+    "cited": [
+     "ADR-004",
+     "email"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.5,
+    "ok_textrule": false,
+    "ms": 15.9,
+    "answer": "Decisions about [email]:\n- [ADR-004] Order confirmation email is best-effort: active, and still current (nothing supersedes it).",
+    "intent": "decision"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": true,
+    "missing": [],
+    "cited": [
+     "ADR-004",
+     "email",
+     "p-019"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.6667,
+    "ok_ids_only": true,
+    "name_map": {
+     "soren-orrinwood": [
+      "p-019"
+     ],
+     "order-confirmation-email-is-best-effort": [
+      "ADR-004"
+     ]
+    },
+    "ms": 3009.7,
+    "answer": "Soren Orrinwood (p-019) decided that order confirmation email is best-effort (ADR-004), made on 2025-11-04.\n\nHowever, the context doesn't include contact information or availability details, so you'd need to find their contact through your organization's directory or team channels.",
+    "error": null,
+    "usd": 0.007848,
+    "in": 7263,
+    "out": 117,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B16",
+   "q": "the off peak migration rule for the catalog db, whose idea was that originally",
+   "expect": [
+    "ADR-009",
+    "p-025"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ADR-009",
+     "ADR-021",
+     "p-006",
+     "p-016",
+     "p-025",
+     "product-catalog"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.3333,
+    "ok_textrule": true,
+    "ms": 43.2,
+    "answer": "Decisions about [product-catalog]:\n- [ADR-009] Catalog DB migrations run off-peak: superseded; the current decision is [ADR-021] (Catalog DB schema changes use online migrations). Decided by [p-025] Yara Umberfield (has left).\n- [ADR-021] Catalog DB schema changes use online migrations: active, and still current (nothing supersedes it). Decided by [p-006] Florin Ashcombe (still on the owning team), [p-016] Pavel Kingsbarrow (still on the owning team).",
+    "intent": "decision"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ADR-009",
+     "p-025",
+     "team-catalog"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.6667,
+    "ok_ids_only": true,
+    "name_map": {
+     "catalog": [
+      "team-catalog"
+     ],
+     "yara-umberfield": [
+      "p-025"
+     ]
+    },
+    "ms": 2383.9,
+    "answer": "ADR-009 (the off-peak migration rule for the catalog database) was decided on 2025-09-18 by Yara Umberfield (p-025). The document does not indicate whose original idea it was, only who made the formal decision.",
+    "error": null,
+    "usd": 0.008883,
+    "in": 8498,
+    "out": 77,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B17",
+   "q": "who signed off on keeping payment calls under 2 seconds, still on the payments team?",
+   "expect": [
+    "ADR-012",
+    "p-004",
+    "p-022"
+   ],
+   "fl": {
+    "ok": false,
+    "ok_strict": false,
+    "abstained": false,
+    "missing": [
+     "ADR-012",
+     "p-022"
+    ],
+    "cited": [
+     "p-004",
+     "p-017",
+     "p-030",
+     "p-034",
+     "p-036",
+     "payment",
+     "team-payments"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.1429,
+    "ok_textrule": false,
+    "ms": 17.3,
+    "answer": "People who have worked on [payment], most work first:\n- Quinn Lindqvane [p-017]: 32 commits, resolved 5 incident(s) there; [team-payments]\n- Juno Pellucid [p-036]: 22 commits, resolved 2 incident(s) there; [team-payments]\n- Desmond Brackwater [p-030]: 14 commits, resolved 1 incident(s) there; [team-payments]\n- Hester Hawksmere [p-034]: 8 commits, resolved 0 incident(s) there; [team-payments]\n- Dorian Marrowby [p-004]: 7 commits, resolved 1 incident(s) there; [team-payments]",
+    "intent": "people"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ADR-012",
+     "checkout",
+     "p-004",
+     "p-022",
+     "p-036",
+     "payment",
+     "team-checkout",
+     "team-payments"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.375,
+    "ok_ids_only": false,
+    "name_map": {
+     "dorian-marrowby": [
+      "p-004"
+     ],
+     "juno-pellucid": [
+      "p-036"
+     ],
+     "payments": [
+      "team-payments"
+     ],
+     "vesna-hollowell": [
+      "p-022"
+     ],
+     "checkout": [
+      "team-checkout"
+     ]
+    },
+    "ms": 4038.4,
+    "answer": "Dorian Marrowby and Juno Pellucid.\n\nDorian Marrowby (p-004) decided ADR-012 (which caps payment client timeout at 2000 ms) on 2026-03-12 and remains a lead on team Payments. Juno Pellucid (p-036) is an engineer on team Payments since 2025-09-10.\n\nHowever, if the question specifically asks who *signed off* (decided) on ADR-012: **Dorian Marrowby** and **Vesna Hollowell** decided it together, but only Dorian Marrowby is still on the payments team. Vesna Hollowell is listed as having committed to checkout, not payments.",
+    "error": null,
+    "usd": 0.008758,
+    "in": 7513,
+    "out": 249,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B18",
+   "q": "which money-path services don't have a runbook at all?",
+   "expect": [
+    "cart",
+    "currency",
+    "frontend",
+    "frontend-proxy",
+    "shipping",
+    "quote"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "cart",
+     "currency",
+     "frontend",
+     "frontend-proxy",
+     "quote",
+     "shipping"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 1.0,
+    "ok_textrule": true,
+    "ms": 9.7,
+    "answer": "6 revenue-path services lack a guardrail:\n- [cart] (cart shopping basket, tier 1): no current runbook\n- [currency] (currency conversion, tier 1): no current runbook\n- [frontend] (frontend web storefront, tier 1): no current runbook\n- [frontend-proxy] (frontend proxy (envoy), tier 1): no current runbook\n- [shipping] (shipping quotes and dispatch, tier 1): no current runbook\n- [quote] (shipping quote calculator, tier 2): no current runbook",
+    "intent": "gaps"
+   },
+   "sdk": {
+    "ok": false,
+    "ok_strict": false,
+    "abstained": false,
+    "missing": [
+     "quote"
+    ],
+    "cited": [
+     "cart",
+     "checkout",
+     "currency",
+     "frontend",
+     "frontend-proxy",
+     "payment",
+     "product-catalog",
+     "rb-catalog-lock",
+     "rb-checkout-degraded",
+     "rb-payment-errors",
+     "shipping",
+     "team-checkout"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.4167,
+    "ok_ids_only": false,
+    "name_map": {
+     "checkout": [
+      "team-checkout"
+     ]
+    },
+    "ms": 2630.6,
+    "answer": "the money-path (revenue path) services are: cart, checkout, currency, frontend, frontend-proxy, payment, product-catalog, and shipping.\n\nThe runbooks mentioned in the context cover:\n- checkout (rb-checkout-degraded)\n- product-catalog (rb-catalog-lock)\n- payment (rb-payment-errors)\n\nThe money-path services without any runbook are:\n- cart\n- currency\n- frontend\n- frontend-proxy\n- shipping",
+    "error": null,
+    "usd": 0.008199,
+    "in": 7594,
+    "out": 121,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B19",
+   "q": "anything in the revenue flow that nobody owns or that has no playbook?",
+   "expect": [
+    "cart",
+    "currency",
+    "frontend",
+    "frontend-proxy",
+    "shipping",
+    "quote"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "cart",
+     "currency",
+     "frontend",
+     "frontend-proxy",
+     "quote",
+     "shipping"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 1.0,
+    "ok_textrule": true,
+    "ms": 8.8,
+    "answer": "6 revenue-path services lack a guardrail:\n- [cart] (cart shopping basket, tier 1): no current runbook\n- [currency] (currency conversion, tier 1): no current runbook\n- [frontend] (frontend web storefront, tier 1): no current runbook\n- [frontend-proxy] (frontend proxy (envoy), tier 1): no current runbook\n- [shipping] (shipping quotes and dispatch, tier 1): no current runbook\n- [quote] (shipping quote calculator, tier 2): no current runbook",
+    "intent": "gaps"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": true,
+    "missing": [],
+    "cited": [
+     "cart",
+     "checkout",
+     "currency",
+     "exec_revenue_metric.sql",
+     "fct_revenue.sql",
+     "frontend",
+     "frontend-proxy",
+     "kpi.exec_revenue",
+     "marts.exec_revenue_metric",
+     "marts.fct_revenue",
+     "payment",
+     "product-catalog",
+     "quote",
+     "rb-payment-errors",
+     "rb-recs-cache",
+     "recommendation",
+     "shipping",
+     "team-catalog",
+     "team-checkout",
+     "team-data",
+     "team-payments",
+     "team-storefront"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.2727,
+    "ok_ids_only": true,
+    "name_map": {
+     "storefront": [
+      "team-storefront"
+     ],
+     "checkout": [
+      "team-checkout"
+     ],
+     "payments": [
+      "team-payments"
+     ],
+     "catalog": [
+      "team-catalog"
+     ],
+     "data": [
+      "team-data"
+     ],
+     "exec-revenue-metric": [
+      "marts.exec_revenue_metric"
+     ],
+     "fct-revenue": [
+      "marts.fct_revenue"
+     ]
+    },
+    "ms": 4255.9,
+    "answer": "provided, I cannot identify anything in the revenue flow that lacks an owner. All revenue-path components have clear ownership:\n\n- **Team Storefront** owns: cart, currency, frontend, frontend-proxy, shipping\n- **Team Checkout** owns: checkout\n- **Team Payments** owns: payment\n- **Team Catalog** owns: product-catalog, quote\n- **Team Data** owns: kpi.exec_revenue, exec_revenue_metric.sql, fct_revenue.sql, and related staging transforms\n\nRegarding playbooks, the context shows several runbooks exist for revenue-path components (e.g., rb-payment-errors for payment/checkout, rb-recs-cache for recommendation). However, the context doesn't provide a complete inventory of all runbooks, so I cannot definitively say whether every revenue-path component has a playbook. The data is incomplete on this point.",
+    "error": null,
+    "usd": 0.008999,
+    "in": 7864,
+    "out": 227,
+    "context_items": 3
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B20",
+   "q": "do all our tier 1 revenue services have runbooks?",
+   "expect": [
+    "cart",
+    "currency",
+    "frontend",
+    "frontend-proxy",
+    "shipping"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "cart",
+     "currency",
+     "frontend",
+     "frontend-proxy",
+     "quote",
+     "shipping"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.8333,
+    "ok_textrule": true,
+    "ms": 8.8,
+    "answer": "6 revenue-path services lack a guardrail:\n- [cart] (cart shopping basket, tier 1): no current runbook\n- [currency] (currency conversion, tier 1): no current runbook\n- [frontend] (frontend web storefront, tier 1): no current runbook\n- [frontend-proxy] (frontend proxy (envoy), tier 1): no current runbook\n- [shipping] (shipping quotes and dispatch, tier 1): no current runbook\n- [quote] (shipping quote calculator, tier 2): no current runbook",
+    "intent": "gaps"
+   },
+   "sdk": {
+    "ok": false,
+    "ok_strict": false,
+    "abstained": false,
+    "missing": [
+     "frontend"
+    ],
+    "cited": [
+     "cart",
+     "checkout",
+     "currency",
+     "frontend-proxy",
+     "payment",
+     "product-catalog",
+     "rb-checkout-degraded",
+     "rb-payment-errors",
+     "shipping",
+     "team-checkout"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.4,
+    "ok_ids_only": false,
+    "name_map": {
+     "checkout": [
+      "team-checkout"
+     ]
+    },
+    "ms": 2506.6,
+    "answer": "No. Not all tier 1 revenue services have runbooks.\n\nThe tier 1 revenue services are: currency, cart, checkout, payment, product-catalog, shipping, and frontend-proxy.\n\nRunbooks exist for:\n- checkout (rb-checkout-degraded)\n- payment (rb-payment-errors)\n\nNo runbooks are listed for currency, cart, product-catalog, shipping, or frontend-proxy.",
+    "error": null,
+    "usd": 0.009147,
+    "in": 8607,
+    "out": 108,
+    "context_items": 5
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B21",
+   "q": "if the valkey cache falls over what else goes down with it",
+   "expect": [
+    "cart",
+    "checkout",
+    "frontend",
+    "frontend-proxy"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "agent",
+     "cache",
+     "cart",
+     "chatbot",
+     "checkout",
+     "frontend",
+     "frontend-proxy",
+     "mcp"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.5,
+    "ok_textrule": true,
+    "ms": 14.5,
+    "answer": "If [cache] goes down, 7 things downstream are affected, highest impact first:\n- [cart] (Service, tier 1, 1 hop(s))\n- [checkout] (Service, tier 1, 2 hop(s))\n- [frontend] (Service, tier 1, 2 hop(s))\n- [frontend-proxy] (Service, tier 1, 3 hop(s))\n- [agent] (Service, tier 3, 3 hop(s))\n- [mcp] (Service, tier 3, 3 hop(s))\n- [chatbot] (Service, tier 3, 4 hop(s))",
+    "intent": "blast"
+   },
+   "sdk": {
+    "ok": false,
+    "ok_strict": false,
+    "abstained": false,
+    "missing": [
+     "frontend-proxy"
+    ],
+    "cited": [
+     "cache",
+     "cart",
+     "checkout",
+     "frontend",
+     "inc-h001",
+     "inc-h013",
+     "inc-h021",
+     "inc-h024",
+     "inc-h033",
+     "team-checkout"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.3,
+    "ok_ids_only": false,
+    "name_map": {
+     "checkout": [
+      "team-checkout"
+     ]
+    },
+    "ms": 3360.6,
+    "answer": "If the Valkey cache fails, the following services are affected:\n\n1. **Cart** \u2014 Cart depends on the cache synchronously and is affected by its failures\n2. **Checkout** \u2014 Checkout depends on cart, so it's affected downstream\n3. **Frontend** \u2014 Frontend depends on cart, so it's affected downstream\n\nThe incident history shows this pattern repeatedly: when the cache refused connections (inc-h001, inc-h013, inc-h021, inc-h024, inc-h033), cart service errors spiked, which then cascaded to checkout and frontend since they depend on cart for their operations.",
+    "error": null,
+    "usd": 0.009823,
+    "in": 9108,
+    "out": 143,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B22",
+   "q": "postgres product db dies, what's impacted?",
+   "expect": [
+    "product-catalog",
+    "accounting",
+    "checkout",
+    "frontend"
+   ],
+   "fl": {
+    "ok": false,
+    "ok_strict": false,
+    "abstained": false,
+    "missing": [
+     "accounting"
+    ],
+    "cited": [
+     "agent",
+     "chatbot",
+     "checkout",
+     "frontend",
+     "frontend-proxy",
+     "mcp",
+     "product-catalog",
+     "recommendation"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.375,
+    "ok_textrule": false,
+    "ms": 32.4,
+    "answer": "If [product-catalog] goes down, 7 things downstream are affected, highest impact first:\n- [checkout] (Service, tier 1, 1 hop(s))\n- [frontend] (Service, tier 1, 1 hop(s))\n- [frontend-proxy] (Service, tier 1, 2 hop(s))\n- [recommendation] (Service, tier 2, 1 hop(s))\n- [agent] (Service, tier 3, 2 hop(s))\n- [mcp] (Service, tier 3, 2 hop(s))\n- [chatbot] (Service, tier 3, 3 hop(s))",
+    "intent": "blast"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "accounting",
+     "astronomy-db",
+     "checkout",
+     "frontend",
+     "product-catalog",
+     "recommendation",
+     "team-checkout"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.5714,
+    "ok_ids_only": true,
+    "name_map": {
+     "postgres-product-database": [
+      "astronomy-db"
+     ],
+     "checkout": [
+      "team-checkout"
+     ]
+    },
+    "ms": 3158.1,
+    "answer": "if astronomy-db (the Postgres product database) fails, the following are impacted:\n\n1. **product-catalog** \u2014 directly affected through synchronous calls where errors propagate\n2. **accounting** \u2014 affected through synchronous calls where errors propagate\n3. **checkout** \u2014 affected indirectly because it depends on product-catalog\n4. **frontend** \u2014 affected indirectly because it depends on product-catalog\n5. **recommendation** \u2014 affected indirectly because it depends on product-catalog\n\nThe failure cascades because product-catalog is a critical dependency for multiple services, and when astronomy-db fails, product-catalog cannot function, which then impacts all services that call product-catalog.",
+    "error": null,
+    "usd": 0.010484,
+    "in": 9664,
+    "out": 164,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B23",
+   "q": "if the shipping quote calculator is down does that take out checkout too?",
+   "expect": [
+    "shipping",
+    "checkout"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "agent",
+     "chatbot",
+     "checkout",
+     "frontend",
+     "frontend-proxy",
+     "mcp",
+     "shipping"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.2857,
+    "ok_textrule": true,
+    "ms": 21.3,
+    "answer": "If [shipping] goes down, 6 things downstream are affected, highest impact first:\n- [checkout] (Service, tier 1, 1 hop(s))\n- [frontend] (Service, tier 1, 1 hop(s))\n- [frontend-proxy] (Service, tier 1, 2 hop(s))\n- [agent] (Service, tier 3, 2 hop(s))\n- [mcp] (Service, tier 3, 2 hop(s))\n- [chatbot] (Service, tier 3, 3 hop(s))",
+    "intent": "blast"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "checkout",
+     "quote",
+     "shipping",
+     "team-checkout"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.5,
+    "ok_ids_only": true,
+    "name_map": {
+     "checkout": [
+      "team-checkout"
+     ]
+    },
+    "ms": 2249.2,
+    "answer": "Yes. Checkout depends on the quote service synchronously with error propagation. If quote fails, shipping is affected, and since checkout depends on shipping via synchronous calls with error propagation, checkout will also be affected.",
+    "error": null,
+    "usd": 0.007823,
+    "in": 7543,
+    "out": 56,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B24",
+   "q": "blast radius if payments goes down?",
+   "expect": [
+    "checkout",
+    "raw.raw_orders",
+    "frontend"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "agent",
+     "checkout",
+     "frontend",
+     "frontend-proxy",
+     "kpi.exec_revenue",
+     "marts.exec_revenue_metric",
+     "marts.fct_revenue",
+     "mcp",
+     "payment",
+     "raw.raw_orders",
+     "staging.stg_orders"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.2727,
+    "ok_textrule": true,
+    "ms": 23.7,
+    "answer": "If [payment] goes down, 12 things downstream are affected, highest impact first:\n- [checkout] (Service, tier 1, 1 hop(s))\n- [raw.raw_orders] (Table, tier 1, 1 hop(s))\n- [frontend] (Service, tier 1, 2 hop(s))\n- [staging.stg_orders] (Table, tier 1, 2 hop(s))\n- [frontend-proxy] (Service, tier 1, 3 hop(s))\n- [marts.fct_revenue] (Table, tier 1, 3 hop(s))\n- [marts.exec_revenue_metric] (Table, tier 1, 4 hop(s))\n- [kpi.exec_revenue] (KPI, tier 1, 5 hop(s))\n- [agent] (Service, tier 3, 3 hop(s))\n- [mcp] (Service, tier 3, 3 hop(s))\n\u2026and 2 more.",
+    "intent": "blast"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "agent",
+     "checkout",
+     "dash.exec_morning",
+     "frontend",
+     "kpi.exec_revenue",
+     "marts.exec_revenue_metric",
+     "marts.fct_revenue",
+     "mcp",
+     "payment",
+     "raw.raw_orders",
+     "staging.stg_orders",
+     "team-checkout",
+     "team-storefront"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.2308,
+    "ok_ids_only": true,
+    "name_map": {
+     "checkout": [
+      "team-checkout"
+     ],
+     "raw-orders": [
+      "raw.raw_orders"
+     ],
+     "stg-orders": [
+      "staging.stg_orders"
+     ],
+     "fct-revenue": [
+      "marts.fct_revenue"
+     ],
+     "exec-revenue-metric": [
+      "marts.exec_revenue_metric"
+     ],
+     "storefront": [
+      "team-storefront"
+     ]
+    },
+    "ms": 4506.7,
+    "answer": "If payment goes down, the blast radius includes:\n\n**Direct impacts (synchronous dependencies):**\n- **Checkout** \u2014 fails because checkout depends on payment for charge processing\n- **Raw.raw_orders** \u2014 fails because payment emits every captured order row to this extract\n\n**Downstream impacts:**\n- **Frontend** \u2014 affected because frontend depends on checkout\n- **Agent** \u2014 affected because agent depends on frontend (which depends on checkout)\n- **MCP** \u2014 affected because mcp depends on frontend\n\n**Indirect effects:**\n- **Staging.stg_orders** \u2014 affected because it depends on raw.raw_orders\n- **Marts.fct_revenue** \u2014 affected because it depends on staging.stg_orders\n- **Marts.exec_revenue_metric** \u2014 affected because it depends on marts.fct_revenue\n- **KPI.exec_revenue** \u2014 affected because it depends on marts.exec_revenue_metric\n- **Dash.exec_morning** \u2014 affected because it depends on kpi.exec_revenue\n\nThe most critical impact is checkout failure, which blocks order placement across the storefront. This cascades to frontend and downstream analytics pipelines.",
+    "error": null,
+    "usd": 0.008443,
+    "in": 7018,
+    "out": 285,
+    "context_items": 3
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B25",
+   "q": "what breaks if the assistant's mcp tools go down",
+   "expect": [
+    "agent",
+    "chatbot"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "agent",
+     "chatbot",
+     "frontend-proxy",
+     "mcp"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.5,
+    "ok_textrule": true,
+    "ms": 10.5,
+    "answer": "If [mcp] goes down, 3 things downstream are affected, highest impact first:\n- [agent] (Service, tier 3, 1 hop(s))\n- [frontend-proxy] (Service, tier 1, 3 hop(s))\n- [chatbot] (Service, tier 3, 2 hop(s))",
+    "intent": "blast"
+   },
+   "sdk": {
+    "ok": false,
+    "ok_strict": false,
+    "abstained": false,
+    "missing": [
+     "chatbot"
+    ],
+    "cited": [
+     "agent",
+     "mcp"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.5,
+    "ok_ids_only": false,
+    "name_map": {
+     "assistant-mcp-tools": [
+      "mcp"
+     ]
+    },
+    "ms": 2233.5,
+    "answer": "If mcp (assistant mcp tools) fails, the agent service is affected because agent depends on mcp through synchronous calls where errors propagate.",
+    "error": null,
+    "usd": 0.009195,
+    "in": 8885,
+    "out": 62,
+    "context_items": 3
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B26",
+   "q": "who owned fraud detection back when inc-h006 happened? and who has it now",
+   "expect": [
+    "team-payments",
+    "team-platform"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "fraud-detection",
+     "p-004",
+     "p-017",
+     "p-030",
+     "p-036",
+     "team-payments",
+     "team-platform"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.2857,
+    "ok_textrule": true,
+    "ms": 5.1,
+    "answer": "At inc-h006 (onset 2026-07-17), [fraud-detection] was owned by [team-payments]; it is owned by [team-platform] now. People from that team who worked on it then:\n- Dorian Marrowby [p-004]: 4 commits\n- Quinn Lindqvane [p-017]: 3 commits\n- Desmond Brackwater [p-030]: 1 commit\n- Juno Pellucid [p-036]: 1 commit\nOwnership history: [team-payments] 2025-09-10 to 2026-08-06; [team-platform] 2026-08-06 to now.",
+    "intent": "owner_then"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "fraud-detection",
+     "inc-h006",
+     "team-payments",
+     "team-platform"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.5,
+    "ok_ids_only": true,
+    "name_map": {
+     "payments": [
+      "team-payments"
+     ],
+     "platform": [
+      "team-platform"
+     ]
+    },
+    "ms": 2183.9,
+    "answer": "When inc-h006 occurred on 2026-07-17, fraud-detection was owned by Team Payments (from 2025-09-10 to 2026-08-06).\n\nCurrently, fraud-detection has been owned by Team Platform since 2026-08-06.",
+    "error": null,
+    "usd": 0.010165,
+    "in": 9790,
+    "out": 75,
+    "context_items": 5
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B27",
+   "q": "which team had the ad service in july 2026?",
+   "expect": [
+    "team-storefront"
+   ],
+   "fl": {
+    "ok": false,
+    "ok_strict": false,
+    "abstained": true,
+    "missing": [
+     "team-storefront"
+    ],
+    "cited": [],
+    "names_sources": false,
+    "fabricated": [],
+    "precision": null,
+    "ok_textrule": false,
+    "ms": 19.0,
+    "answer": "I could not find that component in the graph (no id or name match).",
+    "intent": "owner_then"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ad",
+     "team-growth",
+     "team-storefront"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.3333,
+    "ok_ids_only": true,
+    "name_map": {
+     "storefront": [
+      "team-storefront"
+     ],
+     "growth": [
+      "team-growth"
+     ]
+    },
+    "ms": 2594.5,
+    "answer": "Team Storefront had the ad service in July 2026. According to the ownership history, ad was owned by team Storefront from 2025-09-10 to 2026-08-31, and then transferred to team Growth starting 2026-08-31. Since July 2026 falls before August 31, 2026, team Storefront owned it at that time.",
+    "error": null,
+    "usd": 0.009062,
+    "in": 8472,
+    "out": 118,
+    "context_items": 3
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B28",
+   "q": "fraud-detection owner during inc-h040?",
+   "expect": [
+    "team-platform"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "fraud-detection",
+     "team-payments",
+     "team-platform"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.3333,
+    "ok_textrule": true,
+    "ms": 6.1,
+    "answer": "At inc-h040 (onset 2026-10-13), [fraud-detection] was owned by [team-platform], and still is.\nOwnership history: [team-payments] 2025-09-10 to 2026-08-06; [team-platform] 2026-08-06 to now.",
+    "intent": "owner_then"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "fraud-detection",
+     "inc-h040",
+     "team-platform"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.3333,
+    "ok_ids_only": true,
+    "name_map": {
+     "platform": [
+      "team-platform"
+     ]
+    },
+    "ms": 2238.1,
+    "answer": "During incident inc-h040 (2026-10-13 10:03 UTC to 10:58 UTC), fraud-detection was owned by team Platform. Team Platform has owned fraud-detection since 2026-08-06.",
+    "error": null,
+    "usd": 0.01002,
+    "in": 9685,
+    "out": 67,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B29",
+   "q": "as of january 2026, what was the rule for catalog db migrations?",
+   "expect": [
+    "ADR-009"
+   ],
+   "fl": {
+    "ok": false,
+    "ok_strict": false,
+    "abstained": false,
+    "missing": [
+     "ADR-009"
+    ],
+    "cited": [],
+    "names_sources": false,
+    "fabricated": [],
+    "precision": null,
+    "ok_textrule": false,
+    "ms": 28.1,
+    "answer": "As of when? Give a date (YYYY-MM-DD) or an incident id.",
+    "intent": "asof"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ADR-009",
+     "ADR-021",
+     "astronomy-db",
+     "team-catalog"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.25,
+    "ok_ids_only": true,
+    "name_map": {
+     "catalog": [
+      "team-catalog"
+     ]
+    },
+    "ms": 3046.9,
+    "answer": "As of January 2026, the rule for catalog DB migrations was to run them during the off-peak window (02:00 to 05:00 UTC). This was established by ADR-009, which was decided on 2025-09-18. Migrations on astronomy-db were required to be announced in the catalog channel a day ahead.\n\nThis rule remained in effect until ADR-021 superseded it on 2026-06-03, replacing the off-peak requirement with a requirement to use online migrations instead.",
+    "error": null,
+    "usd": 0.009595,
+    "in": 8980,
+    "out": 123,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B30",
+   "q": "mid july 2026, which decisions and runbooks applied to the product catalog?",
+   "expect": [
+    "ADR-021",
+    "rb-catalog-lock"
+   ],
+   "fl": {
+    "ok": false,
+    "ok_strict": false,
+    "abstained": false,
+    "missing": [
+     "rb-catalog-lock"
+    ],
+    "cited": [
+     "ADR-009",
+     "ADR-021",
+     "p-006",
+     "p-016",
+     "p-025",
+     "product-catalog"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.1667,
+    "ok_textrule": false,
+    "ms": 14.3,
+    "answer": "Decisions about [product-catalog]:\n- [ADR-021] Catalog DB schema changes use online migrations: active, and still current (nothing supersedes it). Decided by [p-006] Florin Ashcombe (still on the owning team), [p-016] Pavel Kingsbarrow (still on the owning team).\n- [ADR-009] Catalog DB migrations run off-peak: superseded; the current decision is [ADR-021] (Catalog DB schema changes use online migrations). Decided by [p-025] Yara Umberfield (has left).",
+    "intent": "decision"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ADR-009",
+     "ADR-021",
+     "product-catalog",
+     "rb-catalog-lock"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.5,
+    "ok_ids_only": true,
+    "name_map": {
+     "catalog-db-migrations-run-off-peak": [
+      "ADR-009"
+     ],
+     "catalog-db-schema-changes-use-online-migrations": [
+      "ADR-021"
+     ],
+     "product-catalog-lock-contention": [
+      "rb-catalog-lock"
+     ]
+    },
+    "ms": 3797.8,
+    "answer": "In mid-July 2026, the following applied to product-catalog:\n\n**Decisions:**\n- ADR-009 \"Catalog DB migrations run off-peak\" (decided 2025-09-18, status superseded as of 2026-06-03)\n- ADR-021 \"Catalog DB schema changes use online migrations\" (decided 2026-06-03, status active) \u2014 this superseded ADR-009\n\n**Runbooks:**\n- rb-catalog-lock \"Product catalog lock contention\" (valid from 2026-06-05) \u2014 covers product-catalog and latency symptoms\n\nNote: ADR-009 was superseded by ADR-021 on 2026-06-03, so by mid-July only ADR-021 was actively in effect.",
+    "error": null,
+    "usd": 0.008685,
+    "in": 7640,
+    "out": 209,
+    "context_items": 3
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B31",
+   "q": "what decisions were in force for checkout at the start of 2026",
+   "expect": [
+    "ADR-004"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ADR-004",
+     "checkout",
+     "p-019"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.3333,
+    "ok_textrule": true,
+    "ms": 12.2,
+    "answer": "Decisions about [checkout]:\n- [ADR-004] Order confirmation email is best-effort: active, and still current (nothing supersedes it). Decided by [p-019] Soren Orrinwood (has left).",
+    "intent": "decision"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": true,
+    "missing": [],
+    "cited": [
+     "ADR-004",
+     "ADR-012",
+     "ADR-013",
+     "checkout",
+     "email",
+     "payment",
+     "team-checkout"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.1429,
+    "ok_ids_only": true,
+    "name_map": {
+     "checkout": [
+      "team-checkout"
+     ],
+     "order-confirmation-email-is-best-effort": [
+      "ADR-004"
+     ],
+     "payment-client-timeout-must-stay-\u2264-2000-ms": [
+      "ADR-012"
+     ],
+     "payment-client-keeps-\u2265-2-retries": [
+      "ADR-013"
+     ]
+    },
+    "ms": 4440.0,
+    "answer": "provided, I cannot definitively determine which decisions were in force for checkout at the start of 2026.\n\nThe context shows several decisions that constrain checkout or related services:\n\n- **ADR-004** (\"Order confirmation email is best-effort\") \u2014 decided 2025-11-04, status active, constrains checkout\n- **ADR-012** (\"Payment client timeout must stay \u2264 2000 ms\") \u2014 decided 2026-03-12, status active, constrains payment\n- **ADR-013** (\"Payment client keeps \u2265 2 retries\") \u2014 decided 2026-03-12, status active, constrains payment\n\nADR-004 was decided in November 2025 with active status, so it would likely have been in force at the start of 2026. However, ADR-012 and ADR-013 were decided in March 2026, after the start of the year.\n\nThe context does not provide complete information about all decisions affecting checkout at January 1, 2026, or their status at that specific time.",
+    "error": null,
+    "usd": 0.009471,
+    "in": 8036,
+    "out": 287,
+    "context_items": 3
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B32",
+   "q": "which active decisions have nobody left who actually made them?",
+   "expect": [
+    "ADR-004",
+    "p-019"
+   ],
+   "fl": {
+    "ok": false,
+    "ok_strict": false,
+    "abstained": true,
+    "missing": [
+     "ADR-004",
+     "p-019"
+    ],
+    "cited": [],
+    "names_sources": false,
+    "fabricated": [],
+    "precision": null,
+    "ok_textrule": false,
+    "ms": 46.0,
+    "answer": "No decision about that is documented in the graph.",
+    "intent": "decision"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ADR-004",
+     "ADR-012",
+     "ADR-013",
+     "ADR-021",
+     "POL-freeze-payment-weekend",
+     "p-004",
+     "p-006",
+     "p-016",
+     "p-019",
+     "p-022"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.2,
+    "ok_ids_only": true,
+    "name_map": {
+     "soren-orrinwood": [
+      "p-019"
+     ],
+     "dorian-marrowby": [
+      "p-004"
+     ],
+     "vesna-hollowell": [
+      "p-022"
+     ],
+     "florin-ashcombe": [
+      "p-006"
+     ],
+     "pavel-kingsbarrow": [
+      "p-016"
+     ]
+    },
+    "ms": 4404.0,
+    "answer": "I need to identify active decisions and check if any of their decision-makers have left Acme.\n\nActive decisions:\n- **ADR-004**: Decided by Soren Orrinwood (p-019) \u2014 has left Acme (inactive since 2026-07-19)\n- **ADR-012**: Decided by Dorian Marrowby (p-004) and Vesna Hollowell (p-022) \u2014 both still active\n- **ADR-013**: Decided by Dorian Marrowby (p-004) and Vesna Hollowell (p-022) \u2014 both still active\n- **ADR-021**: Decided by Florin Ashcombe (p-006) and Pavel Kingsbarrow (p-016) \u2014 both still active\n- **POL-freeze-payment-weekend**: Decided by Dorian Marrowby (p-004) \u2014 still active\n\n**ADR-004** is the only active decision where the sole decision-maker has left Acme.",
+    "error": null,
+    "usd": 0.009112,
+    "in": 7757,
+    "out": 271,
+    "context_items": 3
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B33",
+   "q": "where's our tribal knowledge rotting - stuff that switched teams and never got a runbook?",
+   "expect": [
+    "fraud-detection",
+    "ad"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "accounting",
+     "ad",
+     "fraud-detection",
+     "p-004",
+     "p-007",
+     "p-017",
+     "p-027",
+     "p-028",
+     "p-030",
+     "queue",
+     "rb-kafka-lag",
+     "recommendation",
+     "team-growth",
+     "team-payments",
+     "team-platform",
+     "team-storefront"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.125,
+    "ok_textrule": true,
+    "ms": 13.4,
+    "answer": "7 places where what the organisation knows has decayed:\n- [accounting] stale runbook: runbook [rb-kafka-lag] not reviewed for 95 days\n- [fraud-detection] handover with no runbook since: moved from [team-payments] to [team-platform]; no runbook reviewed since; ask [p-004], [p-017], [p-030]\n- [ad] handover with no runbook since: moved from [team-storefront] to [team-growth]; no runbook reviewed since; ask [p-007], [p-027], [p-028]\n- [queue] graph probably missing an edge: 6 incidents caused at queue also hit accounting, but the graph has no failure path queue \u2192 accounting\n- [queue] graph probably missing an edge: 6 incidents caused at queue also hit fraud-detection, but the graph has no failure path queue \u2192 fraud-detection\n- [recommendation] graph probably missing an edge: 6 incidents caused at recommendation also hit product-catalog, but the graph has no failure path recommendation \u2192 product-catalog\n\u2026and 1 more of the same kinds.",
+    "intent": "knowledge"
+   },
+   "sdk": {
+    "ok": false,
+    "ok_strict": false,
+    "abstained": true,
+    "missing": [
+     "fraud-detection"
+    ],
+    "cited": [
+     "ad",
+     "checkout",
+     "p-027",
+     "p-028",
+     "p-031",
+     "payment",
+     "product-catalog",
+     "queue",
+     "recommendation",
+     "team-checkout",
+     "team-growth",
+     "team-storefront"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.0833,
+    "ok_ids_only": false,
+    "name_map": {
+     "storefront": [
+      "team-storefront"
+     ],
+     "growth": [
+      "team-growth"
+     ],
+     "checkout": [
+      "team-checkout"
+     ],
+     "anouk-pennyrigg": [
+      "p-027"
+     ],
+     "esme-oldcastle-pym": [
+      "p-031"
+     ],
+     "bram-jarrowmere": [
+      "p-028"
+     ]
+    },
+    "ms": 4220.8,
+    "answer": "**ad (advertising)** is a clear example of tribal knowledge risk.\n\nAd switched team ownership from Storefront to Growth on 2026-08-31, but there's no runbook documented for it in the runbook inventory. The context lists runbooks for checkout, payment, recommendation, product-catalog, and queue\u2014but nothing for ad despite it being an active component with commit history.\n\nThis is particularly risky because:\n- Multiple engineers have worked on ad (Anouk Pennyrigg, Esme Oldcastle-Pym, Bram Jarrowmere, and others)\n- The team transition happened recently (August 2026)\n- No incident response procedures are documented if ad experiences issues\n\nThe pattern suggests any component that changed ownership without a corresponding runbook creation is at risk of knowledge loss, especially if the original team members leave or institutional memory fades during the handoff.",
+    "error": null,
+    "usd": 0.008532,
+    "in": 7467,
+    "out": 213,
+    "context_items": 3
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B34",
+   "q": "fraud-detection got handed over to platform, who from the old team should I ping about how it works?",
+   "expect": [
+    "p-004",
+    "p-017",
+    "p-030"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "accounting",
+     "ad",
+     "fraud-detection",
+     "p-004",
+     "p-007",
+     "p-017",
+     "p-027",
+     "p-028",
+     "p-030",
+     "queue",
+     "rb-kafka-lag",
+     "recommendation",
+     "team-growth",
+     "team-payments",
+     "team-platform",
+     "team-storefront"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.1875,
+    "ok_textrule": true,
+    "ms": 4.8,
+    "answer": "7 places where what the organisation knows has decayed:\n- [accounting] stale runbook: runbook [rb-kafka-lag] not reviewed for 95 days\n- [fraud-detection] handover with no runbook since: moved from [team-payments] to [team-platform]; no runbook reviewed since; ask [p-004], [p-017], [p-030]\n- [ad] handover with no runbook since: moved from [team-storefront] to [team-growth]; no runbook reviewed since; ask [p-007], [p-027], [p-028]\n- [queue] graph probably missing an edge: 6 incidents caused at queue also hit accounting, but the graph has no failure path queue \u2192 accounting\n- [queue] graph probably missing an edge: 6 incidents caused at queue also hit fraud-detection, but the graph has no failure path queue \u2192 fraud-detection\n- [recommendation] graph probably missing an edge: 6 incidents caused at recommendation also hit product-catalog, but the graph has no failure path recommendation \u2192 product-catalog\n\u2026and 1 more of the same kinds.",
+    "intent": "knowledge"
+   },
+   "sdk": {
+    "ok": false,
+    "ok_strict": false,
+    "abstained": true,
+    "missing": [
+     "p-017",
+     "p-030"
+    ],
+    "cited": [
+     "fraud-detection",
+     "p-004",
+     "p-014",
+     "p-033",
+     "p-036",
+     "team-payments",
+     "team-platform"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.1429,
+    "ok_ids_only": false,
+    "name_map": {
+     "payments": [
+      "team-payments"
+     ],
+     "platform": [
+      "team-platform"
+     ],
+     "juno-pellucid": [
+      "p-036"
+     ],
+     "nikolai-tamberlin": [
+      "p-014"
+     ],
+     "dorian-marrowby": [
+      "p-004"
+     ],
+     "galen-glasswell": [
+      "p-033"
+     ]
+    },
+    "ms": 3851.1,
+    "answer": "fraud-detection was owned by team Payments until 2026-08-06, when ownership transferred to team Platform.\n\nFrom team Payments, you could contact **Juno Pellucid**, who made 1 commit to fraud-detection and has resolved incidents related to the service. However, the context doesn't provide a comprehensive list of all team Payments members who worked on fraud-detection.\n\nFor more detailed knowledge about how fraud-detection works, you might also consider reaching out to the people with the most commits to the service: **Nikolai Tamberlin** (5 commits), **Dorian Marrowby** (4 commits), and **Galen Glasswell** (4 commits), though the context doesn't specify which team they're on.",
+    "error": null,
+    "usd": 0.010718,
+    "in": 9793,
+    "out": 185,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B35",
+   "q": "is there a runbook for the recs cache stampede thing",
+   "expect": [
+    "rb-recs-cache"
+   ],
+   "fl": {
+    "ok": false,
+    "ok_strict": false,
+    "abstained": false,
+    "missing": [
+     "rb-recs-cache"
+    ],
+    "cited": [
+     "cart",
+     "currency",
+     "frontend",
+     "frontend-proxy",
+     "quote",
+     "shipping"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.0,
+    "ok_textrule": false,
+    "ms": 9.2,
+    "answer": "6 revenue-path services lack a guardrail:\n- [cart] (cart shopping basket, tier 1): no current runbook\n- [currency] (currency conversion, tier 1): no current runbook\n- [frontend] (frontend web storefront, tier 1): no current runbook\n- [frontend-proxy] (frontend proxy (envoy), tier 1): no current runbook\n- [shipping] (shipping quotes and dispatch, tier 1): no current runbook\n- [quote] (shipping quote calculator, tier 2): no current runbook",
+    "intent": "gaps"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "cache",
+     "rb-recs-cache",
+     "recommendation"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.3333,
+    "ok_ids_only": true,
+    "name_map": {
+     "recommendation-cache-stampede": [
+      "rb-recs-cache"
+     ]
+    },
+    "ms": 3361.6,
+    "answer": "Yes. The runbook is **rb-recs-cache**, titled \"Recommendation cache stampede,\" valid from 2026-05-12. It addresses latency in the recommendation service caused by cache stampedes\u2014situations where a recommendation release changes cache keys or TTLs and empties the cache all at once, causing every request to miss and recompute simultaneously. The runbook recommends either enabling the recommendation cache-failure fallback flag to serve static picks, or rolling back the release and re-enabling gradually to let the cache warm up.",
+    "error": null,
+    "usd": 0.008886,
+    "in": 8256,
+    "out": 126,
+    "context_items": 5
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B36",
+   "q": "got a playbook for when the order queue consumers start lagging?",
+   "expect": [
+    "rb-kafka-lag"
+   ],
+   "fl": {
+    "ok": false,
+    "ok_strict": false,
+    "abstained": false,
+    "missing": [
+     "rb-kafka-lag"
+    ],
+    "cited": [
+     "accounting",
+     "agent",
+     "chatbot",
+     "checkout",
+     "fraud-detection",
+     "frontend",
+     "frontend-proxy",
+     "mcp",
+     "queue"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.0,
+    "ok_textrule": false,
+    "ms": 28.4,
+    "answer": "If [queue] goes down, 6 things downstream are affected, highest impact first:\n- [checkout] (Service, tier 1, 1 hop(s))\n- [frontend] (Service, tier 1, 2 hop(s))\n- [frontend-proxy] (Service, tier 1, 3 hop(s))\n- [agent] (Service, tier 3, 3 hop(s))\n- [mcp] (Service, tier 3, 3 hop(s))\n- [chatbot] (Service, tier 3, 4 hop(s))\nNot in the dependency graph, but incident history says it also hits: [accounting] (6 incidents), [fraud-detection] (6 incidents) (a likely missing edge).",
+    "intent": "blast"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "accounting",
+     "checkout",
+     "fraud-detection",
+     "queue",
+     "rb-kafka-lag",
+     "team-checkout"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.1667,
+    "ok_ids_only": true,
+    "name_map": {
+     "order-queue-consumer-lag": [
+      "rb-kafka-lag"
+     ],
+     "checkout": [
+      "team-checkout"
+     ]
+    },
+    "ms": 3344.4,
+    "answer": "Yes. The runbook **rb-kafka-lag** titled \"Order queue consumer lag\" covers this.\n\nIt advises to:\n\n1. Check recent queue configuration changes (partition counts, retention, consumer-group settings) and consumer restarts\n2. Restore the previous queue settings if a change lines up with the lag\n3. Let consumers catch up\n4. Open a follow-up issue if the backlog keeps growing at normal traffic\n\nThe runbook notes that consumer lag delays accounting and fraud detection services, but doesn't block order placement since checkout publishes asynchronously to the queue.",
+    "error": null,
+    "usd": 0.00867,
+    "in": 8000,
+    "out": 134,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B37",
+   "q": "what runbook do we follow when checkout is degraded",
+   "expect": [
+    "rb-checkout-degraded"
+   ],
+   "fl": {
+    "ok": false,
+    "ok_strict": false,
+    "abstained": false,
+    "missing": [
+     "rb-checkout-degraded"
+    ],
+    "cited": [
+     "accounting",
+     "ad",
+     "fraud-detection",
+     "p-004",
+     "p-007",
+     "p-017",
+     "p-027",
+     "p-028",
+     "p-030",
+     "queue",
+     "rb-kafka-lag",
+     "recommendation",
+     "team-growth",
+     "team-payments",
+     "team-platform",
+     "team-storefront"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.0,
+    "ok_textrule": false,
+    "ms": 11.1,
+    "answer": "7 places where what the organisation knows has decayed:\n- [accounting] stale runbook: runbook [rb-kafka-lag] not reviewed for 95 days\n- [fraud-detection] handover with no runbook since: moved from [team-payments] to [team-platform]; no runbook reviewed since; ask [p-004], [p-017], [p-030]\n- [ad] handover with no runbook since: moved from [team-storefront] to [team-growth]; no runbook reviewed since; ask [p-007], [p-027], [p-028]\n- [queue] graph probably missing an edge: 6 incidents caused at queue also hit accounting, but the graph has no failure path queue \u2192 accounting\n- [queue] graph probably missing an edge: 6 incidents caused at queue also hit fraud-detection, but the graph has no failure path queue \u2192 fraud-detection\n- [recommendation] graph probably missing an edge: 6 incidents caused at recommendation also hit product-catalog, but the graph has no failure path recommendation \u2192 product-catalog\n\u2026and 1 more of the same kinds.",
+    "intent": "knowledge"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "cart",
+     "checkout",
+     "currency",
+     "email",
+     "payment",
+     "product-catalog",
+     "queue",
+     "rb-checkout-degraded",
+     "shipping",
+     "team-checkout"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.1,
+    "ok_ids_only": true,
+    "name_map": {
+     "checkout": [
+      "team-checkout"
+     ]
+    },
+    "ms": 3589.7,
+    "answer": "When checkout is degraded, follow the **rb-checkout-degraded** runbook.\n\nThis runbook instructs you to:\n\n1. Walk the synchronous dependencies first (payment, cart, currency, shipping, and product-catalog) and look for which one's errors started before checkout's\n2. If no dependency changed, check checkout's own recent deploys and connection pools\n3. Escalate to the owning team of whichever dependency explains the error share\u2014do not page everyone at once\n\nThe runbook notes that email and the order queue are best-effort dependencies whose failures should not fail orders, so focus on the synchronous dependencies.",
+    "error": null,
+    "usd": 0.008911,
+    "in": 8171,
+    "out": 148,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B38",
+   "q": "whats the decision on the recommendation service's cache TTL?",
+   "expect": [],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": true,
+    "missing": [],
+    "cited": [],
+    "names_sources": false,
+    "fabricated": [],
+    "precision": null,
+    "ok_textrule": true,
+    "ms": 11.4,
+    "answer": "No decision about that is documented in the graph.",
+    "intent": "decision"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": false,
+    "abstained": true,
+    "missing": [],
+    "cited": [
+     "ADR-004",
+     "ADR-012",
+     "cache",
+     "checkout",
+     "payment",
+     "rb-recs-cache",
+     "recommendation",
+     "team-checkout"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": null,
+    "ok_ids_only": true,
+    "name_map": {
+     "checkout": [
+      "team-checkout"
+     ]
+    },
+    "ms": 2971.5,
+    "answer": "The context does not contain a specific decision about the recommendation service's cache TTL. \n\nWhile the runbook rb-recs-cache mentions that \"A recommendation release that changes cache keys or TTLs can empty the cache in one go,\" it describes this as a problem scenario rather than documenting an actual decision on what the TTL should be.\n\nThe architecture decision records (ADR-004 and ADR-012) in the context address checkout and payment timeouts respectively, but neither covers recommendation cache TTL settings.",
+    "error": null,
+    "usd": 0.009114,
+    "in": 8504,
+    "out": 122,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B39",
+   "q": "who approved the budget for the new CDN vendor?",
+   "expect": [],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": true,
+    "missing": [],
+    "cited": [],
+    "names_sources": false,
+    "fabricated": [],
+    "precision": null,
+    "ok_textrule": true,
+    "ms": 27.4,
+    "answer": "I could not find that component in the graph (no id or name match).",
+    "intent": "people"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": false,
+    "abstained": true,
+    "missing": [],
+    "cited": [
+     "checkout",
+     "payment",
+     "team-checkout"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": null,
+    "ok_ids_only": true,
+    "name_map": {
+     "checkout": [
+      "team-checkout"
+     ]
+    },
+    "ms": 2309.1,
+    "answer": "The context does not contain information about who approved the budget for a new CDN vendor. The provided documents focus on incidents, deployments, decisions, and personnel commits related to payment systems, checkout, product catalogs, and other internal services, but do not mention CDN vendors or budget approvals for them.",
+    "error": null,
+    "usd": 0.009707,
+    "in": 9352,
+    "out": 71,
+    "context_items": 5
+   }
+  },
+  {
+   "set": "s2",
+   "id": "B40",
+   "q": "who owns the loyalty points service",
+   "expect": [],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": true,
+    "missing": [],
+    "cited": [],
+    "names_sources": false,
+    "fabricated": [],
+    "precision": null,
+    "ok_textrule": true,
+    "ms": 20.5,
+    "answer": "I could not find that component in the graph (no id or name match).",
+    "intent": "people"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": true,
+    "missing": [],
+    "cited": [],
+    "names_sources": false,
+    "fabricated": [],
+    "precision": null,
+    "ok_ids_only": true,
+    "name_map": {},
+    "ms": 2132.3,
+    "answer": "The context does not contain information about a loyalty points service or its ownership. The services listed in the provided documentation do not include a loyalty points service.",
+    "error": null,
+    "usd": 0.008646,
+    "in": 8341,
+    "out": 61,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O01",
+   "q": "Who on the team has worked on payment before?",
+   "expect": [
+    "payment",
+    "team-payments"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "p-004",
+     "p-017",
+     "p-030",
+     "p-034",
+     "p-036",
+     "payment",
+     "team-payments"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.2857,
+    "ok_textrule": true,
+    "ms": 4.6,
+    "answer": "People who have worked on [payment], most work first:\n- Quinn Lindqvane [p-017]: 32 commits, resolved 5 incident(s) there; [team-payments]\n- Juno Pellucid [p-036]: 22 commits, resolved 2 incident(s) there; [team-payments]\n- Desmond Brackwater [p-030]: 14 commits, resolved 1 incident(s) there; [team-payments]\n- Hester Hawksmere [p-034]: 8 commits, resolved 0 incident(s) there; [team-payments]\n- Dorian Marrowby [p-004]: 7 commits, resolved 1 incident(s) there; [team-payments]",
+    "intent": "people"
+   },
+   "sdk": {
+    "ok": false,
+    "ok_strict": false,
+    "abstained": false,
+    "missing": [
+     "team-payments"
+    ],
+    "cited": [
+     "p-004",
+     "p-017",
+     "p-030",
+     "p-034",
+     "p-036",
+     "p-038",
+     "payment"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.1429,
+    "ok_ids_only": false,
+    "name_map": {
+     "quinn-lindqvane": [
+      "p-017"
+     ],
+     "juno-pellucid": [
+      "p-036"
+     ],
+     "desmond-brackwater": [
+      "p-030"
+     ],
+     "hester-hawksmere": [
+      "p-034"
+     ],
+     "dorian-marrowby": [
+      "p-004"
+     ],
+     "lior-sablewood": [
+      "p-038"
+     ]
+    },
+    "ms": 2670.4,
+    "answer": "Based on the commit history for the payment component, the following people have worked on payment:\n\n- Quinn Lindqvane (32 commits)\n- Juno Pellucid (22 commits)\n- Desmond Brackwater (14 commits)\n- Hester Hawksmere (8 commits)\n- Dorian Marrowby (7 commits)\n- Lior Sablewood (7 commits)",
+    "error": null,
+    "usd": 0.008878,
+    "in": 8233,
+    "out": 129,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O02",
+   "q": "Who knows the checkout code?",
+   "expect": [
+    "checkout"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "checkout",
+     "p-005",
+     "p-017",
+     "p-018",
+     "p-022",
+     "p-037",
+     "team-checkout",
+     "team-payments"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.125,
+    "ok_textrule": true,
+    "ms": 5.7,
+    "answer": "People who have worked on [checkout], most work first:\n- Kestrel Quillon [p-037]: 22 commits, resolved 0 incident(s) there; [team-checkout]\n- Elsbeth Birchley [p-005]: 10 commits, resolved 0 incident(s) there; [team-checkout]\n- Vesna Hollowell [p-022]: 10 commits, resolved 0 incident(s) there; [team-checkout]\n- Quinn Lindqvane [p-017]: 7 commits, resolved 5 incident(s) there; [team-payments]\n- Rosalind Coldharbour [p-018]: 6 commits, resolved 0 incident(s) there; [team-checkout]",
+    "intent": "people"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "checkout",
+     "p-005",
+     "p-017",
+     "p-018",
+     "p-019",
+     "p-022",
+     "p-037",
+     "team-checkout"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.125,
+    "ok_ids_only": true,
+    "name_map": {
+     "checkout": [
+      "team-checkout"
+     ],
+     "kestrel-quillon": [
+      "p-037"
+     ],
+     "elsbeth-birchley": [
+      "p-005"
+     ],
+     "vesna-hollowell": [
+      "p-022"
+     ],
+     "quinn-lindqvane": [
+      "p-017"
+     ],
+     "rosalind-coldharbour": [
+      "p-018"
+     ],
+     "soren-orrinwood": [
+      "p-019"
+     ]
+    },
+    "ms": 3377.9,
+    "answer": "Based on the commit history in the context, the following people have worked on checkout code:\n\n1. **Kestrel Quillon** (p-037) \u2014 22 commits\n2. **Elsbeth Birchley** (p-005) \u2014 10 commits\n3. **Vesna Hollowell** (p-022) \u2014 10 commits\n4. **Quinn Lindqvane** (p-017) \u2014 7 commits\n5. **Rosalind Coldharbour** (p-018) \u2014 6 commits\n6. **Soren Orrinwood** (p-019) \u2014 2 commits\n\nKestrel Quillon has the most extensive experience with the checkout codebase.",
+    "error": null,
+    "usd": 0.007494,
+    "in": 6494,
+    "out": 200,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O03",
+   "q": "Who has worked on productcatalog?",
+   "expect": [
+    "product-catalog"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "p-012",
+     "p-015",
+     "p-016",
+     "p-025",
+     "p-035",
+     "product-catalog",
+     "team-catalog",
+     "team-data"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.125,
+    "ok_textrule": true,
+    "ms": 4.1,
+    "answer": "People who have worked on [product-catalog], most work first:\n- Pavel Kingsbarrow [p-016]: 11 commits, resolved 1 incident(s) there; [team-catalog]\n- Isak Juniper-Rowe [p-035]: 8 commits, resolved 1 incident(s) there; [team-catalog]\n- Leander Eastholm [p-012]: 7 commits, resolved 2 incident(s) there; [team-catalog]\n- Odessa Nettlefold [p-015]: 5 commits, resolved 0 incident(s) there; [team-data]\n- Yara Umberfield [p-025]: 5 commits, resolved 2 incident(s) there; [team-catalog] (no longer active)",
+    "intent": "people"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "p-006",
+     "p-012",
+     "p-015",
+     "p-016",
+     "p-025",
+     "p-035",
+     "product-catalog"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.1429,
+    "ok_ids_only": true,
+    "name_map": {
+     "pavel-kingsbarrow": [
+      "p-016"
+     ],
+     "isak-juniper-rowe": [
+      "p-035"
+     ],
+     "leander-eastholm": [
+      "p-012"
+     ],
+     "odessa-nettlefold": [
+      "p-015"
+     ],
+     "yara-umberfield": [
+      "p-025"
+     ],
+     "florin-ashcombe": [
+      "p-006"
+     ]
+    },
+    "ms": 2778.9,
+    "answer": "Based on the commit history for product-catalog, the following people have worked on it:\n\n1. Pavel Kingsbarrow (11 commits)\n2. Isak Juniper-Rowe (8 commits)\n3. Leander Eastholm (7 commits)\n4. Odessa Nettlefold (5 commits)\n5. Yara Umberfield (5 commits)\n6. Florin Ashcombe (4 commits)",
+    "error": null,
+    "usd": 0.009974,
+    "in": 9369,
+    "out": 121,
+    "context_items": 5
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O04",
+   "q": "Which engineers worked on cart?",
+   "expect": [
+    "cart"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "cart",
+     "p-007",
+     "p-027",
+     "p-028",
+     "p-032",
+     "p-038",
+     "team-storefront"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.1429,
+    "ok_textrule": true,
+    "ms": 7.3,
+    "answer": "People who have worked on [cart], most work first:\n- Bram Jarrowmere [p-028]: 9 commits, resolved 0 incident(s) there; [team-storefront]\n- Lior Sablewood [p-038]: 6 commits, resolved 2 incident(s) there; [team-storefront]\n- Fabian Driftwood [p-032]: 4 commits, resolved 0 incident(s) there; [team-storefront] (no longer active)\n- Anouk Pennyrigg [p-027]: 3 commits, resolved 1 incident(s) there; [team-storefront]\n- Greta Greywater [p-007]: 2 commits, resolved 2 incident(s) there; [team-storefront]",
+    "intent": "people"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "cart",
+     "p-007",
+     "p-027",
+     "p-028",
+     "p-032",
+     "p-038",
+     "p-039"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.1429,
+    "ok_ids_only": true,
+    "name_map": {
+     "bram-jarrowmere": [
+      "p-028"
+     ],
+     "lior-sablewood": [
+      "p-038"
+     ],
+     "fabian-driftwood": [
+      "p-032"
+     ],
+     "anouk-pennyrigg": [
+      "p-027"
+     ],
+     "greta-greywater": [
+      "p-007"
+     ],
+     "maren-calderwick": [
+      "p-039"
+     ]
+    },
+    "ms": 2266.2,
+    "answer": "Based on the commit history, the following engineers worked on cart:\n\n- Bram Jarrowmere (9 commits)\n- Lior Sablewood (6 commits)\n- Fabian Driftwood (4 commits)\n- Anouk Pennyrigg (3 commits)\n- Greta Greywater (2 commits)\n- Maren Calderwick (1 commit)",
+    "error": null,
+    "usd": 0.011293,
+    "in": 10758,
+    "out": 107,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O05",
+   "q": "Who is an expert on recommendation?",
+   "expect": [
+    "recommendation"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "p-010",
+     "p-013",
+     "p-020",
+     "p-031",
+     "p-035",
+     "recommendation",
+     "team-catalog",
+     "team-growth"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.125,
+    "ok_textrule": true,
+    "ms": 3.9,
+    "answer": "People who have worked on [recommendation], most work first:\n- Talia Yarrowby [p-020]: 16 commits, resolved 2 incident(s) there; [team-growth] (no longer active)\n- Jovan Ivybridge-Lane [p-010]: 10 commits, resolved 0 incident(s) there; [team-growth]\n- Mireille Zephyrine [p-013]: 10 commits, resolved 3 incident(s) there; [team-growth]\n- Esme Oldcastle-Pym [p-031]: 9 commits, resolved 1 incident(s) there; [team-growth]\n- Isak Juniper-Rowe [p-035]: 6 commits, resolved 1 incident(s) there; [team-catalog]",
+    "intent": "people"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "inc-h017",
+     "inc-h022",
+     "p-010",
+     "p-013",
+     "p-020",
+     "recommendation",
+     "team-growth"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.1429,
+    "ok_ids_only": true,
+    "name_map": {
+     "talia-yarrowby": [
+      "p-020"
+     ],
+     "jovan-ivybridge-lane": [
+      "p-010"
+     ],
+     "mireille-zephyrine": [
+      "p-013"
+     ],
+     "growth": [
+      "team-growth"
+     ]
+    },
+    "ms": 3282.5,
+    "answer": "Based on the commit history, the people with the most expertise on recommendation are:\n\n1. **Talia Yarrowby** \u2014 16 commits to recommendation\n2. **Jovan Ivybridge-Lane** \u2014 10 commits to recommendation\n3. **Mireille Zephyrine** \u2014 10 commits to recommendation\n\nTalia Yarrowby has the most commits and has also resolved multiple recommendation incidents (inc-h017 and inc-h022). Jovan Ivybridge-Lane is the lead of Team Growth, which owns the recommendation component.",
+    "error": null,
+    "usd": 0.008792,
+    "in": 7987,
+    "out": 161,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O06",
+   "q": "What did we decide about payment timeouts, and is it still current?",
+   "expect": [
+    "ADR-012"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ADR-012",
+     "ADR-013",
+     "p-004",
+     "p-022",
+     "payment"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.2,
+    "ok_textrule": true,
+    "ms": 9.3,
+    "answer": "Decisions about [payment]:\n- [ADR-012] Payment client timeout must stay \u2264 2000 ms: active, and still current (nothing supersedes it). Decided by [p-004] Dorian Marrowby (still on the owning team), [p-022] Vesna Hollowell (still here, another team).\n- [ADR-013] Payment client keeps \u2265 2 retries: active, and still current (nothing supersedes it). Decided by [p-004] Dorian Marrowby (still on the owning team), [p-022] Vesna Hollowell (still here, another team).",
+    "intent": "decision"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ADR-012",
+     "ADR-013",
+     "checkout",
+     "payment",
+     "team-checkout"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.2,
+    "ok_ids_only": true,
+    "name_map": {
+     "checkout": [
+      "team-checkout"
+     ]
+    },
+    "ms": 3890.1,
+    "answer": "ADR-012 decided that the payment client timeout must stay at or below 2000 ms. This decision is still current\u2014it has active status as of its most recent review on 2026-09-02.\n\nThe rationale: checkout holds a connection for every in-flight charge, so a longer timeout turns a slow processor into connection pool exhaustion and failed orders. The 2000 ms cap pairs with ADR-013 (minimum 2 retries with jittered backoff), allowing fast, retryable failures instead of long waits when the processor is slow.\n\nRaising the timeout above 2000 ms requires a new decision with a capacity review of checkout.",
+    "error": null,
+    "usd": 0.007494,
+    "in": 6614,
+    "out": 176,
+    "context_items": 3
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O07",
+   "q": "What is our decision on payment retries?",
+   "expect": [
+    "ADR-013"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ADR-012",
+     "ADR-013",
+     "p-004",
+     "p-022",
+     "payment"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.2,
+    "ok_textrule": true,
+    "ms": 10.0,
+    "answer": "Decisions about [payment]:\n- [ADR-012] Payment client timeout must stay \u2264 2000 ms: active, and still current (nothing supersedes it). Decided by [p-004] Dorian Marrowby (still on the owning team), [p-022] Vesna Hollowell (still here, another team).\n- [ADR-013] Payment client keeps \u2265 2 retries: active, and still current (nothing supersedes it). Decided by [p-004] Dorian Marrowby (still on the owning team), [p-022] Vesna Hollowell (still here, another team).",
+    "intent": "decision"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ADR-012",
+     "ADR-013",
+     "checkout",
+     "payment",
+     "team-checkout"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.2,
+    "ok_ids_only": true,
+    "name_map": {
+     "checkout": [
+      "team-checkout"
+     ]
+    },
+    "ms": 3450.1,
+    "answer": "ADR-013 requires the payment client to keep at least 2 retries. When a charge fails or times out, the payment client retries it at least twice with jittered backoff before reporting failure to checkout. This is safe because charges are idempotent on the processor side (each carries an idempotency key). The decision pairs with ADR-012's short timeout requirement\u2014transient processor errors are only acceptable because they're retried. Removing retries or dropping below two requires a new decision.",
+    "error": null,
+    "usd": 0.007327,
+    "in": 6632,
+    "out": 139,
+    "context_items": 3
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O08",
+   "q": "What did we decide about catalog db migrations?",
+   "expect": [
+    "ADR-009",
+    "ADR-021"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ADR-009",
+     "ADR-021",
+     "p-006",
+     "p-016",
+     "p-025",
+     "product-catalog"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.3333,
+    "ok_textrule": true,
+    "ms": 19.6,
+    "answer": "Decisions about [product-catalog]:\n- [ADR-009] Catalog DB migrations run off-peak: superseded; the current decision is [ADR-021] (Catalog DB schema changes use online migrations). Decided by [p-025] Yara Umberfield (has left).\n- [ADR-021] Catalog DB schema changes use online migrations: active, and still current (nothing supersedes it). Decided by [p-006] Florin Ashcombe (still on the owning team), [p-016] Pavel Kingsbarrow (still on the owning team).",
+    "intent": "decision"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ADR-009",
+     "ADR-021",
+     "astronomy-db",
+     "team-catalog"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.5,
+    "ok_ids_only": true,
+    "name_map": {
+     "catalog": [
+      "team-catalog"
+     ]
+    },
+    "ms": 5175.2,
+    "answer": "Two key decisions were made about catalog DB migrations:\n\n1. **ADR-009 (2025-09-18)**: Initially decided that schema migrations on astronomy-db would run only during the off-peak window (02:00 to 05:00 UTC) and be announced in the catalog channel a day ahead. This was a stopgap measure because migrations hold table locks that stall catalog reads.\n\n2. **ADR-021 (2026-06-03)**: Superseded ADR-009, deciding that catalog DB schema changes must use online migrations instead. Schema changes on astronomy-db now go through an online migration tool that copies the table in the background and swaps it with a short metadata lock. Migrations may run at any hour, but must use online mode; plain `ALTER TABLE` against product tables is not allowed.\n\nThe shift from ADR-009 to ADR-021 occurred after the off-peak window proved ineffective\u2014night traffic still queued behind long locks, and the approach pushed risky changes to hours when fewer people were around to respond to issues.",
+    "error": null,
+    "usd": 0.01001,
+    "in": 8785,
+    "out": 245,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O09",
+   "q": "What did we decide about the order confirmation email?",
+   "expect": [
+    "ADR-004"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ADR-004",
+     "email"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.5,
+    "ok_textrule": true,
+    "ms": 12.2,
+    "answer": "Decisions about [email]:\n- [ADR-004] Order confirmation email is best-effort: active, and still current (nothing supersedes it).",
+    "intent": "decision"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ADR-004",
+     "checkout",
+     "email",
+     "team-checkout"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.25,
+    "ok_ids_only": true,
+    "name_map": {
+     "order-confirmation-email-is-best-effort": [
+      "ADR-004"
+     ],
+     "checkout": [
+      "team-checkout"
+     ]
+    },
+    "ms": 3465.6,
+    "answer": "ADR-004 decided that order confirmation email is best-effort. Checkout places the order and charges the customer before requesting the email service to send a confirmation. If the email call fails or times out, it is logged and retried asynchronously\u2014it never fails the order and never holds up the checkout response. This decision was made because a previous incident showed that a blocked confirmation email had turned a minor mail-provider slowdown into failed orders. The principle is that revenue-critical work stays on the synchronous path while notifications do not.",
+    "error": null,
+    "usd": 0.008877,
+    "in": 8272,
+    "out": 121,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O10",
+   "q": "Which revenue-path services lack a runbook or owner?",
+   "expect": [
+    "cart",
+    "currency"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "cart",
+     "currency",
+     "frontend",
+     "frontend-proxy",
+     "quote",
+     "shipping"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.3333,
+    "ok_textrule": true,
+    "ms": 2.3,
+    "answer": "6 revenue-path services lack a guardrail:\n- [cart] (cart shopping basket, tier 1): no current runbook\n- [currency] (currency conversion, tier 1): no current runbook\n- [frontend] (frontend web storefront, tier 1): no current runbook\n- [frontend-proxy] (frontend proxy (envoy), tier 1): no current runbook\n- [shipping] (shipping quotes and dispatch, tier 1): no current runbook\n- [quote] (shipping quote calculator, tier 2): no current runbook",
+    "intent": "gaps"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "cart",
+     "checkout",
+     "currency",
+     "frontend",
+     "frontend-proxy",
+     "payment",
+     "product-catalog",
+     "rb-catalog-lock",
+     "rb-checkout-degraded",
+     "shipping",
+     "team-catalog",
+     "team-checkout",
+     "team-payments",
+     "team-storefront"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.1429,
+    "ok_ids_only": true,
+    "name_map": {
+     "checkout": [
+      "team-checkout"
+     ],
+     "storefront": [
+      "team-storefront"
+     ],
+     "payments": [
+      "team-payments"
+     ],
+     "catalog": [
+      "team-catalog"
+     ]
+    },
+    "ms": 3844.1,
+    "answer": "the revenue-path services are: cart, checkout, currency, frontend, frontend-proxy, payment, product-catalog, and shipping.\n\nAll of these services have owners assigned to teams:\n- cart, currency, frontend, frontend-proxy, shipping \u2192 Team Storefront\n- checkout \u2192 Team Checkout\n- payment \u2192 Team Payments\n- product-catalog \u2192 Team Catalog\n\nRegarding runbooks, the following revenue-path services lack a dedicated runbook:\n- **cart** (no runbook listed)\n- **currency** (no runbook listed)\n- **frontend** (no runbook listed)\n- **frontend-proxy** (no runbook listed)\n- **shipping** (no runbook listed)\n\nThe revenue-path services that do have runbooks are checkout (rb-checkout-degraded) and product-catalog (rb-catalog-lock).\n\nSo no revenue-path services lack an owner, but five of them (cart, currency, frontend, frontend-proxy, and shipping) lack a dedicated runbook.",
+    "error": null,
+    "usd": 0.009639,
+    "in": 8454,
+    "out": 237,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O11",
+   "q": "What breaks if productcatalog goes down?",
+   "expect": [
+    "product-catalog",
+    "checkout",
+    "frontend"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "agent",
+     "chatbot",
+     "checkout",
+     "frontend",
+     "frontend-proxy",
+     "mcp",
+     "product-catalog",
+     "recommendation"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.375,
+    "ok_textrule": true,
+    "ms": 6.0,
+    "answer": "If [product-catalog] goes down, 7 things downstream are affected, highest impact first:\n- [checkout] (Service, tier 1, 1 hop(s))\n- [frontend] (Service, tier 1, 1 hop(s))\n- [frontend-proxy] (Service, tier 1, 2 hop(s))\n- [recommendation] (Service, tier 2, 1 hop(s))\n- [agent] (Service, tier 3, 2 hop(s))\n- [mcp] (Service, tier 3, 2 hop(s))\n- [chatbot] (Service, tier 3, 3 hop(s))",
+    "intent": "blast"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "checkout",
+     "frontend",
+     "product-catalog",
+     "recommendation",
+     "team-checkout"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.6,
+    "ok_ids_only": true,
+    "name_map": {
+     "checkout": [
+      "team-checkout"
+     ]
+    },
+    "ms": 2743.0,
+    "answer": "If product-catalog goes down, the following systems are affected:\n\n1. **Checkout** \u2014 fails because checkout depends on product-catalog through synchronous calls where errors propagate\n2. **Frontend** \u2014 fails because frontend depends on product-catalog through synchronous calls where errors propagate\n3. **Recommendation** \u2014 fails because recommendation depends on product-catalog through synchronous calls where errors propagate\n\nAll three systems make synchronous calls to product-catalog, so errors propagate directly to them when product-catalog is unavailable.",
+    "error": null,
+    "usd": 0.009274,
+    "in": 8664,
+    "out": 122,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O12",
+   "q": "What breaks if payment goes down?",
+   "expect": [
+    "payment",
+    "checkout"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "agent",
+     "checkout",
+     "frontend",
+     "frontend-proxy",
+     "kpi.exec_revenue",
+     "marts.exec_revenue_metric",
+     "marts.fct_revenue",
+     "mcp",
+     "payment",
+     "raw.raw_orders",
+     "staging.stg_orders"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.1818,
+    "ok_textrule": true,
+    "ms": 6.4,
+    "answer": "If [payment] goes down, 12 things downstream are affected, highest impact first:\n- [checkout] (Service, tier 1, 1 hop(s))\n- [raw.raw_orders] (Table, tier 1, 1 hop(s))\n- [frontend] (Service, tier 1, 2 hop(s))\n- [staging.stg_orders] (Table, tier 1, 2 hop(s))\n- [frontend-proxy] (Service, tier 1, 3 hop(s))\n- [marts.fct_revenue] (Table, tier 1, 3 hop(s))\n- [marts.exec_revenue_metric] (Table, tier 1, 4 hop(s))\n- [kpi.exec_revenue] (KPI, tier 1, 5 hop(s))\n- [agent] (Service, tier 3, 3 hop(s))\n- [mcp] (Service, tier 3, 3 hop(s))\n\u2026and 2 more.",
+    "intent": "blast"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "checkout",
+     "payment",
+     "raw.raw_orders",
+     "team-checkout",
+     "team-payments",
+     "team-platform"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.3333,
+    "ok_ids_only": true,
+    "name_map": {
+     "checkout": [
+      "team-checkout"
+     ],
+     "raw-orders": [
+      "raw.raw_orders"
+     ],
+     "payments": [
+      "team-payments"
+     ],
+     "platform": [
+      "team-platform"
+     ]
+    },
+    "ms": 2708.8,
+    "answer": "If payment goes down, checkout is affected because checkout depends on payment through synchronous calls where errors propagate. This means checkout will fail orders when payment fails.\n\nAdditionally, raw.raw_orders is affected because it depends on payment (payment emits every captured order row as the payments platform extract).",
+    "error": null,
+    "usd": 0.007127,
+    "in": 6667,
+    "out": 92,
+    "context_items": 3
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O13",
+   "q": "What is the impact if currency has an outage?",
+   "expect": [
+    "currency"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "agent",
+     "chatbot",
+     "checkout",
+     "currency",
+     "frontend",
+     "frontend-proxy",
+     "mcp"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.1429,
+    "ok_textrule": true,
+    "ms": 9.9,
+    "answer": "If [currency] goes down, 6 things downstream are affected, highest impact first:\n- [checkout] (Service, tier 1, 1 hop(s))\n- [frontend] (Service, tier 1, 1 hop(s))\n- [frontend-proxy] (Service, tier 1, 2 hop(s))\n- [agent] (Service, tier 3, 2 hop(s))\n- [mcp] (Service, tier 3, 2 hop(s))\n- [chatbot] (Service, tier 3, 3 hop(s))",
+    "intent": "blast"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "checkout",
+     "currency",
+     "frontend",
+     "team-checkout"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.25,
+    "ok_ids_only": true,
+    "name_map": {
+     "checkout": [
+      "team-checkout"
+     ]
+    },
+    "ms": 2017.6,
+    "answer": "If currency has an outage, checkout and frontend are affected because both depend synchronously on the currency service, and errors propagate through those calls.",
+    "error": null,
+    "usd": 0.00736,
+    "in": 7175,
+    "out": 37,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O14",
+   "q": "What breaks if cart fails?",
+   "expect": [
+    "cart"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "agent",
+     "cart",
+     "chatbot",
+     "checkout",
+     "frontend",
+     "frontend-proxy",
+     "mcp"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.1429,
+    "ok_textrule": true,
+    "ms": 7.1,
+    "answer": "If [cart] goes down, 6 things downstream are affected, highest impact first:\n- [checkout] (Service, tier 1, 1 hop(s))\n- [frontend] (Service, tier 1, 1 hop(s))\n- [frontend-proxy] (Service, tier 1, 2 hop(s))\n- [agent] (Service, tier 3, 2 hop(s))\n- [mcp] (Service, tier 3, 2 hop(s))\n- [chatbot] (Service, tier 3, 3 hop(s))",
+    "intent": "blast"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "cart",
+     "checkout",
+     "frontend",
+     "team-checkout"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.25,
+    "ok_ids_only": true,
+    "name_map": {
+     "checkout": [
+      "team-checkout"
+     ]
+    },
+    "ms": 2009.5,
+    "answer": "If cart fails, the following services are affected:\n\n1. **Checkout** - depends on cart via synchronous call; errors propagate\n2. **Frontend** - depends on cart via synchronous call; errors propagate",
+    "error": null,
+    "usd": 0.009331,
+    "in": 9061,
+    "out": 54,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O15",
+   "q": "Tell me about checkout",
+   "expect": [
+    "checkout",
+    "team-checkout",
+    "ADR-004"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ADR-004",
+     "checkout",
+     "rb-checkout-degraded",
+     "team-checkout"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.75,
+    "ok_textrule": true,
+    "ms": 10.1,
+    "answer": "[checkout] is a Service; owned by [team-checkout]; runbooks [rb-checkout-degraded]; constrained by [ADR-004].",
+    "intent": "context"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ADR-004",
+     "ADR-012",
+     "ADR-013",
+     "cart",
+     "checkout",
+     "currency",
+     "email",
+     "inc-h004",
+     "inc-h005",
+     "inc-h018",
+     "inc-h019",
+     "inc-h020",
+     "inc-h039",
+     "p-005",
+     "p-037",
+     "payment",
+     "paymentGate",
+     "product-catalog",
+     "queue",
+     "shipping",
+     "team-checkout"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.1429,
+    "ok_ids_only": true,
+    "name_map": {
+     "checkout": [
+      "team-checkout"
+     ],
+     "order-confirmation-email-is-best-effort": [
+      "ADR-004"
+     ],
+     "elsbeth-birchley": [
+      "p-005"
+     ],
+     "kestrel-quillon": [
+      "p-037"
+     ]
+    },
+    "ms": 6344.3,
+    "answer": "Checkout is a critical service in the Acme system that processes customer orders. Here are the key aspects:\n\n**Dependencies & Architecture:**\nCheckout depends synchronously on payment, cart, currency, shipping, and product-catalog services. Email and the order queue are best-effort dependencies that should not fail orders.\n\n**Key Decisions:**\n- **ADR-004**: Order confirmation email is best-effort\u2014failures never block the checkout response\n- **ADR-012 & ADR-013**: Payment client timeout is capped at 2000 ms with minimum 2 retries to prevent connection-pool exhaustion when the payment processor is slow\n\n**Resilience Mechanisms:**\n- The `paymentGate` flag allows checkout to degrade gracefully when payment is unhealthy, accepting orders and deferring charges to a queue rather than failing completely\n- When payment errors occur, on-call can flip the `paymentGate` flag to isolate payment and stop order failures\n\n**Incidents:**\nMultiple incidents have impacted checkout, primarily caused by:\n- Payment charge errors (inc-h005, inc-h018, inc-h039)\n- Database lock contention in product-catalog (inc-h004, inc-h019, inc-h020)\n\n**Team & Ownership:**\nCheckout is owned by team-checkout, led by Elsbeth Birchley (p-005). Kestrel Quillon (p-037) is the top contributor with 22 commits to the service.\n\n**Runbook:**\nWhen checkout degrades, troubleshoot synchronous dependencies first (payment, cart, currency, shipping, product-catalog) to identify which one's errors started before checkout's error rate rose.",
+    "error": null,
+    "usd": 0.008168,
+    "in": 6108,
+    "out": 412,
+    "context_items": 3
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O16",
+   "q": "Tell me about payment",
+   "expect": [
+    "payment",
+    "ADR-012"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ADR-012",
+     "ADR-013",
+     "payment",
+     "rb-payment-errors",
+     "team-payments"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.4,
+    "ok_textrule": true,
+    "ms": 10.4,
+    "answer": "[payment] is a Service; owned by [team-payments]; runbooks [rb-payment-errors]; constrained by [ADR-012], [ADR-013].",
+    "intent": "context"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ADR-012",
+     "ADR-013",
+     "POL-freeze-payment-weekend",
+     "checkout",
+     "inc-h005",
+     "inc-h008",
+     "inc-h011",
+     "inc-h015",
+     "inc-h018",
+     "inc-h027",
+     "inc-h028",
+     "inc-h030",
+     "inc-h039",
+     "payment",
+     "paymentGate",
+     "rb-payment-errors",
+     "team-checkout",
+     "team-payments",
+     "team-storefront"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.1053,
+    "ok_ids_only": true,
+    "name_map": {
+     "checkout": [
+      "team-checkout"
+     ],
+     "storefront": [
+      "team-storefront"
+     ],
+     "payment-client-keeps-\u2265-2-retries": [
+      "ADR-013"
+     ],
+     "payments": [
+      "team-payments"
+     ],
+     "payment-charge-errors-at-checkout": [
+      "rb-payment-errors"
+     ]
+    },
+    "ms": 7740.3,
+    "answer": "# Payment Service Overview\n\nPayment is a core service in the system that handles charge processing for orders. Here are the key aspects:\n\n## Dependencies and Architecture\n- Checkout depends synchronously on payment, meaning payment failures directly impact order processing\n- Payment communicates with an external card processor with a client timeout and retry mechanism\n\n## Critical Constraints (Active Decisions)\n\n**ADR-012: Payment client timeout \u2264 2000 ms**\n- The timeout to the card processor is capped at 2000 ms\n- Longer timeouts cause connection-pool exhaustion in checkout, leading to failed orders across the storefront\n- Raising this timeout requires a new decision with a capacity review of checkout\n\n**ADR-013: Payment client keeps \u2265 2 retries**\n- The payment client retries failed or timed-out charges at least twice with jittered backoff\n- Charges are idempotent on the processor side, making retries safe\n- This pairs with ADR-012: short timeouts are only safe because transient errors are retried\n\n**POL-freeze-payment-weekend**\n- No payment changes allowed Friday 16:00 to Monday 09:00 (IST)\n- Rationale: Weekend checkout volume peaks while payments on-call is one person; a bad change waits hours for a fix\n\n## Incident History\nMultiple incidents have originated in payment (inc-h005, inc-h008, inc-h011, inc-h015, inc-h018, inc-h027, inc-h028, inc-h030, inc-h039), typically causing checkout failures. Common mitigations include flipping the `paymentGate` flag to isolate payment or rolling back problematic deploys.\n\n## Runbook\nThe \"Payment charge errors at checkout\" runbook (valid from 2026-04-02) guides response when checkout error rates rise, focusing on detecting recent payment changes and using the `paymentGate` flag for containment.",
+    "error": null,
+    "usd": 0.00893,
+    "in": 6580,
+    "out": 470,
+    "context_items": 3
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O17",
+   "q": "What did we decide about kubernetes autoscaling?",
+   "expect": [],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": true,
+    "missing": [],
+    "cited": [],
+    "names_sources": false,
+    "fabricated": [],
+    "precision": null,
+    "ok_textrule": true,
+    "ms": 18.5,
+    "answer": "No decision about that is documented in the graph.",
+    "intent": "decision"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": true,
+    "missing": [],
+    "cited": [],
+    "names_sources": false,
+    "fabricated": [],
+    "precision": null,
+    "ok_ids_only": true,
+    "name_map": {},
+    "ms": 1784.8,
+    "answer": "The context does not contain any information about Kubernetes autoscaling decisions. I cannot answer this question based on the provided material.",
+    "error": null,
+    "usd": 0.006864,
+    "in": 6699,
+    "out": 33,
+    "context_items": 3
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O18",
+   "q": "Who has worked on the warp drive?",
+   "expect": [],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": true,
+    "missing": [],
+    "cited": [],
+    "names_sources": false,
+    "fabricated": [],
+    "precision": null,
+    "ok_textrule": true,
+    "ms": 13.9,
+    "answer": "I could not find that component in the graph (no id or name match).",
+    "intent": "people"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": true,
+    "missing": [],
+    "cited": [],
+    "names_sources": false,
+    "fabricated": [],
+    "precision": null,
+    "ok_ids_only": true,
+    "name_map": {},
+    "ms": 1991.7,
+    "answer": "The context does not contain any information about a \"warp drive\" or anyone working on it. I cannot answer this question based on the provided material.",
+    "error": null,
+    "usd": 0.00887,
+    "in": 8615,
+    "out": 51,
+    "context_items": 5
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O19",
+   "q": "What breaks if the flux capacitor goes down?",
+   "expect": [],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": true,
+    "missing": [],
+    "cited": [],
+    "names_sources": false,
+    "fabricated": [],
+    "precision": null,
+    "ok_textrule": true,
+    "ms": 13.0,
+    "answer": "I could not find that component in the graph (no id or name match).",
+    "intent": "blast"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": true,
+    "missing": [],
+    "cited": [],
+    "names_sources": false,
+    "fabricated": [],
+    "precision": null,
+    "ok_ids_only": true,
+    "name_map": {},
+    "ms": 1940.3,
+    "answer": "The context provided does not contain any information about a flux capacitor or what happens if it fails. I cannot answer this question based on the available reference material.",
+    "error": null,
+    "usd": 0.009009,
+    "in": 8804,
+    "out": 41,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O20",
+   "q": "Tell me about the quantum router",
+   "expect": [],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": true,
+    "missing": [],
+    "cited": [],
+    "names_sources": false,
+    "fabricated": [],
+    "precision": null,
+    "ok_textrule": true,
+    "ms": 25.2,
+    "answer": "I could not find that component in the graph (no id or name match).",
+    "intent": "context"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": true,
+    "missing": [],
+    "cited": [],
+    "names_sources": false,
+    "fabricated": [],
+    "precision": null,
+    "ok_ids_only": true,
+    "name_map": {},
+    "ms": 1745.8,
+    "answer": "The context provided does not contain any information about a quantum router. I cannot answer this question based on the available reference material.",
+    "error": null,
+    "usd": 0.006773,
+    "in": 6608,
+    "out": 33,
+    "context_items": 3
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O21",
+   "q": "Who owned fraud-detection during inc-h002?",
+   "expect": [
+    "fraud-detection",
+    "team-payments",
+    "team-platform",
+    "p-004"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "fraud-detection",
+     "p-004",
+     "p-017",
+     "p-030",
+     "p-036",
+     "team-payments",
+     "team-platform"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.5714,
+    "ok_textrule": true,
+    "ms": 8.2,
+    "answer": "At inc-h002 (onset 2026-07-01), [fraud-detection] was owned by [team-payments]; it is owned by [team-platform] now. People from that team who worked on it then:\n- Dorian Marrowby [p-004]: 4 commits\n- Quinn Lindqvane [p-017]: 3 commits\n- Desmond Brackwater [p-030]: 1 commit\n- Juno Pellucid [p-036]: 1 commit\nOwnership history: [team-payments] 2025-09-10 to 2026-08-06; [team-platform] 2026-08-06 to now.",
+    "intent": "owner_then"
+   },
+   "sdk": {
+    "ok": false,
+    "ok_strict": false,
+    "abstained": false,
+    "missing": [
+     "p-004"
+    ],
+    "cited": [
+     "fraud-detection",
+     "inc-h002",
+     "team-payments",
+     "team-platform"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.75,
+    "ok_ids_only": false,
+    "name_map": {
+     "payments": [
+      "team-payments"
+     ],
+     "platform": [
+      "team-platform"
+     ]
+    },
+    "ms": 2537.9,
+    "answer": "During inc-h002 (which occurred on 2026-07-01), fraud-detection was owned by Team Payments. According to the context, fraud-detection was owned by team Payments from 2025-09-10 to 2026-08-06, and Team Platform has owned it since 2026-08-06.",
+    "error": null,
+    "usd": 0.010426,
+    "in": 10001,
+    "out": 85,
+    "context_items": 5
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O22",
+   "q": "Who owned product-catalog on 2026-03-01?",
+   "expect": [
+    "product-catalog",
+    "team-catalog"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "product-catalog",
+     "team-catalog"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 1.0,
+    "ok_textrule": true,
+    "ms": 6.5,
+    "answer": "At 2026-03-01, [product-catalog] was owned by [team-catalog], and still is.\nOwnership history: [team-catalog] 2025-09-10 to now.",
+    "intent": "owner_then"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "product-catalog",
+     "team-catalog"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 1.0,
+    "ok_ids_only": true,
+    "name_map": {
+     "catalog": [
+      "team-catalog"
+     ]
+    },
+    "ms": 2275.6,
+    "answer": "Team Catalog (team-catalog) owned product-catalog on 2026-03-01. According to the ownership history, product-catalog has been owned by team Catalog since 2025-09-10, with no ownership changes recorded after that date.",
+    "error": null,
+    "usd": 0.009923,
+    "in": 9603,
+    "out": 64,
+    "context_items": 5
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O23",
+   "q": "What did we know about product-catalog as of 2025-11-01?",
+   "expect": [
+    "product-catalog",
+    "ADR-009"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ADR-009",
+     "product-catalog",
+     "team-catalog"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.6667,
+    "ok_textrule": true,
+    "ms": 7.0,
+    "answer": "As of 2025-11-01, the graph held this about [product-catalog]:\n- owner: [team-catalog]\n- on call: none recorded\n- decisions in force: [ADR-009]\n- runbooks in effect: none recorded",
+    "intent": "asof"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": true,
+    "missing": [],
+    "cited": [
+     "ADR-009",
+     "astronomy-db",
+     "checkout",
+     "frontend",
+     "product-catalog",
+     "rb-catalog-lock",
+     "recommendation",
+     "slo-product-catalog",
+     "sym-latency-product-catalog",
+     "team-catalog",
+     "team-checkout"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.1818,
+    "ok_ids_only": true,
+    "name_map": {
+     "catalog": [
+      "team-catalog"
+     ],
+     "checkout": [
+      "team-checkout"
+     ],
+     "catalog-db-migrations-run-off-peak": [
+      "ADR-009"
+     ]
+    },
+    "ms": 5586.2,
+    "answer": "provided, as of 2025-11-01, the following was known about product-catalog:\n\n**Ownership & Team:**\n- product-catalog was owned by team Catalog, which had been the case since 2025-09-10\n\n**Service Level & Performance:**\n- It had a service-level objective (slo-product-catalog) with a 99% error-rate target over 30 days\n\n**Dependencies & Architecture:**\n- It depended on astronomy-db via synchronous calls with error propagation\n- It was a dependency for checkout, frontend, and recommendation services (all via synchronous calls where errors propagate)\n- It used astronomy-db for lock-wait metrics\n\n**Constraints & Policies:**\n- ADR-009 (\"Catalog DB migrations run off-peak\"), decided on 2025-09-18, constrained both product-catalog and astronomy-db, requiring schema migrations to run only during the off-peak window (02:00 to 05:00 UTC)\n\n**Known Issues:**\n- There was a documented latency symptom (sym-latency-product-catalog) affecting the service, with a runbook (rb-catalog-lock) available since 2026-06-05 to address lock contention issues\n\nThe context does not provide information about specific incidents or deployments affecting product-catalog prior to 2025-11-01.",
+    "error": null,
+    "usd": 0.011117,
+    "in": 9487,
+    "out": 326,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O24",
+   "q": "What is the history of fraud-detection?",
+   "expect": [
+    "fraud-detection",
+    "inc-h040"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "dep-176",
+     "dep-181",
+     "dep-183",
+     "dep-237",
+     "dep-239",
+     "dep-293",
+     "fraud-detection",
+     "inc-h025",
+     "inc-h026",
+     "inc-h036",
+     "inc-h040"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.1818,
+    "ok_textrule": true,
+    "ms": 5.5,
+    "answer": "[fraud-detection]'s history (12 deploys, 6 incidents, 2 owners), newest first:\n- 2026-10-13 incident [inc-h040]: impacted: Order queue consumer lag\n- 2026-10-04 incident [inc-h036]: impacted: Kafka consumer lag on order events\n- 2026-09-21 deploy [dep-293]: deploy pr-347 by p-014\n- 2026-09-09 incident [inc-h026]: impacted: Order queue consumer lag\n- 2026-09-08 incident [inc-h025]: impacted: Kafka consumer lag on order events\n- 2026-09-03 deploy [dep-239]: deploy pr-303 by p-014\n- 2026-09-02 deploy [dep-237]: deploy pr-300 by p-035\n- 2026-08-16 deploy [dep-183]: deploy pr-257 by p-008\n- 2026-08-16 deploy [dep-181]: deploy pr-255 by p-033\n- 2026-08-14 deploy [dep-176]: deploy pr-250 by p-014\n\u2026and 10 earlier events.",
+    "intent": "history"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "dep-252",
+     "dep-334",
+     "dep-358",
+     "dep-41",
+     "dep-92",
+     "fraud-detection",
+     "inc-h002",
+     "inc-h006",
+     "inc-h025",
+     "inc-h036",
+     "inc-h040",
+     "p-004",
+     "p-008",
+     "p-014",
+     "p-017",
+     "p-024",
+     "p-030",
+     "p-033",
+     "p-035",
+     "p-036",
+     "p-038",
+     "queue",
+     "rb-kafka-lag",
+     "team-payments",
+     "team-platform"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.08,
+    "ok_ids_only": true,
+    "name_map": {
+     "payments": [
+      "team-payments"
+     ],
+     "platform": [
+      "team-platform"
+     ],
+     "nikolai-tamberlin": [
+      "p-014"
+     ],
+     "dorian-marrowby": [
+      "p-004"
+     ],
+     "galen-glasswell": [
+      "p-033"
+     ],
+     "quinn-lindqvane": [
+      "p-017"
+     ],
+     "isak-juniper-rowe": [
+      "p-035"
+     ],
+     "lior-sablewood": [
+      "p-038"
+     ],
+     "hollis-mossgrave": [
+      "p-008"
+     ],
+     "xavi-foxbury": [
+      "p-024"
+     ],
+     "desmond-brackwater": [
+      "p-030"
+     ],
+     "juno-pellucid": [
+      "p-036"
+     ],
+     "order-queue-consumer-lag": [
+      "rb-kafka-lag"
+     ]
+    },
+    "ms": 6720.4,
+    "answer": "Fraud-detection is a service within Acme's operational infrastructure that has experienced significant ownership and operational changes:\n\n**Ownership Timeline:**\n- Owned by team Payments from 2025-09-10 to 2026-08-06\n- Owned by team Platform since 2026-08-06\n\n**Key Contributors:**\nThe service has received commits from multiple developers: Nikolai Tamberlin (5 commits), Dorian Marrowby (4 commits), Galen Glasswell (4 commits), Quinn Lindqvane (3 commits), Isak Juniper-Rowe (2 commits), Lior Sablewood (2 commits), and one commit each from Hollis Mossgrave, Xavi Foxbury, Desmond Brackwater, and Juno Pellucid.\n\n**Operational Dependencies:**\nThe queue service depends on fraud-detection via synchronous calls and is affected by its failures.\n\n**Incident History:**\nFraud-detection has been impacted by four incidents related to order queue consumer lag:\n- inc-h002 (2026-07-01): Deploy dep-41 reduced queue throughput, causing fraud-detection to fall behind\n- inc-h006 (2026-07-17): Deploy dep-92 caused queue rebalancing, with fraud-detection processing events hours late\n- inc-h025 (2026-09-08): Deploy dep-252 caused similar consumer lag issues\n- inc-h036 (2026-10-04): Deploy dep-334 reduced queue partition throughput, again delaying fraud-detection processing\n- inc-h040 (2026-10-13): Deploy dep-358 caused fraud-detection to process order events hours late\n\n**Service Level Objective:**\nFraud-detection has an SLO with a 98% error-rate target over 30 days.",
+    "error": null,
+    "usd": 0.010781,
+    "in": 8581,
+    "out": 440,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O25",
+   "q": "Where is our operational knowledge stale or lost in a handover?",
+   "expect": [
+    "fraud-detection",
+    "team-payments",
+    "accounting",
+    "rb-kafka-lag"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "accounting",
+     "ad",
+     "fraud-detection",
+     "p-004",
+     "p-007",
+     "p-017",
+     "p-027",
+     "p-028",
+     "p-030",
+     "queue",
+     "rb-kafka-lag",
+     "recommendation",
+     "team-growth",
+     "team-payments",
+     "team-platform",
+     "team-storefront"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.25,
+    "ok_textrule": true,
+    "ms": 8.7,
+    "answer": "7 places where what the organisation knows has decayed:\n- [accounting] stale runbook: runbook [rb-kafka-lag] not reviewed for 95 days\n- [fraud-detection] handover with no runbook since: moved from [team-payments] to [team-platform]; no runbook reviewed since; ask [p-004], [p-017], [p-030]\n- [ad] handover with no runbook since: moved from [team-storefront] to [team-growth]; no runbook reviewed since; ask [p-007], [p-027], [p-028]\n- [queue] graph probably missing an edge: 6 incidents caused at queue also hit accounting, but the graph has no failure path queue \u2192 accounting\n- [queue] graph probably missing an edge: 6 incidents caused at queue also hit fraud-detection, but the graph has no failure path queue \u2192 fraud-detection\n- [recommendation] graph probably missing an edge: 6 incidents caused at recommendation also hit product-catalog, but the graph has no failure path recommendation \u2192 product-catalog\n\u2026and 1 more of the same kinds.",
+    "intent": "knowledge"
+   },
+   "sdk": {
+    "ok": false,
+    "ok_strict": false,
+    "abstained": true,
+    "missing": [
+     "accounting",
+     "fraud-detection",
+     "rb-kafka-lag",
+     "team-payments"
+    ],
+    "cited": [],
+    "names_sources": false,
+    "fabricated": [],
+    "precision": null,
+    "ok_ids_only": false,
+    "name_map": {},
+    "ms": 2223.4,
+    "answer": "The context does not contain information about where operational knowledge is stale or lost in a handover. The provided materials cover incidents, decisions, runbooks, and service dependencies, but do not address knowledge transfer gaps or handover processes.",
+    "error": null,
+    "usd": 0.007018,
+    "in": 6643,
+    "out": 75,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O26",
+   "q": "Who owned the warp drive back in 2026-01-01?",
+   "expect": [],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": true,
+    "missing": [],
+    "cited": [],
+    "names_sources": false,
+    "fabricated": [],
+    "precision": null,
+    "ok_textrule": true,
+    "ms": 30.9,
+    "answer": "I could not find that component in the graph (no id or name match).",
+    "intent": "owner_then"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": true,
+    "missing": [],
+    "cited": [],
+    "names_sources": false,
+    "fabricated": [],
+    "precision": null,
+    "ok_ids_only": true,
+    "name_map": {},
+    "ms": 2296.3,
+    "answer": "The context does not contain any information about a \"warp drive\" or its ownership at any point in time. The context only covers ownership of components within the Acme system (such as databases, services, and tools) from September 2025 onwards.",
+    "error": null,
+    "usd": 0.009673,
+    "in": 9358,
+    "out": 63,
+    "context_items": 5
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O27",
+   "q": "Which customers are affected if checkout goes down?",
+   "expect": [
+    "checkout",
+    "cust-orion-optics",
+    "cust-lyra-labs",
+    "slo-checkout"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "checkout",
+     "cust-cygnus-club",
+     "cust-lyra-labs",
+     "cust-orion-optics",
+     "cust-vega-schools",
+     "frontend",
+     "frontend-proxy",
+     "slo-checkout",
+     "slo-frontend",
+     "slo-frontend-proxy"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.4,
+    "ok_textrule": true,
+    "ms": 8.2,
+    "answer": "If [checkout] goes down, 4 customers are reached through the failure (each counted once), 25,600 MRR at risk:\n- [cust-orion-optics] Orion Optics Ltd (synthetic), 12,000 MRR, through [checkout] (checkout API (PlaceOrder)), [frontend] (storefront web)\n- [cust-lyra-labs] Lyra Labs (synthetic), 9,000 MRR, through [checkout] (checkout API (PlaceOrder))\n- [cust-vega-schools] Vega Schools Network (synthetic), 4,000 MRR, through [frontend] (storefront web); nearest path [checkout] \u2192 [frontend]\n- [cust-cygnus-club] Cygnus Stargazers Club (synthetic), 600 MRR, through [frontend-proxy] (public web); nearest path [checkout] \u2192 [frontend] \u2192 [frontend-proxy]\nSLOs on [checkout] and its blast radius (3):\n- [slo-checkout] on [checkout]: 99.0% over 30 days, 43% of budget left, not burning now (no current telemetry)\n- [slo-frontend] on [frontend]: 99.0% over 30 days, 52% of budget left, not burning now (no current telemetry)\n- [slo-frontend-proxy] on [frontend-proxy]: 99.0% over 30 days, 64% of budget left, not burning now (no current telemetry)",
+    "intent": "obligations"
+   },
+   "sdk": {
+    "ok": false,
+    "ok_strict": false,
+    "abstained": true,
+    "missing": [
+     "cust-lyra-labs",
+     "cust-orion-optics",
+     "slo-checkout"
+    ],
+    "cited": [
+     "checkout",
+     "frontend",
+     "team-checkout",
+     "team-storefront"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.25,
+    "ok_ids_only": false,
+    "name_map": {
+     "checkout": [
+      "team-checkout"
+     ],
+     "storefront": [
+      "team-storefront"
+     ]
+    },
+    "ms": 3255.2,
+    "answer": "if checkout goes down, the following are affected:\n\n1. **Frontend** \u2014 Frontend depends on checkout (synchronous call; errors propagate), so frontend would be affected.\n\n2. **Shoppers/Users** \u2014 Orders placed through frontend would be rejected, as checkout is the service that processes order placement.\n\nThe context does not provide information about specific customer segments or customer identities that would be affected. It only indicates that the impact flows through to frontend and to users attempting to place orders through the storefront.",
+    "error": null,
+    "usd": 0.007533,
+    "in": 6833,
+    "out": 140,
+    "context_items": 3
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O28",
+   "q": "What SLOs depend on payment?",
+   "expect": [
+    "payment",
+    "slo-payment",
+    "slo-checkout"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "checkout",
+     "cust-cygnus-club",
+     "cust-lyra-labs",
+     "cust-orion-optics",
+     "cust-pavo-partners",
+     "cust-vega-schools",
+     "frontend",
+     "frontend-proxy",
+     "kpi.exec_revenue",
+     "marts.exec_revenue_metric",
+     "marts.fct_revenue",
+     "payment",
+     "raw.raw_orders",
+     "slo-checkout",
+     "slo-frontend",
+     "slo-frontend-proxy",
+     "slo-payment",
+     "staging.stg_orders"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.1667,
+    "ok_textrule": true,
+    "ms": 6.7,
+    "answer": "If [payment] goes down, 5 customers are reached through the failure (each counted once), 28,600 MRR at risk:\n- [cust-orion-optics] Orion Optics Ltd (synthetic), 12,000 MRR, through [checkout] (checkout API (PlaceOrder)), [frontend] (storefront web); nearest path [payment] \u2192 [checkout]\n- [cust-lyra-labs] Lyra Labs (synthetic), 9,000 MRR, through [checkout] (checkout API (PlaceOrder)); nearest path [payment] \u2192 [checkout]\n- [cust-vega-schools] Vega Schools Network (synthetic), 4,000 MRR, through [frontend] (storefront web); nearest path [payment] \u2192 [checkout] \u2192 [frontend]\n- [cust-pavo-partners] Pavo Partners (synthetic revenue-share partner), 3,000 MRR, through [kpi.exec_revenue] (monthly revenue-share statement); nearest path [payment] \u2192 [raw.raw_orders] \u2192 [staging.stg_orders] \u2192 [marts.fct_revenue] \u2192 [marts.exec_revenue_metric] \u2192 [kpi.exec_revenue]\n- [cust-cygnus-club] Cygnus Stargazers Club (synthetic), 600 MRR, through [frontend-proxy] (public web); nearest path [payment] \u2192 [checkout] \u2192 [frontend] \u2192 [frontend-proxy]\nSLOs on [payment] and its blast radius (4):\n- [slo-checkout] on [checkout]: 99.0% over 30 days, 43% of budget left, not burning now (no current telemetry)\n- [slo-frontend] on [frontend]: 99.0% over 30 days, 52% of budget left, not burning now (no current telemetry)\n- [slo-frontend-proxy] on [frontend-proxy]: 99.0% over 30 days, 64% of budget left, not burning now (no current telemetry)\n- [slo-payment] on [payment]: 99.0% over 30 days, 75% of budget left, not burning now (no current telemetry)",
+    "intent": "obligations"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "checkout",
+     "payment",
+     "raw.raw_orders",
+     "slo-checkout",
+     "slo-payment",
+     "team-checkout"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.5,
+    "ok_ids_only": true,
+    "name_map": {
+     "payment-error-rate-slo-99%-over-30-days": [
+      "slo-payment"
+     ],
+     "checkout": [
+      "team-checkout"
+     ],
+     "raw-orders": [
+      "raw.raw_orders"
+     ]
+    },
+    "ms": 2890.6,
+    "answer": "provided, no SLOs directly depend on payment. \n\nHowever, **slo-payment** (payment error-rate SLO 99% over 30 days) applies to the payment service itself.\n\nThe context shows that payment is a dependency for other services like checkout and raw.raw_orders, but the SLOs that apply to those downstream services (slo-checkout, for example) are separate from slo-payment.",
+    "error": null,
+    "usd": 0.008434,
+    "in": 7889,
+    "out": 109,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O29",
+   "q": "Who has worked on pyment?",
+   "expect": [
+    "payment"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "p-004",
+     "p-017",
+     "p-030",
+     "p-034",
+     "p-036",
+     "payment",
+     "team-payments"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.1429,
+    "ok_textrule": true,
+    "ms": 10.2,
+    "answer": "People who have worked on [payment], most work first:\n- Quinn Lindqvane [p-017]: 32 commits, resolved 5 incident(s) there; [team-payments]\n- Juno Pellucid [p-036]: 22 commits, resolved 2 incident(s) there; [team-payments]\n- Desmond Brackwater [p-030]: 14 commits, resolved 1 incident(s) there; [team-payments]\n- Hester Hawksmere [p-034]: 8 commits, resolved 0 incident(s) there; [team-payments]\n- Dorian Marrowby [p-004]: 7 commits, resolved 1 incident(s) there; [team-payments]",
+    "intent": "people"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": true,
+    "missing": [],
+    "cited": [
+     "p-004",
+     "p-017",
+     "p-030",
+     "p-034",
+     "p-036",
+     "p-038",
+     "payment",
+     "team-payments"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.125,
+    "ok_ids_only": true,
+    "name_map": {
+     "payments": [
+      "team-payments"
+     ],
+     "quinn-lindqvane": [
+      "p-017"
+     ],
+     "juno-pellucid": [
+      "p-036"
+     ],
+     "desmond-brackwater": [
+      "p-030"
+     ],
+     "hester-hawksmere": [
+      "p-034"
+     ],
+     "dorian-marrowby": [
+      "p-004"
+     ],
+     "lior-sablewood": [
+      "p-038"
+     ]
+    },
+    "ms": 3630.0,
+    "answer": "provided, I cannot find any component or project called \"pyment\". \n\nThe context does include extensive information about who has worked on \"payment\" (note the different spelling), which is a component owned by the Payments team. If you meant \"payment\", the people who have committed to it are:\n\n- Quinn Lindqvane (32 commits)\n- Juno Pellucid (22 commits)\n- Desmond Brackwater (14 commits)\n- Hester Hawksmere (8 commits)\n- Dorian Marrowby (7 commits)\n- Lior Sablewood (7 commits)\n\nCould you clarify if you meant \"payment\" or a different component?",
+    "error": null,
+    "usd": 0.01032,
+    "in": 9455,
+    "out": 173,
+    "context_items": 5
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O30",
+   "q": "What breaks if chekout goes down?",
+   "expect": [
+    "checkout",
+    "frontend"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "agent",
+     "chatbot",
+     "checkout",
+     "frontend",
+     "frontend-proxy",
+     "mcp"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.3333,
+    "ok_textrule": true,
+    "ms": 11.7,
+    "answer": "If [checkout] goes down, 5 things downstream are affected, highest impact first:\n- [frontend] (Service, tier 1, 1 hop(s))\n- [frontend-proxy] (Service, tier 1, 2 hop(s))\n- [agent] (Service, tier 3, 2 hop(s))\n- [mcp] (Service, tier 3, 2 hop(s))\n- [chatbot] (Service, tier 3, 3 hop(s))",
+    "intent": "blast"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "checkout",
+     "frontend",
+     "team-checkout"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.6667,
+    "ok_ids_only": true,
+    "name_map": {
+     "checkout": [
+      "team-checkout"
+     ]
+    },
+    "ms": 1955.9,
+    "answer": "If checkout goes down, frontend is affected because frontend depends on checkout through a synchronous call where errors propagate.",
+    "error": null,
+    "usd": 0.008848,
+    "in": 8698,
+    "out": 30,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O31",
+   "q": "Check what depends on cart",
+   "expect": [
+    "cart"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "agent",
+     "cart",
+     "chatbot",
+     "checkout",
+     "frontend",
+     "frontend-proxy",
+     "mcp"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.1429,
+    "ok_textrule": true,
+    "ms": 11.8,
+    "answer": "If [cart] goes down, 6 things downstream are affected, highest impact first:\n- [checkout] (Service, tier 1, 1 hop(s))\n- [frontend] (Service, tier 1, 1 hop(s))\n- [frontend-proxy] (Service, tier 1, 2 hop(s))\n- [agent] (Service, tier 3, 2 hop(s))\n- [mcp] (Service, tier 3, 2 hop(s))\n- [chatbot] (Service, tier 3, 3 hop(s))",
+    "intent": "blast"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "cart",
+     "checkout",
+     "frontend",
+     "team-checkout"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.25,
+    "ok_ids_only": true,
+    "name_map": {
+     "checkout": [
+      "team-checkout"
+     ]
+    },
+    "ms": 2086.3,
+    "answer": "the following services depend on cart:\n\n1. **Checkout** - depends on cart via synchronous call with error propagation\n2. **Frontend** - depends on cart via synchronous call with error propagation",
+    "error": null,
+    "usd": 0.007491,
+    "in": 7211,
+    "out": 56,
+    "context_items": 4
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O32",
+   "q": "Which flags affect payment?",
+   "expect": [
+    "payment"
+   ],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ADR-012",
+     "ADR-013",
+     "payment",
+     "rb-payment-errors",
+     "team-payments"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.2,
+    "ok_textrule": true,
+    "ms": 16.7,
+    "answer": "[payment] is a Service; owned by [team-payments]; runbooks [rb-payment-errors]; constrained by [ADR-012], [ADR-013].",
+    "intent": "context"
+   },
+   "sdk": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ADR-012",
+     "ADR-013",
+     "POL-freeze-payment-weekend",
+     "checkout",
+     "inc-h008",
+     "inc-h018",
+     "inc-h028",
+     "payment",
+     "paymentGate",
+     "paymentUnreachable",
+     "team-checkout"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": 0.0909,
+    "ok_ids_only": true,
+    "name_map": {
+     "checkout": [
+      "team-checkout"
+     ]
+    },
+    "ms": 3840.7,
+    "answer": "provided, the following flags affect payment:\n\n1. **paymentGate** - This flag gates the checkout PlaceOrder operation and enables checkout to accept orders even when payment is unhealthy. It has been used to resolve or mitigate multiple payment-related incidents (inc-h008, inc-h018, inc-h028).\n\n2. **paymentUnreachable** - This flag gates the checkout functionality.\n\nAdditionally, payment itself is constrained by:\n- **POL-freeze-payment-weekend** - A policy that constrains payment changes\n- **ADR-013** - A decision requiring payment client to keep at least 2 retries\n- **ADR-012** - A decision requiring payment client timeout to stay at or below 2000 ms",
+    "error": null,
+    "usd": 0.008337,
+    "in": 7332,
+    "out": 201,
+    "context_items": 3
+   }
+  },
+  {
+   "set": "orig",
+   "id": "O33",
+   "q": "Check the current flags",
+   "expect": [],
+   "fl": {
+    "ok": true,
+    "ok_strict": true,
+    "abstained": true,
+    "missing": [],
+    "cited": [],
+    "names_sources": false,
+    "fabricated": [],
+    "precision": null,
+    "ok_textrule": true,
+    "ms": 13.2,
+    "answer": "I could not find that component in the graph (no id or name match).",
+    "intent": "context"
+   },
+   "sdk": {
+    "ok": false,
+    "ok_strict": false,
+    "abstained": false,
+    "missing": [],
+    "cited": [
+     "ad",
+     "adFailure",
+     "cart",
+     "cartFailure",
+     "checkout",
+     "checkout:PlaceOrder",
+     "email",
+     "emailMemoryLeak",
+     "frontend",
+     "imageSlowLoad",
+     "intlShippingSlowdown",
+     "kafkaQueueProblems",
+     "payment",
+     "paymentFailure",
+     "paymentGate",
+     "paymentUnreachable",
+     "product-catalog",
+     "productCatalogFailure",
+     "productCatalogLockContention",
+     "queue",
+     "recommendation",
+     "recommendationCacheFailure",
+     "recommendationsEnabled",
+     "shipping",
+     "team-checkout"
+    ],
+    "names_sources": true,
+    "fabricated": [],
+    "precision": null,
+    "ok_ids_only": false,
+    "name_map": {
+     "checkout": [
+      "team-checkout"
+     ]
+    },
+    "ms": 3756.4,
+    "answer": "here are the current feature flags and their states:\n\n**Flags that are ON:**\n- paymentGate (gates checkout:PlaceOrder)\n- recommendationsEnabled (gates frontend)\n\n**Flags that are OFF:**\n- adFailure (gates ad)\n- cartFailure (gates cart)\n- emailMemoryLeak (gates email)\n- imageSlowLoad (gates frontend)\n- intlShippingSlowdown (gates shipping)\n- kafkaQueueProblems (gates queue)\n- paymentFailure (gates payment)\n- paymentUnreachable (gates checkout)\n- productCatalogFailure (gates product-catalog)\n- productCatalogLockContention (gates product-catalog)\n- recommendationCacheFailure (gates recommendation)",
+    "error": null,
+    "usd": 0.00772,
+    "in": 6640,
+    "out": 216,
+    "context_items": 3
+   }
+  }
+ ]
+}

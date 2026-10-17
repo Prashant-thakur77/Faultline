@@ -5,7 +5,7 @@ PY := PYTHONPATH=backend $(UV) python
 GUARD := scripts/memguard.sh
 TENANT ?= acme
 
-.PHONY: gc mcp-http eval results claims bench chaos oncall-night learning-night t2-gonogo replay concurrency scale tenants-bench algo10k setup up down smoke smoke-both seed test invariants judge-check demo api frontend mcp run export \
+.PHONY: gc graphrag-sdk-venv graphrag-sdk-dry mcp-http eval results claims bench chaos oncall-night learning-night t2-gonogo replay concurrency scale tenants-bench algo10k setup up down smoke smoke-both seed test invariants judge-check demo api frontend mcp run export \
         demo-reset demo-healthy build baselines doctor eval results claims
 
 setup:
@@ -78,6 +78,12 @@ bench:  ## gate bench: 100 generated gate cases on clean rooms → "gate verdict
 
 oncall-night:  ## M19 scripted on-call night: page → escalate → ack → APPLIED → contract → same fault under contract + 5 negatives → evals/results/oncall_night.json
 	$(GUARD) 2500 $(PY) evals/oncall_night.py
+
+graphrag-sdk-venv:  ## eval only: isolated venv for FalkorDB's GraphRAG-SDK under tmp/ (+ the 6.0.x full-text DDL patch, GLiNER model)
+	bash scripts/graphrag_sdk_venv.sh
+
+graphrag-sdk-dry:  ## eval only: brain vs GraphRAG-SDK corpus + cost estimate (no API call); the paid run is evals/graphrag_sdk_arm.py --run
+	$(PY) evals/graphrag_sdk_arm.py --dry-run
 
 learning-night:  ## M21 learning: choices cold vs warm, guidelines, who responds (MTTA), forget, gaps, recency recall → evals/results/learning_night.json
 	$(GUARD) 3000 $(PY) evals/learning_night.py

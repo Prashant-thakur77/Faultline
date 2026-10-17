@@ -1,0 +1,310 @@
+{
+ "at": "2026-10-17T23:30:21",
+ "corpus": {
+  "docs": [
+   {
+    "id": "adr-004",
+    "file": "adr-004.md",
+    "kind": "document",
+    "words": 119,
+    "chars": 851,
+    "sha256": "eed5e72dd99b0bab89dee1bfb305e5bc37a3e7c09f2d55e0a8369bbb61513d59"
+   },
+   {
+    "id": "adr-009",
+    "file": "adr-009.md",
+    "kind": "document",
+    "words": 105,
+    "chars": 741,
+    "sha256": "0efc83b3abba0a3696f66cd31f489858bc4129ba2d87978d56f8ff91922ab229"
+   },
+   {
+    "id": "adr-012",
+    "file": "adr-012.md",
+    "kind": "document",
+    "words": 120,
+    "chars": 810,
+    "sha256": "c42897d987ef40a2d8ace4c62c7023113a3989fa8e430a2ff17949c21d4eb0eb"
+   },
+   {
+    "id": "adr-013",
+    "file": "adr-013.md",
+    "kind": "document",
+    "words": 99,
+    "chars": 709,
+    "sha256": "9459fb8cb9f56d82e8c4dcf551485bcee438e76110d165fcdc3d756a94255d6c"
+   },
+   {
+    "id": "adr-021",
+    "file": "adr-021.md",
+    "kind": "document",
+    "words": 125,
+    "chars": 893,
+    "sha256": "c3510344a45651fbf4a8ac5ee383739391accd13cd42a23f078cfe414d5c1299"
+   },
+   {
+    "id": "chat-catalog-migrations",
+    "file": "chat-catalog-migrations.md",
+    "kind": "document",
+    "words": 70,
+    "chars": 535,
+    "sha256": "6d6c27cf92c5c7477fb5bb9c0aa8a2070ebc25d223de4148980730f2c9b1a8b5"
+   },
+   {
+    "id": "chat-payment-timeouts",
+    "file": "chat-payment-timeouts.md",
+    "kind": "document",
+    "words": 121,
+    "chars": 822,
+    "sha256": "c9279b49e3b04e3c9ed7a7e998e1cd4e77bbd90e04a312a0db6c3aade4e99925"
+   },
+   {
+    "id": "issue-checkout-payment-isolation",
+    "file": "issue-checkout-payment-isolation.md",
+    "kind": "document",
+    "words": 72,
+    "chars": 519,
+    "sha256": "657286abb282cd6af47776c6c0434a18620c107661d4bb012a97d9525f19900c"
+   },
+   {
+    "id": "rb-catalog-lock",
+    "file": "rb-catalog-lock.md",
+    "kind": "document",
+    "words": 85,
+    "chars": 637,
+    "sha256": "a9b236c7a112c2b8f28bc9d306676e5b7b2791df3ff462211186a666ef6a992a"
+   },
+   {
+    "id": "rb-checkout-degraded",
+    "file": "rb-checkout-degraded.md",
+    "kind": "document",
+    "words": 94,
+    "chars": 702,
+    "sha256": "c2156b2feeacf89cec47dd9d7fb191b50cd40422ecb17a4c21efcc4a87eb738f"
+   },
+   {
+    "id": "rb-kafka-lag",
+    "file": "rb-kafka-lag.md",
+    "kind": "document",
+    "words": 91,
+    "chars": 658,
+    "sha256": "42a40a467277e899b7697d9d8e8a8765dbed97fa68dadd8d3f256da0768cc115"
+   },
+   {
+    "id": "rb-payment-errors",
+    "file": "rb-payment-errors.md",
+    "kind": "document",
+    "words": 108,
+    "chars": 734,
+    "sha256": "3cedc978ec759b4a5b9eab47c2ebe8ecef160a9701892652e0bec8398d2676db"
+   },
+   {
+    "id": "rb-recs-cache",
+    "file": "rb-recs-cache.md",
+    "kind": "document",
+    "words": 95,
+    "chars": 704,
+    "sha256": "0f6a1b2f0b584701ed3b136ef0345fc6dd2612bcdc7ac056abf8e4d9d44b5ff6"
+   },
+   {
+    "id": "facts-customers-slos-flags",
+    "file": "facts-customers-slos-flags.md",
+    "kind": "facts",
+    "words": 442,
+    "chars": 3347,
+    "sha256": "30841712673b009682399c35671541ce560c727d0ff358ba4509482cce49be05"
+   },
+   {
+    "id": "facts-decisions",
+    "file": "facts-decisions.md",
+    "kind": "facts",
+    "words": 199,
+    "chars": 1440,
+    "sha256": "2bcdde515726582ca0ba7f353c4e20442a956f4e9cf2894d57c9d6e63f8e0ad4"
+   },
+   {
+    "id": "facts-incidents",
+    "file": "facts-incidents.md",
+    "kind": "facts",
+    "words": 2945,
+    "chars": 22197,
+    "sha256": "af963a6cfd4d5ffd3e624bd151ddf4b86fe17c35ea1f6704348f6402be2dc209"
+   },
+   {
+    "id": "facts-ownership",
+    "file": "facts-ownership.md",
+    "kind": "facts",
+    "words": 408,
+    "chars": 3263,
+    "sha256": "b5b40abc661ee7be2137546fec10220b0e854d0b86db918add7505ed876e3862"
+   },
+   {
+    "id": "facts-people",
+    "file": "facts-people.md",
+    "kind": "facts",
+    "words": 1589,
+    "chars": 11047,
+    "sha256": "820db2df141b7a1a37bf70e14763b4030ad5a208098d7b72721a4b0ac1be94e0"
+   },
+   {
+    "id": "facts-runbooks",
+    "file": "facts-runbooks.md",
+    "kind": "facts",
+    "words": 250,
+    "chars": 2066,
+    "sha256": "6e8c7c2a8c90550b8d795407e33757f3f6944d5877c4558f48617cff4deae65f"
+   },
+   {
+    "id": "facts-services",
+    "file": "facts-services.md",
+    "kind": "facts",
+    "words": 1234,
+    "chars": 8929,
+    "sha256": "a5230e4572684ac50c490e7941efafe1cbaf383e2bb7440407fa01ad72cb6193"
+   }
+  ],
+  "documents": 13,
+  "facts_docs": 7,
+  "words": 8371
+ },
+ "estimate": {
+  "docs": [
+   {
+    "id": "adr-004",
+    "chunks": 1,
+    "tokens": 204
+   },
+   {
+    "id": "adr-009",
+    "chunks": 1,
+    "tokens": 199
+   },
+   {
+    "id": "adr-012",
+    "chunks": 1,
+    "tokens": 223
+   },
+   {
+    "id": "adr-013",
+    "chunks": 1,
+    "tokens": 197
+   },
+   {
+    "id": "adr-021",
+    "chunks": 1,
+    "tokens": 236
+   },
+   {
+    "id": "chat-catalog-migrations",
+    "chunks": 1,
+    "tokens": 137
+   },
+   {
+    "id": "chat-payment-timeouts",
+    "chunks": 1,
+    "tokens": 188
+   },
+   {
+    "id": "issue-checkout-payment-isolation",
+    "chunks": 1,
+    "tokens": 126
+   },
+   {
+    "id": "rb-catalog-lock",
+    "chunks": 1,
+    "tokens": 150
+   },
+   {
+    "id": "rb-checkout-degraded",
+    "chunks": 1,
+    "tokens": 168
+   },
+   {
+    "id": "rb-kafka-lag",
+    "chunks": 1,
+    "tokens": 154
+   },
+   {
+    "id": "rb-payment-errors",
+    "chunks": 1,
+    "tokens": 170
+   },
+   {
+    "id": "rb-recs-cache",
+    "chunks": 1,
+    "tokens": 166
+   },
+   {
+    "id": "facts-customers-slos-flags",
+    "chunks": 2,
+    "tokens": 829
+   },
+   {
+    "id": "facts-decisions",
+    "chunks": 1,
+    "tokens": 401
+   },
+   {
+    "id": "facts-incidents",
+    "chunks": 14,
+    "tokens": 6269
+   },
+   {
+    "id": "facts-ownership",
+    "chunks": 2,
+    "tokens": 958
+   },
+   {
+    "id": "facts-people",
+    "chunks": 13,
+    "tokens": 5778
+   },
+   {
+    "id": "facts-runbooks",
+    "chunks": 2,
+    "tokens": 648
+   },
+   {
+    "id": "facts-services",
+    "chunks": 5,
+    "tokens": 2149
+   }
+  ],
+  "chunks": 52,
+  "ingest": {
+   "in": 86843,
+   "out": 120937,
+   "usd": 0.6915
+  },
+  "per_question": {
+   "in": 10627,
+   "out": 425,
+   "usd": 0.01275
+  },
+  "sets": {
+   "s2": {
+    "questions": 40,
+    "usd": 0.5101
+   },
+   "orig": {
+    "questions": 33,
+    "usd": 0.4208
+   }
+  },
+  "mean_chunk_tokens": 372.1,
+  "assumptions": {
+   "claude_vs_cl100k": 1.25,
+   "step2_in": "template + chunk + 1.5x chunk",
+   "step2_out": "5x chunk",
+   "price_in": 1e-06,
+   "price_out": 5e-06
+  }
+ },
+ "projection": {
+  "ingest_usd": 0.6915,
+  "s2_usd": 0.5101,
+  "orig_usd": 0.4208,
+  "total_usd": 1.6224
+ },
+ "cap": 1.5
+}

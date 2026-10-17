@@ -1,0 +1,3516 @@
+{
+ "mode": "run",
+ "sdk_version": "1.4.0",
+ "model": "anthropic/claude-haiku-4-5",
+ "max_tokens": 8192,
+ "temperature": 0.0,
+ "embedder": "fastembed/BAAI/bge-small-en-v1.5",
+ "embedding_dimension": 384,
+ "graph": "graphrag_acme",
+ "cap_usd": 1.5,
+ "started": 1792262414.8002312,
+ "ingest": {
+  "docs": [
+   {
+    "id": "adr-004",
+    "s": 14.85,
+    "error": null,
+    "result": {
+     "document_info": {
+      "path": "adr-004",
+      "uid": "adr-004",
+      "metadata": {}
+     },
+     "nodes_created": 7,
+     "relationships_created": 14,
+     "chunks_indexed": 1,
+     "metadata": {
+      "merged_entities": 0,
+      "raw_nodes": 7,
+      "raw_relationships": 7,
+      "mention_edges_created": 7
+     }
+    },
+    "calls": 1,
+    "in": 776,
+    "out": 911,
+    "usd": 0.005331
+   },
+   {
+    "id": "adr-009",
+    "s": 8.46,
+    "error": null,
+    "result": {
+     "document_info": {
+      "path": "adr-009",
+      "uid": "adr-009",
+      "metadata": {}
+     },
+     "nodes_created": 8,
+     "relationships_created": 15,
+     "chunks_indexed": 1,
+     "metadata": {
+      "merged_entities": 0,
+      "raw_nodes": 8,
+      "raw_relationships": 7,
+      "mention_edges_created": 8
+     }
+    },
+    "calls": 1,
+    "in": 777,
+    "out": 993,
+    "usd": 0.005742
+   },
+   {
+    "id": "adr-012",
+    "s": 11.02,
+    "error": null,
+    "result": {
+     "document_info": {
+      "path": "adr-012",
+      "uid": "adr-012",
+      "metadata": {}
+     },
+     "nodes_created": 10,
+     "relationships_created": 19,
+     "chunks_indexed": 1,
+     "metadata": {
+      "merged_entities": 0,
+      "raw_nodes": 10,
+      "raw_relationships": 9,
+      "mention_edges_created": 10
+     }
+    },
+    "calls": 1,
+    "in": 805,
+    "out": 1274,
+    "usd": 0.007175
+   },
+   {
+    "id": "adr-013",
+    "s": 9.72,
+    "error": null,
+    "result": {
+     "document_info": {
+      "path": "adr-013",
+      "uid": "adr-013",
+      "metadata": {}
+     },
+     "nodes_created": 9,
+     "relationships_created": 17,
+     "chunks_indexed": 1,
+     "metadata": {
+      "merged_entities": 0,
+      "raw_nodes": 9,
+      "raw_relationships": 8,
+      "mention_edges_created": 9
+     }
+    },
+    "calls": 1,
+    "in": 783,
+    "out": 1124,
+    "usd": 0.006403
+   },
+   {
+    "id": "adr-021",
+    "s": 7.27,
+    "error": null,
+    "result": {
+     "document_info": {
+      "path": "adr-021",
+      "uid": "adr-021",
+      "metadata": {}
+     },
+     "nodes_created": 7,
+     "relationships_created": 13,
+     "chunks_indexed": 1,
+     "metadata": {
+      "merged_entities": 0,
+      "raw_nodes": 7,
+      "raw_relationships": 6,
+      "mention_edges_created": 7
+     }
+    },
+    "calls": 1,
+    "in": 813,
+    "out": 849,
+    "usd": 0.005058
+   },
+   {
+    "id": "chat-catalog-migrations",
+    "s": 6.98,
+    "error": null,
+    "result": {
+     "document_info": {
+      "path": "chat-catalog-migrations",
+      "uid": "chat-catalog-migrations",
+      "metadata": {}
+     },
+     "nodes_created": 7,
+     "relationships_created": 11,
+     "chunks_indexed": 1,
+     "metadata": {
+      "merged_entities": 0,
+      "raw_nodes": 7,
+      "raw_relationships": 4,
+      "mention_edges_created": 7
+     }
+    },
+    "calls": 1,
+    "in": 718,
+    "out": 758,
+    "usd": 0.004508
+   },
+   {
+    "id": "chat-payment-timeouts",
+    "s": 9.93,
+    "error": null,
+    "result": {
+     "document_info": {
+      "path": "chat-payment-timeouts",
+      "uid": "chat-payment-timeouts",
+      "metadata": {}
+     },
+     "nodes_created": 10,
+     "relationships_created": 18,
+     "chunks_indexed": 1,
+     "metadata": {
+      "merged_entities": 0,
+      "raw_nodes": 10,
+      "raw_relationships": 8,
+      "mention_edges_created": 10
+     }
+    },
+    "calls": 1,
+    "in": 740,
+    "out": 1083,
+    "usd": 0.006155
+   },
+   {
+    "id": "issue-checkout-payment-isolation",
+    "s": 7.37,
+    "error": null,
+    "result": {
+     "document_info": {
+      "path": "issue-checkout-payment-isolation",
+      "uid": "issue-checkout-payment-isolation",
+      "metadata": {}
+     },
+     "nodes_created": 6,
+     "relationships_created": 12,
+     "chunks_indexed": 1,
+     "metadata": {
+      "merged_entities": 0,
+      "raw_nodes": 6,
+      "raw_relationships": 6,
+      "mention_edges_created": 6
+     }
+    },
+    "calls": 1,
+    "in": 677,
+    "out": 783,
+    "usd": 0.004592
+   },
+   {
+    "id": "rb-catalog-lock",
+    "s": 6.94,
+    "error": null,
+    "result": {
+     "document_info": {
+      "path": "rb-catalog-lock",
+      "uid": "rb-catalog-lock",
+      "metadata": {}
+     },
+     "nodes_created": 7,
+     "relationships_created": 9,
+     "chunks_indexed": 1,
+     "metadata": {
+      "merged_entities": 0,
+      "raw_nodes": 7,
+      "raw_relationships": 2,
+      "mention_edges_created": 7
+     }
+    },
+    "calls": 1,
+    "in": 736,
+    "out": 787,
+    "usd": 0.004671
+   },
+   {
+    "id": "rb-checkout-degraded",
+    "s": 10.34,
+    "error": null,
+    "result": {
+     "document_info": {
+      "path": "rb-checkout-degraded",
+      "uid": "rb-checkout-degraded",
+      "metadata": {}
+     },
+     "nodes_created": 12,
+     "relationships_created": 23,
+     "chunks_indexed": 1,
+     "metadata": {
+      "merged_entities": 0,
+      "raw_nodes": 12,
+      "raw_relationships": 11,
+      "mention_edges_created": 12
+     }
+    },
+    "calls": 1,
+    "in": 757,
+    "out": 1356,
+    "usd": 0.007537
+   },
+   {
+    "id": "rb-kafka-lag",
+    "s": 7.36,
+    "error": null,
+    "result": {
+     "document_info": {
+      "path": "rb-kafka-lag",
+      "uid": "rb-kafka-lag",
+      "metadata": {}
+     },
+     "nodes_created": 8,
+     "relationships_created": 14,
+     "chunks_indexed": 1,
+     "metadata": {
+      "merged_entities": 0,
+      "raw_nodes": 8,
+      "raw_relationships": 6,
+      "mention_edges_created": 8
+     }
+    },
+    "calls": 1,
+    "in": 738,
+    "out": 812,
+    "usd": 0.004798
+   },
+   {
+    "id": "rb-payment-errors",
+    "s": 9.28,
+    "error": null,
+    "result": {
+     "document_info": {
+      "path": "rb-payment-errors",
+      "uid": "rb-payment-errors",
+      "metadata": {}
+     },
+     "nodes_created": 10,
+     "relationships_created": 18,
+     "chunks_indexed": 1,
+     "metadata": {
+      "merged_entities": 0,
+      "raw_nodes": 10,
+      "raw_relationships": 8,
+      "mention_edges_created": 10
+     }
+    },
+    "calls": 1,
+    "in": 753,
+    "out": 1075,
+    "usd": 0.006128
+   },
+   {
+    "id": "rb-recs-cache",
+    "s": 7.56,
+    "error": null,
+    "result": {
+     "document_info": {
+      "path": "rb-recs-cache",
+      "uid": "rb-recs-cache",
+      "metadata": {}
+     },
+     "nodes_created": 3,
+     "relationships_created": 3,
+     "chunks_indexed": 1,
+     "metadata": {
+      "merged_entities": 0,
+      "raw_nodes": 3,
+      "raw_relationships": 0,
+      "mention_edges_created": 3
+     }
+    },
+    "calls": 1,
+    "in": 751,
+    "out": 834,
+    "usd": 0.004921
+   },
+   {
+    "id": "facts-customers-slos-flags",
+    "s": 23.02,
+    "error": null,
+    "result": {
+     "document_info": {
+      "path": "facts-customers-slos-flags",
+      "uid": "facts-customers-slos-flags",
+      "metadata": {}
+     },
+     "nodes_created": 51,
+     "relationships_created": 84,
+     "chunks_indexed": 2,
+     "metadata": {
+      "merged_entities": 0,
+      "raw_nodes": 51,
+      "raw_relationships": 30,
+      "mention_edges_created": 54
+     }
+    },
+    "calls": 2,
+    "in": 2186,
+    "out": 5438,
+    "usd": 0.029376
+   },
+   {
+    "id": "facts-decisions",
+    "s": 22.73,
+    "error": null,
+    "result": {
+     "document_info": {
+      "path": "facts-decisions",
+      "uid": "facts-decisions",
+      "metadata": {}
+     },
+     "nodes_created": 22,
+     "relationships_created": 46,
+     "chunks_indexed": 1,
+     "metadata": {
+      "merged_entities": 0,
+      "raw_nodes": 22,
+      "raw_relationships": 24,
+      "mention_edges_created": 22
+     }
+    },
+    "calls": 1,
+    "in": 1350,
+    "out": 3181,
+    "usd": 0.017255
+   },
+   {
+    "id": "facts-incidents",
+    "s": 59.35,
+    "error": null,
+    "result": {
+     "document_info": {
+      "path": "facts-incidents",
+      "uid": "facts-incidents",
+      "metadata": {}
+     },
+     "nodes_created": 251,
+     "relationships_created": 722,
+     "chunks_indexed": 14,
+     "metadata": {
+      "merged_entities": 0,
+      "raw_nodes": 251,
+      "raw_relationships": 377,
+      "mention_edges_created": 370
+     }
+    },
+    "calls": 14,
+    "in": 15309,
+    "out": 51564,
+    "usd": 0.273129
+   },
+   {
+    "id": "facts-ownership",
+    "s": 33.11,
+    "error": null,
+    "result": {
+     "document_info": {
+      "path": "facts-ownership",
+      "uid": "facts-ownership",
+      "metadata": {}
+     },
+     "nodes_created": 45,
+     "relationships_created": 120,
+     "chunks_indexed": 2,
+     "metadata": {
+      "merged_entities": 0,
+      "raw_nodes": 45,
+      "raw_relationships": 64,
+      "mention_edges_created": 68
+     }
+    },
+    "calls": 2,
+    "in": 2492,
+    "out": 7904,
+    "usd": 0.042012
+   },
+   {
+    "id": "facts-people",
+    "s": 43.27,
+    "error": null,
+    "result": {
+     "document_info": {
+      "path": "facts-people",
+      "uid": "facts-people",
+      "metadata": {}
+     },
+     "nodes_created": 74,
+     "relationships_created": 520,
+     "chunks_indexed": 13,
+     "metadata": {
+      "merged_entities": 0,
+      "raw_nodes": 74,
+      "raw_relationships": 243,
+      "mention_edges_created": 284
+     }
+    },
+    "calls": 13,
+    "in": 22294,
+    "out": 49897,
+    "usd": 0.271779
+   },
+   {
+    "id": "facts-runbooks",
+    "s": 19.78,
+    "error": null,
+    "result": {
+     "document_info": {
+      "path": "facts-runbooks",
+      "uid": "facts-runbooks",
+      "metadata": {}
+     },
+     "nodes_created": 31,
+     "relationships_created": 62,
+     "chunks_indexed": 2,
+     "metadata": {
+      "merged_entities": 0,
+      "raw_nodes": 31,
+      "raw_relationships": 26,
+      "mention_edges_created": 39
+     }
+    },
+    "calls": 2,
+    "in": 1906,
+    "out": 4626,
+    "usd": 0.025036
+   },
+   {
+    "id": "facts-services",
+    "s": 24.0,
+    "error": null,
+    "result": {
+     "document_info": {
+      "path": "facts-services",
+      "uid": "facts-services",
+      "metadata": {}
+     },
+     "nodes_created": 76,
+     "relationships_created": 185,
+     "chunks_indexed": 5,
+     "metadata": {
+      "merged_entities": 0,
+      "raw_nodes": 76,
+      "raw_relationships": 83,
+      "mention_edges_created": 104
+     }
+    },
+    "calls": 5,
+    "in": 6116,
+    "out": 11586,
+    "usd": 0.064046
+   }
+  ],
+  "projection_usd": 1.3057,
+  "finalize": {
+   "s": 9.15,
+   "result": {
+    "null_stubs_removed": 0,
+    "entities_deduplicated": 0,
+    "entities_embedded": 489,
+    "relationships_embedded": 879,
+    "indexes": {
+     "vector_Chunk": true,
+     "vector_Entity": true,
+     "vector_RELATES": true,
+     "fulltext_Chunk": true,
+     "fulltext_Entity": true
+    }
+   },
+   "calls": 0,
+   "in": 0,
+   "out": 0,
+   "usd": 0
+  },
+  "seconds": 351.5,
+  "cost": {
+   "calls": 52,
+   "in": 61477,
+   "out": 146835,
+   "usd": 0.795652
+  }
+ },
+ "answers": [
+  {
+   "set": "s2",
+   "id": "B01",
+   "q": "who actually knows the recomendation code? need someone who's spent real time in it",
+   "answer": "Based on the commit history, the people who have spent the most time working on recommendation code are:\n\n1. **Talia Yarrowby** (p-020) \u2014 16 commits\n2. **Jovan Ivybridge-Lane** (p-010) \u2014 10 commits\n3. **Mireille Zephyrine** (p-013) \u2014 10 commits\n4. **Esme Oldcastle-Pym** (p-031) \u2014 9 commits\n5. **Isak Juniper-Rowe** (p-035) \u2014 6 commits\n\nTalia Yarrowby has by far the most commits to recommendation. However, note that Talia left Acme on 2026-08-30 and is now inactive, so she may not be available. Among currently active engineers, Jovan Ivybridge-Lane and Mireille Zephyrine have the deepest experience.",
+   "context_items": 4,
+   "context_sections": [
+    "hint",
+    "entities",
+    "facts",
+    "passages"
+   ],
+   "ms": 4223.1,
+   "calls": 2,
+   "in": 7932,
+   "out": 270,
+   "usd": 0.009282
+  },
+  {
+   "set": "s2",
+   "id": "B02",
+   "q": "anyone been hacking on the shopping basket service lately? got a question about it",
+   "answer": "Yes, the cart service (shopping basket) has had several recent incidents. Here are the key ones:\n\n- **inc-h001** (June 20, 2026): Valkey cache refusing cart connections after deploy dep-12. Fixed by flipping the cartFailure flag.\n\n- **inc-h013** (July 27, 2026): Valkey cache refusing cart connections again after deploy dep-121. Also fixed with the cartFailure flag.\n\n- **inc-h021** (August 20, 2026): Cart service errors after cache config change (dep-196). The cache config evicted sessions and carts couldn't be loaded. Fixed by rolling back dep-196.\n\n- **inc-h024** (September 6, 2026): Cart errors from cache failure after deploy dep-247. Connections to cache were refused and cart error rate rose sharply. Fixed by rolling back dep-247.\n\n- **inc-h033** (September 29, 2026): Valkey cache refusing cart connections after deploy dep-319. Fixed by flipping the cartFailure flag.\n\nMost of these issues stem from cache-related problems. What's your question?",
+   "context_items": 4,
+   "context_sections": [
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 4160.8,
+   "calls": 2,
+   "in": 7595,
+   "out": 268,
+   "usd": 0.008935
+  },
+  {
+   "set": "s2",
+   "id": "B03",
+   "q": "who's the go-to person for the thing that calculates shipping quotes",
+   "answer": "Based on the commit history, **Fabian Driftwood** is the go-to person for shipping quotes, with 10 commits to the shipping service. He's followed by Greta Greywater (8 commits), Bram Jarrowmere (4 commits), Anouk Pennyrigg (3 commits), and Lior Sablewood (1 commit).\n\nThe shipping service is owned by Team Storefront.",
+   "context_items": 3,
+   "context_sections": [
+    "entities",
+    "facts",
+    "passages"
+   ],
+   "ms": 2678.5,
+   "calls": 2,
+   "in": 7603,
+   "out": 134,
+   "usd": 0.008273
+  },
+  {
+   "set": "s2",
+   "id": "B04",
+   "q": "who wrote most of the currency conversion svc and are they even still around?",
+   "answer": "**Fabian Driftwood** wrote most of the currency conversion service, with 19 commits to currency\u2014significantly more than any other contributor (Lior Sablewood has 6, Anouk Pennyrigg has 3, Bram Jarrowmere has 1, and Hester Hawksmere has 1).\n\nYes, Fabian Driftwood is still around. The context indicates he is an active engineer at Acme, though his specific team membership and current status details are not provided in the available information.",
+   "context_items": 5,
+   "context_sections": [
+    "hint",
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 3413.2,
+   "calls": 2,
+   "in": 8464,
+   "out": 140,
+   "usd": 0.009164
+  },
+  {
+   "set": "s2",
+   "id": "B05",
+   "q": "which folks have touched the order confirmation email code",
+   "answer": "Based on the commit history provided, the following people have made commits to the email codebase:\n\n- Soren Orrinwood (p-019) - 4 commits\n- Kestrel Quillon (p-037) - 4 commits\n- Maren Calderwick (p-039) - 3 commits\n- Elsbeth Birchley (p-005) - 2 commits\n- Vesna Hollowell (p-022) - 2 commits\n- Rosalind Coldharbour (p-018) - 1 commit",
+   "context_items": 4,
+   "context_sections": [
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 3227.3,
+   "calls": 2,
+   "in": 9128,
+   "out": 147,
+   "usd": 0.009863
+  },
+  {
+   "set": "s2",
+   "id": "B06",
+   "q": "which team is on the hook for fraud detecton these days?",
+   "answer": "Team Platform is currently responsible for fraud-detection. The service transferred to their ownership on 2026-08-06, after being owned by team Payments from the start (2025-09-10).",
+   "context_items": 3,
+   "context_sections": [
+    "entities",
+    "facts",
+    "passages"
+   ],
+   "ms": 2339.9,
+   "calls": 2,
+   "in": 8710,
+   "out": 74,
+   "usd": 0.00908
+  },
+  {
+   "set": "s2",
+   "id": "B07",
+   "q": "who owns the kafka order queue",
+   "answer": "Team Checkout owns the kafka order queue (queue component).",
+   "context_items": 5,
+   "context_sections": [
+    "hint",
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 1688.1,
+   "calls": 2,
+   "in": 8755,
+   "out": 20,
+   "usd": 0.008855
+  },
+  {
+   "set": "s2",
+   "id": "B08",
+   "q": "whose is the nginx image server? need to ping the owning team",
+   "answer": "Team Storefront owns the image-provider service (the nginx image server). They have owned it since 2025-09-10.",
+   "context_items": 4,
+   "context_sections": [
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 2035.9,
+   "calls": 2,
+   "in": 9080,
+   "out": 36,
+   "usd": 0.00926
+  },
+  {
+   "set": "s2",
+   "id": "B09",
+   "q": "ad serving - which team owns that now? thought it moved",
+   "answer": "Team Growth owns ad serving now. It was owned by Team Storefront from 2025-09-10 to 2026-08-31, then transferred to Team Growth on 2026-08-31.",
+   "context_items": 4,
+   "context_sections": [
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 2011.8,
+   "calls": 2,
+   "in": 9572,
+   "out": 55,
+   "usd": 0.009847
+  },
+  {
+   "set": "s2",
+   "id": "B10",
+   "q": "are we still doing catalog db migrations off-peak or did that change?",
+   "answer": "No, that changed. ADR-009 required catalog database migrations to run off-peak (02:00 to 05:00 UTC), but it was superseded by ADR-021 on 2026-06-03. \n\nThe reason for the change: off-peak migrations still caused table locking issues because regional traffic continued to reach the catalog at night. ADR-021 now requires all schema changes on astronomy-db to use an online migration tool that performs non-locking migrations. Migrations may now run at any hour, but must use the online mode\u2014plain `ALTER TABLE` statements are not allowed.",
+   "context_items": 5,
+   "context_sections": [
+    "hint",
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 3422.9,
+   "calls": 2,
+   "in": 8481,
+   "out": 144,
+   "usd": 0.009201
+  },
+  {
+   "set": "s2",
+   "id": "B11",
+   "q": "do we have a decision on whether checkout should wait for the confirmation email to send?",
+   "answer": "Yes. ADR-004 establishes that order confirmation email is best-effort and must not block checkout. The decision specifies that checkout places the order and charges the customer before requesting the email service to send confirmation. Any failure or timeout in the email call is logged and retried asynchronously\u2014it never fails the order and never holds the checkout response open. The configuration rule `checkout.email.blocking` is set to `false` to enforce this. Any change to make the email call blocking requires a new decision.",
+   "context_items": 5,
+   "context_sections": [
+    "hint",
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 3448.5,
+   "calls": 2,
+   "in": 7475,
+   "out": 118,
+   "usd": 0.008065
+  },
+  {
+   "set": "s2",
+   "id": "B12",
+   "q": "how many retries is the payment client meant to keep, was that ever written down",
+   "answer": "The payment client is meant to keep at least 2 retries. This was written down in ADR-013 (\"Payment client keeps \u2265 2 retries\"), decided on 2026-03-12. The decision specifies that the payment client retries a failed or timed-out charge at least twice with jittered backoff before reporting failure to checkout.",
+   "context_items": 5,
+   "context_sections": [
+    "hint",
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 2595.2,
+   "calls": 2,
+   "in": 8014,
+   "out": 90,
+   "usd": 0.008464
+  },
+  {
+   "set": "s2",
+   "id": "B13",
+   "q": "any ADRs that touch the postgres product database?",
+   "answer": "Two ADRs constrain astronomy-db (the postgres product database):\n\n1. **ADR-009** \u2013 \"Catalog DB migrations run off-peak\" (decided 2025-09-18, now superseded). Required schema migrations to run only during the off-peak window (02:00 to 05:00 UTC).\n\n2. **ADR-021** \u2013 \"Catalog DB schema changes use online migrations\" (decided 2026-06-03, active). Supersedes ADR-009. Requires schema changes to use an online migration tool that avoids long table locks.",
+   "context_items": 4,
+   "context_sections": [
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 3183.6,
+   "calls": 2,
+   "in": 7786,
+   "out": 138,
+   "usd": 0.008476
+  },
+  {
+   "set": "s2",
+   "id": "B14",
+   "q": "who made the call to do catalog schema changes online, and are they still here?",
+   "answer": "Florin Ashcombe (p-006) and Pavel Kingsbarrow (p-016) decided on ADR-021 on 2026-06-03, which mandates that catalog DB schema changes use online migrations.\n\nYes, they are still here. Florin Ashcombe is a member of the Catalog team as of 2025-09-10, and Pavel Kingsbarrow has made 11 commits to product-catalog, indicating active involvement.",
+   "context_items": 4,
+   "context_sections": [
+    "hint",
+    "entities",
+    "facts",
+    "passages"
+   ],
+   "ms": 3091.8,
+   "calls": 2,
+   "in": 7927,
+   "out": 138,
+   "usd": 0.008617
+  },
+  {
+   "set": "s2",
+   "id": "B15",
+   "q": "who decided the order email is best effort? can I go ask them about it",
+   "answer": "Soren Orrinwood (p-019) decided that order confirmation email is best-effort (ADR-004), made on 2025-11-04.\n\nHowever, the context doesn't include contact information or availability details, so you'd need to find their contact through your organization's directory or team channels.",
+   "context_items": 4,
+   "context_sections": [
+    "hint",
+    "entities",
+    "facts",
+    "passages"
+   ],
+   "ms": 3009.7,
+   "calls": 2,
+   "in": 7263,
+   "out": 117,
+   "usd": 0.007848
+  },
+  {
+   "set": "s2",
+   "id": "B16",
+   "q": "the off peak migration rule for the catalog db, whose idea was that originally",
+   "answer": "ADR-009 (the off-peak migration rule for the catalog database) was decided on 2025-09-18 by Yara Umberfield (p-025). The document does not indicate whose original idea it was, only who made the formal decision.",
+   "context_items": 4,
+   "context_sections": [
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 2383.9,
+   "calls": 2,
+   "in": 8498,
+   "out": 77,
+   "usd": 0.008883
+  },
+  {
+   "set": "s2",
+   "id": "B17",
+   "q": "who signed off on keeping payment calls under 2 seconds, still on the payments team?",
+   "answer": "Dorian Marrowby and Juno Pellucid.\n\nDorian Marrowby (p-004) decided ADR-012 (which caps payment client timeout at 2000 ms) on 2026-03-12 and remains a lead on team Payments. Juno Pellucid (p-036) is an engineer on team Payments since 2025-09-10.\n\nHowever, if the question specifically asks who *signed off* (decided) on ADR-012: **Dorian Marrowby** and **Vesna Hollowell** decided it together, but only Dorian Marrowby is still on the payments team. Vesna Hollowell is listed as having committed to checkout, not payments.",
+   "context_items": 4,
+   "context_sections": [
+    "hint",
+    "entities",
+    "facts",
+    "passages"
+   ],
+   "ms": 4038.4,
+   "calls": 2,
+   "in": 7513,
+   "out": 249,
+   "usd": 0.008758
+  },
+  {
+   "set": "s2",
+   "id": "B18",
+   "q": "which money-path services don't have a runbook at all?",
+   "answer": "the money-path (revenue path) services are: cart, checkout, currency, frontend, frontend-proxy, payment, product-catalog, and shipping.\n\nThe runbooks mentioned in the context cover:\n- checkout (rb-checkout-degraded)\n- product-catalog (rb-catalog-lock)\n- payment (rb-payment-errors)\n\nThe money-path services without any runbook are:\n- cart\n- currency\n- frontend\n- frontend-proxy\n- shipping",
+   "context_items": 4,
+   "context_sections": [
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 2630.6,
+   "calls": 2,
+   "in": 7594,
+   "out": 121,
+   "usd": 0.008199
+  },
+  {
+   "set": "s2",
+   "id": "B19",
+   "q": "anything in the revenue flow that nobody owns or that has no playbook?",
+   "answer": "provided, I cannot identify anything in the revenue flow that lacks an owner. All revenue-path components have clear ownership:\n\n- **Team Storefront** owns: cart, currency, frontend, frontend-proxy, shipping\n- **Team Checkout** owns: checkout\n- **Team Payments** owns: payment\n- **Team Catalog** owns: product-catalog, quote\n- **Team Data** owns: kpi.exec_revenue, exec_revenue_metric.sql, fct_revenue.sql, and related staging transforms\n\nRegarding playbooks, the context shows several runbooks exist for revenue-path components (e.g., rb-payment-errors for payment/checkout, rb-recs-cache for recommendation). However, the context doesn't provide a complete inventory of all runbooks, so I cannot definitively say whether every revenue-path component has a playbook. The data is incomplete on this point.",
+   "context_items": 3,
+   "context_sections": [
+    "entities",
+    "facts",
+    "passages"
+   ],
+   "ms": 4255.9,
+   "calls": 2,
+   "in": 7864,
+   "out": 227,
+   "usd": 0.008999
+  },
+  {
+   "set": "s2",
+   "id": "B20",
+   "q": "do all our tier 1 revenue services have runbooks?",
+   "answer": "No. Not all tier 1 revenue services have runbooks.\n\nThe tier 1 revenue services are: currency, cart, checkout, payment, product-catalog, shipping, and frontend-proxy.\n\nRunbooks exist for:\n- checkout (rb-checkout-degraded)\n- payment (rb-payment-errors)\n\nNo runbooks are listed for currency, cart, product-catalog, shipping, or frontend-proxy.",
+   "context_items": 5,
+   "context_sections": [
+    "hint",
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 2506.6,
+   "calls": 2,
+   "in": 8607,
+   "out": 108,
+   "usd": 0.009147
+  },
+  {
+   "set": "s2",
+   "id": "B21",
+   "q": "if the valkey cache falls over what else goes down with it",
+   "answer": "If the Valkey cache fails, the following services are affected:\n\n1. **Cart** \u2014 Cart depends on the cache synchronously and is affected by its failures\n2. **Checkout** \u2014 Checkout depends on cart, so it's affected downstream\n3. **Frontend** \u2014 Frontend depends on cart, so it's affected downstream\n\nThe incident history shows this pattern repeatedly: when the cache refused connections (inc-h001, inc-h013, inc-h021, inc-h024, inc-h033), cart service errors spiked, which then cascaded to checkout and frontend since they depend on cart for their operations.",
+   "context_items": 4,
+   "context_sections": [
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 3360.6,
+   "calls": 2,
+   "in": 9108,
+   "out": 143,
+   "usd": 0.009823
+  },
+  {
+   "set": "s2",
+   "id": "B22",
+   "q": "postgres product db dies, what's impacted?",
+   "answer": "if astronomy-db (the Postgres product database) fails, the following are impacted:\n\n1. **product-catalog** \u2014 directly affected through synchronous calls where errors propagate\n2. **accounting** \u2014 affected through synchronous calls where errors propagate\n3. **checkout** \u2014 affected indirectly because it depends on product-catalog\n4. **frontend** \u2014 affected indirectly because it depends on product-catalog\n5. **recommendation** \u2014 affected indirectly because it depends on product-catalog\n\nThe failure cascades because product-catalog is a critical dependency for multiple services, and when astronomy-db fails, product-catalog cannot function, which then impacts all services that call product-catalog.",
+   "context_items": 4,
+   "context_sections": [
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 3158.1,
+   "calls": 2,
+   "in": 9664,
+   "out": 164,
+   "usd": 0.010484
+  },
+  {
+   "set": "s2",
+   "id": "B23",
+   "q": "if the shipping quote calculator is down does that take out checkout too?",
+   "answer": "Yes. Checkout depends on the quote service synchronously with error propagation. If quote fails, shipping is affected, and since checkout depends on shipping via synchronous calls with error propagation, checkout will also be affected.",
+   "context_items": 4,
+   "context_sections": [
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 2249.2,
+   "calls": 2,
+   "in": 7543,
+   "out": 56,
+   "usd": 0.007823
+  },
+  {
+   "set": "s2",
+   "id": "B24",
+   "q": "blast radius if payments goes down?",
+   "answer": "If payment goes down, the blast radius includes:\n\n**Direct impacts (synchronous dependencies):**\n- **Checkout** \u2014 fails because checkout depends on payment for charge processing\n- **Raw.raw_orders** \u2014 fails because payment emits every captured order row to this extract\n\n**Downstream impacts:**\n- **Frontend** \u2014 affected because frontend depends on checkout\n- **Agent** \u2014 affected because agent depends on frontend (which depends on checkout)\n- **MCP** \u2014 affected because mcp depends on frontend\n\n**Indirect effects:**\n- **Staging.stg_orders** \u2014 affected because it depends on raw.raw_orders\n- **Marts.fct_revenue** \u2014 affected because it depends on staging.stg_orders\n- **Marts.exec_revenue_metric** \u2014 affected because it depends on marts.fct_revenue\n- **KPI.exec_revenue** \u2014 affected because it depends on marts.exec_revenue_metric\n- **Dash.exec_morning** \u2014 affected because it depends on kpi.exec_revenue\n\nThe most critical impact is checkout failure, which blocks order placement across the storefront. This cascades to frontend and downstream analytics pipelines.",
+   "context_items": 3,
+   "context_sections": [
+    "entities",
+    "facts",
+    "passages"
+   ],
+   "ms": 4506.7,
+   "calls": 2,
+   "in": 7018,
+   "out": 285,
+   "usd": 0.008443
+  },
+  {
+   "set": "s2",
+   "id": "B25",
+   "q": "what breaks if the assistant's mcp tools go down",
+   "answer": "If mcp (assistant mcp tools) fails, the agent service is affected because agent depends on mcp through synchronous calls where errors propagate.",
+   "context_items": 3,
+   "context_sections": [
+    "entities",
+    "facts",
+    "passages"
+   ],
+   "ms": 2233.5,
+   "calls": 2,
+   "in": 8885,
+   "out": 62,
+   "usd": 0.009195
+  },
+  {
+   "set": "s2",
+   "id": "B26",
+   "q": "who owned fraud detection back when inc-h006 happened? and who has it now",
+   "answer": "When inc-h006 occurred on 2026-07-17, fraud-detection was owned by Team Payments (from 2025-09-10 to 2026-08-06).\n\nCurrently, fraud-detection has been owned by Team Platform since 2026-08-06.",
+   "context_items": 5,
+   "context_sections": [
+    "hint",
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 2183.9,
+   "calls": 2,
+   "in": 9790,
+   "out": 75,
+   "usd": 0.010165
+  },
+  {
+   "set": "s2",
+   "id": "B27",
+   "q": "which team had the ad service in july 2026?",
+   "answer": "Team Storefront had the ad service in July 2026. According to the ownership history, ad was owned by team Storefront from 2025-09-10 to 2026-08-31, and then transferred to team Growth starting 2026-08-31. Since July 2026 falls before August 31, 2026, team Storefront owned it at that time.",
+   "context_items": 3,
+   "context_sections": [
+    "entities",
+    "facts",
+    "passages"
+   ],
+   "ms": 2594.5,
+   "calls": 2,
+   "in": 8472,
+   "out": 118,
+   "usd": 0.009062
+  },
+  {
+   "set": "s2",
+   "id": "B28",
+   "q": "fraud-detection owner during inc-h040?",
+   "answer": "During incident inc-h040 (2026-10-13 10:03 UTC to 10:58 UTC), fraud-detection was owned by team Platform. Team Platform has owned fraud-detection since 2026-08-06.",
+   "context_items": 4,
+   "context_sections": [
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 2238.1,
+   "calls": 2,
+   "in": 9685,
+   "out": 67,
+   "usd": 0.01002
+  },
+  {
+   "set": "s2",
+   "id": "B29",
+   "q": "as of january 2026, what was the rule for catalog db migrations?",
+   "answer": "As of January 2026, the rule for catalog DB migrations was to run them during the off-peak window (02:00 to 05:00 UTC). This was established by ADR-009, which was decided on 2025-09-18. Migrations on astronomy-db were required to be announced in the catalog channel a day ahead.\n\nThis rule remained in effect until ADR-021 superseded it on 2026-06-03, replacing the off-peak requirement with a requirement to use online migrations instead.",
+   "context_items": 4,
+   "context_sections": [
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 3046.9,
+   "calls": 2,
+   "in": 8980,
+   "out": 123,
+   "usd": 0.009595
+  },
+  {
+   "set": "s2",
+   "id": "B30",
+   "q": "mid july 2026, which decisions and runbooks applied to the product catalog?",
+   "answer": "In mid-July 2026, the following applied to product-catalog:\n\n**Decisions:**\n- ADR-009 \"Catalog DB migrations run off-peak\" (decided 2025-09-18, status superseded as of 2026-06-03)\n- ADR-021 \"Catalog DB schema changes use online migrations\" (decided 2026-06-03, status active) \u2014 this superseded ADR-009\n\n**Runbooks:**\n- rb-catalog-lock \"Product catalog lock contention\" (valid from 2026-06-05) \u2014 covers product-catalog and latency symptoms\n\nNote: ADR-009 was superseded by ADR-021 on 2026-06-03, so by mid-July only ADR-021 was actively in effect.",
+   "context_items": 3,
+   "context_sections": [
+    "entities",
+    "facts",
+    "passages"
+   ],
+   "ms": 3797.8,
+   "calls": 2,
+   "in": 7640,
+   "out": 209,
+   "usd": 0.008685
+  },
+  {
+   "set": "s2",
+   "id": "B31",
+   "q": "what decisions were in force for checkout at the start of 2026",
+   "answer": "provided, I cannot definitively determine which decisions were in force for checkout at the start of 2026.\n\nThe context shows several decisions that constrain checkout or related services:\n\n- **ADR-004** (\"Order confirmation email is best-effort\") \u2014 decided 2025-11-04, status active, constrains checkout\n- **ADR-012** (\"Payment client timeout must stay \u2264 2000 ms\") \u2014 decided 2026-03-12, status active, constrains payment\n- **ADR-013** (\"Payment client keeps \u2265 2 retries\") \u2014 decided 2026-03-12, status active, constrains payment\n\nADR-004 was decided in November 2025 with active status, so it would likely have been in force at the start of 2026. However, ADR-012 and ADR-013 were decided in March 2026, after the start of the year.\n\nThe context does not provide complete information about all decisions affecting checkout at January 1, 2026, or their status at that specific time.",
+   "context_items": 3,
+   "context_sections": [
+    "entities",
+    "facts",
+    "passages"
+   ],
+   "ms": 4440.0,
+   "calls": 2,
+   "in": 8036,
+   "out": 287,
+   "usd": 0.009471
+  },
+  {
+   "set": "s2",
+   "id": "B32",
+   "q": "which active decisions have nobody left who actually made them?",
+   "answer": "I need to identify active decisions and check if any of their decision-makers have left Acme.\n\nActive decisions:\n- **ADR-004**: Decided by Soren Orrinwood (p-019) \u2014 has left Acme (inactive since 2026-07-19)\n- **ADR-012**: Decided by Dorian Marrowby (p-004) and Vesna Hollowell (p-022) \u2014 both still active\n- **ADR-013**: Decided by Dorian Marrowby (p-004) and Vesna Hollowell (p-022) \u2014 both still active\n- **ADR-021**: Decided by Florin Ashcombe (p-006) and Pavel Kingsbarrow (p-016) \u2014 both still active\n- **POL-freeze-payment-weekend**: Decided by Dorian Marrowby (p-004) \u2014 still active\n\n**ADR-004** is the only active decision where the sole decision-maker has left Acme.",
+   "context_items": 3,
+   "context_sections": [
+    "entities",
+    "facts",
+    "passages"
+   ],
+   "ms": 4404.0,
+   "calls": 2,
+   "in": 7757,
+   "out": 271,
+   "usd": 0.009112
+  },
+  {
+   "set": "s2",
+   "id": "B33",
+   "q": "where's our tribal knowledge rotting - stuff that switched teams and never got a runbook?",
+   "answer": "**ad (advertising)** is a clear example of tribal knowledge risk.\n\nAd switched team ownership from Storefront to Growth on 2026-08-31, but there's no runbook documented for it in the runbook inventory. The context lists runbooks for checkout, payment, recommendation, product-catalog, and queue\u2014but nothing for ad despite it being an active component with commit history.\n\nThis is particularly risky because:\n- Multiple engineers have worked on ad (Anouk Pennyrigg, Esme Oldcastle-Pym, Bram Jarrowmere, and others)\n- The team transition happened recently (August 2026)\n- No incident response procedures are documented if ad experiences issues\n\nThe pattern suggests any component that changed ownership without a corresponding runbook creation is at risk of knowledge loss, especially if the original team members leave or institutional memory fades during the handoff.",
+   "context_items": 3,
+   "context_sections": [
+    "entities",
+    "facts",
+    "passages"
+   ],
+   "ms": 4220.8,
+   "calls": 2,
+   "in": 7467,
+   "out": 213,
+   "usd": 0.008532
+  },
+  {
+   "set": "s2",
+   "id": "B34",
+   "q": "fraud-detection got handed over to platform, who from the old team should I ping about how it works?",
+   "answer": "fraud-detection was owned by team Payments until 2026-08-06, when ownership transferred to team Platform.\n\nFrom team Payments, you could contact **Juno Pellucid**, who made 1 commit to fraud-detection and has resolved incidents related to the service. However, the context doesn't provide a comprehensive list of all team Payments members who worked on fraud-detection.\n\nFor more detailed knowledge about how fraud-detection works, you might also consider reaching out to the people with the most commits to the service: **Nikolai Tamberlin** (5 commits), **Dorian Marrowby** (4 commits), and **Galen Glasswell** (4 commits), though the context doesn't specify which team they're on.",
+   "context_items": 4,
+   "context_sections": [
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 3851.1,
+   "calls": 2,
+   "in": 9793,
+   "out": 185,
+   "usd": 0.010718
+  },
+  {
+   "set": "s2",
+   "id": "B35",
+   "q": "is there a runbook for the recs cache stampede thing",
+   "answer": "Yes. The runbook is **rb-recs-cache**, titled \"Recommendation cache stampede,\" valid from 2026-05-12. It addresses latency in the recommendation service caused by cache stampedes\u2014situations where a recommendation release changes cache keys or TTLs and empties the cache all at once, causing every request to miss and recompute simultaneously. The runbook recommends either enabling the recommendation cache-failure fallback flag to serve static picks, or rolling back the release and re-enabling gradually to let the cache warm up.",
+   "context_items": 5,
+   "context_sections": [
+    "hint",
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 3361.6,
+   "calls": 2,
+   "in": 8256,
+   "out": 126,
+   "usd": 0.008886
+  },
+  {
+   "set": "s2",
+   "id": "B36",
+   "q": "got a playbook for when the order queue consumers start lagging?",
+   "answer": "Yes. The runbook **rb-kafka-lag** titled \"Order queue consumer lag\" covers this.\n\nIt advises to:\n\n1. Check recent queue configuration changes (partition counts, retention, consumer-group settings) and consumer restarts\n2. Restore the previous queue settings if a change lines up with the lag\n3. Let consumers catch up\n4. Open a follow-up issue if the backlog keeps growing at normal traffic\n\nThe runbook notes that consumer lag delays accounting and fraud detection services, but doesn't block order placement since checkout publishes asynchronously to the queue.",
+   "context_items": 4,
+   "context_sections": [
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 3344.4,
+   "calls": 2,
+   "in": 8000,
+   "out": 134,
+   "usd": 0.00867
+  },
+  {
+   "set": "s2",
+   "id": "B37",
+   "q": "what runbook do we follow when checkout is degraded",
+   "answer": "When checkout is degraded, follow the **rb-checkout-degraded** runbook.\n\nThis runbook instructs you to:\n\n1. Walk the synchronous dependencies first (payment, cart, currency, shipping, and product-catalog) and look for which one's errors started before checkout's\n2. If no dependency changed, check checkout's own recent deploys and connection pools\n3. Escalate to the owning team of whichever dependency explains the error share\u2014do not page everyone at once\n\nThe runbook notes that email and the order queue are best-effort dependencies whose failures should not fail orders, so focus on the synchronous dependencies.",
+   "context_items": 4,
+   "context_sections": [
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 3589.7,
+   "calls": 2,
+   "in": 8171,
+   "out": 148,
+   "usd": 0.008911
+  },
+  {
+   "set": "s2",
+   "id": "B38",
+   "q": "whats the decision on the recommendation service's cache TTL?",
+   "answer": "The context does not contain a specific decision about the recommendation service's cache TTL. \n\nWhile the runbook rb-recs-cache mentions that \"A recommendation release that changes cache keys or TTLs can empty the cache in one go,\" it describes this as a problem scenario rather than documenting an actual decision on what the TTL should be.\n\nThe architecture decision records (ADR-004 and ADR-012) in the context address checkout and payment timeouts respectively, but neither covers recommendation cache TTL settings.",
+   "context_items": 4,
+   "context_sections": [
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 2971.5,
+   "calls": 2,
+   "in": 8504,
+   "out": 122,
+   "usd": 0.009114
+  },
+  {
+   "set": "s2",
+   "id": "B39",
+   "q": "who approved the budget for the new CDN vendor?",
+   "answer": "The context does not contain information about who approved the budget for a new CDN vendor. The provided documents focus on incidents, deployments, decisions, and personnel commits related to payment systems, checkout, product catalogs, and other internal services, but do not mention CDN vendors or budget approvals for them.",
+   "context_items": 5,
+   "context_sections": [
+    "hint",
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 2309.1,
+   "calls": 2,
+   "in": 9352,
+   "out": 71,
+   "usd": 0.009707
+  },
+  {
+   "set": "s2",
+   "id": "B40",
+   "q": "who owns the loyalty points service",
+   "answer": "The context does not contain information about a loyalty points service or its ownership. The services listed in the provided documentation do not include a loyalty points service.",
+   "context_items": 4,
+   "context_sections": [
+    "hint",
+    "entities",
+    "facts",
+    "passages"
+   ],
+   "ms": 2132.3,
+   "calls": 2,
+   "in": 8341,
+   "out": 61,
+   "usd": 0.008646
+  },
+  {
+   "set": "orig",
+   "id": "O01",
+   "q": "Who on the team has worked on payment before?",
+   "answer": "Based on the commit history for the payment component, the following people have worked on payment:\n\n- Quinn Lindqvane (32 commits)\n- Juno Pellucid (22 commits)\n- Desmond Brackwater (14 commits)\n- Hester Hawksmere (8 commits)\n- Dorian Marrowby (7 commits)\n- Lior Sablewood (7 commits)",
+   "context_items": 4,
+   "context_sections": [
+    "hint",
+    "entities",
+    "facts",
+    "passages"
+   ],
+   "ms": 2670.4,
+   "calls": 2,
+   "in": 8233,
+   "out": 129,
+   "usd": 0.008878
+  },
+  {
+   "set": "orig",
+   "id": "O02",
+   "q": "Who knows the checkout code?",
+   "answer": "Based on the commit history in the context, the following people have worked on checkout code:\n\n1. **Kestrel Quillon** (p-037) \u2014 22 commits\n2. **Elsbeth Birchley** (p-005) \u2014 10 commits\n3. **Vesna Hollowell** (p-022) \u2014 10 commits\n4. **Quinn Lindqvane** (p-017) \u2014 7 commits\n5. **Rosalind Coldharbour** (p-018) \u2014 6 commits\n6. **Soren Orrinwood** (p-019) \u2014 2 commits\n\nKestrel Quillon has the most extensive experience with the checkout codebase.",
+   "context_items": 4,
+   "context_sections": [
+    "hint",
+    "entities",
+    "facts",
+    "passages"
+   ],
+   "ms": 3377.9,
+   "calls": 2,
+   "in": 6494,
+   "out": 200,
+   "usd": 0.007494
+  },
+  {
+   "set": "orig",
+   "id": "O03",
+   "q": "Who has worked on productcatalog?",
+   "answer": "Based on the commit history for product-catalog, the following people have worked on it:\n\n1. Pavel Kingsbarrow (11 commits)\n2. Isak Juniper-Rowe (8 commits)\n3. Leander Eastholm (7 commits)\n4. Odessa Nettlefold (5 commits)\n5. Yara Umberfield (5 commits)\n6. Florin Ashcombe (4 commits)",
+   "context_items": 5,
+   "context_sections": [
+    "hint",
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 2778.9,
+   "calls": 2,
+   "in": 9369,
+   "out": 121,
+   "usd": 0.009974
+  },
+  {
+   "set": "orig",
+   "id": "O04",
+   "q": "Which engineers worked on cart?",
+   "answer": "Based on the commit history, the following engineers worked on cart:\n\n- Bram Jarrowmere (9 commits)\n- Lior Sablewood (6 commits)\n- Fabian Driftwood (4 commits)\n- Anouk Pennyrigg (3 commits)\n- Greta Greywater (2 commits)\n- Maren Calderwick (1 commit)",
+   "context_items": 4,
+   "context_sections": [
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 2266.2,
+   "calls": 2,
+   "in": 10758,
+   "out": 107,
+   "usd": 0.011293
+  },
+  {
+   "set": "orig",
+   "id": "O05",
+   "q": "Who is an expert on recommendation?",
+   "answer": "Based on the commit history, the people with the most expertise on recommendation are:\n\n1. **Talia Yarrowby** \u2014 16 commits to recommendation\n2. **Jovan Ivybridge-Lane** \u2014 10 commits to recommendation\n3. **Mireille Zephyrine** \u2014 10 commits to recommendation\n\nTalia Yarrowby has the most commits and has also resolved multiple recommendation incidents (inc-h017 and inc-h022). Jovan Ivybridge-Lane is the lead of Team Growth, which owns the recommendation component.",
+   "context_items": 4,
+   "context_sections": [
+    "hint",
+    "entities",
+    "facts",
+    "passages"
+   ],
+   "ms": 3282.5,
+   "calls": 2,
+   "in": 7987,
+   "out": 161,
+   "usd": 0.008792
+  },
+  {
+   "set": "orig",
+   "id": "O06",
+   "q": "What did we decide about payment timeouts, and is it still current?",
+   "answer": "ADR-012 decided that the payment client timeout must stay at or below 2000 ms. This decision is still current\u2014it has active status as of its most recent review on 2026-09-02.\n\nThe rationale: checkout holds a connection for every in-flight charge, so a longer timeout turns a slow processor into connection pool exhaustion and failed orders. The 2000 ms cap pairs with ADR-013 (minimum 2 retries with jittered backoff), allowing fast, retryable failures instead of long waits when the processor is slow.\n\nRaising the timeout above 2000 ms requires a new decision with a capacity review of checkout.",
+   "context_items": 3,
+   "context_sections": [
+    "entities",
+    "facts",
+    "passages"
+   ],
+   "ms": 3890.1,
+   "calls": 2,
+   "in": 6614,
+   "out": 176,
+   "usd": 0.007494
+  },
+  {
+   "set": "orig",
+   "id": "O07",
+   "q": "What is our decision on payment retries?",
+   "answer": "ADR-013 requires the payment client to keep at least 2 retries. When a charge fails or times out, the payment client retries it at least twice with jittered backoff before reporting failure to checkout. This is safe because charges are idempotent on the processor side (each carries an idempotency key). The decision pairs with ADR-012's short timeout requirement\u2014transient processor errors are only acceptable because they're retried. Removing retries or dropping below two requires a new decision.",
+   "context_items": 3,
+   "context_sections": [
+    "entities",
+    "facts",
+    "passages"
+   ],
+   "ms": 3450.1,
+   "calls": 2,
+   "in": 6632,
+   "out": 139,
+   "usd": 0.007327
+  },
+  {
+   "set": "orig",
+   "id": "O08",
+   "q": "What did we decide about catalog db migrations?",
+   "answer": "Two key decisions were made about catalog DB migrations:\n\n1. **ADR-009 (2025-09-18)**: Initially decided that schema migrations on astronomy-db would run only during the off-peak window (02:00 to 05:00 UTC) and be announced in the catalog channel a day ahead. This was a stopgap measure because migrations hold table locks that stall catalog reads.\n\n2. **ADR-021 (2026-06-03)**: Superseded ADR-009, deciding that catalog DB schema changes must use online migrations instead. Schema changes on astronomy-db now go through an online migration tool that copies the table in the background and swaps it with a short metadata lock. Migrations may run at any hour, but must use online mode; plain `ALTER TABLE` against product tables is not allowed.\n\nThe shift from ADR-009 to ADR-021 occurred after the off-peak window proved ineffective\u2014night traffic still queued behind long locks, and the approach pushed risky changes to hours when fewer people were around to respond to issues.",
+   "context_items": 4,
+   "context_sections": [
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 5175.2,
+   "calls": 2,
+   "in": 8785,
+   "out": 245,
+   "usd": 0.01001
+  },
+  {
+   "set": "orig",
+   "id": "O09",
+   "q": "What did we decide about the order confirmation email?",
+   "answer": "ADR-004 decided that order confirmation email is best-effort. Checkout places the order and charges the customer before requesting the email service to send a confirmation. If the email call fails or times out, it is logged and retried asynchronously\u2014it never fails the order and never holds up the checkout response. This decision was made because a previous incident showed that a blocked confirmation email had turned a minor mail-provider slowdown into failed orders. The principle is that revenue-critical work stays on the synchronous path while notifications do not.",
+   "context_items": 4,
+   "context_sections": [
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 3465.6,
+   "calls": 2,
+   "in": 8272,
+   "out": 121,
+   "usd": 0.008877
+  },
+  {
+   "set": "orig",
+   "id": "O10",
+   "q": "Which revenue-path services lack a runbook or owner?",
+   "answer": "the revenue-path services are: cart, checkout, currency, frontend, frontend-proxy, payment, product-catalog, and shipping.\n\nAll of these services have owners assigned to teams:\n- cart, currency, frontend, frontend-proxy, shipping \u2192 Team Storefront\n- checkout \u2192 Team Checkout\n- payment \u2192 Team Payments\n- product-catalog \u2192 Team Catalog\n\nRegarding runbooks, the following revenue-path services lack a dedicated runbook:\n- **cart** (no runbook listed)\n- **currency** (no runbook listed)\n- **frontend** (no runbook listed)\n- **frontend-proxy** (no runbook listed)\n- **shipping** (no runbook listed)\n\nThe revenue-path services that do have runbooks are checkout (rb-checkout-degraded) and product-catalog (rb-catalog-lock).\n\nSo no revenue-path services lack an owner, but five of them (cart, currency, frontend, frontend-proxy, and shipping) lack a dedicated runbook.",
+   "context_items": 4,
+   "context_sections": [
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 3844.1,
+   "calls": 2,
+   "in": 8454,
+   "out": 237,
+   "usd": 0.009639
+  },
+  {
+   "set": "orig",
+   "id": "O11",
+   "q": "What breaks if productcatalog goes down?",
+   "answer": "If product-catalog goes down, the following systems are affected:\n\n1. **Checkout** \u2014 fails because checkout depends on product-catalog through synchronous calls where errors propagate\n2. **Frontend** \u2014 fails because frontend depends on product-catalog through synchronous calls where errors propagate\n3. **Recommendation** \u2014 fails because recommendation depends on product-catalog through synchronous calls where errors propagate\n\nAll three systems make synchronous calls to product-catalog, so errors propagate directly to them when product-catalog is unavailable.",
+   "context_items": 4,
+   "context_sections": [
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 2743.0,
+   "calls": 2,
+   "in": 8664,
+   "out": 122,
+   "usd": 0.009274
+  },
+  {
+   "set": "orig",
+   "id": "O12",
+   "q": "What breaks if payment goes down?",
+   "answer": "If payment goes down, checkout is affected because checkout depends on payment through synchronous calls where errors propagate. This means checkout will fail orders when payment fails.\n\nAdditionally, raw.raw_orders is affected because it depends on payment (payment emits every captured order row as the payments platform extract).",
+   "context_items": 3,
+   "context_sections": [
+    "entities",
+    "facts",
+    "passages"
+   ],
+   "ms": 2708.8,
+   "calls": 2,
+   "in": 6667,
+   "out": 92,
+   "usd": 0.007127
+  },
+  {
+   "set": "orig",
+   "id": "O13",
+   "q": "What is the impact if currency has an outage?",
+   "answer": "If currency has an outage, checkout and frontend are affected because both depend synchronously on the currency service, and errors propagate through those calls.",
+   "context_items": 4,
+   "context_sections": [
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 2017.6,
+   "calls": 2,
+   "in": 7175,
+   "out": 37,
+   "usd": 0.00736
+  },
+  {
+   "set": "orig",
+   "id": "O14",
+   "q": "What breaks if cart fails?",
+   "answer": "If cart fails, the following services are affected:\n\n1. **Checkout** - depends on cart via synchronous call; errors propagate\n2. **Frontend** - depends on cart via synchronous call; errors propagate",
+   "context_items": 4,
+   "context_sections": [
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 2009.5,
+   "calls": 2,
+   "in": 9061,
+   "out": 54,
+   "usd": 0.009331
+  },
+  {
+   "set": "orig",
+   "id": "O15",
+   "q": "Tell me about checkout",
+   "answer": "Checkout is a critical service in the Acme system that processes customer orders. Here are the key aspects:\n\n**Dependencies & Architecture:**\nCheckout depends synchronously on payment, cart, currency, shipping, and product-catalog services. Email and the order queue are best-effort dependencies that should not fail orders.\n\n**Key Decisions:**\n- **ADR-004**: Order confirmation email is best-effort\u2014failures never block the checkout response\n- **ADR-012 & ADR-013**: Payment client timeout is capped at 2000 ms with minimum 2 retries to prevent connection-pool exhaustion when the payment processor is slow\n\n**Resilience Mechanisms:**\n- The `paymentGate` flag allows checkout to degrade gracefully when payment is unhealthy, accepting orders and deferring charges to a queue rather than failing completely\n- When payment errors occur, on-call can flip the `paymentGate` flag to isolate payment and stop order failures\n\n**Incidents:**\nMultiple incidents have impacted checkout, primarily caused by:\n- Payment charge errors (inc-h005, inc-h018, inc-h039)\n- Database lock contention in product-catalog (inc-h004, inc-h019, inc-h020)\n\n**Team & Ownership:**\nCheckout is owned by team-checkout, led by Elsbeth Birchley (p-005). Kestrel Quillon (p-037) is the top contributor with 22 commits to the service.\n\n**Runbook:**\nWhen checkout degrades, troubleshoot synchronous dependencies first (payment, cart, currency, shipping, product-catalog) to identify which one's errors started before checkout's error rate rose.",
+   "context_items": 3,
+   "context_sections": [
+    "entities",
+    "facts",
+    "passages"
+   ],
+   "ms": 6344.3,
+   "calls": 2,
+   "in": 6108,
+   "out": 412,
+   "usd": 0.008168
+  },
+  {
+   "set": "orig",
+   "id": "O16",
+   "q": "Tell me about payment",
+   "answer": "# Payment Service Overview\n\nPayment is a core service in the system that handles charge processing for orders. Here are the key aspects:\n\n## Dependencies and Architecture\n- Checkout depends synchronously on payment, meaning payment failures directly impact order processing\n- Payment communicates with an external card processor with a client timeout and retry mechanism\n\n## Critical Constraints (Active Decisions)\n\n**ADR-012: Payment client timeout \u2264 2000 ms**\n- The timeout to the card processor is capped at 2000 ms\n- Longer timeouts cause connection-pool exhaustion in checkout, leading to failed orders across the storefront\n- Raising this timeout requires a new decision with a capacity review of checkout\n\n**ADR-013: Payment client keeps \u2265 2 retries**\n- The payment client retries failed or timed-out charges at least twice with jittered backoff\n- Charges are idempotent on the processor side, making retries safe\n- This pairs with ADR-012: short timeouts are only safe because transient errors are retried\n\n**POL-freeze-payment-weekend**\n- No payment changes allowed Friday 16:00 to Monday 09:00 (IST)\n- Rationale: Weekend checkout volume peaks while payments on-call is one person; a bad change waits hours for a fix\n\n## Incident History\nMultiple incidents have originated in payment (inc-h005, inc-h008, inc-h011, inc-h015, inc-h018, inc-h027, inc-h028, inc-h030, inc-h039), typically causing checkout failures. Common mitigations include flipping the `paymentGate` flag to isolate payment or rolling back problematic deploys.\n\n## Runbook\nThe \"Payment charge errors at checkout\" runbook (valid from 2026-04-02) guides response when checkout error rates rise, focusing on detecting recent payment changes and using the `paymentGate` flag for containment.",
+   "context_items": 3,
+   "context_sections": [
+    "entities",
+    "facts",
+    "passages"
+   ],
+   "ms": 7740.3,
+   "calls": 2,
+   "in": 6580,
+   "out": 470,
+   "usd": 0.00893
+  },
+  {
+   "set": "orig",
+   "id": "O17",
+   "q": "What did we decide about kubernetes autoscaling?",
+   "answer": "The context does not contain any information about Kubernetes autoscaling decisions. I cannot answer this question based on the provided material.",
+   "context_items": 3,
+   "context_sections": [
+    "entities",
+    "facts",
+    "passages"
+   ],
+   "ms": 1784.8,
+   "calls": 2,
+   "in": 6699,
+   "out": 33,
+   "usd": 0.006864
+  },
+  {
+   "set": "orig",
+   "id": "O18",
+   "q": "Who has worked on the warp drive?",
+   "answer": "The context does not contain any information about a \"warp drive\" or anyone working on it. I cannot answer this question based on the provided material.",
+   "context_items": 5,
+   "context_sections": [
+    "hint",
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 1991.7,
+   "calls": 2,
+   "in": 8615,
+   "out": 51,
+   "usd": 0.00887
+  },
+  {
+   "set": "orig",
+   "id": "O19",
+   "q": "What breaks if the flux capacitor goes down?",
+   "answer": "The context provided does not contain any information about a flux capacitor or what happens if it fails. I cannot answer this question based on the available reference material.",
+   "context_items": 4,
+   "context_sections": [
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 1940.3,
+   "calls": 2,
+   "in": 8804,
+   "out": 41,
+   "usd": 0.009009
+  },
+  {
+   "set": "orig",
+   "id": "O20",
+   "q": "Tell me about the quantum router",
+   "answer": "The context provided does not contain any information about a quantum router. I cannot answer this question based on the available reference material.",
+   "context_items": 3,
+   "context_sections": [
+    "entities",
+    "facts",
+    "passages"
+   ],
+   "ms": 1745.8,
+   "calls": 2,
+   "in": 6608,
+   "out": 33,
+   "usd": 0.006773
+  },
+  {
+   "set": "orig",
+   "id": "O21",
+   "q": "Who owned fraud-detection during inc-h002?",
+   "answer": "During inc-h002 (which occurred on 2026-07-01), fraud-detection was owned by Team Payments. According to the context, fraud-detection was owned by team Payments from 2025-09-10 to 2026-08-06, and Team Platform has owned it since 2026-08-06.",
+   "context_items": 5,
+   "context_sections": [
+    "hint",
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 2537.9,
+   "calls": 2,
+   "in": 10001,
+   "out": 85,
+   "usd": 0.010426
+  },
+  {
+   "set": "orig",
+   "id": "O22",
+   "q": "Who owned product-catalog on 2026-03-01?",
+   "answer": "Team Catalog (team-catalog) owned product-catalog on 2026-03-01. According to the ownership history, product-catalog has been owned by team Catalog since 2025-09-10, with no ownership changes recorded after that date.",
+   "context_items": 5,
+   "context_sections": [
+    "hint",
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 2275.6,
+   "calls": 2,
+   "in": 9603,
+   "out": 64,
+   "usd": 0.009923
+  },
+  {
+   "set": "orig",
+   "id": "O23",
+   "q": "What did we know about product-catalog as of 2025-11-01?",
+   "answer": "provided, as of 2025-11-01, the following was known about product-catalog:\n\n**Ownership & Team:**\n- product-catalog was owned by team Catalog, which had been the case since 2025-09-10\n\n**Service Level & Performance:**\n- It had a service-level objective (slo-product-catalog) with a 99% error-rate target over 30 days\n\n**Dependencies & Architecture:**\n- It depended on astronomy-db via synchronous calls with error propagation\n- It was a dependency for checkout, frontend, and recommendation services (all via synchronous calls where errors propagate)\n- It used astronomy-db for lock-wait metrics\n\n**Constraints & Policies:**\n- ADR-009 (\"Catalog DB migrations run off-peak\"), decided on 2025-09-18, constrained both product-catalog and astronomy-db, requiring schema migrations to run only during the off-peak window (02:00 to 05:00 UTC)\n\n**Known Issues:**\n- There was a documented latency symptom (sym-latency-product-catalog) affecting the service, with a runbook (rb-catalog-lock) available since 2026-06-05 to address lock contention issues\n\nThe context does not provide information about specific incidents or deployments affecting product-catalog prior to 2025-11-01.",
+   "context_items": 4,
+   "context_sections": [
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 5586.2,
+   "calls": 2,
+   "in": 9487,
+   "out": 326,
+   "usd": 0.011117
+  },
+  {
+   "set": "orig",
+   "id": "O24",
+   "q": "What is the history of fraud-detection?",
+   "answer": "Fraud-detection is a service within Acme's operational infrastructure that has experienced significant ownership and operational changes:\n\n**Ownership Timeline:**\n- Owned by team Payments from 2025-09-10 to 2026-08-06\n- Owned by team Platform since 2026-08-06\n\n**Key Contributors:**\nThe service has received commits from multiple developers: Nikolai Tamberlin (5 commits), Dorian Marrowby (4 commits), Galen Glasswell (4 commits), Quinn Lindqvane (3 commits), Isak Juniper-Rowe (2 commits), Lior Sablewood (2 commits), and one commit each from Hollis Mossgrave, Xavi Foxbury, Desmond Brackwater, and Juno Pellucid.\n\n**Operational Dependencies:**\nThe queue service depends on fraud-detection via synchronous calls and is affected by its failures.\n\n**Incident History:**\nFraud-detection has been impacted by four incidents related to order queue consumer lag:\n- inc-h002 (2026-07-01): Deploy dep-41 reduced queue throughput, causing fraud-detection to fall behind\n- inc-h006 (2026-07-17): Deploy dep-92 caused queue rebalancing, with fraud-detection processing events hours late\n- inc-h025 (2026-09-08): Deploy dep-252 caused similar consumer lag issues\n- inc-h036 (2026-10-04): Deploy dep-334 reduced queue partition throughput, again delaying fraud-detection processing\n- inc-h040 (2026-10-13): Deploy dep-358 caused fraud-detection to process order events hours late\n\n**Service Level Objective:**\nFraud-detection has an SLO with a 98% error-rate target over 30 days.",
+   "context_items": 4,
+   "context_sections": [
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 6720.4,
+   "calls": 2,
+   "in": 8581,
+   "out": 440,
+   "usd": 0.010781
+  },
+  {
+   "set": "orig",
+   "id": "O25",
+   "q": "Where is our operational knowledge stale or lost in a handover?",
+   "answer": "The context does not contain information about where operational knowledge is stale or lost in a handover. The provided materials cover incidents, decisions, runbooks, and service dependencies, but do not address knowledge transfer gaps or handover processes.",
+   "context_items": 4,
+   "context_sections": [
+    "hint",
+    "entities",
+    "facts",
+    "passages"
+   ],
+   "ms": 2223.4,
+   "calls": 2,
+   "in": 6643,
+   "out": 75,
+   "usd": 0.007018
+  },
+  {
+   "set": "orig",
+   "id": "O26",
+   "q": "Who owned the warp drive back in 2026-01-01?",
+   "answer": "The context does not contain any information about a \"warp drive\" or its ownership at any point in time. The context only covers ownership of components within the Acme system (such as databases, services, and tools) from September 2025 onwards.",
+   "context_items": 5,
+   "context_sections": [
+    "hint",
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 2296.3,
+   "calls": 2,
+   "in": 9358,
+   "out": 63,
+   "usd": 0.009673
+  },
+  {
+   "set": "orig",
+   "id": "O27",
+   "q": "Which customers are affected if checkout goes down?",
+   "answer": "if checkout goes down, the following are affected:\n\n1. **Frontend** \u2014 Frontend depends on checkout (synchronous call; errors propagate), so frontend would be affected.\n\n2. **Shoppers/Users** \u2014 Orders placed through frontend would be rejected, as checkout is the service that processes order placement.\n\nThe context does not provide information about specific customer segments or customer identities that would be affected. It only indicates that the impact flows through to frontend and to users attempting to place orders through the storefront.",
+   "context_items": 3,
+   "context_sections": [
+    "entities",
+    "facts",
+    "passages"
+   ],
+   "ms": 3255.2,
+   "calls": 2,
+   "in": 6833,
+   "out": 140,
+   "usd": 0.007533
+  },
+  {
+   "set": "orig",
+   "id": "O28",
+   "q": "What SLOs depend on payment?",
+   "answer": "provided, no SLOs directly depend on payment. \n\nHowever, **slo-payment** (payment error-rate SLO 99% over 30 days) applies to the payment service itself.\n\nThe context shows that payment is a dependency for other services like checkout and raw.raw_orders, but the SLOs that apply to those downstream services (slo-checkout, for example) are separate from slo-payment.",
+   "context_items": 4,
+   "context_sections": [
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 2890.6,
+   "calls": 2,
+   "in": 7889,
+   "out": 109,
+   "usd": 0.008434
+  },
+  {
+   "set": "orig",
+   "id": "O29",
+   "q": "Who has worked on pyment?",
+   "answer": "provided, I cannot find any component or project called \"pyment\". \n\nThe context does include extensive information about who has worked on \"payment\" (note the different spelling), which is a component owned by the Payments team. If you meant \"payment\", the people who have committed to it are:\n\n- Quinn Lindqvane (32 commits)\n- Juno Pellucid (22 commits)\n- Desmond Brackwater (14 commits)\n- Hester Hawksmere (8 commits)\n- Dorian Marrowby (7 commits)\n- Lior Sablewood (7 commits)\n\nCould you clarify if you meant \"payment\" or a different component?",
+   "context_items": 5,
+   "context_sections": [
+    "hint",
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 3630.0,
+   "calls": 2,
+   "in": 9455,
+   "out": 173,
+   "usd": 0.01032
+  },
+  {
+   "set": "orig",
+   "id": "O30",
+   "q": "What breaks if chekout goes down?",
+   "answer": "If checkout goes down, frontend is affected because frontend depends on checkout through a synchronous call where errors propagate.",
+   "context_items": 4,
+   "context_sections": [
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 1955.9,
+   "calls": 2,
+   "in": 8698,
+   "out": 30,
+   "usd": 0.008848
+  },
+  {
+   "set": "orig",
+   "id": "O31",
+   "q": "Check what depends on cart",
+   "answer": "the following services depend on cart:\n\n1. **Checkout** - depends on cart via synchronous call with error propagation\n2. **Frontend** - depends on cart via synchronous call with error propagation",
+   "context_items": 4,
+   "context_sections": [
+    "entities",
+    "relationships",
+    "facts",
+    "passages"
+   ],
+   "ms": 2086.3,
+   "calls": 2,
+   "in": 7211,
+   "out": 56,
+   "usd": 0.007491
+  },
+  {
+   "set": "orig",
+   "id": "O32",
+   "q": "Which flags affect payment?",
+   "answer": "provided, the following flags affect payment:\n\n1. **paymentGate** - This flag gates the checkout PlaceOrder operation and enables checkout to accept orders even when payment is unhealthy. It has been used to resolve or mitigate multiple payment-related incidents (inc-h008, inc-h018, inc-h028).\n\n2. **paymentUnreachable** - This flag gates the checkout functionality.\n\nAdditionally, payment itself is constrained by:\n- **POL-freeze-payment-weekend** - A policy that constrains payment changes\n- **ADR-013** - A decision requiring payment client to keep at least 2 retries\n- **ADR-012** - A decision requiring payment client timeout to stay at or below 2000 ms",
+   "context_items": 3,
+   "context_sections": [
+    "entities",
+    "facts",
+    "passages"
+   ],
+   "ms": 3840.7,
+   "calls": 2,
+   "in": 7332,
+   "out": 201,
+   "usd": 0.008337
+  },
+  {
+   "set": "orig",
+   "id": "O33",
+   "q": "Check the current flags",
+   "answer": "here are the current feature flags and their states:\n\n**Flags that are ON:**\n- paymentGate (gates checkout:PlaceOrder)\n- recommendationsEnabled (gates frontend)\n\n**Flags that are OFF:**\n- adFailure (gates ad)\n- cartFailure (gates cart)\n- emailMemoryLeak (gates email)\n- imageSlowLoad (gates frontend)\n- intlShippingSlowdown (gates shipping)\n- kafkaQueueProblems (gates queue)\n- paymentFailure (gates payment)\n- paymentUnreachable (gates checkout)\n- productCatalogFailure (gates product-catalog)\n- productCatalogLockContention (gates product-catalog)\n- recommendationCacheFailure (gates recommendation)",
+   "context_items": 3,
+   "context_sections": [
+    "entities",
+    "facts",
+    "passages"
+   ],
+   "ms": 3756.4,
+   "calls": 2,
+   "in": 6640,
+   "out": 216,
+   "usd": 0.00772
+  }
+ ],
+ "stopped": null,
+ "kg": {
+  "labels": {
+   "Chunk": 52,
+   "Concept": 40,
+   "Dataset": 23,
+   "Date": 85,
+   "Document": 20,
+   "Event": 92,
+   "Law": 7,
+   "Location": 5,
+   "Method": 8,
+   "Organization": 21,
+   "Person": 50,
+   "Product": 95,
+   "Technology": 54,
+   "Unknown": 9,
+   "__Entity__": 489,
+   "__GraphRAGConfig__": 1
+  },
+  "relationships": {
+   "MENTIONED_IN": 1045,
+   "NEXT_CHUNK": 32,
+   "PART_OF": 52,
+   "RELATES": 879
+  }
+ },
+ "finished": 1792262999.3622062,
+ "meter": {
+  "spent_usd": 1.447035,
+  "refused": 0,
+  "truncated": 0,
+  "transport_retries": 0,
+  "calls": 198,
+  "in": 660110,
+  "out": 157385
+ },
+ "calls": [
+  {
+   "phase": "ingest:adr-004",
+   "in": 776,
+   "out": 911,
+   "usd": 0.005331,
+   "ms": 7751.9,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:adr-009",
+   "in": 777,
+   "out": 993,
+   "usd": 0.005742,
+   "ms": 8173.9,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:adr-012",
+   "in": 805,
+   "out": 1274,
+   "usd": 0.007175,
+   "ms": 10504.6,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:adr-013",
+   "in": 783,
+   "out": 1124,
+   "usd": 0.006403,
+   "ms": 9414.8,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:adr-021",
+   "in": 813,
+   "out": 849,
+   "usd": 0.005058,
+   "ms": 6892.9,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:chat-catalog-migrations",
+   "in": 718,
+   "out": 758,
+   "usd": 0.004508,
+   "ms": 6767.2,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:chat-payment-timeouts",
+   "in": 740,
+   "out": 1083,
+   "usd": 0.006155,
+   "ms": 9549.3,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:issue-checkout-payment-isolation",
+   "in": 677,
+   "out": 783,
+   "usd": 0.004592,
+   "ms": 7149.2,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:rb-catalog-lock",
+   "in": 736,
+   "out": 787,
+   "usd": 0.004671,
+   "ms": 6645.5,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:rb-checkout-degraded",
+   "in": 757,
+   "out": 1356,
+   "usd": 0.007537,
+   "ms": 10084.6,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:rb-kafka-lag",
+   "in": 738,
+   "out": 812,
+   "usd": 0.004798,
+   "ms": 7009.9,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:rb-payment-errors",
+   "in": 753,
+   "out": 1075,
+   "usd": 0.006128,
+   "ms": 8947.9,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:rb-recs-cache",
+   "in": 751,
+   "out": 834,
+   "usd": 0.004921,
+   "ms": 7229.7,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-customers-slos-flags",
+   "in": 1238,
+   "out": 2223,
+   "usd": 0.012353,
+   "ms": 15514.3,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-customers-slos-flags",
+   "in": 948,
+   "out": 3215,
+   "usd": 0.017023,
+   "ms": 21614.8,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-decisions",
+   "in": 1350,
+   "out": 3181,
+   "usd": 0.017255,
+   "ms": 22138.3,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-incidents",
+   "in": 1049,
+   "out": 2524,
+   "usd": 0.013669,
+   "ms": 18825.5,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-incidents",
+   "in": 1129,
+   "out": 2909,
+   "usd": 0.015674,
+   "ms": 21869.7,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-incidents",
+   "in": 1111,
+   "out": 2896,
+   "usd": 0.015591,
+   "ms": 22108.6,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-incidents",
+   "in": 1066,
+   "out": 3076,
+   "usd": 0.016446,
+   "ms": 22334.5,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-incidents",
+   "in": 1086,
+   "out": 3252,
+   "usd": 0.017346,
+   "ms": 24002.0,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-incidents",
+   "in": 1074,
+   "out": 3331,
+   "usd": 0.017729,
+   "ms": 24152.2,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-incidents",
+   "in": 1178,
+   "out": 3503,
+   "usd": 0.018693,
+   "ms": 26102.9,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-incidents",
+   "in": 1086,
+   "out": 3636,
+   "usd": 0.019266,
+   "ms": 26547.4,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-incidents",
+   "in": 1080,
+   "out": 4440,
+   "usd": 0.02328,
+   "ms": 31849.3,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-incidents",
+   "in": 1142,
+   "out": 4463,
+   "usd": 0.023457,
+   "ms": 33036.2,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-incidents",
+   "in": 1198,
+   "out": 4783,
+   "usd": 0.025113,
+   "ms": 36073.9,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-incidents",
+   "in": 1138,
+   "out": 5255,
+   "usd": 0.027413,
+   "ms": 38444.4,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-incidents",
+   "in": 876,
+   "out": 3111,
+   "usd": 0.016431,
+   "ms": 22557.1,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-incidents",
+   "in": 1096,
+   "out": 4385,
+   "usd": 0.023021,
+   "ms": 31517.6,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-ownership",
+   "in": 1248,
+   "out": 3153,
+   "usd": 0.017013,
+   "ms": 21369.6,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-ownership",
+   "in": 1244,
+   "out": 4751,
+   "usd": 0.024999,
+   "ms": 31747.1,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-people",
+   "in": 1677,
+   "out": 3405,
+   "usd": 0.018702,
+   "ms": 22967.3,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-people",
+   "in": 1709,
+   "out": 3632,
+   "usd": 0.019869,
+   "ms": 24640.3,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-people",
+   "in": 1745,
+   "out": 3760,
+   "usd": 0.020545,
+   "ms": 25323.8,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-people",
+   "in": 1911,
+   "out": 3842,
+   "usd": 0.021121,
+   "ms": 25881.7,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-people",
+   "in": 1762,
+   "out": 3847,
+   "usd": 0.020997,
+   "ms": 25945.2,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-people",
+   "in": 1804,
+   "out": 3883,
+   "usd": 0.021219,
+   "ms": 26121.7,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-people",
+   "in": 1767,
+   "out": 3963,
+   "usd": 0.021582,
+   "ms": 26795.1,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-people",
+   "in": 1705,
+   "out": 4008,
+   "usd": 0.021745,
+   "ms": 27195.8,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-people",
+   "in": 1818,
+   "out": 4171,
+   "usd": 0.022673,
+   "ms": 28019.4,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-people",
+   "in": 1750,
+   "out": 4300,
+   "usd": 0.02325,
+   "ms": 28805.3,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-people",
+   "in": 1843,
+   "out": 4497,
+   "usd": 0.024328,
+   "ms": 30296.4,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-people",
+   "in": 1704,
+   "out": 4673,
+   "usd": 0.025069,
+   "ms": 30971.5,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-people",
+   "in": 1099,
+   "out": 1916,
+   "usd": 0.010679,
+   "ms": 13229.3,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-runbooks",
+   "in": 802,
+   "out": 2012,
+   "usd": 0.010862,
+   "ms": 14329.7,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-runbooks",
+   "in": 1104,
+   "out": 2614,
+   "usd": 0.014174,
+   "ms": 18368.3,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-services",
+   "in": 1049,
+   "out": 1816,
+   "usd": 0.010129,
+   "ms": 13205.0,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-services",
+   "in": 1289,
+   "out": 1893,
+   "usd": 0.010754,
+   "ms": 13942.0,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-services",
+   "in": 1393,
+   "out": 2394,
+   "usd": 0.013363,
+   "ms": 17458.7,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-services",
+   "in": 1350,
+   "out": 2603,
+   "usd": 0.014365,
+   "ms": 19389.9,
+   "finish": "stop"
+  },
+  {
+   "phase": "ingest:facts-services",
+   "in": 1035,
+   "out": 2880,
+   "usd": 0.015435,
+   "ms": 19728.0,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B01",
+   "in": 67,
+   "out": 48,
+   "usd": 0.000307,
+   "ms": 1069.3,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B01",
+   "in": 7865,
+   "out": 222,
+   "usd": 0.008975,
+   "ms": 3102.9,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B02",
+   "in": 64,
+   "out": 6,
+   "usd": 9.4e-05,
+   "ms": 692.1,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B02",
+   "in": 7531,
+   "out": 262,
+   "usd": 0.008841,
+   "ms": 3420.0,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B03",
+   "in": 63,
+   "out": 28,
+   "usd": 0.000203,
+   "ms": 892.2,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B03",
+   "in": 7540,
+   "out": 106,
+   "usd": 0.00807,
+   "ms": 1737.8,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B04",
+   "in": 64,
+   "out": 7,
+   "usd": 9.9e-05,
+   "ms": 724.6,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B04",
+   "in": 8400,
+   "out": 133,
+   "usd": 0.009065,
+   "ms": 2626.5,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B05",
+   "in": 57,
+   "out": 7,
+   "usd": 9.2e-05,
+   "ms": 910.1,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B05",
+   "in": 9071,
+   "out": 140,
+   "usd": 0.009771,
+   "ms": 2260.8,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B06",
+   "in": 61,
+   "out": 28,
+   "usd": 0.000201,
+   "ms": 896.1,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B06",
+   "in": 8649,
+   "out": 46,
+   "usd": 0.008879,
+   "ms": 1383.3,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B07",
+   "in": 54,
+   "out": 5,
+   "usd": 7.9e-05,
+   "ms": 712.5,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B07",
+   "in": 8701,
+   "out": 15,
+   "usd": 0.008776,
+   "ms": 914.3,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B08",
+   "in": 62,
+   "out": 4,
+   "usd": 8.2e-05,
+   "ms": 761.6,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B08",
+   "in": 9018,
+   "out": 32,
+   "usd": 0.009178,
+   "ms": 1209.2,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B09",
+   "in": 60,
+   "out": 5,
+   "usd": 8.5e-05,
+   "ms": 737.0,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B09",
+   "in": 9512,
+   "out": 50,
+   "usd": 0.009762,
+   "ms": 1220.4,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B10",
+   "in": 63,
+   "out": 6,
+   "usd": 9.3e-05,
+   "ms": 728.0,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B10",
+   "in": 8418,
+   "out": 138,
+   "usd": 0.009108,
+   "ms": 2629.0,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B11",
+   "in": 65,
+   "out": 7,
+   "usd": 0.0001,
+   "ms": 826.1,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B11",
+   "in": 7410,
+   "out": 111,
+   "usd": 0.007965,
+   "ms": 2545.9,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B12",
+   "in": 65,
+   "out": 5,
+   "usd": 9e-05,
+   "ms": 743.3,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B12",
+   "in": 7949,
+   "out": 85,
+   "usd": 0.008374,
+   "ms": 1799.5,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B13",
+   "in": 59,
+   "out": 4,
+   "usd": 7.9e-05,
+   "ms": 702.4,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B13",
+   "in": 7727,
+   "out": 134,
+   "usd": 0.008397,
+   "ms": 2416.8,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B14",
+   "in": 65,
+   "out": 28,
+   "usd": 0.000205,
+   "ms": 834.5,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B14",
+   "in": 7862,
+   "out": 110,
+   "usd": 0.008412,
+   "ms": 2206.2,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B15",
+   "in": 64,
+   "out": 46,
+   "usd": 0.000294,
+   "ms": 1169.0,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B15",
+   "in": 7199,
+   "out": 71,
+   "usd": 0.007554,
+   "ms": 1782.4,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B16",
+   "in": 63,
+   "out": 10,
+   "usd": 0.000113,
+   "ms": 774.3,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B16",
+   "in": 8435,
+   "out": 67,
+   "usd": 0.00877,
+   "ms": 1555.6,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B17",
+   "in": 67,
+   "out": 73,
+   "usd": 0.000432,
+   "ms": 1321.7,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B17",
+   "in": 7446,
+   "out": 176,
+   "usd": 0.008326,
+   "ms": 2643.6,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B18",
+   "in": 62,
+   "out": 9,
+   "usd": 0.000107,
+   "ms": 774.4,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B18",
+   "in": 7532,
+   "out": 112,
+   "usd": 0.008092,
+   "ms": 1797.9,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B19",
+   "in": 63,
+   "out": 25,
+   "usd": 0.000188,
+   "ms": 855.6,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B19",
+   "in": 7801,
+   "out": 202,
+   "usd": 0.008811,
+   "ms": 3359.8,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B20",
+   "in": 61,
+   "out": 12,
+   "usd": 0.000121,
+   "ms": 775.0,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B20",
+   "in": 8546,
+   "out": 96,
+   "usd": 0.009026,
+   "ms": 1678.7,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B21",
+   "in": 61,
+   "out": 6,
+   "usd": 9.1e-05,
+   "ms": 789.7,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B21",
+   "in": 9047,
+   "out": 137,
+   "usd": 0.009732,
+   "ms": 2477.6,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B22",
+   "in": 58,
+   "out": 7,
+   "usd": 9.3e-05,
+   "ms": 773.7,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B22",
+   "in": 9606,
+   "out": 157,
+   "usd": 0.010391,
+   "ms": 2306.0,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B23",
+   "in": 62,
+   "out": 8,
+   "usd": 0.000102,
+   "ms": 755.7,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B23",
+   "in": 7481,
+   "out": 48,
+   "usd": 0.007721,
+   "ms": 1388.1,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B24",
+   "in": 55,
+   "out": 25,
+   "usd": 0.00018,
+   "ms": 944.8,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B24",
+   "in": 6963,
+   "out": 260,
+   "usd": 0.008263,
+   "ms": 3514.3,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B25",
+   "in": 59,
+   "out": 28,
+   "usd": 0.000199,
+   "ms": 864.3,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B25",
+   "in": 8826,
+   "out": 34,
+   "usd": 0.008996,
+   "ms": 1287.6,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B26",
+   "in": 66,
+   "out": 7,
+   "usd": 0.000101,
+   "ms": 712.8,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B26",
+   "in": 9724,
+   "out": 68,
+   "usd": 0.010064,
+   "ms": 1419.9,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B27",
+   "in": 60,
+   "out": 28,
+   "usd": 0.0002,
+   "ms": 896.2,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B27",
+   "in": 8412,
+   "out": 90,
+   "usd": 0.008862,
+   "ms": 1636.8,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B28",
+   "in": 58,
+   "out": 11,
+   "usd": 0.000113,
+   "ms": 747.4,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B28",
+   "in": 9627,
+   "out": 56,
+   "usd": 0.009907,
+   "ms": 1401.0,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B29",
+   "in": 64,
+   "out": 5,
+   "usd": 8.9e-05,
+   "ms": 773.0,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B29",
+   "in": 8916,
+   "out": 118,
+   "usd": 0.009506,
+   "ms": 2217.4,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B30",
+   "in": 65,
+   "out": 25,
+   "usd": 0.00019,
+   "ms": 877.7,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B30",
+   "in": 7575,
+   "out": 184,
+   "usd": 0.008495,
+   "ms": 2872.4,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B31",
+   "in": 62,
+   "out": 41,
+   "usd": 0.000267,
+   "ms": 1031.9,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B31",
+   "in": 7974,
+   "out": 246,
+   "usd": 0.009204,
+   "ms": 3324.6,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B32",
+   "in": 59,
+   "out": 25,
+   "usd": 0.000184,
+   "ms": 918.0,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B32",
+   "in": 7698,
+   "out": 246,
+   "usd": 0.008928,
+   "ms": 3412.0,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B33",
+   "in": 67,
+   "out": 8,
+   "usd": 0.000107,
+   "ms": 828.1,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B33",
+   "in": 7400,
+   "out": 205,
+   "usd": 0.008425,
+   "ms": 3344.5,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B34",
+   "in": 70,
+   "out": 8,
+   "usd": 0.00011,
+   "ms": 749.0,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B34",
+   "in": 9723,
+   "out": 177,
+   "usd": 0.010608,
+   "ms": 3051.9,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B35",
+   "in": 61,
+   "out": 8,
+   "usd": 0.000101,
+   "ms": 815.2,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B35",
+   "in": 8195,
+   "out": 118,
+   "usd": 0.008785,
+   "ms": 2497.1,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B36",
+   "in": 62,
+   "out": 6,
+   "usd": 9.2e-05,
+   "ms": 779.1,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B36",
+   "in": 7938,
+   "out": 128,
+   "usd": 0.008578,
+   "ms": 2501.9,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B37",
+   "in": 59,
+   "out": 7,
+   "usd": 9.4e-05,
+   "ms": 757.0,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B37",
+   "in": 8112,
+   "out": 141,
+   "usd": 0.008817,
+   "ms": 2757.7,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B38",
+   "in": 61,
+   "out": 9,
+   "usd": 0.000106,
+   "ms": 746.2,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B38",
+   "in": 8443,
+   "out": 113,
+   "usd": 0.009008,
+   "ms": 2167.5,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B39",
+   "in": 59,
+   "out": 5,
+   "usd": 8.4e-05,
+   "ms": 737.8,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B39",
+   "in": 9293,
+   "out": 66,
+   "usd": 0.009623,
+   "ms": 1526.7,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B40",
+   "in": 54,
+   "out": 28,
+   "usd": 0.000194,
+   "ms": 935.2,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:s2:B40",
+   "in": 8287,
+   "out": 33,
+   "usd": 0.008452,
+   "ms": 1153.2,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O01",
+   "in": 58,
+   "out": 25,
+   "usd": 0.000183,
+   "ms": 906.8,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O01",
+   "in": 8175,
+   "out": 104,
+   "usd": 0.008695,
+   "ms": 1723.8,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O02",
+   "in": 54,
+   "out": 25,
+   "usd": 0.000179,
+   "ms": 898.1,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O02",
+   "in": 6440,
+   "out": 175,
+   "usd": 0.007315,
+   "ms": 2425.7,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O03",
+   "in": 57,
+   "out": 7,
+   "usd": 9.2e-05,
+   "ms": 805.5,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O03",
+   "in": 9312,
+   "out": 114,
+   "usd": 0.009882,
+   "ms": 1927.0,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O04",
+   "in": 54,
+   "out": 4,
+   "usd": 7.4e-05,
+   "ms": 693.1,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O04",
+   "in": 10704,
+   "out": 103,
+   "usd": 0.011219,
+   "ms": 1503.0,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O05",
+   "in": 55,
+   "out": 28,
+   "usd": 0.000195,
+   "ms": 889.4,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O05",
+   "in": 7932,
+   "out": 133,
+   "usd": 0.008597,
+   "ms": 2330.9,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O06",
+   "in": 63,
+   "out": 25,
+   "usd": 0.000188,
+   "ms": 856.7,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O06",
+   "in": 6551,
+   "out": 151,
+   "usd": 0.007306,
+   "ms": 2948.0,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O07",
+   "in": 57,
+   "out": 25,
+   "usd": 0.000182,
+   "ms": 1013.2,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O07",
+   "in": 6575,
+   "out": 114,
+   "usd": 0.007145,
+   "ms": 2396.3,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O08",
+   "in": 57,
+   "out": 6,
+   "usd": 8.7e-05,
+   "ms": 779.0,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O08",
+   "in": 8728,
+   "out": 239,
+   "usd": 0.009923,
+   "ms": 4309.2,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O09",
+   "in": 58,
+   "out": 6,
+   "usd": 8.8e-05,
+   "ms": 841.9,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O09",
+   "in": 8214,
+   "out": 115,
+   "usd": 0.008789,
+   "ms": 2535.4,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O10",
+   "in": 60,
+   "out": 7,
+   "usd": 9.5e-05,
+   "ms": 712.4,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O10",
+   "in": 8394,
+   "out": 230,
+   "usd": 0.009544,
+   "ms": 3067.2,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O11",
+   "in": 58,
+   "out": 7,
+   "usd": 9.3e-05,
+   "ms": 781.4,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O11",
+   "in": 8606,
+   "out": 115,
+   "usd": 0.009181,
+   "ms": 1916.8,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O12",
+   "in": 55,
+   "out": 28,
+   "usd": 0.000195,
+   "ms": 882.2,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O12",
+   "in": 6612,
+   "out": 64,
+   "usd": 0.006932,
+   "ms": 1785.4,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O13",
+   "in": 59,
+   "out": 4,
+   "usd": 7.9e-05,
+   "ms": 748.0,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O13",
+   "in": 7116,
+   "out": 33,
+   "usd": 0.007281,
+   "ms": 1179.2,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O14",
+   "in": 54,
+   "out": 4,
+   "usd": 7.4e-05,
+   "ms": 733.3,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O14",
+   "in": 9007,
+   "out": 50,
+   "usd": 0.009257,
+   "ms": 1220.9,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O15",
+   "in": 52,
+   "out": 28,
+   "usd": 0.000192,
+   "ms": 865.9,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O15",
+   "in": 6056,
+   "out": 384,
+   "usd": 0.007976,
+   "ms": 5418.2,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O16",
+   "in": 52,
+   "out": 25,
+   "usd": 0.000177,
+   "ms": 874.2,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O16",
+   "in": 6528,
+   "out": 445,
+   "usd": 0.008753,
+   "ms": 6825.8,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O17",
+   "in": 58,
+   "out": 4,
+   "usd": 7.8e-05,
+   "ms": 755.5,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O17",
+   "in": 6641,
+   "out": 29,
+   "usd": 0.006786,
+   "ms": 984.0,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O18",
+   "in": 57,
+   "out": 17,
+   "usd": 0.000142,
+   "ms": 864.2,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O18",
+   "in": 8558,
+   "out": 34,
+   "usd": 0.008728,
+   "ms": 1083.4,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O19",
+   "in": 58,
+   "out": 6,
+   "usd": 8.8e-05,
+   "ms": 754.0,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O19",
+   "in": 8746,
+   "out": 35,
+   "usd": 0.008921,
+   "ms": 1122.8,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O20",
+   "in": 54,
+   "out": 5,
+   "usd": 7.9e-05,
+   "ms": 734.0,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O20",
+   "in": 6554,
+   "out": 28,
+   "usd": 0.006694,
+   "ms": 976.8,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O21",
+   "in": 59,
+   "out": 7,
+   "usd": 9.4e-05,
+   "ms": 872.8,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O21",
+   "in": 9942,
+   "out": 78,
+   "usd": 0.010332,
+   "ms": 1598.9,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O22",
+   "in": 62,
+   "out": 6,
+   "usd": 9.2e-05,
+   "ms": 731.6,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O22",
+   "in": 9541,
+   "out": 58,
+   "usd": 0.009831,
+   "ms": 1467.2,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O23",
+   "in": 66,
+   "out": 14,
+   "usd": 0.000136,
+   "ms": 819.1,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O23",
+   "in": 9421,
+   "out": 312,
+   "usd": 0.010981,
+   "ms": 4718.7,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O24",
+   "in": 57,
+   "out": 6,
+   "usd": 8.7e-05,
+   "ms": 734.4,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O24",
+   "in": 8524,
+   "out": 434,
+   "usd": 0.010694,
+   "ms": 5880.1,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O25",
+   "in": 62,
+   "out": 25,
+   "usd": 0.000187,
+   "ms": 891.8,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O25",
+   "in": 6581,
+   "out": 50,
+   "usd": 0.006831,
+   "ms": 1294.0,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O26",
+   "in": 64,
+   "out": 6,
+   "usd": 9.4e-05,
+   "ms": 771.0,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O26",
+   "in": 9294,
+   "out": 57,
+   "usd": 0.009579,
+   "ms": 1475.4,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O27",
+   "in": 57,
+   "out": 25,
+   "usd": 0.000182,
+   "ms": 902.1,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O27",
+   "in": 6776,
+   "out": 115,
+   "usd": 0.007351,
+   "ms": 2262.8,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O28",
+   "in": 56,
+   "out": 8,
+   "usd": 9.6e-05,
+   "ms": 834.1,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O28",
+   "in": 7833,
+   "out": 101,
+   "usd": 0.008338,
+   "ms": 1993.7,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O29",
+   "in": 55,
+   "out": 5,
+   "usd": 8e-05,
+   "ms": 761.7,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O29",
+   "in": 9400,
+   "out": 168,
+   "usd": 0.01024,
+   "ms": 2787.8,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O30",
+   "in": 57,
+   "out": 4,
+   "usd": 7.7e-05,
+   "ms": 714.4,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O30",
+   "in": 8641,
+   "out": 26,
+   "usd": 0.008771,
+   "ms": 1164.5,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O31",
+   "in": 53,
+   "out": 4,
+   "usd": 7.3e-05,
+   "ms": 730.8,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O31",
+   "in": 7158,
+   "out": 52,
+   "usd": 0.007418,
+   "ms": 1304.6,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O32",
+   "in": 53,
+   "out": 25,
+   "usd": 0.000178,
+   "ms": 918.1,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O32",
+   "in": 7279,
+   "out": 176,
+   "usd": 0.008159,
+   "ms": 2842.2,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O33",
+   "in": 52,
+   "out": 29,
+   "usd": 0.000197,
+   "ms": 895.7,
+   "finish": "stop"
+  },
+  {
+   "phase": "q:orig:O33",
+   "in": 6588,
+   "out": 187,
+   "usd": 0.007523,
+   "ms": 2776.8,
+   "finish": "stop"
+  }
+ ],
+ "warnings": [
+  {
+   "logger": "graphrag_sdk.ingestion.extraction_strategies.graph_extraction",
+   "level": "WARNING",
+   "msg": "Step 2 returned invalid JSON for chunk 53cf162d-152d-4d88-a19c-cdeb2678beab"
+  },
+  {
+   "logger": "graphrag_sdk.core.connection",
+   "level": "ERROR",
+   "msg": "Non-transient FalkorDB query failure: ResponseError: Attribute 'embedding' is already indexed"
+  },
+  {
+   "logger": "graphrag_sdk.core.connection",
+   "level": "ERROR",
+   "msg": "Non-transient FalkorDB query failure: ResponseError: Attribute 'embedding' is already indexed"
+  },
+  {
+   "logger": "graphrag_sdk.core.connection",
+   "level": "ERROR",
+   "msg": "Non-transient FalkorDB query failure: ResponseError: Attribute 'embedding' is already indexed"
+  },
+  {
+   "logger": "graphrag_sdk.core.connection",
+   "level": "ERROR",
+   "msg": "Non-transient FalkorDB query failure: ResponseError: Attribute 'text' is already indexed"
+  },
+  {
+   "logger": "graphrag_sdk.core.connection",
+   "level": "ERROR",
+   "msg": "Non-transient FalkorDB query failure: ResponseError: Attribute 'name' is already indexed"
+  }
+ ],
+ "warning_count": 6,
+ "graphs_deleted": {
+  "graphrag_acme": true,
+  "graphrag_acme__ontology": true
+ },
+ "maxrss_mb": 3279
+}

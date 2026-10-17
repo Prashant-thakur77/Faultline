@@ -312,3 +312,104 @@ Written before any of these benches was coded or run. A 6-node throwaway graph (
   - *Q-GATE-3 errors in the pool.* When the drawn deploy's component is the drawn symptom itself, `algo.maxFlow` refuses ("source and sink sets must be disjoint"); the product's gate never asks that. Such pairs are now excluded from the Q-GATE-3 pool (the count excluded is reported), and up to 3 example messages per error class are recorded.
   - *Shared engine.* Other work may run on the same engine. The graphs outside the bench are listed at every step boundary, and a step whose list changed is flagged in the results (its memory delta may include that work).
 - **Amendment 2 (2026-10-17, 21:41 IST, still before the first real run).** With the guard's ceiling shared by both phases, product tenants (about 14 MB each) would use all the headroom by about 150 and leave none for phase B. Phase A therefore stops by design at 50 product tenants (steps 25 → 50), which is enough for a stable per-tenant figure; phase B is unchanged (small tenants up to totals of 250 → 500 → 1,000, under the same guard). `make compact` runs right before the bench, because the engine held about 1.4 GB of `used_memory` for graphs that `GRAPH.MEMORY USAGE` sums to about 40 MB (memory kept from deleted graphs). The engine's `used_memory_rss` growth per tenant is reported next to `used_memory` per kind. `used_memory`, which `maxmemory` limits, includes index allocations that are never touched, so RSS is the physical figure.
+
+## Addendum (2026-10-17, 23:35 IST): company brain vs FalkorDB's GraphRAG-SDK on the same questions (`evals/graphrag_sdk_arm.py`)
+
+Written before any paid call. Two zero-cost development runs came first, and neither is a result. One was a dry run: the corpus build and a cost estimate, with no API call. The other was a smoke run of the whole SDK pipeline against the pinned engine, with a stub model on a throwaway graph that was then deleted. It found the two problems fixed below. Nothing here changes the product, the gate, its templates, weights or the brain. Every number is reported whatever it shows.
+
+- **Arms.**
+  - *FL*: the shipped company brain (`faultline.brain.ask`, the two-stage router, deterministic, no model). It runs on a fresh `GRAPH.COPY` of `golden_acme`, deleted afterwards. Its model spend is 0.
+  - *SDK*: FalkorDB's GraphRAG-SDK 1.4.0 (PyPI), in an isolated venv under `tmp/` built by `scripts/graphrag_sdk_venv.sh`. It is never a product dependency.
+- **SDK configuration** (one configuration, fixed now):
+  - The SDK's default strategies:
+    - `ingest(text=…, document_id=…)` per document;
+    - `SentenceTokenCapChunking` (512 tokens, overlap 2);
+    - `GraphExtraction` with its default `GLiNERExtractor` (`urchade/gliner_medium-v2.1`, local) and the model's verify/relationship step;
+    - the default entity types, with no ontology;
+    - `ExactMatchResolution`;
+    - `finalize()`;
+    - `completion(question)` with the default `MultiPathRetrieval` (text-to-Cypher off) and the default prompts.
+  - Model: `anthropic/claude-haiku-4-5` through the SDK's own `LiteLLM` provider, temperature 0 (the SDK's default; it always sends a temperature).
+  - `max_tokens` 8,192, as a spend guard. LiteLLM's default for this model is 64,000. A truncated response is counted.
+  - Embeddings: the local `BAAI/bge-small-en-v1.5` (384 dimensions, fastembed), the same model Faultline uses. It is plugged in through the SDK's documented `Embedder` extension point, because no OpenAI key is used.
+  - Changes to the SDK. There are exactly two, and both were found by the smoke run:
+    - (1) The two full-text index statements are switched to the DDL form (`CREATE FULLTEXT INDEX FOR (n:Chunk) ON (n.text)` and `… (n:__Entity__) ON (n.name, n.description)`). The procedure form is rejected by 6.0.2 (upstream GraphRAG-SDK issue #344), and the SDK otherwise continues silently with no full-text index.
+    - (2) One instance of the SDK's own default extractor (`GraphExtraction(llm)`, which is exactly what `ingest()` builds) is created once and passed to every `ingest()` call. Left to the SDK, every call builds a new GLiNER extractor and reloads the model, and memory grew until the process was killed.
+  - One trial (N = 1).
+- **What the SDK is fed** (the corpus is built by the script, with a per-document sha256 recorded in the results; about 8,371 words, 52 chunks):
+  - *The brain's 13 source documents*, verbatim from `data/gen/docs/*.md` (acme only):
+    - 5 ADRs: 004, 009, 012, 013, 021;
+    - 5 runbooks: catalog-lock, checkout-degraded, kafka-lag, payment-errors, recs-cache;
+    - 2 chats;
+    - 1 issue.
+  - *The brain's facts as text*: 7 documents rendered by fixed read-only queries on `golden_acme`, one sentence per entity, with ids next to names. All of them are exported from the brain's own graph, not written by hand:
+    - `facts-services`: every Service, Datastore, Table, KPI, Dashboard and Transform, with name, kind, tier and revenue path; every `PROPAGATES_TO` edge, written as "If A fails, B is affected because B depends on A (reason)";
+    - `facts-ownership`: `OWNS` and every `OWNED_AT` period with dates;
+    - `facts-people`: every Person, with role, `MEMBER_OF` periods, `REPORTS_TO`, and active or left (with the date); per component, who `COMMITTED` and how many commits;
+    - `facts-decisions`: every Decision and the one Policy, with title, status, date, `DECIDED` by, `CONSTRAINS`/`FREEZES`, why and `SUPERSEDES`;
+    - `facts-runbooks`: every Runbook (the 5 human ones and the 6 derived ones), with title, valid-from and `RUNBOOK_FOR` targets;
+    - `facts-incidents`: the 40 incidents, each with onset and resolution time, where it started and what it impacted (`AFFECTED`), its causing deploy, who resolved it and the fix (`RESOLVED`, `RESOLVED_BY`), and its postmortem summary;
+    - `facts-customers-slos-flags`: Customers and `CONSUMES`, SLOs and `FOR`, feature flags and `GATES`.
+  - *Not fed* (the brain's graph holds them; none is what these questions ask for):
+    - individual commits, PRs, deploys, files and repos (summarised by the `COMMITTED` counts and causing deploys);
+    - the on-call rota and `COLLABORATES`;
+    - columns, baselines and metric windows;
+    - endpoints;
+    - the router's `IntentExemplar` nodes;
+    - `Doc` nodes (their files are fed);
+    - `CALLS` and `DEPENDS_ON` (the failure direction is `PROPAGATES_TO`).
+- **Questions.**
+  - *Primary*: blind set 2, `data/brain/heldout_blind2.truth.json` (sha256 `c0cc4341…c3139`), 40 questions, 3 of them unanswerable. No router or template was ever tuned on it.
+  - *Secondary*: the original 33, `data/brain/questions.truth.json` (sha256 `ccf91e6a…68db`), 6 of them unanswerable. They are run only if the spend projection allows (below).
+  - The worker gets only ids and question texts. The grader alone reads the truth files.
+- **Grading** (the same content rule as `evals/brain_heldout.py`: expected ids or entity names cited):
+  - *Cited ids, FL*: the ids its citation guard accepted.
+  - *Cited ids, SDK*: every node id of `golden_acme` written in the answer, plus every id whose exact name or title is written in it. Ids exclude `IntentExemplar` and `Meta`. Names come from Service, Datastore, Table, KPI, Dashboard, Team, Person, Customer and SLO; titles from Decision, Policy and Runbook; only names of 3 characters or more count. Matching is whole-word and case-insensitive, and hyphen, underscore and space count as one separator, so "fraud detection" = `fraud-detection`. Every name → id mapping is reported per answer, and the score with written ids only (no name mapping) is reported too.
+  - *Answerable*: correct when every expected id is cited. FL also needs its guard to pass, as in `brain_heldout`.
+  - *Unanswerable*:
+    - FL: no citations (`brain_heldout`'s rule).
+    - SDK: the answer says the information is not there. A fixed phrase list (`ABSTAIN` in the script): "no information", "not mentioned", "doesn't specify", "there is no", "could not find", "insufficient", …
+    - Strict variant, reported: that phrase and nothing cited.
+  - *Symmetry checks*, both reported:
+    - the SDK's text rule applied to FL's answer text;
+    - the phrase rule applied to both arms.
+- **Metrics, per arm and set.**
+  - Correct k/n with a Wilson 95 % interval.
+  - Answerable correct, and unanswerable answered honestly k/3 (strict too).
+  - *Names its sources*: an answerable answer writes at least one graph id.
+  - *Every cited id exists*: answers with an id-shaped token (`ADR-n`, `p-nnn`, `team-…`, `rb-…`, `inc-…`, `pm-…`, `slo-…`, `cust-…`, `doc-…`, `dep-n`, `pr-n`, `POL-…`) that is not in the graph.
+  - False abstentions on answerable questions.
+  - Citation precision (expected ∩ cited / cited).
+  - Latency p50 / p95 per question (wall time; the SDK's includes its two model calls).
+  - Tokens and US$ from the API's own usage fields: ingestion total, seconds per document, per question.
+  - The SDK graph's size (nodes by label, relationships by type).
+  - Paired outcomes on the same questions (both, FL only, SDK only, neither) and an exact two-sided McNemar p.
+  - Per question kind.
+- **Budget and stopping rule.**
+  - The owner approved US$1.50 for this eval. The hard cap is US$1.50 across ingestion and all questions.
+  - Every model call reserves its worst case (input at 2.5 characters per token, plus `max_tokens` of output) before it is sent. A call that would pass the cap is refused unsent, so real spend cannot pass the cap. Real usage is added from each response.
+  - Price: claude-haiku-4-5, US$1 per million input tokens and US$5 per million output tokens.
+  - Projections stop the run before money is wasted:
+    - during ingestion: spent + the rest of ingestion at the real cost per chunk so far + the primary set's estimate;
+    - before each set and each question: spent + the mean real cost per answered question (the estimate before the first answer) × the questions left.
+  - The dry run's estimate is US$0.69 for ingestion and US$0.51 for set 2, so the primary set is planned. The original 33 are estimated at US$0.42, so they run only if the real spend leaves room. Otherwise they are reported as not run.
+  - The run starts only with at least 4.5 GB available. The worker runs under `scripts/memguard.sh` 4,000 MB (the smoke run's peak was 3,163 MB).
+  - One run. An infrastructure failure (FalkorDB down, an API outage) is re-run once with its reason logged, within the same cap. Nothing is re-run because of its result.
+- **Clean-comparison criteria** (for a README sentence):
+  - the run finished without a budget stop or a refused call;
+  - no document failed to ingest;
+  - the SDK's step-2 extraction failed on at most 5 % of chunks;
+  - every primary question got an answer;
+  - the SDK's graphs were deleted.
+  - Otherwise the result goes to "What didn't work", with no README sentence.
+- **Expectation, stated now.**
+  - The SDK will do best on single-fact lookups (owner now, a runbook, a decision's text) and worst on multi-hop and set questions: blast radius beyond one hop, revenue-path services without a runbook, ownership as of a date, active decisions whose deciders have all left.
+  - It will name its sources less often than FL, and fabricated ids will be rare.
+  - It will decline most unanswerable questions, because its default prompt says to; that abstention is prompt-level, not enforced by a query.
+  - Guess: SDK 12–22 of 40, FL at its last recorded 24 of 40.
+- **Known limits, stated now.**
+  - One model, the SDK's default prompts and no ontology. A tuned ontology, text-to-Cypher, or another model or embedder could score differently.
+  - Extraction quality is part of what is measured. GLiNER's window is 384 words, and the SDK's 512-token chunks exceed it; the smoke run logged truncation.
+  - The facts documents are our rendering of the brain's graph. The SDK reads them as text, which is the point of the comparison but also a choice of wording.
+  - Single trial.
+- **Amendment (2026-10-17, about 23:45 IST, before the run; no paid call made yet).** The SDK's provider retries a failed call 3 times with 1–2 s pauses. That is too short for per-minute rate limits, and a rate-limited extraction call silently falls back to entities with no relationships. So the harness's call wrapper retries the same request itself, on rate-limit, overload, server or connection errors only. It waits 5, 10, 20, 40 and 60 s (at most 5 retries) before handing the error to the SDK. Failed attempts are not billed. The number of retries is reported (`graphrag.transport_retries`). The prompts, strategies and the cap are unchanged.

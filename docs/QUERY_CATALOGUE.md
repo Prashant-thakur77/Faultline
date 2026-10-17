@@ -4,7 +4,7 @@
 
 **PROFILE p50 / p95** = engine milliseconds from `GRAPH.PROFILE` (nearest-rank percentiles of 20 runs; `scripts/profile_templates.py`) for the templates the S1/S2 runs executed, with those runs' recorded params (measured by the eval harness, read from `evals/results/latest.json`). Blank = not executed in those runs; `scratch` = runs on a temporary projection.
 
-<!-- claim:repo.templates -->225<!-- /claim --> templates. `{algo:x}` is resolved to the procedure name recorded by `make smoke` (`graph/algo/resolved.json`).
+<!-- claim:repo.templates -->226<!-- /claim --> templates. `{algo:x}` is resolved to the procedure name recorded by `make smoke` (`graph/algo/resolved.json`).
 
 ## Gate and proof
 
@@ -57,7 +57,7 @@
 
 | id | purpose | uses | PROFILE p50 (ms) | p95 (ms) | file |
 |---|---|---|---|---|---|
-| `Q-ACT-1` | the plan of an incident: options, the chosen/approved/rejected action, verdicts | Cypher |  |  | [actions.cypher](../backend/faultline/graph/templates/actions.cypher) |
+| `Q-ACT-1` | the plan of an incident: options in plan order (their integer rank; options added later without one, and options of graphs written before ranks existed, after them by id), the chosen/approved/rejected action, verdicts, a guideline override | Cypher |  |  | [actions.cypher](../backend/faultline/graph/templates/actions.cypher) |
 | `Q-ACT-APPROVER` | how an approved action ended and who approved it: the incident stage, the action verdict and explanation, and the approver on its Approval (a person, or contract:<id> for a standing approval); read after the execute job or the reconciler to decide whether a human must be paged | Cypher |  |  | [action_approver.cypher](../backend/faultline/graph/templates/action_approver.cypher) |
 | `Q-ACT-INTENT` | execute preconditions: the action, its approval-bound plan hash and spec, and the intent's state, owner run and lease (lease_live on the engine clock: an expired lease fences the holder off before it touches the outside world) | Cypher |  |  | [action_intent.cypher](../backend/faultline/graph/templates/action_intent.cypher) |
 | `Q-CAUSE-1` | the cause the gate confirmed for an incident (the confirmed Hypothesis), newest first | Cypher |  |  | [confirmed_cause.cypher](../backend/faultline/graph/templates/confirmed_cause.cypher) |
@@ -220,6 +220,7 @@
 | `Q-SCHEMA-2` | schema introspection: the (from-label, to-label) endpoint pairs of every relationship type, with counts, over a bounded edge scan (first 100000 edges; complete when the sampled total equals Q-SCHEMA-1 relCount) | Cypher |  |  | [schema_rel_pairs.cypher](../backend/faultline/graph/templates/schema_rel_pairs.cypher) |
 | `Q-SCHEMA-3` | schema introspection: property keys per label with how many sampled nodes carry each, over a bounded node scan (first 20000 nodes; complete when the sampled total equals Q-SCHEMA-1 nodeCount) | Cypher |  |  | [schema_props.cypher](../backend/faultline/graph/templates/schema_props.cypher) |
 | `Q-SCHEMA-4` | schema introspection: the indexes on each label (range / full-text / vector per property) and their status (db.indexes) | Cypher |  |  | [schema_indexes.cypher](../backend/faultline/graph/templates/schema_indexes.cypher) |
+| `Q-SCHEMA-5` | schema introspection: the engine-enforced constraints on the graph (db.constraints: UNIQUE and MANDATORY per label or relationship type, their properties and status, OPERATIONAL once built), the invariants FalkorDB itself refuses to break (graph/constraints.py) | Cypher |  |  | [schema_constraints.cypher](../backend/faultline/graph/templates/schema_constraints.cypher) |
 
 ## Telemetry and baselines
 

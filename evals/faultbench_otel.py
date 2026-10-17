@@ -530,6 +530,7 @@ def run(reason: str, only: list[str] | None = None) -> dict:
             f"{[x['outcome'] for x in pre['incidents']]}) T+={row['tplus']['tied']}")
         if (i + 1) % 10 == 0:
             harness._relieve_engine(f"faultbench-otel-{i + 1}", pressure)
+    rows = {wid: r for wid, r in rows.items() if (RAW / f"{wid}.json").exists()}   # recordings set aside are listed below
     out = {"bench": "FaultBench-OTel", "seed": SEED, "demo": DEMO_TAG, "reason": reason,
            "finished": time.strftime("%Y-%m-%dT%H:%M:%S"), "rows": sorted(rows.values(), key=lambda r: r["wid"]),
            "engine_pressure": pressure, "seconds": round(time.perf_counter() - t0, 1),

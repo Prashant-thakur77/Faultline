@@ -343,6 +343,7 @@ def audit_markdown(out: dict, s: dict) -> list[str]:
     L += faultbench_otel_markdown(s)
     L += oncall_markdown(s)
     L += learn_markdown(s)
+    L += graphrag_markdown(s)
     L += tenants_markdown(s)   # M20 Wave B
     L += algo10k_markdown(s)
     return L
@@ -554,6 +555,7 @@ def side_summaries(s: dict) -> dict:
     k.update(algo10k_keys())
     k.update(t2_keys())
     k.update(vector_recall_keys())
+    k.update(graphrag_keys())   # GraphRAG-SDK comparison (PREREGISTRATION 2026-10-17 23:35 IST)
     rc = _side("robustness_curves.json")
     if rc:
         for knob, levels in rc["curves"].items():
@@ -783,7 +785,9 @@ def faultbench_otel_keys(x: dict | None = None, dry: dict | None = None) -> dict
     k["otel.accepted_nc.bystander"] = sum(1 for r, c in acc if c != r.get("cause"))
     for arm in ("faultline", "faultline_prefix"):   # fault windows the product called NO_INCIDENT (a miss, not an abstention)
         k[f"otel.{arm}.no_incident_fault"] = sum(r[arm]["no_incident"] for r in faults)
-    k["otel.restarts_seen"] = sum(1 for r in rows for h in (r.get("health") or {}).values() if h.get("restarts"))
+    # windows whose end-of-slot container snapshot shows a restarted or OOM-killed container (the stack as it ran)
+    k["otel.windows_after_restart"] = sum(1 for r in rows if any(h.get("restarts") or h.get("oom")
+                                                                 for h in (r.get("health") or {}).values()))
     return k
 
 
@@ -1003,6 +1007,129 @@ def learn_markdown(s: dict) -> list[str]:
               f"gate verdicts identical in {s['learn.recall.gate_identical']} of {s['learn.recall.trials']}."]
     if s.get("t2.items"):
         L += ["", f"T2 go/no-go (evals/t2_gonogo.py): {s['t2.green']} of {s['t2.items']} green."]
+    return L
+
+
+def graphrag_keys(x: dict | None = None, audit: dict | None = None) -> dict:
+    """graphrag.* (PREREGISTRATION addendum 2026-10-17 23:35 IST): the company brain (fl) against FalkorDB's
+    GraphRAG-SDK (sdk) on the same questions (evals/graphrag_sdk_arm.py → evals/results/graphrag_sdk.json): per set
+    and arm, correct k/n (Wilson 95 %), honest refusals, sources named, fabricated ids, latency, tokens and US$; the
+    SDK's ingestion cost and graph size; paired outcomes; whether the run meets the pre-registered clean criteria."""
+    if x is None:
+        x, audit = _side("graphrag_sdk.json"), _side("graphrag_sdk_audit.json") if audit is None else audit
+    if not x or not x.get("sets"):
+        return {}
+    cfg, ing, kg, me = x.get("config") or {}, x.get("ingest") or {}, x.get("kg") or {}, x.get("meter") or {}
+    cost = ing.get("cost") or {}
+    labels, rels = kg.get("labels") or {}, kg.get("relationships") or {}
+    deleted = x.get("graphs_deleted") or {}
+    k: dict = {"graphrag.model": cfg.get("model"), "graphrag.sdk_version": cfg.get("sdk_version"),
+               "graphrag.cap_usd": cfg.get("cap_usd"),
+               "graphrag.corpus.docs": len((x.get("corpus") or {}).get("docs") or []),
+               "graphrag.corpus.documents": (x.get("corpus") or {}).get("documents"),
+               "graphrag.corpus.facts_docs": (x.get("corpus") or {}).get("facts_docs"),
+               "graphrag.corpus.words": (x.get("corpus") or {}).get("words"),
+               "graphrag.corpus.chunks": x.get("chunks"),
+               "graphrag.ingest.seconds": ing.get("seconds"), "graphrag.ingest.s_per_doc": ing.get("s_per_doc"),
+               "graphrag.ingest.usd": cost.get("usd"), "graphrag.ingest.tokens_in": cost.get("in"),
+               "graphrag.ingest.tokens_out": cost.get("out"), "graphrag.ingest.calls": cost.get("calls"),
+               "graphrag.ingest.doc_errors": len(ing.get("doc_errors") or []),
+               "graphrag.ingest.step_failures": x.get("step_failures"),
+               "graphrag.kg.entities": labels.get("__Entity__"), "graphrag.kg.chunks": labels.get("Chunk"),
+               "graphrag.kg.relates": rels.get("RELATES"),
+               "graphrag.usd_total": round(me["spent_usd"], 4) if me.get("spent_usd") is not None else None,
+               "graphrag.calls": me.get("calls"), "graphrag.refused": me.get("refused"),
+               "graphrag.truncated": me.get("truncated"), "graphrag.transport_retries": me.get("transport_retries"),
+               "graphrag.stopped": bool(x.get("stopped")),
+               "graphrag.graphs_deleted": bool(deleted) and all(deleted.values())}
+    for s, v in x["sets"].items():
+        p = f"graphrag.{s}"
+        k.update({f"{p}.questions": v["questions"], f"{p}.answerable": v["answerable"],
+                  f"{p}.unanswerable": v["unanswerable"],
+                  f"{p}.run": bool((v.get("sdk") or {}).get("complete"))})
+        for arm in ("fl", "sdk"):
+            a = v.get(arm) or {}
+            if not a.get("complete"):
+                k[f"{p}.{arm}.answered"] = a.get("answered", 0)
+                continue
+            for m in ("correct", "answerable_correct", "unanswerable_honest", "unanswerable_honest_strict",
+                      "names_sources", "answers_with_fabricated_ids", "false_abstain", "ms_p50", "ms_p95",
+                      "precision_mean", "correct_textrule", "correct_ids_only", "answers_with_name_mapping", "errors",
+                      "usd", "usd_per_question", "tokens_in", "tokens_out"):
+                if m in a:
+                    k[f"{p}.{arm}.{m}"] = a[m]
+            k[f"{p}.{arm}.s_p50"] = round(a["ms_p50"] / 1000, 2) if a.get("ms_p50") is not None else None
+            k.update(wilson_keys(f"{p}.{arm}.correct", a["correct"], v["questions"]))
+        for m, val in (v.get("paired") or {}).items():
+            k[f"{p}.paired.{m}"] = val
+        if (v.get("sdk") or {}).get("complete"):
+            for kind, e in (v.get("by_kind") or {}).items():
+                k.update({f"{p}.kind.{kind}.{m}": e[m] for m in ("n", "fl", "sdk")})
+    for sk in x.get("skipped_sets") or []:
+        k[f"graphrag.{sk['set']}.skipped_projection_usd"] = sk.get("projection_usd")
+    au = audit or {}   # post hoc, NOT pre-registered: credited answers with a wrong or missing key claim
+    for arm in ("fl", "sdk") if au else ():
+        a, s = au[arm], au["set"]
+        k[f"graphrag.{s}.audit.{arm}.wrong_claim"] = len(a["wrong_or_missing_key_claim"])
+        k[f"graphrag.{s}.audit.{arm}.wrong_claim_ids"] = ",".join(w["id"] for w in a["wrong_or_missing_key_claim"]) or "none"
+        k[f"graphrag.{s}.audit.{arm}.credited_and_right"] = a["credited"] - len(a["wrong_or_missing_key_claim"])
+    n_chunks = k["graphrag.kg.chunks"] or k["graphrag.corpus.chunks"] or 0
+    prim = x["sets"].get("s2") or {}
+    k["graphrag.clean"] = bool(not x.get("stopped") and not me.get("refused") and not k["graphrag.ingest.doc_errors"]
+                               and n_chunks and (x.get("step_failures") or 0) <= 0.05 * n_chunks
+                               and (prim.get("sdk") or {}).get("complete") and not (prim.get("sdk") or {}).get("errors")
+                               and k["graphrag.graphs_deleted"])
+    return k
+
+
+def graphrag_markdown(s: dict) -> list[str]:
+    if s.get("graphrag.s2.questions") is None:
+        return []
+    L = ["", "## Company brain vs FalkorDB's GraphRAG-SDK, same questions (evals/graphrag_sdk_arm.py)", "",
+         f"GraphRAG-SDK {s['graphrag.sdk_version']} with its default ingestion and retrieval, on "
+         f"{s['graphrag.model']}, built its own graph in FalkorDB from the brain's {s['graphrag.corpus.documents']} "
+         f"source documents and its facts as {s['graphrag.corpus.facts_docs']} text documents "
+         f"({s['graphrag.corpus.words']} words): {s['graphrag.kg.entities']} entities, {s['graphrag.kg.relates']} "
+         f"relationships, {s['graphrag.kg.chunks']} chunks, in {s['graphrag.ingest.seconds']} s "
+         f"(US${round(s['graphrag.ingest.usd'] or 0, 4)}). Total model spend US${s['graphrag.usd_total']} of a US${s['graphrag.cap_usd']} cap. "
+         f"Clean by the pre-registered criteria: {s['graphrag.clean']}.", ""]
+    for sid, title in (("s2", "Blind set 2 (primary)"), ("orig", "Original 33 (secondary)")):
+        p = f"graphrag.{sid}"
+        if s.get(f"{p}.questions") is None:
+            continue
+        if not s.get(f"{p}.run"):
+            L += [f"{title}: not run by the SDK (projected US${s.get(f'{p}.skipped_projection_usd')} over the cap)."
+                  if s.get(f"{p}.skipped_projection_usd") is not None else f"{title}: SDK incomplete.", ""]
+            continue
+        n = s[f"{p}.questions"]
+        L += [f"**{title}** ({n} questions, {s[f'{p}.unanswerable']} unanswerable)", "",
+              "| | Faultline brain | GraphRAG-SDK |", "|---|---|---|"]
+        row = lambda lab, m: L.append(f"| {lab} | {s.get(f'{p}.fl.{m}')} | {s.get(f'{p}.sdk.{m}')} |")  # noqa: E731
+        L.append(f"| correct of {n} [95 % CI] | {_kn(s, f'{p}.fl.correct')} | {_kn(s, f'{p}.sdk.correct')} |")
+        row("answerable correct", "answerable_correct")
+        row(f"unanswerable declined (of {s[f'{p}.unanswerable']})", "unanswerable_honest")
+        row("… declined and nothing cited", "unanswerable_honest_strict")
+        row(f"answers naming a source id (of {s[f'{p}.answerable']})", "names_sources")
+        row("answers with a non-existent id", "answers_with_fabricated_ids")
+        row("false refusals on answerable questions", "false_abstain")
+        row("citation precision (mean)", "precision_mean")
+        L.append(f"| latency p50 / p95 ms | {s.get(f'{p}.fl.ms_p50')} / {s.get(f'{p}.fl.ms_p95')} | "
+                 f"{s.get(f'{p}.sdk.ms_p50')} / {s.get(f'{p}.sdk.ms_p95')} |")
+        L.append(f"| model US$ (per question) | 0 | {s.get(f'{p}.sdk.usd')} ({s.get(f'{p}.sdk.usd_per_question')}) |")
+        L += ["", f"Paired: both right {s.get(f'{p}.paired.both')}, brain only {s.get(f'{p}.paired.fl_only')}, SDK only "
+                  f"{s.get(f'{p}.paired.sdk_only')}, neither {s.get(f'{p}.paired.neither')} (exact McNemar p "
+                  f"{s.get(f'{p}.paired.mcnemar_p')}). Symmetry checks: the SDK's text rule on the brain's answers "
+                  f"{s.get(f'{p}.fl.correct_textrule')}/{n}; the SDK with written ids only (no name mapping) "
+                  f"{s.get(f'{p}.sdk.correct_ids_only')}/{n}.", ""]
+        kinds = sorted({x.split(".")[3] for x in s if x.startswith(f"{p}.kind.")})
+        if kinds:
+            L += ["By question kind (brain / SDK of n): " + "; ".join(
+                f"{kd} {s[f'{p}.kind.{kd}.fl']}/{s[f'{p}.kind.{kd}.sdk']} of {s[f'{p}.kind.{kd}.n']}" for kd in kinds) + ".", ""]
+        if s.get(f"{p}.audit.sdk.wrong_claim") is not None:
+            L += [f"Post hoc, not pre-registered (evals/results/graphrag_sdk_audit.json): credited answers that also state "
+                  f"something wrong or leave out the key fact: SDK {s[f'{p}.audit.sdk.wrong_claim']} "
+                  f"({s[f'{p}.audit.sdk.wrong_claim_ids']}), brain {s[f'{p}.audit.fl.wrong_claim']}. Credited and right: "
+                  f"SDK {s[f'{p}.audit.sdk.credited_and_right']}/{n}, brain {s[f'{p}.audit.fl.credited_and_right']}/{n}.", ""]
     return L
 
 

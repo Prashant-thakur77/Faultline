@@ -1,0 +1,21 @@
+{
+ "what": "Post-hoc reading of every answer the pre-registered content rule credited on blind set 2 (evals/results/graphrag_sdk.json), for both arms: does the answer also state something wrong, or leave out the key fact the question asks for? NOT pre-registered; the author's reading, written after the run; each verdict is checkable against the graph and the answer text in graphrag_sdk.json.",
+ "written": "2026-10-18T00:40:00+05:30",
+ "set": "s2",
+ "fl": {
+  "credited": 24,
+  "wrong_or_missing_key_claim": [],
+  "notes": {
+   "B23": "answered for shipping (the neighbouring service the name resolved to) instead of the quote calculator; its conclusion that checkout is affected holds, so not counted as a wrong claim"
+  }
+ },
+ "sdk": {
+  "credited": 32,
+  "wrong_or_missing_key_claim": [
+   {"id": "B04", "why": "says Fabian Driftwood (p-032) 'is still around ... an active engineer'; in the graph p-032 has left (active false)"},
+   {"id": "B15", "why": "does not say that the only decider of ADR-004, Soren Orrinwood (p-019), has left, though the question asks whether they can be asked"},
+   {"id": "B17", "why": "its first line names 'Dorian Marrowby and Juno Pellucid'; Juno Pellucid (p-036) did not decide ADR-012 (the same answer later names Vesna Hollowell correctly)"},
+   {"id": "B19", "why": "says it cannot tell which revenue-path components have no playbook; credited only because it lists every revenue-path service under its owner"}
+  ]
+ }
+}
