@@ -29,7 +29,7 @@ export interface QueryRow extends QueryStats {
 }
 
 export interface RecentQuery {
-  /** Epoch ms (the engine records whole seconds). */
+  /** Epoch ms: the stream entry id's millisecond when the server sends it (`at_ms`), else "Received at" (whole s). */
   at: EpochMs | null;
   id: string;
   kind: "template" | "write" | null;
@@ -48,6 +48,9 @@ export interface Telemetry {
   entries: number;
   from: EpochMs | null;
   to: EpochMs | null;
+  /** p50 / p95 total ms over every entry of the window, mapped or not (computed by the server over the entries). */
+  overallP50: number | null;
+  overallP95: number | null;
   queries: QueryRow[];
   /** Ad-hoc / dynamic queries (guarded text2cypher, the official MCP server, operators): counted, never shown. */
   unmapped: QueryStats;
@@ -70,11 +73,23 @@ export interface GraphMemory {
 
 export type GraphRole = "tenant" | "golden" | "oncall" | "audit" | "room" | "other";
 
+/** The declared engine-enforced invariants (graph/constraints.py) the engine reports on one graph (db.constraints). */
+export interface GraphConstraints {
+  declared: number;
+  operational: number;
+  pending: number;
+  missing: number;
+  /** False for the append-only audit log, which carries no schema (so 0 there is expected, not a failure). */
+  expected: boolean;
+}
+
 export interface GraphInsight {
   name: string;
   role: GraphRole;
   memory: GraphMemory;
   telemetry: Telemetry;
+  /** null: not reported (an older server, or the engine refused the read): never shown as enforced. */
+  constraints: GraphConstraints | null;
 }
 
 export interface EngineConfig {
@@ -89,14 +104,17 @@ export interface EngineConfig {
 
 export interface EngineInsight {
   tenant: string;
+  /** The pinned engine (graph/algo/resolved.json); null from a server that does not send it. */
+  engine: { version: string | null; digest: string | null } | null;
   load: { running: number | null; waiting: number | null };
   config: EngineConfig;
   roomsNotReported: number;
   source: string | null;
   privacy: string | null;
   graphs: GraphInsight[];
-  /** The same aggregation over every graph above (no recent list: the tail merges the graphs' own). */
-  templates: Omit<Telemetry, "recent">;
+  /** The same aggregation over every graph above; `recent` is the server's merge of the graphs' streams (newest 20,
+   * to the millisecond), null from a server that does not send it (the tail then merges the graphs' own). */
+  templates: Omit<Telemetry, "recent"> & { recent: RecentQuery[] | null };
 }
 
 // ------------------------------------------------------------------ readers (never invent a value)
@@ -146,20 +164,13 @@ function stats(o: Obj): QueryStats {
   };
 }
 
-function telemetry(raw: unknown, graph: string): Telemetry {
-  const t = isObj(raw) ? raw : {};
-  const queries = (Array.isArray(t.queries) ? t.queries : [])
-    .filter(isObj)
-    .flatMap((q) => {
-      const id = str(q.id);
-      return id ? [{ id, kind: kindOf(q.kind), ...stats(q) }] : [];
-    });
-  const recent = (Array.isArray(t.recent) ? t.recent : []).filter(isObj).flatMap((r) => {
+function recentList(raw: unknown, graph: string): RecentQuery[] {
+  return (Array.isArray(raw) ? raw : []).filter(isObj).flatMap((r) => {
     const id = str(r.id);
     return id
       ? [
           {
-            at: secs(r.at),
+            at: secs(r.at_ms) ?? secs(r.at),
             id,
             kind: kindOf(r.kind),
             totalMs: num(r.total_ms),
@@ -169,18 +180,38 @@ function telemetry(raw: unknown, graph: string): Telemetry {
             cache: bool(r.cache),
             write: bool(r.write),
             timeout: bool(r.timeout),
-            graph,
+            graph: str(r.graph) ?? graph,
           },
         ]
       : [];
   });
+}
+
+function constraintsOf(v: unknown): GraphConstraints | null {
+  if (!isObj(v)) return null;
+  const declared = num(v.declared);
+  const operational = num(v.operational);
+  if (declared === null || operational === null) return null;
+  return { declared, operational, pending: num(v.pending) ?? 0, missing: num(v.missing) ?? 0, expected: v.expected !== false };
+}
+
+function telemetry(raw: unknown, graph: string): Telemetry {
+  const t = isObj(raw) ? raw : {};
+  const queries = (Array.isArray(t.queries) ? t.queries : [])
+    .filter(isObj)
+    .flatMap((q) => {
+      const id = str(q.id);
+      return id ? [{ id, kind: kindOf(q.kind), ...stats(q) }] : [];
+    });
   return {
     entries: num(t.entries) ?? 0,
     from: secs(t.from),
     to: secs(t.to),
+    overallP50: num(t.total_ms_p50),
+    overallP95: num(t.total_ms_p95),
     queries,
     unmapped: stats(isObj(t.unmapped) ? t.unmapped : {}),
-    recent,
+    recent: recentList(t.recent, graph),
   };
 }
 
@@ -234,12 +265,20 @@ export function parseInsight(raw: unknown): EngineInsight {
     .filter(([, v]) => isObj(v))
     .map(([name, v]) => {
       const g = v as Obj;
-      return { name, role: graphRole(name, tenant), memory: memory(g.memory, g.memory_mb), telemetry: telemetry(g.telemetry, name) };
+      return {
+        name,
+        role: graphRole(name, tenant),
+        memory: memory(g.memory, g.memory_mb),
+        telemetry: telemetry(g.telemetry, name),
+        constraints: constraintsOf(g.constraints),
+      };
     })
     .sort((a, b) => ROLE_ORDER[a.role] - ROLE_ORDER[b.role] || a.name.localeCompare(b.name));
   const all = telemetry(raw.templates, "");
+  const eng = isObj(raw.engine) ? raw.engine : null;
   return {
     tenant,
+    engine: eng ? { version: str(eng.version), digest: str(eng.digest) } : null,
     load: { running: num(load.running), waiting: num(load.waiting) },
     config: {
       queryMemCapacity: num(cfg.QUERY_MEM_CAPACITY),
@@ -254,7 +293,16 @@ export function parseInsight(raw: unknown): EngineInsight {
     source: str(raw.source),
     privacy: str(raw.privacy),
     graphs,
-    templates: { entries: all.entries, from: all.from, to: all.to, queries: all.queries, unmapped: all.unmapped },
+    templates: {
+      entries: all.entries,
+      from: all.from,
+      to: all.to,
+      overallP50: all.overallP50,
+      overallP95: all.overallP95,
+      queries: all.queries,
+      unmapped: all.unmapped,
+      recent: Array.isArray(raw.templates.recent) ? all.recent : null,
+    },
   };
 }
 
@@ -276,7 +324,25 @@ export function mergeRecent(graphs: GraphInsight[], n = 20): RecentQuery[] {
     .map((x) => x.r);
 }
 
-/** The verdict line's numbers, all from the response (sums of counts; no percentile is combined across ids). */
+/** The live tail's rows: the server's own merge across graphs when it sends one, else each graph's list merged here. */
+export function tailRows(d: EngineInsight, n = 20): RecentQuery[] {
+  return d.templates.recent ? d.templates.recent.slice(0, n) : mergeRecent(d.graphs, n);
+}
+
+/** Constraints over the graphs that are expected to carry them (the audit log is not): the fewest enforced on any of
+ * them, and the graphs below the declared count. null when no graph reported its constraints. */
+export function constraintSummary(graphs: GraphInsight[]) {
+  const withC = graphs.filter((g) => g.constraints?.expected);
+  if (!withC.length) return null;
+  const declared = Math.max(...withC.map((g) => g.constraints!.declared));
+  const enforced = Math.min(...withC.map((g) => g.constraints!.operational));
+  const short = withC.filter((g) => g.constraints!.operational < g.constraints!.declared).map((g) => g.name);
+  const unreported = graphs.filter((g) => g.constraints === null).map((g) => g.name);
+  return { declared, enforced, graphs: withC.length, short, unreported, notExpected: graphs.filter((g) => g.constraints && !g.constraints.expected).map((g) => g.name) };
+}
+
+/** The verdict line's numbers, all from the response (sums of counts; no percentile is combined across ids: the
+ * overall p50 / p95 are the server's, over the entries). */
 export function insightSummary(d: EngineInsight) {
   const t = d.templates;
   const rows = t.queries;
@@ -300,6 +366,8 @@ export function insightSummary(d: EngineInsight) {
     slowest,
     cachePct,
     ids: rows.length,
+    overallP50: t.overallP50,
+    overallP95: t.overallP95,
   };
 }
 

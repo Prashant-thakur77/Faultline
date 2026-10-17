@@ -94,7 +94,8 @@ export function EngineVerdict({
   at: number | null;
 }) {
   const status = useAppStatus().status;
-  const version = status?.engine?.engine ?? null;
+  // the engine names itself in the insight response; /api/status only for a server that does not
+  const version = d?.engine?.version ?? status?.engine?.engine ?? null;
   let icon = <LoaderCircle aria-hidden className="size-6 text-zinc-400 motion-safe:animate-spin" />;
   let head = "Reading FalkorDB's own memory and telemetry…";
   let tone = "bg-zinc-600";
@@ -120,7 +121,18 @@ export function EngineVerdict({
           <>
             {fmtInt(s.entries)} quer{s.entries === 1 ? "y" : "ies"}
             {s.windowMs !== null ? ` in the last ${fmtWindow(s.windowMs)}` : ""}
-            {s.busiest ? (
+            {s.overallP50 !== null ? (
+              <>
+                {" · "}p50 {fmtEngineMs(s.overallP50)}, p95 {fmtEngineMs(s.overallP95)}
+                {s.busiest ? (
+                  <>
+                    {" · busiest "}
+                    <span className="font-mono text-zinc-200">{s.busiest.id}</span>
+                  </>
+                ) : null}
+              </>
+            ) : s.busiest ? (
+              // a server without the overall percentiles: the busiest template's own
               <>
                 {" · busiest "}
                 <span className="font-mono text-zinc-200">{s.busiest.id}</span> p50 {fmtEngineMs(s.busiest.totalP50)}, p95{" "}

@@ -154,13 +154,19 @@ def _entries(graph: str, count: int) -> list[dict[str, Any]]:
     tidx, widx = _template_index(), _writer_index()
     out = []
     for item in raw:
+        # the stream entry id is "<ms>-<seq>": when the engine recorded the entry, to the millisecond (finer than
+        # "Received at", whole seconds), with a sequence number that orders entries within one millisecond
+        sid = _s(item[0]) if isinstance(item, (list, tuple)) and item else ""
+        ms, _, seq = sid.partition("-")
         fields = item[1] if isinstance(item, (list, tuple)) else {}
         if isinstance(fields, (list, tuple)):        # a RESP2 flat [k, v, k, v] reply
             fields = {fields[i]: fields[i + 1] for i in range(0, len(fields) - 1, 2)}
         f = {_s(k): _s(v) for k, v in fields.items()}
         q = _norm(f.get("Query", ""))
         qid = tidx.get(q) or widx.get(q)
-        e: dict[str, Any] = {"at": int(float(f.get("Received at") or 0)), "id": qid,
+        e: dict[str, Any] = {"at": int(float(f.get("Received at") or 0)),
+                             "at_ms": int(ms) if ms.isdigit() else None, "_seq": int(seq) if seq.isdigit() else 0,
+                             "id": qid,
                              "kind": "template" if q in tidx else "write" if q in widx else None,
                              "cache": f.get("Utilized cache") == "1", "write": f.get("Write") == "1",
                              "timeout": f.get("Timeout") == "1"}
@@ -191,10 +197,24 @@ def _aggregate(entries: list[dict[str, Any]]) -> dict[str, Any]:
     rows = [{"id": k, "kind": v[0]["kind"], **stats(v)} for k, v in by.items()]
     rows.sort(key=lambda r: (-r["n"], r["id"]))
     ats = [e["at"] for e in entries if e["at"]]
+    totals = [e["total_ms"] for e in entries if e.get("total_ms") is not None]
     return {"entries": len(entries), "from": min(ats) if ats else None, "to": max(ats) if ats else None,
+            # every entry of the window, mapped or not (nearest-rank, like the per-id rows)
+            "total_ms_p50": _pct(totals, 0.5), "total_ms_p95": _pct(totals, 0.95),
             "queries": rows,
             # ad-hoc queries (guarded text2cypher, the official MCP server, operators): counted, never shown
             "unmapped": {"n": len(other), **({k: v for k, v in stats(other).items() if k != "n"} if other else {})}}
+
+
+_RECENT_KEYS = ("at", "at_ms", "id", "kind", "total_ms", "wait_ms", "exec_ms", "report_ms", "cache", "write", "timeout")
+
+
+def _recent(es: list[dict[str, Any]], graph: str | None = None, n: int = RECENT) -> list[dict[str, Any]]:
+    """The newest `n` mapped entries (ids and numbers only), newest first by the stream entry id; with `graph`, each
+    entry names the graph whose stream recorded it (the combined list over several graphs)."""
+    mapped = sorted((e for e in es if e["id"]), key=lambda e: (e["at_ms"] or e["at"] * 1000, e["_seq"]), reverse=True)
+    return [{**{k: e[k] for k in _RECENT_KEYS}, **({"graph": e["_graph"]} if graph is None and "_graph" in e else {})}
+            for e in mapped[:n]]
 
 
 @_engine_call
@@ -203,9 +223,31 @@ def telemetry(graph: str, count: int = TELEMETRY_COUNT) -> dict[str, Any]:
     p95, report ms p50, plan-cache hit %, writes and timeouts; plus the most recent mapped entries (ids and numbers)."""
     es = _entries(graph, count)
     agg = _aggregate(es)
-    agg["recent"] = [{k: e[k] for k in ("at", "id", "kind", "total_ms", "wait_ms", "exec_ms", "report_ms", "cache",
-                                         "write", "timeout")} for e in es if e["id"]][:RECENT]
+    agg["recent"] = _recent(es, graph)
     return agg
+
+
+def _constraints(tenant: str, graph: str) -> dict[str, Any] | None:
+    """How many of the declared engine-enforced invariants (graph/constraints.py) the engine reports OPERATIONAL on
+    `graph`: Q-SCHEMA-5 (db.constraints) through the read-only wrapper. Counts only. None when the engine refuses the
+    read (never claimed as enforced)."""
+    from . import constraints as gc
+    from .errors import GraphError
+    from .ro import RO
+
+    try:
+        rows = RO(tenant, graph).run("Q-SCHEMA-5", {}).rows
+    except GraphError:
+        return None
+    have = {gc.key_of([r["type"], r["label"], r["properties"], r["entitytype"], r["status"]]): r["status"] for r in rows}
+    declared = gc.by_key()
+    return {"declared": len(declared),
+            "operational": sum(1 for k in declared if have.get(k) == "OPERATIONAL"),
+            "pending": sum(1 for k in declared if have.get(k) in gc.PENDING),
+            "missing": sum(1 for k in declared if k not in have),
+            # the schema (and so the constraints) is applied to world graphs: tenant, golden, on-call, clean rooms; the
+            # append-only audit log (re-arm receipts, run index, LLM ledger) is not one, so it is expected to carry none
+            "expected": not graph.startswith("audit_")}
 
 
 @_engine_call
@@ -234,7 +276,11 @@ def insight(tenant: str) -> dict[str, Any]:
     rooms = sorted(g for g in existing if g.startswith(f"eval_{t}_"))
     names = [g for g in [f"tenant_{t}", f"golden_{t}", f"oncall_{t}", f"audit_{t}"] + rooms[:MAX_INSIGHT_ROOMS]
              if g in existing and graph_belongs_to(g, t)]
-    out: dict[str, Any] = {"tenant": t, "load": info(), "config": engine_config(), "graphs": {},
+    from .algo.registry import resolved_meta
+
+    meta = resolved_meta()
+    out: dict[str, Any] = {"tenant": t, "engine": {"version": meta.get("engine"), "digest": meta.get("digest")},
+                           "load": info(), "config": engine_config(), "graphs": {},
                            "rooms_not_reported": max(0, len(rooms) - MAX_INSIGHT_ROOMS),
                            "source": "GRAPH.MEMORY USAGE + the engine's telemetry{graph} stream (FalkorDB 6.0)",
                            "privacy": "template and writer ids, timings and flags only; no query text, no parameters"}
@@ -245,14 +291,15 @@ def insight(tenant: str) -> dict[str, Any]:
             es = _entries(g, TELEMETRY_COUNT)
         except redis.exceptions.ResponseError:     # deleted since list_graphs (a clean room): nothing left to report
             continue
-        every += es
+        every += [{**e, "_graph": g} for e in es]
         tel = _aggregate(es)
-        tel["recent"] = [{k: e[k] for k in ("at", "id", "kind", "total_ms", "wait_ms", "exec_ms", "report_ms", "cache",
-                                             "write", "timeout")} for e in es if e["id"]][:RECENT]
+        tel["recent"] = _recent(es, g)
         out["graphs"][g] = {"memory_mb": mem.get("total_graph_sz_mb"),
                             "memory": {k: v for k, v in mem.items() if isinstance(v, (int, float, dict))},
-                            "telemetry": tel}
+                            "telemetry": tel, "constraints": _constraints(t, g)}
     out["templates"] = _aggregate(every)
+    # the newest mapped entries across the reported graphs, merged by the stream entry id (ms, then sequence)
+    out["templates"]["recent"] = _recent(every)
     return out
 
 

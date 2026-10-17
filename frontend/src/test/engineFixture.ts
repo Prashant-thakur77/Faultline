@@ -17,8 +17,9 @@ const stats = (n: number, p50: number, p95: number, cache: number, extra: Record
   ...extra,
 });
 
-const recent = (at: number, id: string, kind: "template" | "write", total: number, cache = false) => ({
+const recent = (at: number, atMs: number, id: string, kind: "template" | "write", total: number, cache = false) => ({
   at,
+  at_ms: atMs,
   id,
   kind,
   total_ms: total,
@@ -30,8 +31,16 @@ const recent = (at: number, id: string, kind: "template" | "write", total: numbe
   timeout: false,
 });
 
+const constraints = { declared: 15, operational: 15, pending: 0, missing: 0, expected: true };
+
+// one second, two graphs: the server orders them by the stream id's millisecond (the room's Q-INC-1 first)
+const ONCALL = recent(1792252980, 1792252980100, "Q-ONCALL-NOW", "template", 0.94);
+const STAGE = recent(1792252970, 1792252970050, "W-STAGE", "write", 1.2, true);
+const INC = recent(1792252980, 1792252980412, "Q-INC-1", "template", 0.55);
+
 export const INSIGHT = {
   tenant: "acme",
+  engine: { version: "6.0.2", digest: "sha256:107455e862a824e45e8e9f5a7fbfdf5e00a08b14e13eae2577c72fd9e3f59ba6" },
   load: { running: 0, waiting: 0 },
   config: {
     QUERY_MEM_CAPACITY: 268435456,
@@ -57,16 +66,19 @@ export const INSIGHT = {
         amortized_edge_attributes_by_type_sz_mb: { PROPAGATES_TO: 0 },
         indices_sz_mb: 0,
       },
+      constraints,
       telemetry: {
         entries: 1000,
         from: 1792245970,
-        to: 1792252973,
+        to: 1792252980,
+        total_ms_p50: 0.3,
+        total_ms_p95: 3.5,
         queries: [
           { id: "Q-META-1", kind: "template", ...stats(58, 0.15, 0.38, 15.5) },
           { id: "W-STAGE", kind: "write", ...stats(12, 0.9, 4.1, 80, { writes: 12 }) },
         ],
         unmapped: stats(225, 0.29, 3.9, 40),
-        recent: [recent(1792252973, "Q-ONCALL-NOW", "template", 0.94), recent(1792252970, "W-STAGE", "write", 1.2, true)],
+        recent: [ONCALL, STAGE],
       },
     },
     eval_acme_api_v2_s1_1_abcd: {
@@ -80,30 +92,41 @@ export const INSIGHT = {
         amortized_edge_attributes_by_type_sz_mb: { PROPAGATES_TO: 0 },
         indices_sz_mb: 0,
       },
+      constraints,
       telemetry: {
         entries: 400,
         from: 1792250000,
         to: 1792252980,
+        total_ms_p50: 0.6,
+        total_ms_p95: 1.2,
         queries: [{ id: "Q-INC-1", kind: "template", ...stats(40, 0.6, 1.2, 50) }],
         unmapped: { n: 0 },
-        recent: [recent(1792252980, "Q-INC-1", "template", 0.55)],
+        recent: [INC],
       },
     },
     golden_acme: {
       memory_mb: 2,
       memory: { total_graph_sz_mb: 2, label_matrices_sz_mb: 0, relation_matrices_sz_mb: 0, amortized_node_block_sz_mb: 0, indices_sz_mb: 0 },
-      telemetry: { entries: 0, from: null, to: null, queries: [], unmapped: { n: 0 }, recent: [] },
+      constraints,
+      telemetry: { entries: 0, from: null, to: null, total_ms_p50: null, total_ms_p95: null, queries: [], unmapped: { n: 0 }, recent: [] },
     },
   },
   templates: {
     entries: 1400,
     from: 1792245970,
     to: 1792252980,
+    total_ms_p50: 0.36,
+    total_ms_p95: 1.9,
     queries: [
       { id: "Q-META-1", kind: "template", ...stats(58, 0.15, 0.38, 15.5) },
       { id: "Q-INC-1", kind: "template", ...stats(40, 0.6, 1.2, 50) },
       { id: "W-STAGE", kind: "write", ...stats(12, 0.9, 4.1, 80, { writes: 12 }) },
     ],
     unmapped: stats(225, 0.29, 3.9, 40),
+    recent: [
+      { ...INC, graph: "eval_acme_api_v2_s1_1_abcd" },
+      { ...ONCALL, graph: "tenant_acme" },
+      { ...STAGE, graph: "tenant_acme" },
+    ],
   },
 };

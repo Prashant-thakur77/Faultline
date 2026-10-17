@@ -4,7 +4,7 @@ import { CircleCheck, CircleX, Pause, PenLine, Play, Zap } from "lucide-react";
 import { QUERY_ID_CLS } from "@/components/cypher/ViaFalkor";
 import { Section } from "@/components/incident/Section";
 import { StatusChip } from "@/components/StatusChip";
-import { fmtEngineMs, mergeRecent, type EngineInsight, type RecentQuery } from "@/lib/engine";
+import { fmtEngineMs, tailRows, type EngineInsight, type RecentQuery } from "@/lib/engine";
 import { cn } from "@/lib/utils";
 import { EngineVia, UpdatedAgo, useOpenTemplate } from "./bits";
 
@@ -45,8 +45,8 @@ function Split({ q }: { q: RecentQuery }) {
 }
 
 /**
- * The newest queries the engine recorded across the tenant's graphs (each graph's stream keeps its own; merged by
- * time), re-read every few seconds while the tab is visible. Pause freezes the whole page's numbers.
+ * The newest queries the engine recorded across the tenant's graphs (the server merges the graphs' streams to the
+ * millisecond), re-read every few seconds while the tab is visible. Pause freezes the whole page's numbers.
  */
 export function LiveTail({
   d,
@@ -63,7 +63,7 @@ export function LiveTail({
   at: number | null;
 }) {
   const open = useOpenTemplate(tenant);
-  const rows = mergeRecent(d.graphs, TAIL_N);
+  const rows = tailRows(d, TAIL_N);
   const byId = new Map(d.templates.queries.map((r) => [r.id, r]));
   return (
     <Section

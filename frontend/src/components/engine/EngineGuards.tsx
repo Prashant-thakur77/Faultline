@@ -1,9 +1,9 @@
 "use client";
 
-import { Activity, Clock, Gauge, Globe, Layers, MemoryStick, ScrollText, ShieldAlert, type LucideIcon } from "lucide-react";
+import { Activity, Clock, Gauge, Globe, Layers, Lock, MemoryStick, ScrollText, ShieldAlert, type LucideIcon } from "lucide-react";
 import { Section } from "@/components/incident/Section";
 import { fmtInt } from "@/lib/format";
-import { fmtBytes, type EngineInsight } from "@/lib/engine";
+import { constraintSummary, fmtBytes, type EngineInsight } from "@/lib/engine";
 import { REPO_URL } from "@/lib/site";
 import { EngineVia } from "./bits";
 
@@ -41,13 +41,30 @@ const doc = (p: string) =>
     <code className="font-mono text-zinc-300">{p}</code>
   );
 
-/** The limits the engine enforces on every query (GRAPH.CONFIG GET), its load now (GRAPH.INFO), and the network guard. */
+/** The limits the engine enforces on every query (GRAPH.CONFIG GET), its load now (GRAPH.INFO), the constraints it
+ * enforces on every write (db.constraints), and the network guard. */
 export function GuardsCard({ d }: { d: EngineInsight }) {
   const c = d.config;
   const cap = c.queryMemCapacity;
+  const k = constraintSummary(d.graphs);
   return (
-    <Section id="engine-guards" title="Engine guards" via={<EngineVia what="GRAPH.CONFIG · GRAPH.INFO" />}>
+    <Section id="engine-guards" title="Engine guards" via={<EngineVia what="GRAPH.CONFIG · GRAPH.INFO · db.constraints" />}>
       <ul className="space-y-2" aria-label="Engine limits">
+        {k ? (
+          <Guard
+            icon={Lock}
+            title="Write invariants"
+            value={k.short.length ? `${k.enforced} of ${k.declared} enforced` : `${k.enforced} constraints enforced`}
+            warn={k.short.length > 0}
+          >
+            MANDATORY and UNIQUE constraints ({doc("backend/faultline/graph/constraints.py")}): FalkorDB refuses a write
+            that breaks one, such as evidence without provenance, a page without a deadline, an approval without its plan
+            hash or a failure edge without a capacity. On {k.graphs} graph{k.graphs === 1 ? "" : "s"} of this tenant
+            {k.short.length ? `; fewer than ${k.declared} on ${k.short.join(", ")}` : ""}
+            {k.notExpected.length ? `; the append-only ${k.notExpected.join(", ")} carries none by design` : ""}
+            {k.unreported.length ? `; not reported for ${k.unreported.join(", ")}` : ""}.
+          </Guard>
+        ) : null}
         <Guard
           icon={MemoryStick}
           title="Memory per query"

@@ -21,12 +21,13 @@ const section = (name: string) => screen.getByRole("heading", { name }).closest(
 beforeEach(() => resetTemplatePurposes());
 
 describe("Inside FalkorDB right now", () => {
-  it("leads with the verdict: graphs, memory, query count, the busiest template's p50/p95, timeouts", async () => {
+  it("leads with the verdict: the engine's own version, graphs, memory, query count, overall p50/p95, timeouts", async () => {
     const { calls } = stubFetch({ "/api/engine/insight": { body: INSIGHT }, "/api/templates/": { body: TEMPLATE } });
     show();
-    expect(await screen.findByRole("heading", { level: 2, name: "FalkorDB · 3 graphs for acme · 7 MB" })).toBeTruthy();
+    expect(await screen.findByRole("heading", { level: 2, name: "FalkorDB 6.0.2 · 3 graphs for acme · 7 MB" })).toBeTruthy();
     const verdict = screen.getByRole("heading", { name: /^FalkorDB/ }).closest("section")!;
-    expect(verdict.textContent).toMatch(/1,400 queries in the last 1 h 57 min · busiest Q-META-1 p50 0\.15 ms, p95 0\.38 ms · 0 timeouts/);
+    // the overall percentiles are the server's, over every entry (not the busiest template's)
+    expect(verdict.textContent).toMatch(/1,400 queries in the last 1 h 57 min · p50 0\.36 ms, p95 1\.90 ms · busiest Q-META-1 · 0 timeouts/);
     expect(verdict.textContent).toMatch(/0 running, 0 waiting now/);
     expect(verdict.textContent).toMatch(/no query text, no parameters/);
     expect(calls[0].url).toContain("/api/engine/insight?tenant=acme");
@@ -92,7 +93,9 @@ describe("Inside FalkorDB right now", () => {
       const tail = await waitFor(() => section("Live tail"));
       const items = within(within(tail).getByRole("list", { name: "Most recent queries, newest first" })).getAllByRole("listitem");
       const idOf = (i: HTMLElement) => (within(i).queryByRole("button")?.textContent ?? i.querySelector("span.inline-flex")?.textContent ?? "").trim();
+      // the server's merge across graphs, to the millisecond: the room's Q-INC-1 and Q-ONCALL-NOW share a second
       expect(items.map(idOf)).toEqual(["Q-INC-1", "Q-ONCALL-NOW", "W-STAGE"]);
+      expect(items[0].textContent).toMatch(/eval_acme_api_v2_s1_1_abcd/);
       expect(items[1].textContent).toMatch(/wait 0\.07.*execution 0\.30.*report 0\.57/);
       expect(within(items[2]).getByText("cached plan")).toBeTruthy();
       const reads = () => calls.filter((c) => c.url.includes("/api/engine/insight")).length;
@@ -105,7 +108,7 @@ describe("Inside FalkorDB right now", () => {
       const paused = reads();
       await vi.advanceTimersByTimeAsync(15_000);
       expect(reads()).toBe(paused);
-      expect(screen.getByText("FalkorDB · 3 graphs for acme · 7 MB")).toBeTruthy(); // the last numbers stay
+      expect(screen.getByText("FalkorDB 6.0.2 · 3 graphs for acme · 7 MB")).toBeTruthy(); // the last numbers stay
     } finally {
       vi.useRealTimers();
     }
@@ -115,6 +118,8 @@ describe("Inside FalkorDB right now", () => {
     stubFetch({ "/api/engine/insight": { body: INSIGHT }, "/api/templates/": { body: TEMPLATE } });
     show();
     const g = await waitFor(() => section("Engine guards"));
+    expect(g.textContent).toMatch(/Write invariants15 constraints enforced/);
+    expect(g.textContent).toMatch(/On 3 graphs of this tenant\./);
     expect(g.textContent).toMatch(/Memory per query256 MB/);
     expect(g.textContent).toMatch(/Query timeout2 s default · 10 s max/);
     expect(g.textContent).toMatch(/50 queued · 20 threads/);
@@ -143,11 +148,36 @@ describe("Inside FalkorDB right now", () => {
     expect((await screen.findByRole("alert")).textContent).toMatch(/Inside FalkorDB \(GET \/api\/engine\/insight\) is unavailable: Faultline API unreachable/);
   });
 
+  it("a graph below the declared constraints is named, and an older server's answer still reads", async () => {
+    const short = structuredClone(INSIGHT) as Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+    short.graphs.eval_acme_api_v2_s1_1_abcd.constraints = { declared: 15, operational: 12, pending: 3, missing: 0, expected: true };
+    stubFetch({ "/api/engine/insight": { body: short }, "/api/templates/": { body: TEMPLATE } });
+    const { unmount } = show();
+    const g = await waitFor(() => section("Engine guards"));
+    expect(g.textContent).toMatch(/Write invariants12 of 15 enforced/);
+    expect(g.textContent).toMatch(/fewer than 15 on eval_acme_api_v2_s1_1_abcd/);
+    unmount();
+    // before these fields existed: no engine, no overall percentiles, no combined recent, no constraints
+    const old = structuredClone(INSIGHT) as Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+    delete old.engine;
+    delete old.templates.total_ms_p50;
+    delete old.templates.total_ms_p95;
+    delete old.templates.recent;
+    for (const v of Object.values(old.graphs) as Record<string, unknown>[]) delete v.constraints;
+    stubFetch({ "/api/engine/insight": { body: old }, "/api/templates/": { body: TEMPLATE } });
+    show();
+    const verdict = (await screen.findByRole("heading", { level: 2, name: "FalkorDB · 3 graphs for acme · 7 MB" })).closest("section")!;
+    expect(verdict.textContent).toMatch(/busiest Q-META-1 p50 0\.15 ms, p95 0\.38 ms/);
+    const tail = section("Live tail");
+    expect(within(within(tail).getByRole("list", { name: "Most recent queries, newest first" })).getAllByRole("listitem")).toHaveLength(3);
+    expect(section("Engine guards").textContent).not.toMatch(/Write invariants/);
+  });
+
   it("an engine with no recorded query yet says so instead of an empty table", async () => {
     const empty = {
       ...INSIGHT,
       graphs: { golden_acme: INSIGHT.graphs.golden_acme },
-      templates: { entries: 0, from: null, to: null, queries: [], unmapped: { n: 0 } },
+      templates: { entries: 0, from: null, to: null, total_ms_p50: null, total_ms_p95: null, queries: [], unmapped: { n: 0 }, recent: [] },
     };
     stubFetch({ "/api/engine/insight": { body: empty } });
     show();

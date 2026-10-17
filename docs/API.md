@@ -228,6 +228,7 @@ Public-safe: template ids (`Q-…`), writer ids (`W-…`), timings and flags onl
 ```jsonc
 {
   "tenant": "acme",
+  "engine": {"version": "6.0.2", "digest": "sha256:107455e8…"},   // the pinned engine (graph/algo/resolved.json)
   "load": {"running": 0, "waiting": 0},                       // GRAPH.INFO, engine-wide
   "config": {"QUERY_MEM_CAPACITY": 268435456, "TIMEOUT_MAX": 10000, "TIMEOUT_DEFAULT": 2000,
              "MAX_QUEUED_QUERIES": 50, "CACHE_SIZE": 25, "MAX_INFO_QUERIES": 1000, "THREAD_COUNT": 20},
@@ -240,8 +241,11 @@ Public-safe: template ids (`Q-…`), writer ids (`W-…`), timings and flags onl
       "memory": {"total_graph_sz_mb": 2, "label_matrices_sz_mb": 0, "relation_matrices_sz_mb": 0,
                  "amortized_node_block_sz_mb": 0, "amortized_node_attributes_by_label_sz_mb": {"Service": 0, "...": 0},
                  "amortized_edge_attributes_by_type_sz_mb": {"PROPAGATES_TO": 0, "...": 0}, "indices_sz_mb": 0},
+      "constraints": {"declared": 15, "operational": 15, "pending": 0, "missing": 0,   // Q-SCHEMA-5 (db.constraints)
+                      "expected": true},                       // false for audit_<t>: the append-only log carries none
       "telemetry": {
         "entries": 1000, "from": 1792245970, "to": 1792252973,  // stream window (epoch s); MAX_INFO_QUERIES keeps 1000
+        "total_ms_p50": 0.36, "total_ms_p95": 1.9,              // every entry of the window, mapped or not   // noclaim: example values
         "queries": [                                           // per id, most frequent first
           {"id": "Q-META-1", "kind": "template", "n": 58,
            "total_ms_p50": 0.15, "total_ms_p95": 0.38, "wait_ms_p50": 0.015, "wait_ms_p95": 0.13,   // noclaim: example values
@@ -251,17 +255,30 @@ Public-safe: template ids (`Q-…`), writer ids (`W-…`), timings and flags onl
         ],
         "unmapped": {"n": 225, "total_ms_p50": 0.29, "...": "same fields, no id"},   // ad-hoc / dynamic queries: counted only   // noclaim: example values
         "recent": [                                            // newest first, at most 20, mapped entries only
-          {"at": 1792252973, "id": "Q-ONCALL-NOW", "kind": "template", "total_ms": 0.94, "wait_ms": 0.07,   // noclaim: example values
+          {"at": 1792252973, "at_ms": 1792252973221, "id": "Q-ONCALL-NOW", "kind": "template", "total_ms": 0.94, "wait_ms": 0.07,   // noclaim: example values
            "exec_ms": 0.30, "report_ms": 0.57, "cache": false, "write": false, "timeout": false}   // illustrative values (noclaim)
         ]
       }
     }
   },
-  "templates": {"entries": 4321, "from": 1792245000, "to": 1792252973, "queries": ["... the same rows, over all graphs above"],
-                "unmapped": {"n": 900}}
+  "templates": {"entries": 4321, "from": 1792245000, "to": 1792252973,
+                "total_ms_p50": 0.36, "total_ms_p95": 1.9,      // over every entry of every graph above   // noclaim: example values
+                "queries": ["... the same rows, over all graphs above"],
+                "unmapped": {"n": 900},
+                "recent": [                                    // the newest 20 mapped entries across those graphs
+                  {"at": 1792252980, "at_ms": 1792252980412, "graph": "eval_acme_api_v2_s1_1_abcd", "id": "Q-INC-1",
+                   "kind": "template", "total_ms": 0.55, "...": "same fields as a graph's recent"}]}   // noclaim: example values
 }
 ```
 
 Percentiles are nearest-rank over the stream window. Durations are milliseconds as the engine records them (`Wait` =
-queued before a thread took it, `Execution`, `Report` = serialising the reply). Tests: `tests/live/test_engine_insight.py`,
+queued before a thread took it, `Execution`, `Report` = serialising the reply).
+
+- `at` is the stream's `Received at` (whole seconds); `at_ms` is the stream entry id's millisecond, when the engine
+  recorded the entry. Lists are newest first by `at_ms`, then the entry id's sequence number.
+- `total_ms_p50` / `total_ms_p95` at the top of a `telemetry` block (and of `templates`) cover every entry of the
+  window, the unmapped ones included; they are computed over the entries, never combined from the per-id percentiles.
+- `templates.recent` merges the graphs' streams; each entry names its `graph`.
+- `constraints` counts the declared engine-enforced invariants (`graph/constraints.py`) the engine reports OPERATIONAL
+  on that graph; `null` when the engine refused the read (never shown as enforced). Tests: `tests/live/test_engine_insight.py`,
 `tests/test_engine_insight_units.py`.

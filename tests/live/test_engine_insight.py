@@ -50,3 +50,33 @@ def test_insight_is_scoped_rate_limited_and_fails_closed(db, monkeypatch):
         api._rate.clear()
     rep = E.insight("globex")
     assert all(k.endswith("_globex") or k.startswith("eval_globex_") for k in rep["graphs"])
+
+
+def test_overall_percentiles_combined_recent_engine_identity_and_constraints(db):
+    """The fields the /engine page reads without a second call: the engine's version and digest (resolved.json), the
+    overall p50/p95 per graph and over all of them, the newest mapped entries merged across graphs (to the millisecond),
+    and how many declared constraints each graph enforces (Q-SCHEMA-5)."""
+    import json as _json
+    from pathlib import Path
+
+    from faultline.graph.constraints import CONSTRAINTS
+
+    for _ in range(3):
+        RO("acme").run("Q-COUNT-1", {})
+    out = E.insight("acme")
+    pinned = _json.loads((Path(__file__).resolve().parents[2] / "backend/faultline/graph/algo/resolved.json").read_text())
+    assert out["engine"] == {"version": pinned["engine"], "digest": pinned["digest"]}
+    tm = out["templates"]
+    assert tm["total_ms_p50"] is not None and tm["total_ms_p95"] >= tm["total_ms_p50"]
+    rec = tm["recent"]
+    assert 0 < len(rec) <= 20 and all(r["graph"] in out["graphs"] and r["id"] for r in rec)
+    stamps = [r["at_ms"] for r in rec]
+    assert stamps == sorted(stamps, reverse=True) and all(abs(r["at_ms"] - 1000 * r["at"]) < 2000 for r in rec)
+    t = out["graphs"]["tenant_acme"]
+    assert t["telemetry"]["total_ms_p50"] is not None
+    assert t["constraints"] == {"declared": len(CONSTRAINTS), "operational": len(CONSTRAINTS), "pending": 0, "missing": 0,
+                                "expected": True}
+    if "audit_acme" in out["graphs"]:
+        assert out["graphs"]["audit_acme"]["constraints"]["expected"] is False   # the append-only log carries none
+    for g, v in out["graphs"].items():
+        assert set(v["constraints"]) >= {"declared", "operational"}, g
