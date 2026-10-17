@@ -104,7 +104,7 @@ EXPLAINER = ["x_tenant", "x_matrices", "x_blast", "x_path", "x_flow", "x_cut", "
 ONCALL = ["oc_page", "oc_ack", "oc_contract"]  # v4: the page, the ack, a contract; add "oc_telegram" (and its narration) once media/telegram.png exists
 # The beats, in narration order (cut v4). The recorder refuses a narration whose segments differ.
 SEGMENT_IDS = ["problem", "whyhard", "idea", "cube", *EXPLAINER, "run", "g2", "g5", "proof", "contain", "act", *ONCALL,
-               "preflight", "brain", "learn", "engine", "numbers", "cost", "close"]
+               "brain", "learn", "engine", "numbers", "cost", "close"]   # "preflight" has a beat; out of the short cut
 # The proof beats' charts (media/proof.html#<name>), per segment, in the order shown; several in one segment share it
 # evenly, or "name@word" shows it when the voice reaches that word. "close" shows its charts before "Any agent".
 # Every name listed must be drawn into docs/media/charts/<name>.svg (scripts/gen_charts.py), copied byte for byte to
