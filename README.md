@@ -1129,7 +1129,7 @@ Install and release: `packages/faultline-mcp/` is the npm package (a stdio MCP s
 
 ## Team
 
-Prashant ([@Prashant-thakur77](https://github.com/Prashant-thakur77)), Puneet Yadav ([@puneetnith28](https://github.com/puneetnith28)) and Lakshay Deol ([@Lakshay-Deol](https://github.com/Lakshay-Deol)).
+Prashant ([@Prashant-thakur77](https://github.com/Prashant-thakur77)), Puneet Yadav ([@puneetnith28](https://github.com/puneetnith28)), Lakshay Deol ([@Lakshay-Deol](https://github.com/Lakshay-Deol)) and Vaishali Thakur ([@Vaishali054](https://github.com/Vaishali054)).
 
 ## License
 
