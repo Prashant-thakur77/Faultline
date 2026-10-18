@@ -70,6 +70,8 @@ else
 fi
 
 echo "④ unit tests …"
+# the SQL-tool tests open the demo warehouse read-only: a fresh clone builds it first (incident mode, as ⑩ leaves it)
+uv run python pipeline/generate_sources.py --mode incident >/dev/null 2>&1 && uv run python pipeline/run.py >/dev/null 2>&1
 if uv run pytest tests -q -m "not smoke and not live and not slow" -p no:warnings --junitxml="$JC/unit.xml" >/dev/null 2>&1; then
   step "unit tests" "$(junit "$JC/unit.xml")" PASS
 else

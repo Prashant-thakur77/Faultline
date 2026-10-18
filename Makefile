@@ -5,7 +5,7 @@ PY := PYTHONPATH=backend $(UV) python
 GUARD := scripts/memguard.sh
 TENANT ?= acme
 
-.PHONY: gc graphrag-sdk-venv graphrag-sdk-dry mcp-http eval results claims bench chaos oncall-night learning-night t2-gonogo replay concurrency scale tenants-bench algo10k setup up down smoke smoke-both seed test invariants judge-check demo api frontend mcp run export \
+.PHONY: fixture gc graphrag-sdk-venv graphrag-sdk-dry mcp-http eval results claims bench chaos oncall-night learning-night t2-gonogo replay concurrency scale tenants-bench algo10k setup up down smoke smoke-both seed test invariants judge-check demo api frontend mcp run export \
         demo-reset demo-healthy build baselines doctor eval results claims
 
 setup:
@@ -43,8 +43,14 @@ gc:  ## drop leftover eval/whatif/scratch graphs (keeps those recent runs point 
 	$(PY) scripts/gc_graphs.py --tenant $(TENANT)
 
 ## -- tests ---------------------------------------------------------------------------------------
-test:
+test: fixture
 	PYTHONPATH=backend $(UV) pytest tests -m "not smoke and not live and not slow"
+
+# The demo warehouse the SQL-tool tests open read-only: built once if a fresh clone has none (incident mode, as
+# judge-check leaves it). `make demo-healthy` / the scenarios switch modes themselves.
+fixture:
+	@test -f data/warehouse/faultline.duckdb -a -f data/sources/raw_orders.csv || \
+	  ($(UV) python pipeline/generate_sources.py --mode incident && $(UV) python pipeline/run.py)
 
 # Fixture-dependent pipeline invariants: build the HEALTHY fixture first (32/32 expected).
 invariants: demo-healthy
