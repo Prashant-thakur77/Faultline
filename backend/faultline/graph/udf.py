@@ -43,19 +43,40 @@ def _s(x: Any) -> str:
     return x.decode() if isinstance(x, bytes) else str(x)
 
 
+def _templates_using(lib: str) -> tuple[list[str], list[str]]:
+    """(template ids whose Cypher calls `<lib>.` functions, the functions they call), read from the catalogue."""
+    import re
+
+    from .templates import catalogue
+
+    ids, used = [], set()
+    for t in catalogue().values():
+        calls = re.findall(rf"\b{re.escape(lib)}\.([A-Za-z_][\w.]*)\s*\(", t.text)
+        if calls:
+            ids.append(t.id)
+            used.update(calls)
+    return sorted(ids), sorted(used)
+
+
 def udf_status(r: Any) -> dict[str, dict[str, Any]]:
     """Per pinned library: "loaded" (present at the pinned sha), "mismatch" (present, different code) or "missing",
-    read from GRAPH.UDF LIST WITHCODE."""
+    read from GRAPH.UDF LIST WITHCODE, with the functions the engine registered for it and the templates that call
+    them."""
     loaded: dict[str, str] = {}
+    funcs: dict[str, list[str]] = {}
     for entry in r.execute_command("GRAPH.UDF", "LIST", "WITHCODE") or []:
         d = {_s(entry[i]): entry[i + 1] for i in range(0, len(entry) - 1, 2)}
         code = d.get("library_code")
-        loaded[_s(d.get("library_name"))] = hashlib.sha256(code if isinstance(code, bytes) else _s(code).encode()).hexdigest()
+        name = _s(d.get("library_name"))
+        loaded[name] = hashlib.sha256(code if isinstance(code, bytes) else _s(code).encode()).hexdigest()
+        funcs[name] = sorted(_s(f) for f in (d.get("functions") or []))
     out = {}
     for lib, (_rel, sha) in UDF_LIBS.items():
         got = loaded.get(lib)
+        ids, used = _templates_using(lib)
         out[lib] = {"state": "missing" if got is None else ("loaded" if got == sha else "mismatch"),
-                    "pinned_sha": sha[:12], "loaded_sha": got[:12] if got else None}
+                    "pinned_sha": sha[:12], "loaded_sha": got[:12] if got else None,
+                    "functions": funcs.get(lib, []), "used": used, "templates": ids}
     return out
 
 
