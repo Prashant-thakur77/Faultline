@@ -191,7 +191,8 @@ function StageGroup({
                   )}
                   <span className="truncate font-mono text-zinc-200">{it.row.cause}</span>
                   <span className="text-[11px] text-[var(--fl-subtle)]">
-                    {originText(it.row.origin)} · {plural(it.row.checks.length, "check")}
+                    {originText(it.row.origin)} · {it.row.checks.filter((c) => c.passed === true).length} of{" "}
+                    {plural(it.row.checks.length, "check")} passed
                   </span>
                 </li>
               ))}
