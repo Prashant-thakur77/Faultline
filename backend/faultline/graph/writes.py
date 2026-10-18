@@ -370,6 +370,34 @@ W_TOOL_CALL = (
     "RETURN sum(CASE WHEN n IS NOT NULL AND n.id IN $seen THEN 1 ELSE 0 END) AS confirmed"
 )
 
+PAYLOAD_CAP = 20000   # characters of JSON kept per stored payload (evidence, tool calls, specialist reports)
+
+
+def capped_json(obj: Any, cap: int = PAYLOAD_CAP) -> str:
+    """Canonical JSON of `obj`, never longer than `cap` and always valid JSON. A payload that does not fit keeps as
+    many leading `rows` as fit (with `rows_truncated` saying how many were dropped); anything else becomes a marker
+    with the size and the start of the text. Cutting the JSON text itself would store an unterminated string."""
+    s = json.dumps(obj, sort_keys=True, default=str)
+    if len(s) <= cap:
+        return s
+    if isinstance(obj, dict) and isinstance(obj.get("rows"), list):
+        rows = obj["rows"]
+
+        def fit(n: int) -> str:
+            return json.dumps({**obj, "rows": rows[:n], "rows_truncated": len(rows) - n}, sort_keys=True, default=str)
+
+        lo, hi = 0, len(rows)
+        while lo < hi:   # the largest prefix of rows that fits
+            mid = (lo + hi + 1) // 2
+            if len(fit(mid)) <= cap:
+                lo = mid
+            else:
+                hi = mid - 1
+        t = fit(lo)
+        if len(t) <= cap:
+            return t
+    return json.dumps({"truncated": True, "chars": len(s), "head": s[: cap // 2]}, default=str)
+
 
 def record_tool_call(g: Graph, *, run_id: str, tenant: str, tc_id: str, tool: str, template: str, cypher: str,
                      params: dict, digest: str, rows: int, ms: float, truncated: bool, served_by: str,
@@ -385,7 +413,7 @@ def record_tool_call(g: Graph, *, run_id: str, tenant: str, tc_id: str, tool: st
         "value": value, "baseline": baseline, "ratio": ratio, "summary": summary[:500],
         "seen": sorted(set(seen_ids))[:500], "about": sorted(set(about)),
         "ids": sorted(set(sorted(set(seen_ids))[:500]) | set(about)),
-        "payload": json.dumps(payload, sort_keys=True, default=str)[:20000] if payload is not None else None,
+        "payload": capped_json(payload) if payload is not None else None,
     }, timeout=WRITE_TIMEOUT_MS)
     return int(res.result_set[0][0]) if res.result_set else 0
 
@@ -529,12 +557,12 @@ def record_external_evidence(g: Graph, *, run: str, tc_id: str, tool: str, ev_id
                              ratio: float | None = None, band: float | None = None, anomalous: bool | None = None) -> int:
     """Evidence observed in a system under observation (warehouse, pipeline, GitHub, simulator) is
     recorded in FalkorDB BEFORE anything uses it. Payload is stored as canonical JSON (truncated)."""
-    body = json.dumps(payload, sort_keys=True, default=str)
+    body = capped_json(payload)
     r = g.query(W_DATA_EVIDENCE, {
         "run": run, "tc_id": tc_id, "tool": tool, "ev_id": ev_id, "kind": kind, "source": source,
         "transport": transport, "params": json.dumps(params, sort_keys=True, default=str), "digest": digest,
         "value": value, "baseline": baseline, "ratio": ratio, "band": band, "summary": summary[:500],
-        "payload": body[:20000], "about": sorted(set(about)), "ms": round(ms, 2), "rows": rows, "anomalous": anomalous,
+        "payload": body, "about": sorted(set(about)), "ms": round(ms, 2), "rows": rows, "anomalous": anomalous,
         "served_by": f"{source} via {transport}",
     }, timeout=WRITE_TIMEOUT_MS).result_set
     return int(r[0][0]) if r else 0
@@ -1375,7 +1403,7 @@ def complete_specialist_task(g: Graph, *, task: str, agent: str, run: str, role:
     r = g.query(W_SPECIALIST_DONE, {
         "task": task, "agent": agent, "run": run, "role": role, "status": status,
         "names": sorted(set(names)), "cites": sorted(set(cites)),
-        "report": json.dumps(report, sort_keys=True, default=str)[:20000],
+        "report": capped_json(report),
         "unknowns": [u[:300] for u in (unknowns or [])][:20], "limits": [x[:300] for x in (limits or [])][:20],
         "tcs": sorted(set(tool_calls or []))[:400], "n": int(n),
     }, timeout=WRITE_TIMEOUT_MS).result_set

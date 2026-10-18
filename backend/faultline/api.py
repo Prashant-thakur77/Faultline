@@ -590,6 +590,17 @@ def tenants() -> list[dict]:
     return out
 
 
+def _stored_json(text: str | None, default: Any = None) -> Any:
+    """A JSON payload stored on an evidence or tool-call node. Payloads written before writes.capped_json could be cut
+    mid-string; one unreadable payload is reported as such instead of failing the whole response."""
+    if not text:
+        return default
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        return {"unreadable": True, "reason": "the stored payload is not valid JSON (cut by an older version)"}
+
+
 @app.get("/api/incidents")
 def incidents(tenant: str = "acme") -> list[dict]:
     try:
@@ -866,7 +877,7 @@ def incident_plan(inc: str, tenant: str = "acme") -> dict:
     for tool in ("containment_cut", "whatif", "who_fixes", "bus_factor", "escalation_tree", "notify_set", "owner_at",
                  "learned_preferences", "learned_responders"):
         rows = ro.run("Q-EV-TOOL", {"run": loc["run"], "tool": tool}).rows
-        out[tool] = ({**rows[0], "payload": json.loads(rows[0]["payload"]) if rows[0]["payload"] else None,
+        out[tool] = ({**rows[0], "payload": _stored_json(rows[0]["payload"]),
                       "params": json.loads(rows[0]["params"]) if rows[0]["params"] else None} if rows else None)
     out["options"] = [{**a, "preview": json.loads(a["preview"]) if a["preview"] else None,
                        "spec": json.loads(a["spec"]) if a["spec"] else None,
@@ -1728,7 +1739,7 @@ def incident_contrast(inc: str, tenant: str = "acme") -> dict:
         rows = ro.run("Q-EV-TOOL", {"run": loc["run"], "tool": tool}).rows
         if not rows:
             return None
-        payload = json.loads(rows[0]["payload"]) if rows[0]["payload"] else {}
+        payload = _stored_json(rows[0]["payload"], {})
         return {"rows": payload.get("rows") or [], "template": rows[0]["template"], "evidence_id": rows[0]["evidence_id"],
                 "params": json.loads(rows[0]["params"]) if rows[0]["params"] else {}, "summary": rows[0]["summary"]}
 
@@ -2019,7 +2030,7 @@ def preflight_last(pr: str, tenant: str = "acme") -> dict:
     from .preflight.comment import render
 
     r = rows[0]
-    payload = json.loads(r["payload"]) if r["payload"] else {}
+    payload = _stored_json(r["payload"], {})
     facts = RO(check_tenant(tenant)).run("Q-PRE-FACTS", {"pr": pr}).rows
     res = {"pr": pr, "run_id": r["run"], **{k: v for k, v in payload.items() if k != "rows"},
            "assessment": (payload.get("rows") or [{}])[0], "facts": facts, "notes": [], "unknown_files": [],
@@ -2497,7 +2508,7 @@ def page_detail(pid: str, request: Request, tenant: str = "acme") -> dict:
         for tool, key in (("who_fixes", "who_fixes"), ("obligation_clock", "obligations")):
             ev = ro.run("Q-EV-TOOL", {"run": run, "tool": tool}).rows if run else []
             if ev:
-                payload = json.loads(ev[0]["payload"]) if ev[0]["payload"] else {}
+                payload = _stored_json(ev[0]["payload"], {})
                 out[key] = ({"rows": payload.get("rows", [])[:5], "template": ev[0]["template"],
                              "evidence_id": ev[0]["evidence_id"]} if tool == "who_fixes" else
                             {"breach": payload.get("breach"), "urgent": payload.get("urgent"),
