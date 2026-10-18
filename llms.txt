@@ -5,7 +5,7 @@
 > the change can carry the observed impact (`algo.maxFlow`); otherwise it abstains and hands the incident to a human.
 > It then proposes the smallest containment (max-flow min-cut, each option tried on a `GRAPH.COPY`), routes to who
 > should fix it (`algo.HarmonicCentrality`, escalation by `algo.MSF`), pages the on-call, takes one human-approved
-> action (a real pull request), verifies it through a second channel (APPLIED / NOT_APPLIED / UNKNOWN) and writes the
+> action (a real pull request, or a data repair it proposes from its own measurements), verifies it through a second channel (APPLIED / NOT_APPLIED / UNKNOWN) and writes the
 > decision back into the same graph. Built for Graph Hacks (WeMakeDevs × FalkorDB); tracks T1 (Agents That Act on
 > Connected Data), T3 (Company Brain), T2 (Agent Memory & Coordination). Every number below is checked against
 > evals/results/latest.json by `make claims` (the HTML comments are those checks).
@@ -14,7 +14,8 @@
 
 - Live demo (keyless, simulated GitHub): https://13-203-185-119.sslip.io
 - Hosted read-only MCP server, public demo key: docs/MCP.md (`https://13-203-185-119.sslip.io/mcp`)
-- Narrated video (4:54): docs/media/demo.mp4 and the GitHub release asset
+- Narrated video (4:54): https://youtu.be/6tyPre4fLxk (also docs/media/demo.mp4 and the GitHub release asset)
+- Blog post: https://medium.com/@prashant101007/our-on-call-agent-isnt-allowed-to-blame-a-deploy-until-falkordb-returns-a-path-b32d8bcf2fb7
 - Give any MCP client the graph tools: `npx -y @prashantthakur77/faultline-mcp` (npm; connects to the live demo, `--url`/`--key` for your own server)
 - Run the whole product with Docker only: `curl -fsSLO https://raw.githubusercontent.com/Prashant-thakur77/Faultline/main/deploy/quickstart.yml && docker compose -f quickstart.yml up`, then http://localhost:3000
 - Reproduce everything offline with no API key: `make setup && make judge-check` (prints PASS)
