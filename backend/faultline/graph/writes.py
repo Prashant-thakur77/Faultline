@@ -514,17 +514,19 @@ def upsert_chunks(g: Graph, rows: list[dict[str, Any]], *, docs: list[str]) -> i
 W_NOTE = (
     # ONE query, so every condition and the write are atomic together: every `about` id is a node of the graph,
     # the reply target exists, and the author is under its daily quota on the ENGINE clock (concurrent writers cannot
-    # both take the last slot). A reply keeps the note it answers alive at least as long as itself.
+    # both take the last slot). A reply keeps the note it answers alive at least as long as itself. A private note is
+    # seen only by its author; only a note the author can see may be replied to.
     "OPTIONAL MATCH (p:Note {id: $reply_to}) "
     "WITH p "
     "MATCH (x:Node) WHERE x.id IN $about "
     "WITH p, collect(DISTINCT x) AS targets "
-    "WHERE size(targets) = size($about) AND ($reply_to = '' OR p IS NOT NULL) "
+    "WHERE size(targets) = size($about) AND ($reply_to = '' OR (p IS NOT NULL AND "
+    "(coalesce(p.visibility, 'shared') = 'shared' OR p.agent = $principal))) "
     "MERGE (a:Author {id: $principal}) "
     "WITH p, targets, a, size([(a)-[:WROTE]->(r:Note) WHERE r.created_at >= timestamp() - 86400000 | r]) AS used "
     "WHERE used < $quota "
     "CREATE (n:Note {id: $id, agent: $principal, name: $name, session: $session, kind: $kind, text: $text, "
-    "created_at: timestamp(), expires_at: timestamp() + $ttl_ms, embedding: vecf32($vec)}) "
+    "visibility: $visibility, created_at: timestamp(), expires_at: timestamp() + $ttl_ms, embedding: vecf32($vec)}) "
     "CREATE (a)-[:WROTE]->(n) "
     "FOREACH (x IN targets | CREATE (n)-[:ABOUT]->(x)) "
     "FOREACH (q IN CASE WHEN p IS NULL THEN [] ELSE [p] END | CREATE (n)-[:REPLY_TO {stance: $stance}]->(q) "
@@ -534,13 +536,15 @@ W_NOTE = (
 
 
 def write_note(g: Graph, *, id: str, principal: str, name: str, session: str, kind: str, text: str, about: list[str],
-               vec: list[float], ttl_ms: int, quota: int, reply_to: str = "", stance: str = "adds") -> dict | None:
+               vec: list[float], ttl_ms: int, quota: int, reply_to: str = "", stance: str = "adds",
+               private: bool = False) -> dict | None:
     """W-NOTE-1 on agentmem_<tenant> (`g` is client.mem_graph: the mem_<tenant> ACL user, that key only). Returns the
     written note's id, the author's count today and its times, or None when a condition refused it (an unknown id,
     unknown reply target, or the quota): the caller reads which one, read-only."""
     rows = g.query(W_NOTE, {"id": id, "principal": principal, "name": name, "session": session, "kind": kind,
                             "text": text, "about": sorted(set(about)), "vec": [float(v) for v in vec],
-                            "ttl_ms": int(ttl_ms), "quota": int(quota), "reply_to": reply_to or "", "stance": stance},
+                            "ttl_ms": int(ttl_ms), "quota": int(quota), "reply_to": reply_to or "", "stance": stance,
+                            "visibility": "private" if private else "shared"},
                    timeout=WRITE_TIMEOUT_MS).result_set
     if not rows:
         return None

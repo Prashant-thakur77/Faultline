@@ -126,3 +126,18 @@ def test_the_public_demo_stays_read_only_unless_a_host_opts_in(monkeypatch):
     assert all(a.read_only_hint for a in hosted.values())
     monkeypatch.setattr(settings, "faultline_mcp_notes", True)
     assert register_tools(Srv(), public=True).tools["remember"].read_only_hint is False
+
+
+def test_a_private_note_is_its_authors_alone(acme):
+    tag = uuid.uuid4().hex[:6]
+    mine = notes.remember("acme", principal="agent-a", text=f"my own scratch thought on cart {tag}", about=["cart"],
+                          private=True)
+    acme.append(mine["id"])
+    assert mine["visibility"] == "private"
+    seen = lambda viewer: [r["id"] for r in notes.recall("acme", focus="cart", text=f"scratch thought {tag}",  # noqa: E731
+                                                         viewer=viewer).rows]
+    assert mine["id"] in seen("agent-a")                       # its author recalls it
+    assert mine["id"] not in seen("agent-b") and mine["id"] not in seen("")   # nobody else does, not even the UI
+    with pytest.raises(notes.NoteRefused, match="private"):     # and nobody else can reply to it
+        notes.remember("acme", principal="agent-b", text="replying to something I cannot see", about=["cart"],
+                       reply_to=mine["id"])

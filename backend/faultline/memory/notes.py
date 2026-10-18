@@ -60,9 +60,10 @@ def _cfg() -> dict[str, Any]:
 
 
 def remember(tenant: str, *, principal: str, text: str, about: list[str], kind: str = "lead", name: str = "",
-             session: str = "", reply_to: str = "", stance: str = "adds") -> dict[str, Any]:
+             session: str = "", reply_to: str = "", stance: str = "adds", private: bool = False) -> dict[str, Any]:
     """Write one note (W-NOTE-1, atomic with its checks) as `principal` (the authenticated MCP key, or the process).
-    `name` is how the agent calls itself (shown, never trusted for quotas)."""
+    `name` is how the agent calls itself (shown, never trusted for quotas). `private`: only `principal` will see it
+    (each agent or person keeps its own memory beside the shared one)."""
     from .embed import embed_one
 
     w = _cfg()
@@ -82,16 +83,17 @@ def remember(tenant: str, *, principal: str, text: str, about: list[str], kind: 
     out = writes.write_note(client.mem_graph(t), id=nid, principal=principal, name=name[:60], session=session[:80],
                             kind=kind, text=text, about=ids, vec=embed_one(text),
                             ttl_ms=int(float(w["ttl_days"]) * 86_400_000), quota=int(w["quota_per_day"]),
-                            reply_to=reply_to, stance=stance)
+                            reply_to=reply_to, stance=stance, private=private)
     if out is None:
         why = RO(t, memory_graph(t)).run("Q-NOTE-REFUSED", {"about": ids, "reply_to": reply_to, "principal": principal})
         r = why.rows[0] if why.rows else {}
         if r.get("unknown_about"):
             raise NoteRefused(f"not in this graph: {', '.join(r['unknown_about'])}", r["unknown_about"])
         if not r.get("reply_ok", True):
-            raise NoteRefused(f"no note {reply_to!r} to reply to")
+            raise NoteRefused(f"no note {reply_to!r} to reply to (or it is another author's private note)")
         raise NoteRefused(f"daily note quota reached ({r.get('used')}/{w['quota_per_day']} in the last 24 h)")
     return {**out, "tenant": t, "graph": memory_graph(t), "about": ids, "kind": kind,
+            "visibility": "private" if private else "shared",
             **({"reply_to": reply_to, "stance": stance} if reply_to else {})}
 
 
@@ -120,8 +122,9 @@ def leave_note(tenant: str, *, principal: str, text: str, about: list[str], kind
                         reply_to=reply_to, stance=stance)
 
 
-def recall(tenant: str, *, text: str = "", focus: str = "") -> QueryResult:
-    """Q-NOTE-RECALL: notes by meaning (`text`) and by graph distance (`focus`), ranked in the engine."""
+def recall(tenant: str, *, text: str = "", focus: str = "", viewer: str = "") -> QueryResult:
+    """Q-NOTE-RECALL: notes by meaning (`text`) and by graph distance (`focus`), ranked in the engine: every shared
+    note plus `viewer`'s own private ones (viewer "" = shared notes only)."""
     from .embed import embed_one
 
     w = _cfg()
@@ -131,7 +134,7 @@ def recall(tenant: str, *, text: str = "", focus: str = "") -> QueryResult:
     ensure_memory_graph(t)
     q = embed_one(text) if text.strip() else None
     return RO(t, memory_graph(t)).run("Q-NOTE-RECALL", {
-        "focus": focus, "q": q, "hops": int(w["near_hops"]), "floor": float(w["min_similarity"]),
+        "focus": focus, "q": q, "hops": int(w["near_hops"]), "floor": float(w["min_similarity"]), "viewer": viewer,
         "w": [float(w["w_meaning"]), float(w["w_near"]), float(w["w_fresh"]), float(w["fresh_tau_min"])]})
 
 

@@ -69,3 +69,15 @@ def test_last_preflight_is_readable_by_pr_id():
         assert body["evidence"]["params"] == {"pr": f"pr:{REPO}#9005"} and "ADR-012" in body["comment"]
         assert {f["key"] for f in body["facts"]} == {"payment.client.timeout_ms", "payment.currency"}  # currency removed
         assert c.get("/api/preflight", params={"pr": "pr:nope#1"}).status_code == 404
+
+
+def test_a_code_constant_raising_the_timeout_is_blocked_like_the_config():
+    """No model: the changed literal constant takes the decision's own rule key (Q-DEC-KEYS), so Q-DEC-1 sees it."""
+    r = run("acme", _pr(9005, "export const CLIENT_TIMEOUT_MS = 5000;\n", path="src/payment/client.js",
+                        before="export const CLIENT_TIMEOUT_MS = 1500;\n"))
+    assert {"key": "payment.client.timeout_ms", "value": 5000, "about": "payment", "file": "file:src/payment/client.js"} \
+        in r["facts"]
+    assert r["verdict"] == "block" and "ADR-012" in {d["id"] for d in r["decision_links"]}
+    ok = run("acme", _pr(9006, "export const CLIENT_TIMEOUT_MS = 1800;\n", path="src/payment/client.js",
+                         before="export const CLIENT_TIMEOUT_MS = 1500;\n"))
+    assert ok["terms"]["decision"]["value"] == 0.0                       # within the decision's bound

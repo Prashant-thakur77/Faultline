@@ -1054,6 +1054,7 @@ class _Remember(BaseModel):
     agent_name: str = Field("", max_length=60)
     reply_to: str = Field("", max_length=40, pattern=r"^(note-[0-9a-f]{12})?$")
     stance: str = Field("adds", pattern="^(confirms|refutes|adds)$")
+    private: bool = False
 
 
 def _principal(b: context.Binding) -> str:
@@ -1063,20 +1064,22 @@ def _principal(b: context.Binding) -> str:
 
 @_guard
 def remember(text: str, about: list[str], kind: str = "lead", agent_name: str = "", reply_to: str = "",
-             stance: str = "adds") -> dict[str, Any]:
+             stance: str = "adds", private: bool = False) -> dict[str, Any]:
     """Leave a note for other agents (track T2: shared memory). `about`: 1-10 ids of nodes in the graph (components,
     decisions, incidents, people); `kind`: lead | observation | hypothesis | handoff | verdict; `reply_to` (a note id) with
     `stance` confirms | refutes | adds answers another agent's note. Written in ONE atomic query to the tenant's
     agentmem graph by an ACL user that can touch only that graph (the graph the gate reads stays read-only), under a
-    daily quota per caller. A note is a lead for people and agents, never evidence: the evidence gate does not read it."""
+    daily quota per caller. `private`: only this caller will see it (its own memory beside the shared one). A note is
+    a lead for people and agents, never evidence: the evidence gate does not read it."""
     from ..memory import notes
 
     a = _Remember(text=text, about=[_IdArg(id=i).id for i in about], kind=kind, agent_name=agent_name,
-                  reply_to=reply_to, stance=stance)
+                  reply_to=reply_to, stance=stance, private=private)
     b = context.current()
     try:
         out = notes.remember(b.tenant, principal=_principal(b), name=a.agent_name, session=b.run_id or "",
-                             text=a.text, about=a.about, kind=a.kind, reply_to=a.reply_to, stance=a.stance)
+                             text=a.text, about=a.about, kind=a.kind, reply_to=a.reply_to, stance=a.stance,
+                             private=a.private)
     except notes.NoteRefused as e:
         return {"error": f"refused: {e}"}
     except ValueError as e:
@@ -1091,18 +1094,19 @@ class _Recall(BaseModel):
 
 
 @_guard
-def recall_notes(text: str = "", focus_id: str = "") -> dict[str, Any]:
+def recall_notes(text: str = "", focus_id: str = "", include_private: bool = True) -> dict[str, Any]:
     """What other agents noted (track T2): notes recalled by meaning (`text`, the vecf32 index) and by graph distance
     (`focus_id`: notes about that component or one within two PROPAGATES_TO hops), unexpired, ranked inside FalkorDB
     (faultline.noteScore: similarity, nearness, freshness), each with its components and its replies (confirms,
-    refutes, adds). One read-only query on the agentmem graph. Leads only: nothing here grounds a claim."""
+    refutes, adds). Shared notes plus the caller's own private ones (`include_private`). One read-only query on the
+    agentmem graph. Leads only: nothing here grounds a claim."""
     from ..memory import notes
 
     a = _Recall(text=text, focus_id=_IdArg(id=focus_id).id if focus_id else "")
     if not a.text.strip() and not a.focus_id:
         return {"error": "invalid arguments: give text, focus_id or both"}
     b = context.current()
-    r = notes.recall(b.tenant, text=a.text, focus=a.focus_id)
+    r = notes.recall(b.tenant, text=a.text, focus=a.focus_id, viewer=_principal(b) if include_private else "")
     # about=[]: a note naming a component must never mark that component as seen (G1 grounds on graph facts only)
     return _envelope(r, tool="recall_notes", kind="notes", about=[],
                      via="db.idx.vector.queryNodes(Note) ∪ (focus)-[:PROPAGATES_TO*0..2]-()<-[:ABOUT]-(:Note), "

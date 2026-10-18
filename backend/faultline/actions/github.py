@@ -31,7 +31,7 @@ def _check_branch(branch: str) -> None:
         raise GitHubError(f"refusing to touch branch {branch!r}: only {FIX_PREFIX}* is allowed")
 
 
-from ..preflight.facts import CONFIG_SUFFIXES  # noqa: E402  (the only files the fact extractor parses)
+from ..preflight.facts import CODE_SUFFIXES, CONFIG_SUFFIXES  # noqa: E402  (the files the fact extractor parses)
 MAX_PR_FILES = 200
 
 
@@ -215,7 +215,7 @@ class RealGitHub:
 
         out = []
         for f in files[:MAX_PR_FILES]:
-            path, cfg = f["filename"], f["filename"].endswith(CONFIG_SUFFIXES)
+            path, cfg = f["filename"], f["filename"].endswith(CONFIG_SUFFIXES + CODE_SUFFIXES)
             out.append({"path": path, "before": content(path, pr["base"]["sha"]) if cfg else None,
                         "after": content(path, pr["head"]["sha"]) if cfg else None})
         return {"title": pr.get("title", ""), "author": (pr.get("user") or {}).get("login", ""),

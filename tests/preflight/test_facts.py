@@ -52,3 +52,32 @@ def test_hostile_configs_are_refused_not_expanded():
         assert time.perf_counter() - t0 < 2.0
     ok, _ = extract([ChangedFile(path="svc/config.yaml", before="a: 1\\n", after="a: 2\\n")], {"svc/config.yaml": "payment"})
     assert [f.key for f in ok] == ["payment.a"]                       # ordinary configs still work
+
+
+def test_code_constants_are_literals_only():
+    from faultline.preflight.facts import constants
+
+    src = """const CLIENT_TIMEOUT_MS = 2000;
+export const retries: number = 2;
+TIMEOUT = 2 * 1000
+x = foo(bar=3)
+if x == 3:
+ENABLED = True  # on
+name := "payments"
+private static final int MAX_POOL = 50;
+val cacheTtl = 30
+"""
+    assert constants(src) == {"CLIENT_TIMEOUT_MS": 2000, "retries": 2, "ENABLED": True, "name": "payments",
+                              "MAX_POOL": 50, "cacheTtl": 30}            # computed values and calls are never read
+
+
+def test_a_code_constant_takes_the_decisions_rule_key():
+    from faultline.preflight.facts import ChangedFile, extract
+
+    f = [ChangedFile(path="svc/pay/client.py", before="CLIENT_TIMEOUT_MS = 2000\nPOOL = 4\n",
+                     after="CLIENT_TIMEOUT_MS = 8000\nPOOL = 4\nNEW_FLAG = true\n")]
+    facts, notes = extract(f, {"svc/pay/client.py": "payment"}, {"payment": ["payment.client.timeout_ms"]})
+    assert {(x.key, x.value) for x in facts} == {("payment.client.timeout_ms", 8000), ("payment.NEW_FLAG", True)}
+    assert "2 literal constant(s) changed" in notes[0]
+    facts, notes = extract(f, {}, {})
+    assert facts == [] and "not mapped to a component" in notes[0]

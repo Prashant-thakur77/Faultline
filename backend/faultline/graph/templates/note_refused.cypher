@@ -9,7 +9,7 @@ CALL {
   RETURN collect(i) AS unknown_about
 }
 CALL {
-  MATCH (p:Note) WHERE p.id = $reply_to
+  MATCH (p:Note) WHERE p.id = $reply_to AND (coalesce(p.visibility, 'shared') = 'shared' OR p.agent = $principal)
   RETURN count(p) AS replies_found
 }
 CALL {

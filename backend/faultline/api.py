@@ -1814,7 +1814,7 @@ def agent_notes_route(tenant: str = "acme", focus: str = "", text: str = "") -> 
         raise HTTPException(400, "text is at most 200 characters and focus at most 120")
     if not text.strip() and not focus:
         raise HTTPException(400, "give focus, text or both")
-    out = _tool(check_tenant(tenant), None, "recall_notes", text=text, focus_id=focus)
+    out = _tool(check_tenant(tenant), None, "recall_notes", text=text, focus_id=focus, include_private=False)
     if out.get("error"):
         raise HTTPException(400, out["error"])
     return {k: out.get(k) for k in ("rows", "via", "template", "cypher", "params", "ms", "served_by", "note")}

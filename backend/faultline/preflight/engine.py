@@ -37,7 +37,7 @@ class PRRef(BaseModel):
 
 def fetch(ref: PRRef, hub) -> PreflightIn:
     """Build the preflight input from the PR itself (GitHub REST, or the simulated world when keyless): changed files
-    with before/after contents for config files. A GitHubError propagates: the caller says GitHub could not be read."""
+    with before/after contents for config and code files. A GitHubError propagates: the caller says GitHub could not be read."""
     d = hub.pr_files(ref.repo, ref.number)
     if not d["files"]:
         raise ValueError(f"{ref.repo}#{ref.number} changes no files")
@@ -64,7 +64,9 @@ def run(tenant: str, pr: PreflightIn, graph: str | None = None) -> dict:
                              sha=pr.head_sha, files=file_ids)
     rows = RO(tenant, graph).run("Q-PRE-3", {"files": file_ids}).rows
     comp_of = {r["file"].removeprefix("file:"): r["component"] for r in rows if r["component"]}
-    facts, notes = extract(pr.files, comp_of)
+    # the rule keys decisions set on these components: a changed code constant is named by the graph's own vocabulary
+    keys = {r["about"]: r["keys"] for r in RO(tenant, graph).run("Q-DEC-KEYS", {"ids": sorted(set(comp_of.values()))}).rows}
+    facts, notes = extract(pr.files, comp_of, keys)
     for f in facts:
         writes.assert_change_fact(g, change=pid, key=f.key, value=f.value, about=f.about, file=f.file)
     unknown = sorted({f.path for f in pr.files} - set(comp_of))
