@@ -8,6 +8,9 @@ from .state import Stage
 
 # Internal tools (engine-written scratch/what-if graphs) are never hosted for judges.
 INTERNAL_TOOLS = {"rank_causes", "whatif", "futures", "who_fixes", "escalation_tree", "group_alerts"}
+# Run-scoped tools read the measurements of the run they are called in (the bound run id); a hosted client has no run,
+# so they are not offered there (they would only ever answer with an error)
+RUN_SCOPED_TOOLS = {"repair_targets"}
 
 PHASE_TOOLS: dict[Stage, list[str]] = {
     # group_alerts: which alerts are one incident (algo.WCC); run as code by agent/intake.py before an incident exists

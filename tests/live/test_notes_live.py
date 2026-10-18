@@ -124,6 +124,7 @@ def test_the_public_demo_stays_read_only_unless_a_host_opts_in(monkeypatch):
 
     monkeypatch.setattr(settings, "faultline_mcp_notes", False)
     hosted = register_tools(Srv(), public=True).tools
+    assert "repair_targets" not in hosted and "repair_targets" in register_tools(Srv(), public=False).tools   # run-scoped
     assert "recall_notes" in hosted and not WRITE_TOOLS & set(hosted)
     assert all(a.read_only_hint for a in hosted.values())
     monkeypatch.setattr(settings, "faultline_mcp_notes", True)

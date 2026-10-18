@@ -29,7 +29,7 @@ WRITE_TOOLS = {"remember"}   # the one MCP tool that writes: a shared note, to a
 
 def register_tools(server: MCPServer, public: bool = False) -> MCPServer:
     """public=True (hosted HTTP, judges): drop INTERNAL_TOOLS, which build engine-written scratch/what-if graphs. Every hosted tool then reads only, through the tenant's read-only ACL user."""
-    from ..agent.phases import INTERNAL_TOOLS
+    from ..agent.phases import INTERNAL_TOOLS, RUN_SCOPED_TOOLS
     from .titles import TITLES
 
     ro = ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True, openWorldHint=False)
@@ -38,7 +38,7 @@ def register_tools(server: MCPServer, public: bool = False) -> MCPServer:
     # `remember` writes one note to the tenant's agentmem graph only (the mem_<t> ACL user), never the tenant graph
     note = ToolAnnotations(readOnlyHint=False, destructiveHint=False, idempotentHint=False, openWorldHint=False)
     for name, fn in T.TOOLS.items():
-        if public and name in INTERNAL_TOOLS:
+        if public and (name in INTERNAL_TOOLS or name in RUN_SCOPED_TOOLS):
             continue
         if public and name in WRITE_TOOLS and not settings.faultline_mcp_notes:
             continue  # the public demo stays read-only; a self-hosted HTTP server opts in with FAULTLINE_MCP_NOTES=true

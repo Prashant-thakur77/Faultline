@@ -19,7 +19,7 @@ def code_counts() -> dict:
     one template behind whenever a template or tool landed between eval runs (DECISIONS 2026-10-16). Tenant sizes stay
     the run's (they are read from the graphs the run used)."""
     sys.path.insert(0, str(ROOT / "backend"))
-    from faultline.agent.phases import INTERNAL_TOOLS
+    from faultline.agent.phases import INTERNAL_TOOLS, RUN_SCOPED_TOOLS
     from faultline.graph.algo import registry
     from faultline.graph.templates import catalogue
     from faultline.mcp_server import tools as T
@@ -29,7 +29,8 @@ def code_counts() -> dict:
 
     return {"repo.templates": len(catalogue()), "repo.algorithms": len(registry.resolved()), "repo.mcp_tools": len(T.TOOLS),
             # hosted = what the public HTTP server offers: no internal tools, and no write tool unless a host opts in
-            "repo.mcp_tools_hosted": len([t for t in T.TOOLS if t not in INTERNAL_TOOLS and t not in WRITE_TOOLS]),
+            "repo.mcp_tools_hosted": len([t for t in T.TOOLS if t not in INTERNAL_TOOLS and t not in WRITE_TOOLS
+                                          and t not in RUN_SCOPED_TOOLS]),
             # engine-enforced invariants (M20 #1): MANDATORY / UNIQUE constraints on nodes and relationships
             "repo.constraints": len(CONSTRAINTS)}
 

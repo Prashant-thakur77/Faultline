@@ -37,7 +37,7 @@
 - One graph per tenant, read-only ACL users, `GRAPH.RO_QUERY` with a timeout and a row limit for every read; writes only through one module.
 - <!-- claim:repo.algorithms -->10<!-- /claim --> `algo.*` procedures, each changing a decision (BFS, SPpaths, SSpaths, maxFlow, pageRank, betweenness, WCC, labelPropagation, HarmonicCentrality, MSF).
 - Two kinds of action verified through a second channel: a flag or rollback pull request (GitHub main re-read, telemetry back in band) and a data repair the keyless run proposes from its own measurements (one segment of the anomalous column a power of ten off; the lineage graph names the transform), verified by rebuilding the warehouse: <!-- claim:example.s2.verdict -->APPLIED<!-- /claim -->, <!-- claim:example.s2.invariants -->32/32<!-- /claim --> invariants, write-back <!-- claim:example.s2.writeback -->7/7<!-- /claim --> (examples/s2-data-incident).
-- <!-- claim:repo.templates -->241<!-- /claim --> parameterised Cypher templates (never Cypher built from input), <!-- claim:repo.mcp_tools -->62<!-- /claim --> MCP tools, <!-- claim:repo.constraints -->18<!-- /claim --> constraints, vectors (`vecf32`) and full-text indexes, `GRAPH.COPY` clean rooms, `WAITAOF` durability, the engine's telemetry stream.
+- <!-- claim:repo.templates -->242<!-- /claim --> parameterised Cypher templates (never Cypher built from input), <!-- claim:repo.mcp_tools -->62<!-- /claim --> MCP tools, <!-- claim:repo.constraints -->18<!-- /claim --> constraints, vectors (`vecf32`) and full-text indexes, `GRAPH.COPY` clean rooms, `WAITAOF` durability, the engine's telemetry stream.
 
 ## Docs
 
