@@ -330,6 +330,16 @@ export function PreflightView({ focus = null, prRef = null }: { focus?: string |
           <div className="fl-card rounded-2xl px-5 py-8 text-center">
             <p className="text-[15px] text-zinc-200">Pick an example pull request to see its verdict.</p>
             <p className="mt-1 text-sm text-[var(--fl-subtle)]">Block, review or allow, with every term read from FalkorDB.</p>
+            <button
+              type="button"
+              onClick={() => {
+                setText(JSON.stringify(EXAMPLES[0].body, null, 2));
+                void run(EXAMPLES[0].body);
+              }}
+              className="fl-press mt-4 inline-flex min-h-9 items-center gap-1.5 rounded-full bg-zinc-50 px-4 text-sm font-medium text-zinc-950 outline-none hover:bg-white focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+            >
+              Check the risky one: {EXAMPLES[0].label}
+            </button>
           </div>
         ) : busy ? (
           <p className="text-sm text-zinc-300">Scoring the PR against the graph…</p>
