@@ -184,7 +184,13 @@ export function FalkorExplainer() {
       lastOp.current[key] = op;
       el.style.opacity = String(op);
       el.style.visibility = op === 0 ? "hidden" : "visible";
-      if (x >= 0) el.style.transform = `translate(-50%, 0) translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)`;
+      if (x >= 0) {
+        // keep a centred label inside the stage: near the edge a long one ("Alerts & telemetry") was clipped
+        const w = el.parentElement?.clientWidth ?? 0;
+        const half = el.offsetWidth / 2 + 8;
+        const cx = w > 2 * half ? Math.min(Math.max(x, half), w - half) : x;
+        el.style.transform = `translate(-50%, 0) translate(${cx.toFixed(1)}px, ${y.toFixed(1)}px)`;
+      }
       else el.style.setProperty("--k", String(op));
     },
   }), []);
