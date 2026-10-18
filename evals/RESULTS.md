@@ -164,7 +164,7 @@ TR ranks every change in the window by its measured excess, with no graph. Rerun
 
 ## Company brain on paraphrased questions (not a blind set)
 
-Original wording: 33/33 (90–100 %) correct, citation precision 0.3118. Paraphrased: 30/33 (76–97 %) correct (30 routed to the expected intent; 30 with every expected citation whatever the intent label), citation precision 0.2935.
+Original wording: 33/33 (90–100 %) correct, citation precision 0.3021. Paraphrased: 31/33 (80–98 %) correct (31 routed to the expected intent; 31 with every expected citation whatever the intent label), citation precision 0.2803.
 
 ## Company brain on blind sets (written by agents that never saw the router)
 

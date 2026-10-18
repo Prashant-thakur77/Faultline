@@ -1,11 +1,11 @@
 {
   "incident": {
-    "id": "inc-s2-99a4f2f6",
+    "id": "inc-s2-2defc7b1",
     "title": "The executive revenue KPI looks wrong since yesterday",
-    "stage": "AWAITING_APPROVAL",
+    "stage": "RESOLVED",
     "onset_at": 1792029600000,
-    "opened_at": 1792279125034,
-    "confident": false,
+    "opened_at": 1792323310318,
+    "confident": true,
     "targets": [
       "kpi.exec_revenue"
     ],
@@ -14,8 +14,8 @@
     ]
   },
   "run": {
-    "run": "run-s2-99a4f2f6",
-    "graph": "eval_acme_api_v2_s2_4150_99a4f2f6",
+    "run": "run-s2-2defc7b1",
+    "graph": "eval_acme_api_v2_s2_8945_2defc7b1",
     "scenario": "S2",
     "outcome": "CONFIRMED",
     "cause": "D-cutover-1",
@@ -23,96 +23,131 @@
   },
   "stages": [
     {
-      "id": "run-s2-99a4f2f6-se-INTAKE-1-2d7c8d",
+      "id": "run-s2-2defc7b1-se-INTAKE-1-bae391",
       "stage": "INTAKE",
       "ord": 1,
-      "at": 1792279125037,
-      "note": "alerts: ['al-s2-kpi']"
+      "at": 1792323310326,
+      "note": "alerts: al-s2-kpi"
     },
     {
-      "id": "run-s2-99a4f2f6-se-RECALL-2-c7b196",
+      "id": "run-s2-2defc7b1-se-RECALL-2-38d83b",
       "stage": "RECALL",
       "ord": 2,
-      "at": 1792279125135,
+      "at": 1792323310406,
       "note": ""
     },
     {
-      "id": "run-s2-99a4f2f6-se-LOCALIZE-3-243680",
+      "id": "run-s2-2defc7b1-se-LOCALIZE-3-bf73b0",
       "stage": "LOCALIZE",
       "ord": 3,
-      "at": 1792279125154,
+      "at": 1792323310453,
       "note": ""
     },
     {
-      "id": "run-s2-99a4f2f6-se-BLAST-4-c116d2",
+      "id": "run-s2-2defc7b1-se-BLAST-4-b790ed",
       "stage": "BLAST",
       "ord": 4,
-      "at": 1792279125176,
+      "at": 1792323310460,
       "note": ""
     },
     {
-      "id": "run-s2-99a4f2f6-se-HYPOTHESIZE-5-52912e",
+      "id": "run-s2-2defc7b1-se-HYPOTHESIZE-5-7927fa",
       "stage": "HYPOTHESIZE",
       "ord": 5,
-      "at": 1792279125191,
+      "at": 1792323310466,
       "note": ""
     },
     {
-      "id": "run-s2-99a4f2f6-se-INVESTIGATE-6-c71dfa",
+      "id": "run-s2-2defc7b1-se-INVESTIGATE-6-945b82",
       "stage": "INVESTIGATE",
       "ord": 6,
-      "at": 1792279125229,
+      "at": 1792323310479,
       "note": ""
     },
     {
-      "id": "run-s2-99a4f2f6-se-GATE-7-b1eaf2",
+      "id": "run-s2-2defc7b1-se-GATE-7-e0bcf3",
       "stage": "GATE",
       "ord": 7,
-      "at": 1792279125631,
+      "at": 1792323310823,
       "note": "cause D-cutover-1 accepted (confident=True)"
     },
     {
-      "id": "run-s2-99a4f2f6-se-CONTAIN-9-30b676",
+      "id": "run-s2-2defc7b1-se-CONTAIN-9-f23658",
       "stage": "CONTAIN",
       "ord": 9,
-      "at": 1792279125648,
+      "at": 1792323310843,
       "note": ""
     },
     {
-      "id": "run-s2-99a4f2f6-se-ROUTE-10-acfd06",
+      "id": "run-s2-2defc7b1-se-ROUTE-10-cee246",
       "stage": "ROUTE",
       "ord": 10,
-      "at": 1792279126056,
+      "at": 1792323311215,
       "note": ""
     },
     {
-      "id": "run-s2-99a4f2f6-se-PLAN-11-7426ad",
+      "id": "run-s2-2defc7b1-se-PLAN-11-3320ba",
       "stage": "PLAN",
       "ord": 11,
-      "at": 1792279126140,
+      "at": 1792323311249,
       "note": ""
     },
     {
-      "id": "run-s2-99a4f2f6-se-AWAITING_APPROVAL-12-d17346",
+      "id": "run-s2-2defc7b1-se-AWAITING_APPROVAL-12-c2ba1a",
       "stage": "AWAITING_APPROVAL",
       "ord": 12,
-      "at": 1792279126193,
+      "at": 1792323311320,
       "note": "two-step approval required: choose an option, then approve its plan hash"
+    },
+    {
+      "id": "run-s2-2defc7b1-se-EXECUTE-13-baafcc",
+      "stage": "EXECUTE",
+      "ord": 13,
+      "at": 1792323311498,
+      "note": "executing act-inc-s2-2defc7b1-4"
+    },
+    {
+      "id": "run-s2-2defc7b1-se-VERIFY-14-5b9573",
+      "stage": "VERIFY",
+      "ord": 14,
+      "at": 1792323311676,
+      "note": ""
+    },
+    {
+      "id": "run-s2-2defc7b1-se-WRITEBACK-15-59a581",
+      "stage": "WRITEBACK",
+      "ord": 15,
+      "at": 1792323312622,
+      "note": "verdict APPLIED: pipeline/transforms/stg_orders.sql carries the patch; on the incident's own data (mode incident, sources b8f24c5669d3) the rebuild passed 32/32 invariants and the KPI anomaly ratio is 0.933 (inside 0."
+    },
+    {
+      "id": "run-s2-2defc7b1-se-LEARN-16-ac8f23",
+      "stage": "LEARN",
+      "ord": 16,
+      "at": 1792323313034,
+      "note": "family of 7 incidents; runbook rb-derived-32def3f1f2 now supported by 3"
+    },
+    {
+      "id": "run-s2-2defc7b1-se-RESOLVED-17-da0458",
+      "stage": "RESOLVED",
+      "ord": 17,
+      "at": 1792323313035,
+      "note": "write-back verified 7/7"
     }
   ],
   "tool_calls": [
     {
-      "id": "run-s2-99a4f2f6-tc0001",
+      "id": "run-s2-2defc7b1-tc0001",
       "tool": "similar_incidents",
       "template": "Q-MEM-1",
-      "ms": 2.41,
+      "ms": 2.11,
       "rows": 5,
-      "at": 1792279125142,
-      "evidence_id": "ev_6d2773925a",
+      "at": 1792323310413,
+      "evidence_id": "ev_2f021fb798",
       "kind": "recall",
       "summary": "5 structurally confirmed precedents: inc-h038, inc-h031, inc-h016",
       "params": {
-        "current": "inc-s2-99a4f2f6",
+        "current": "inc-s2-2defc7b1",
         "half_life_ms": 2592000000.0,
         "now": 1792029600000,
         "w_recency": 0.2
@@ -120,12 +155,12 @@
       "digest": "eea4b0b4df5074366860ea5987a0f30cbba257ff2902d0befb6aca10f05a513e"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0002",
+      "id": "run-s2-2defc7b1-tc0002",
       "tool": "runbook_for",
       "template": "Q-MEM-3",
-      "ms": 1.0,
+      "ms": 0.86,
       "rows": 1,
-      "at": 1792279125149,
+      "at": 1792323310445,
       "evidence_id": "ev_170de71b35",
       "kind": "recall",
       "summary": "1 runbooks",
@@ -138,12 +173,37 @@
       "digest": "e085fbc30db5ec61fb5183e53792d3f23c22c55b8218e780173b0751f3b98e44"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0003",
+      "id": "run-s2-2defc7b1-tc0003",
+      "tool": "recall_notes",
+      "template": "Q-NOTE-RECALL",
+      "ms": 2.25,
+      "rows": 2,
+      "at": 1792323310451,
+      "evidence_id": "ev_70bffc6067",
+      "kind": "notes",
+      "summary": "2 notes near kpi.exec_revenue",
+      "params": {
+        "floor": 0.65,
+        "focus": "kpi.exec_revenue",
+        "hops": 2,
+        "q": null,
+        "viewer": "faultline:run-s2-2defc7b1",
+        "w": [
+          0.6,
+          0.3,
+          0.1,
+          1440.0
+        ]
+      },
+      "digest": "02ff8bb7629f2c2b3d1868b36f43501c8d36942fb6cc484288a5ca0fa0b1a9da"
+    },
+    {
+      "id": "run-s2-2defc7b1-tc0004",
       "tool": "service_context",
       "template": "Q-CTX-1",
-      "ms": 1.68,
+      "ms": 0.6,
       "rows": 1,
-      "at": 1792279125164,
+      "at": 1792323310457,
       "evidence_id": "ev_c0c67d4d13",
       "kind": "context",
       "summary": "context of kpi.exec_revenue",
@@ -154,12 +214,12 @@
       "digest": "b04721a110d02aeb17972cf71ea82bee2b74b8b990212da20203aec84675f443"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0004",
+      "id": "run-s2-2defc7b1-tc0005",
       "tool": "upstream_scope",
       "template": "Q-LIN-1",
-      "ms": 1.54,
+      "ms": 0.32,
       "rows": 11,
-      "at": 1792279125171,
+      "at": 1792323310459,
       "evidence_id": "ev_dd753e57fb",
       "kind": "lineage",
       "summary": "11 upstream nodes",
@@ -169,27 +229,32 @@
       "digest": "c2e96f4d490bddcb8e66b9a690ebd81799158eba6804ff1b274ac25f4c5beaaf"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0005",
+      "id": "run-s2-2defc7b1-tc0006",
       "tool": "blast_radius",
-      "template": "Q-BLAST-1",
-      "ms": 1.45,
+      "template": "Q-BLAST-3",
+      "ms": 1.67,
       "rows": 1,
-      "at": 1792279125182,
-      "evidence_id": "ev_1c9c30782d",
+      "at": 1792323310463,
+      "evidence_id": "ev_d9803ff7c1",
       "kind": "blast",
       "summary": "1 impacted nodes",
       "params": {
-        "id": "kpi.exec_revenue"
+        "id": "kpi.exec_revenue",
+        "tw": [
+          1.0,
+          0.5,
+          0.2
+        ]
       },
-      "digest": "99c39a147c355fcdcb2ab12a26074455c894607465e1a08c398b63a0a1bf1bcc"
+      "digest": "5b44c9b7a5ce1737e02b27e739c954a39706db7301da57cb93b8eb99453fcff3"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0006",
+      "id": "run-s2-2defc7b1-tc0007",
       "tool": "chokepoints",
       "template": "Q-CHOKE-1",
-      "ms": 1.24,
+      "ms": 0.4,
       "rows": 10,
-      "at": 1792279125187,
+      "at": 1792323310465,
       "evidence_id": "ev_2c9a86d8e7",
       "kind": "centrality",
       "summary": "top chokepoints",
@@ -197,12 +262,12 @@
       "digest": "43f129377bd342896a12f190339d1a5f8bb511f765fa525e23d31cc988039c96"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0007",
+      "id": "run-s2-2defc7b1-tc0008",
       "tool": "upstream_suspects",
       "template": "Q-SUS-1",
-      "ms": 1.63,
+      "ms": 0.62,
       "rows": 2,
-      "at": 1792279125201,
+      "at": 1792323310470,
       "evidence_id": "ev_3af87f8aef",
       "kind": "change",
       "summary": "2 upstream changes",
@@ -214,12 +279,12 @@
       "digest": "f555800c0d9a0c41d7da1d0d008a467899c066dd26843b2c153e90909857eb59"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0008",
+      "id": "run-s2-2defc7b1-tc0009",
       "tool": "window_changes",
       "template": "Q-SUS-2",
-      "ms": 1.33,
+      "ms": 0.39,
       "rows": 2,
-      "at": 1792279125207,
+      "at": 1792323310472,
       "evidence_id": "ev_a19203b14e",
       "kind": "change",
       "summary": "2 changes in window",
@@ -230,12 +295,12 @@
       "digest": "86322245ee108660eb46ec97833bbd0f6af777f460d325129e26ee6eaabb12a2"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0009",
+      "id": "run-s2-2defc7b1-tc0010",
       "tool": "rank_causes",
       "template": "Q-RANK-1",
-      "ms": 1.11,
+      "ms": 0.27,
       "rows": 12,
-      "at": 1792279125219,
+      "at": 1792323310475,
       "evidence_id": "ev_cd0bb42838",
       "kind": "rank",
       "summary": "pageRank over 12 nodes, 11 edges",
@@ -243,12 +308,12 @@
       "digest": "e3afdd4ac9088fc848e5aff75dab084a3a6fd7aa384a8c266f5d0ac52d2c41e1"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0010",
+      "id": "run-s2-2defc7b1-tc0011",
       "tool": "get_metric_history",
       "template": null,
-      "ms": 2.14,
+      "ms": 0.83,
       "rows": 1,
-      "at": 1792279125255,
+      "at": 1792323310487,
       "evidence_id": "ev_7cf2442039",
       "kind": "metric",
       "summary": "KPI 2026-08-09: 2,737,324 vs expected 29,349 (\u00d793.27, band 1.377)",
@@ -256,12 +321,12 @@
       "digest": "fe99940e41241820b472432a814ec0dca867dc113d2aeb24ee0ece95fdd9d736"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0011",
+      "id": "run-s2-2defc7b1-tc0012",
       "tool": "compare_to_baseline",
       "template": null,
-      "ms": 184.92,
+      "ms": 186.94,
       "rows": 7,
-      "at": 1792279125443,
+      "at": 1792323310676,
       "evidence_id": "ev_201daec0f6",
       "kind": "baseline_comparison",
       "summary": "worst day ratio \u00d7100.0 (band 1.377); anomalous days: ['2026-08-09', '2026-08-08', '2026-08-07']",
@@ -271,12 +336,27 @@
       "digest": "91a4878d43d25ef4253779626e6c370347275d9ede7c8b6893320ed98aa7b100"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0012",
+      "id": "run-s2-2defc7b1-tc0013",
+      "tool": "upstream_scope",
+      "template": "Q-LIN-1",
+      "ms": 1.0,
+      "rows": 11,
+      "at": 1792323310681,
+      "evidence_id": "ev_dd753e57fb",
+      "kind": "lineage",
+      "summary": "11 upstream nodes",
+      "params": {
+        "symptom": "kpi.exec_revenue"
+      },
+      "digest": "c2e96f4d490bddcb8e66b9a690ebd81799158eba6804ff1b274ac25f4c5beaaf"
+    },
+    {
+      "id": "run-s2-2defc7b1-tc0014",
       "tool": "causal_paths",
       "template": "Q-GATE-1",
-      "ms": 0.94,
+      "ms": 1.05,
       "rows": 1,
-      "at": 1792279125451,
+      "at": 1792323310682,
       "evidence_id": "ev_299133ee43",
       "kind": "path",
       "summary": "D-cutover-1 \u2192 payment \u2192 raw.raw_orders \u2192 staging.stg_orders \u2192 marts.fct_revenue \u2192 marts.exec_revenue_metric \u2192 kpi.exec_revenue",
@@ -287,12 +367,12 @@
       "digest": "7728be32bd70c255486c788abe311fd937fc1a1d9a128c16bb5663af9b297e34"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0013",
+      "id": "run-s2-2defc7b1-tc0015",
       "tool": "change_details",
       "template": "Q-CHANGE-2",
-      "ms": 0.64,
+      "ms": 2.75,
       "rows": 1,
-      "at": 1792279125453,
+      "at": 1792323310683,
       "evidence_id": "ev_4d2118fdaf",
       "kind": "change",
       "summary": "D-cutover-1: data_cutover of payment, 0 asserted facts",
@@ -302,58 +382,12 @@
       "digest": "747463910868bb306d3aa71e935133c5a276d6c94a0bb16420aff4df9a17ffa9"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0014",
-      "tool": "upstream_scope",
-      "template": "Q-LIN-1",
-      "ms": 1.28,
-      "rows": 11,
-      "at": 1792279125453,
-      "evidence_id": "ev_dd753e57fb",
-      "kind": "lineage",
-      "summary": "11 upstream nodes",
-      "params": {
-        "symptom": "kpi.exec_revenue"
-      },
-      "digest": "c2e96f4d490bddcb8e66b9a690ebd81799158eba6804ff1b274ac25f4c5beaaf"
-    },
-    {
-      "id": "run-s2-99a4f2f6-tc0015",
-      "tool": "diff_summary",
-      "template": "Q-CODE-1",
-      "ms": 2.21,
-      "rows": 1,
-      "at": 1792279125458,
-      "evidence_id": "ev_42b5778c61",
-      "kind": "code",
-      "summary": "D-cutover-1: no commits or diff facts in the graph (code not inspectable)",
-      "params": {
-        "id": "D-cutover-1"
-      },
-      "digest": "a1a84e70bd141a76c755c45c713de44b83fcdc926d594be692b4ea3a58163640"
-    },
-    {
-      "id": "run-s2-99a4f2f6-tc0016",
-      "tool": "causal_paths",
-      "template": "Q-GATE-1",
-      "ms": 1.05,
-      "rows": 1,
-      "at": 1792279125460,
-      "evidence_id": "ev_eae6fb8db2",
-      "kind": "path",
-      "summary": "D-fx-pause-7 \u2192 raw.raw_fx_rates \u2192 staging.stg_fx_rates \u2192 marts.fct_revenue \u2192 marts.exec_revenue_metric \u2192 kpi.exec_revenue",
-      "params": {
-        "cause": "D-fx-pause-7",
-        "symptom": "kpi.exec_revenue"
-      },
-      "digest": "0f2cc1055e6e40ef937ae680c3ae9d5684098e9f41b16262c91069da95675c12"
-    },
-    {
-      "id": "run-s2-99a4f2f6-tc0017",
+      "id": "run-s2-2defc7b1-tc0016",
       "tool": "baseline_columns",
       "template": null,
-      "ms": 2.21,
+      "ms": 0.5,
       "rows": 1,
-      "at": 1792279125461,
+      "at": 1792323310685,
       "evidence_id": "ev_bda1cc2f01",
       "kind": "baseline",
       "summary": "1 baselined columns in 6 tables",
@@ -370,12 +404,27 @@
       "digest": "44c3e25944119d3513315f9d7eac93cb1c0e288e5343be7a273aaa2ef30bf67d"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0018",
+      "id": "run-s2-2defc7b1-tc0017",
+      "tool": "diff_summary",
+      "template": "Q-CODE-1",
+      "ms": 4.85,
+      "rows": 1,
+      "at": 1792323310686,
+      "evidence_id": "ev_42b5778c61",
+      "kind": "code",
+      "summary": "D-cutover-1: no commits or diff facts in the graph (code not inspectable)",
+      "params": {
+        "id": "D-cutover-1"
+      },
+      "digest": "a1a84e70bd141a76c755c45c713de44b83fcdc926d594be692b4ea3a58163640"
+    },
+    {
+      "id": "run-s2-2defc7b1-tc0018",
       "tool": "anomalous_row_share",
       "template": null,
-      "ms": 13.97,
+      "ms": 7.38,
       "rows": 1,
-      "at": 1792279125497,
+      "at": 1792323310703,
       "evidence_id": "ev_41900686e1",
       "kind": "row_share",
       "summary": "327/327 rows of staging.stg_orders.amount on 2026-08-09 outside baseline range [5.0, 1114.51] \u2192 share 1.0",
@@ -387,12 +436,12 @@
       "digest": "293553e53d665b3898b94aedbac8b2da1039e6b7db01728135c49bc43db1a55a"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0019",
+      "id": "run-s2-2defc7b1-tc0019",
       "tool": "causal_paths",
       "template": "Q-GATE-1",
-      "ms": 1.73,
+      "ms": 2.37,
       "rows": 1,
-      "at": 1792279125503,
+      "at": 1792323310708,
       "evidence_id": "ev_f0840aa989",
       "kind": "path",
       "summary": "D-cutover-1 \u2192 payment \u2192 raw.raw_orders \u2192 staging.stg_orders",
@@ -403,120 +452,12 @@
       "digest": "273128226190a9ad1387c0777d41e9205a6550336cb8365c458795359d27f410"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0020",
-      "tool": "decision_check",
-      "template": "Q-DEC-1",
-      "ms": 0.91,
-      "rows": 0,
-      "at": 1792279125503,
-      "evidence_id": "ev_142f8d2888",
-      "kind": "decision",
-      "summary": "0 violations",
-      "params": {
-        "change": "D-cutover-1"
-      },
-      "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
-    },
-    {
-      "id": "run-s2-99a4f2f6-tc0021",
-      "tool": "diff_summary",
-      "template": "Q-CODE-1",
-      "ms": 1.97,
-      "rows": 1,
-      "at": 1792279125508,
-      "evidence_id": "ev_f5a6023e53",
-      "kind": "code",
-      "summary": "D-fx-pause-7: no commits or diff facts in the graph (code not inspectable)",
-      "params": {
-        "id": "D-fx-pause-7"
-      },
-      "digest": "4574050653525499aa9418bdde0e40a4b6f18e88222ac8b1ae0e3bb024e78cd3"
-    },
-    {
-      "id": "run-s2-99a4f2f6-tc0022",
-      "tool": "change_details",
-      "template": "Q-CHANGE-2",
-      "ms": 0.72,
-      "rows": 1,
-      "at": 1792279125510,
-      "evidence_id": "ev_6d82cca5e2",
-      "kind": "change",
-      "summary": "D-fx-pause-7: config of raw.raw_fx_rates, 0 asserted facts",
-      "params": {
-        "id": "D-fx-pause-7"
-      },
-      "digest": "7399d51907c30910e0867a028c8982613eb1dce814f256e456fd4c44786b3dbd"
-    },
-    {
-      "id": "run-s2-99a4f2f6-tc0023",
+      "id": "run-s2-2defc7b1-tc0020",
       "tool": "causal_paths",
       "template": "Q-GATE-1",
-      "ms": 0.92,
-      "rows": 0,
-      "at": 1792279125512,
-      "evidence_id": "ev_c14a1bcb39",
-      "kind": "path",
-      "summary": "no path D-fx-pause-7 \u2192 staging.stg_orders (\u2264 8 hops)",
-      "params": {
-        "cause": "D-fx-pause-7",
-        "symptom": "staging.stg_orders"
-      },
-      "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
-    },
-    {
-      "id": "run-s2-99a4f2f6-tc0024",
-      "tool": "decision_check",
-      "template": "Q-DEC-1",
-      "ms": 0.74,
-      "rows": 0,
-      "at": 1792279125525,
-      "evidence_id": "ev_077f3c9f08",
-      "kind": "decision",
-      "summary": "0 violations",
-      "params": {
-        "change": "D-fx-pause-7"
-      },
-      "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
-    },
-    {
-      "id": "run-s2-99a4f2f6-tc0025",
-      "tool": "window_changes",
-      "template": "Q-SUS-2",
-      "ms": 1.03,
-      "rows": 2,
-      "at": 1792279125536,
-      "evidence_id": "ev_a19203b14e",
-      "kind": "change",
-      "summary": "2 changes in window",
-      "params": {
-        "onset": 1792029600000,
-        "window_ms": 3600000
-      },
-      "digest": "86322245ee108660eb46ec97833bbd0f6af777f460d325129e26ee6eaabb12a2"
-    },
-    {
-      "id": "run-s2-99a4f2f6-tc0026",
-      "tool": "causal_paths",
-      "template": "Q-GATE-1",
-      "ms": 0.68,
+      "ms": 2.09,
       "rows": 1,
-      "at": 1792279125545,
-      "evidence_id": "ev_299133ee43",
-      "kind": "path",
-      "summary": "D-cutover-1 \u2192 payment \u2192 raw.raw_orders \u2192 staging.stg_orders \u2192 marts.fct_revenue \u2192 marts.exec_revenue_metric \u2192 kpi.exec_revenue",
-      "params": {
-        "cause": "D-cutover-1",
-        "symptom": "kpi.exec_revenue"
-      },
-      "digest": "7728be32bd70c255486c788abe311fd937fc1a1d9a128c16bb5663af9b297e34"
-    },
-    {
-      "id": "run-s2-99a4f2f6-tc0027",
-      "tool": "causal_paths",
-      "template": "Q-GATE-1",
-      "ms": 1.15,
-      "rows": 1,
-      "at": 1792279125551,
+      "at": 1792323310712,
       "evidence_id": "ev_eae6fb8db2",
       "kind": "path",
       "summary": "D-fx-pause-7 \u2192 raw.raw_fx_rates \u2192 staging.stg_fx_rates \u2192 marts.fct_revenue \u2192 marts.exec_revenue_metric \u2192 kpi.exec_revenue",
@@ -527,12 +468,136 @@
       "digest": "0f2cc1055e6e40ef937ae680c3ae9d5684098e9f41b16262c91069da95675c12"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0028",
+      "id": "run-s2-2defc7b1-tc0021",
+      "tool": "diff_summary",
+      "template": "Q-CODE-1",
+      "ms": 2.17,
+      "rows": 1,
+      "at": 1792323310713,
+      "evidence_id": "ev_f5a6023e53",
+      "kind": "code",
+      "summary": "D-fx-pause-7: no commits or diff facts in the graph (code not inspectable)",
+      "params": {
+        "id": "D-fx-pause-7"
+      },
+      "digest": "4574050653525499aa9418bdde0e40a4b6f18e88222ac8b1ae0e3bb024e78cd3"
+    },
+    {
+      "id": "run-s2-2defc7b1-tc0022",
+      "tool": "causal_paths",
+      "template": "Q-GATE-1",
+      "ms": 0.48,
+      "rows": 0,
+      "at": 1792323310714,
+      "evidence_id": "ev_c14a1bcb39",
+      "kind": "path",
+      "summary": "no path D-fx-pause-7 \u2192 staging.stg_orders (\u2264 8 hops)",
+      "params": {
+        "cause": "D-fx-pause-7",
+        "symptom": "staging.stg_orders"
+      },
+      "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "run-s2-2defc7b1-tc0023",
+      "tool": "decision_check",
+      "template": "Q-DEC-1",
+      "ms": 1.97,
+      "rows": 0,
+      "at": 1792323310714,
+      "evidence_id": "ev_142f8d2888",
+      "kind": "decision",
+      "summary": "0 violations",
+      "params": {
+        "change": "D-cutover-1"
+      },
+      "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "run-s2-2defc7b1-tc0024",
+      "tool": "change_details",
+      "template": "Q-CHANGE-2",
+      "ms": 0.42,
+      "rows": 1,
+      "at": 1792323310729,
+      "evidence_id": "ev_6d82cca5e2",
+      "kind": "change",
+      "summary": "D-fx-pause-7: config of raw.raw_fx_rates, 0 asserted facts",
+      "params": {
+        "id": "D-fx-pause-7"
+      },
+      "digest": "7399d51907c30910e0867a028c8982613eb1dce814f256e456fd4c44786b3dbd"
+    },
+    {
+      "id": "run-s2-2defc7b1-tc0025",
+      "tool": "decision_check",
+      "template": "Q-DEC-1",
+      "ms": 0.6,
+      "rows": 0,
+      "at": 1792323310736,
+      "evidence_id": "ev_077f3c9f08",
+      "kind": "decision",
+      "summary": "0 violations",
+      "params": {
+        "change": "D-fx-pause-7"
+      },
+      "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "run-s2-2defc7b1-tc0026",
+      "tool": "window_changes",
+      "template": "Q-SUS-2",
+      "ms": 0.92,
+      "rows": 2,
+      "at": 1792323310744,
+      "evidence_id": "ev_a19203b14e",
+      "kind": "change",
+      "summary": "2 changes in window",
+      "params": {
+        "onset": 1792029600000,
+        "window_ms": 3600000
+      },
+      "digest": "86322245ee108660eb46ec97833bbd0f6af777f460d325129e26ee6eaabb12a2"
+    },
+    {
+      "id": "run-s2-2defc7b1-tc0027",
+      "tool": "causal_paths",
+      "template": "Q-GATE-1",
+      "ms": 0.96,
+      "rows": 1,
+      "at": 1792323310752,
+      "evidence_id": "ev_299133ee43",
+      "kind": "path",
+      "summary": "D-cutover-1 \u2192 payment \u2192 raw.raw_orders \u2192 staging.stg_orders \u2192 marts.fct_revenue \u2192 marts.exec_revenue_metric \u2192 kpi.exec_revenue",
+      "params": {
+        "cause": "D-cutover-1",
+        "symptom": "kpi.exec_revenue"
+      },
+      "digest": "7728be32bd70c255486c788abe311fd937fc1a1d9a128c16bb5663af9b297e34"
+    },
+    {
+      "id": "run-s2-2defc7b1-tc0028",
+      "tool": "causal_paths",
+      "template": "Q-GATE-1",
+      "ms": 0.96,
+      "rows": 1,
+      "at": 1792323310757,
+      "evidence_id": "ev_eae6fb8db2",
+      "kind": "path",
+      "summary": "D-fx-pause-7 \u2192 raw.raw_fx_rates \u2192 staging.stg_fx_rates \u2192 marts.fct_revenue \u2192 marts.exec_revenue_metric \u2192 kpi.exec_revenue",
+      "params": {
+        "cause": "D-fx-pause-7",
+        "symptom": "kpi.exec_revenue"
+      },
+      "digest": "0f2cc1055e6e40ef937ae680c3ae9d5684098e9f41b16262c91069da95675c12"
+    },
+    {
+      "id": "run-s2-2defc7b1-tc0029",
       "tool": "upstream_explained",
       "template": "Q-GATE-UPSTREAM",
-      "ms": 2.64,
+      "ms": 2.5,
       "rows": 0,
-      "at": 1792279125557,
+      "at": 1792323310763,
       "evidence_id": "ev_d1b052a991",
       "kind": "upstream",
       "summary": "strict: no anomalous component upstream accounts for payment, raw.raw_fx_rates",
@@ -550,12 +615,12 @@
       "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0029",
+      "id": "run-s2-2defc7b1-tc0030",
       "tool": "impact_bound",
       "template": "Q-GATE-3+Q-GATE-MULT",
-      "ms": 4.11,
+      "ms": 2.94,
       "rows": 1,
-      "at": 1792279125568,
+      "at": 1792323310771,
       "evidence_id": "ev_f7f81dcffd",
       "kind": "flow",
       "summary": "bound 1.0000 (max flow 1.0000, up to 1 path(s)) vs needed 0.8000 (sufficient)",
@@ -576,12 +641,12 @@
       "digest": "629b4c6bcbac016abab3682d423fe2e4f7faccda91ebc571a165de3e0b98aa6c"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0030",
+      "id": "run-s2-2defc7b1-tc0031",
       "tool": "impact_bound",
       "template": "Q-GATE-3+Q-GATE-MULT",
-      "ms": 3.47,
+      "ms": 2.7,
       "rows": 1,
-      "at": 1792279125574,
+      "at": 1792323310776,
       "evidence_id": "ev_99167a4ab6",
       "kind": "flow",
       "summary": "bound 0.0692 (max flow 0.0692, up to 1 path(s)) vs needed 0.8000 (insufficient)",
@@ -602,12 +667,12 @@
       "digest": "48695a3b650751b356a7d79fe8f3cef76292db26820f66d52e5a4cee1cc23269"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0031",
+      "id": "run-s2-2defc7b1-tc0032",
       "tool": "causal_paths",
       "template": "Q-GATE-1",
-      "ms": 1.2,
+      "ms": 0.94,
       "rows": 1,
-      "at": 1792279125603,
+      "at": 1792323310795,
       "evidence_id": "ev_299133ee43",
       "kind": "path",
       "summary": "D-cutover-1 \u2192 payment \u2192 raw.raw_orders \u2192 staging.stg_orders \u2192 marts.fct_revenue \u2192 marts.exec_revenue_metric \u2192 kpi.exec_revenue",
@@ -618,12 +683,12 @@
       "digest": "7728be32bd70c255486c788abe311fd937fc1a1d9a128c16bb5663af9b297e34"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0032",
+      "id": "run-s2-2defc7b1-tc0033",
       "tool": "upstream_explained",
       "template": "Q-GATE-UPSTREAM-UB",
-      "ms": 1.64,
+      "ms": 1.13,
       "rows": 0,
-      "at": 1792279125614,
+      "at": 1792323310803,
       "evidence_id": "ev_a558c98853",
       "kind": "upstream",
       "summary": "bound: no anomalous component upstream accounts for payment",
@@ -641,12 +706,12 @@
       "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0033",
+      "id": "run-s2-2defc7b1-tc0034",
       "tool": "impact_bound",
       "template": "Q-GATE-3+Q-GATE-MULT",
-      "ms": 1.09,
+      "ms": 1.2,
       "rows": 1,
-      "at": 1792279125619,
+      "at": 1792323310808,
       "evidence_id": "ev_f7f81dcffd",
       "kind": "flow",
       "summary": "bound 1.0000 (max flow 1.0000, up to 1 path(s)) vs needed 0.8000 (sufficient)",
@@ -667,12 +732,12 @@
       "digest": "629b4c6bcbac016abab3682d423fe2e4f7faccda91ebc571a165de3e0b98aa6c"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0034",
+      "id": "run-s2-2defc7b1-tc0035",
       "tool": "window_changes",
       "template": "Q-SUS-2",
-      "ms": 0.42,
+      "ms": 0.33,
       "rows": 2,
-      "at": 1792279125622,
+      "at": 1792323310809,
       "evidence_id": "ev_a19203b14e",
       "kind": "change",
       "summary": "2 changes in window",
@@ -683,12 +748,12 @@
       "digest": "86322245ee108660eb46ec97833bbd0f6af777f460d325129e26ee6eaabb12a2"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0035",
+      "id": "run-s2-2defc7b1-tc0036",
       "tool": "decision_check",
       "template": "Q-DEC-1",
-      "ms": 0.38,
+      "ms": 0.69,
       "rows": 0,
-      "at": 1792279125625,
+      "at": 1792323310815,
       "evidence_id": "ev_142f8d2888",
       "kind": "decision",
       "summary": "0 violations",
@@ -698,12 +763,12 @@
       "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0036",
+      "id": "run-s2-2defc7b1-tc0037",
       "tool": "alert_coverage",
       "template": "Q-CHAIN-MON",
-      "ms": 0.97,
+      "ms": 1.17,
       "rows": 7,
-      "at": 1792279125633,
+      "at": 1792323310826,
       "evidence_id": "ev_32b65faaca",
       "kind": "coverage",
       "summary": "1/7 hops alerted; silent: D-cutover-1, payment, raw.raw_orders, staging.stg_orders, marts.fct_revenue, marts.exec_revenue_metric",
@@ -723,43 +788,48 @@
       "digest": "34a5ba7fadced7f194b4d8050af07b6602720969c40f2baee36644d9fbfb5a82"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0037",
+      "id": "run-s2-2defc7b1-tc0038",
       "tool": "residue_check",
       "template": "Q-RESIDUE-1",
-      "ms": 0.9,
+      "ms": 1.65,
       "rows": 4,
-      "at": 1792279125636,
-      "evidence_id": "ev_f3e23a5f9e",
+      "at": 1792323310832,
+      "evidence_id": "ev_0177a88501",
       "kind": "residue",
       "summary": "the confirmed cause D-cutover-1 explains 4 of 4 anomalous components",
       "params": {
         "cause": "D-cutover-1",
-        "inc": "inc-s2-99a4f2f6"
+        "inc": "inc-s2-2defc7b1"
       },
       "digest": "2d7994d744fd4439cf1a5466066b9febc1f07172bb93fe61e044fed5d91f44af"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0038",
+      "id": "run-s2-2defc7b1-tc0039",
       "tool": "blast_radius",
-      "template": "Q-BLAST-1",
-      "ms": 1.07,
+      "template": "Q-BLAST-3",
+      "ms": 3.75,
       "rows": 12,
-      "at": 1792279125645,
-      "evidence_id": "ev_22fd6ddea3",
+      "at": 1792323310841,
+      "evidence_id": "ev_1362972bb0",
       "kind": "blast",
       "summary": "12 impacted nodes",
       "params": {
-        "id": "payment"
+        "id": "payment",
+        "tw": [
+          1.0,
+          0.5,
+          0.2
+        ]
       },
-      "digest": "f67ba07f99a2e236d8ffe333e346766d4ad1b7f0773af6c13c16d2e91f2cbc1e"
+      "digest": "b48b32af12ca8f015ae543e438e31e5786ca673e6c51138ed4bb0519923f239e"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0039",
+      "id": "run-s2-2defc7b1-tc0040",
       "tool": "connectivity_check",
       "template": "Q-CONN-2",
-      "ms": 1.23,
+      "ms": 1.36,
       "rows": 1,
-      "at": 1792279125657,
+      "at": 1792323310852,
       "evidence_id": "ev_7804e63ea8",
       "kind": "topology",
       "summary": "payment is connected to a protected node",
@@ -773,31 +843,32 @@
       "digest": "b34cdf355338d793c31e9a0a04a203f8027d28e87495c394191aa696625bc855"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0040",
+      "id": "run-s2-2defc7b1-tc0041",
       "tool": "containment_cut",
-      "template": "Q-CUT-1",
-      "ms": 2.91,
+      "template": "Q-CUT-3",
+      "ms": 3.82,
       "rows": 2,
-      "at": 1792279125666,
-      "evidence_id": "ev_44da9f7262",
+      "at": 1792323310860,
+      "evidence_id": "ev_f2470f65b7",
       "kind": "flow",
       "summary": "cut [('payment', 'checkout'), ('payment', 'raw.raw_orders')] total 1.04",
       "params": {
         "failing": "payment",
+        "max_edges": 100,
         "protect": [
           "frontend-proxy",
           "kpi.exec_revenue"
         ]
       },
-      "digest": "e6eda91090b0ca9250b177ab5a9587452ca5b7a55227585ff635b455c2db768a"
+      "digest": "088d423ff2665cc810d0b9b94c0423a8fb4a13d5a72ddd2fab55501d06cf9842"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0041",
+      "id": "run-s2-2defc7b1-tc0042",
       "tool": "whatif",
       "template": "Q-WHATIF-1",
-      "ms": 1.05,
+      "ms": 0.31,
       "rows": 1,
-      "at": 1792279125792,
+      "at": 1792323310950,
       "evidence_id": "ev_36ccc99d18",
       "kind": "whatif",
       "summary": "contains: protected still reached []; connected {'cart': True, 'checkout': True, 'currency': True, 'frontend': True, 'product-catalog': True, 'shipping': True, 'quote': True}",
@@ -807,12 +878,12 @@
       "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0042",
+      "id": "run-s2-2defc7b1-tc0043",
       "tool": "futures",
       "template": "Q-WHATIF-2+Q-FUTURE-1+Q-FUTURE-1+Q-FUTURE-1+Q-WHATIF-2+Q-FUTURE-1+Q-WHATIF-2+Q-FUTURE-1",
-      "ms": 8.33,
+      "ms": 5.47,
       "rows": 5,
-      "at": 1792279126053,
+      "at": 1792323311213,
       "evidence_id": "ev_984714dc7c",
       "kind": "whatif",
       "summary": "min_cut: unknown; remove_origin: unknown; no_change: unknown; payment|checkout: unknown; payment|raw.raw_orders: unknown",
@@ -917,12 +988,12 @@
       "digest": "b774c5762988121b7881aa8e9d9d4fabea5df41edbe6f5d7a5f2d645e1fc1ea7"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0043",
+      "id": "run-s2-2defc7b1-tc0044",
       "tool": "who_fixes",
       "template": "Q-ORG-WHO+Q-ORG-KNOWS+Q-ORG-HARM",
-      "ms": 6.61,
+      "ms": 4.47,
       "rows": 6,
-      "at": 1792279126075,
+      "at": 1792323311226,
       "evidence_id": "ev_24595c1226",
       "kind": "people",
       "summary": "p-017 (authored 8 recent commit(s) on payment, resolved inc-h008, inc-h011, inc-h015 on payment); p-030 (authored 5 recent commit(s) on payment, resolved inc-h018 on payment); p-036 (authored 5 recent commit(s) on payment, resolved inc-h037, inc-h039 on payment)",
@@ -945,12 +1016,12 @@
       "digest": "50938d6c4e33589eaf713b01cb4a475f624b2b690dc75e1b2ff876eb89a62652"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0044",
+      "id": "run-s2-2defc7b1-tc0045",
       "tool": "bus_factor",
       "template": "Q-ORG-BUS",
-      "ms": 1.23,
+      "ms": 0.66,
       "rows": 1,
-      "at": 1792279126080,
+      "at": 1792323311229,
       "evidence_id": "ev_2c21d8019a",
       "kind": "people",
       "summary": "bus factor 2",
@@ -960,12 +1031,12 @@
       "digest": "9700dd8b9c5565a2586bb5f966810d7b39f6916dc78b6222104d8b2c6e589ca3"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0045",
+      "id": "run-s2-2defc7b1-tc0046",
       "tool": "escalation_tree",
       "template": "Q-ORG-MGR+Q-ORG-COLLAB-W+Q-ORG-MSF",
-      "ms": 5.56,
+      "ms": 2.11,
       "rows": 5,
-      "at": 1792279126097,
+      "at": 1792323311234,
       "evidence_id": "ev_8e150d984c",
       "kind": "people",
       "summary": "5 escalation edges over 6 people",
@@ -992,12 +1063,12 @@
       "digest": "e90cda1172c5f5376c8c020e21da9d7550200ec4cb3cc2c3ec829b0008fb408d"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0046",
+      "id": "run-s2-2defc7b1-tc0047",
       "tool": "obligation_clock",
       "template": "Q-OBL-SLO+Q-OBL-CUST",
-      "ms": 5.79,
+      "ms": 1.62,
       "rows": 4,
-      "at": 1792279126112,
+      "at": 1792323311238,
       "evidence_id": "ev_03e17dace3",
       "kind": "obligation",
       "summary": "unmeasured: none of the 4 SLOs in the blast radius has current telemetry, so the time to breach is unknown; 5 customers reached, 28,600 MRR at risk",
@@ -1014,41 +1085,34 @@
       "digest": "651c579ee24b4ff3cc3ef380bb943ccac28b8ccf00889a9ba406f00561d64a58"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0047",
+      "id": "run-s2-2defc7b1-tc0048",
       "tool": "notify_set",
-      "template": "Q-NOTIFY-1",
-      "ms": 1.74,
+      "template": "Q-NOTIFY-2",
+      "ms": 1.9,
       "rows": 4,
-      "at": 1792279126121,
-      "evidence_id": "ev_7aba192059",
+      "at": 1792323311242,
+      "evidence_id": "ev_bdab8538a6",
       "kind": "people",
       "summary": "4 teams to notify: team-storefront, team-checkout, team-data, team-assistant",
       "params": {
-        "ids": [
-          "agent",
-          "chatbot",
-          "checkout",
-          "dash.exec_morning",
-          "frontend",
-          "frontend-proxy",
-          "kpi.exec_revenue",
-          "marts.exec_revenue_metric",
-          "marts.fct_revenue",
-          "mcp",
-          "raw.raw_orders",
-          "staging.stg_orders"
-        ],
-        "now": 1792029600000
+        "id": "payment",
+        "now": 1792029600000,
+        "priority": [],
+        "tw": [
+          1.0,
+          0.5,
+          0.2
+        ]
       },
-      "digest": "c876ba826abec2c557b389db71c6d5804c146943faec15618f370251f1290533"
+      "digest": "6e572a4f038fa01acfcefdbdbcad64de9ab208598245affaea9605b3f9bcef3b"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0048",
+      "id": "run-s2-2defc7b1-tc0049",
       "tool": "owner_at",
       "template": "Q-OWN-AT",
-      "ms": 1.33,
+      "ms": 0.29,
       "rows": 1,
-      "at": 1792279126127,
+      "at": 1792323311244,
       "evidence_id": "ev_c41d468cc4",
       "kind": "people",
       "summary": "payment was owned by team-payments then, and still is",
@@ -1059,34 +1123,105 @@
       "digest": "025338c97a00afdf61d393471d1daa08d80af144ca4c4520f1071c63377fddd1"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0049",
+      "id": "run-s2-2defc7b1-tc0050",
       "tool": "learned_responders",
       "template": "Q-LEARN-RESP",
-      "ms": 1.25,
+      "ms": 0.58,
       "rows": 2,
-      "at": 1792279126136,
-      "evidence_id": "ev_e6f280a5e8",
+      "at": 1792323311248,
+      "evidence_id": "ev_f2b1af0cf8",
       "kind": "people",
-      "summary": "p-030 36.59 (37 response(s)); p-017 25.77 (26 response(s))",
+      "summary": "p-030 88.27 (90 response(s)); p-017 54.85 (56 response(s))",
       "params": {
         "half_life_ms": 1209600000.0,
-        "now": 1792279126133,
+        "now": 1792323311246,
         "target": "payment"
       },
-      "digest": "a6400aacd954b76b4398684fefeaa48b4ad57c1c4ce95b65512996e4c1aed219"
+      "digest": "72eb4d9eba06324164d6c863e3ceb18881de9b07ef40bf19ebd6e1af6d1fec00"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0050",
+      "id": "run-s2-2defc7b1-tc0051",
+      "tool": "change_details",
+      "template": "Q-CHANGE-2",
+      "ms": 0.42,
+      "rows": 1,
+      "at": 1792323311252,
+      "evidence_id": "ev_4d2118fdaf",
+      "kind": "change",
+      "summary": "D-cutover-1: data_cutover of payment, 0 asserted facts",
+      "params": {
+        "id": "D-cutover-1"
+      },
+      "digest": "747463910868bb306d3aa71e935133c5a276d6c94a0bb16420aff4df9a17ffa9"
+    },
+    {
+      "id": "run-s2-2defc7b1-tc0052",
+      "tool": "repair_targets",
+      "template": "Q-REPAIR-TARGETS",
+      "ms": 0.78,
+      "rows": 1,
+      "at": 1792323311254,
+      "evidence_id": "ev_784f0cf108",
+      "kind": "lineage",
+      "summary": "1 anomalous tables a transform builds; nearest the cause: staging.stg_orders (written by stg_orders.sql)",
+      "params": {
+        "chain": [
+          "D-cutover-1",
+          "payment",
+          "raw.raw_orders",
+          "staging.stg_orders",
+          "marts.fct_revenue",
+          "marts.exec_revenue_metric",
+          "kpi.exec_revenue"
+        ],
+        "run": "run-s2-2defc7b1"
+      },
+      "digest": "ff6195bc436b50166ed593bfde17d0fbdec81aabe6eeeb919cdd50cd2aadf313"
+    },
+    {
+      "id": "run-s2-2defc7b1-tc0053",
+      "tool": "unit_shift_check",
+      "template": null,
+      "ms": 29.1,
+      "rows": 1,
+      "at": 1792323311295,
+      "evidence_id": "ev_8aa2baf42e",
+      "kind": "unit_shift",
+      "summary": "unit shift on staging.stg_orders.amount (2026-08-09): rows with payment_processor = 'cloudpay_v2' are 98.2\u00d7 the others (10^2), 327/327 outside the healthy range",
+      "params": {
+        "column": "amount",
+        "day": "2026-08-09",
+        "table": "staging.stg_orders"
+      },
+      "digest": "790132570b8b6850b85ebb88402a7f63a54663d7cbed4fafdbf253a5b3baba88"
+    },
+    {
+      "id": "run-s2-2defc7b1-tc0054",
+      "tool": "read_transform",
+      "template": null,
+      "ms": 0.13,
+      "rows": 1,
+      "at": 1792323311296,
+      "evidence_id": "ev_27b9851c13",
+      "kind": "sql",
+      "summary": "source of stg_orders.sql",
+      "params": {
+        "name": "stg_orders.sql"
+      },
+      "digest": "6f1074ed9501be60c63eaa493d502fddf2a88cf272b7355c9da8397965fecbf8"
+    },
+    {
+      "id": "run-s2-2defc7b1-tc0055",
       "tool": "remedy_stats",
       "template": "Q-REM-1",
-      "ms": 2.98,
+      "ms": 1.17,
       "rows": 1,
-      "at": 1792279126154,
-      "evidence_id": "ev_03f82e4475",
+      "at": 1792323311300,
+      "evidence_id": "ev_e2453329de",
       "kind": "remedy",
       "summary": "1 fix-kind outcomes on past incidents sharing a symptom with this one; best data_repair 6/6",
       "params": {
-        "inc": "inc-s2-99a4f2f6",
+        "inc": "inc-s2-2defc7b1",
         "incidents": [],
         "symptoms": [
           "sym-kpi_jump-kpi.exec_revenue"
@@ -1095,20 +1230,20 @@
       "digest": "b1d6a6423f4cafd1c75cf5def747bdbe76f7840e9c5b9a9f588ffc775e88a371"
     },
     {
-      "id": "run-s2-99a4f2f6-tc0051",
+      "id": "run-s2-2defc7b1-tc0056",
       "tool": "learned_preferences",
       "template": "Q-LEARN-PREF+Q-LEARN-GUIDE+Q-LEARN-SUGGEST+Q-CONTRACT-MATCH",
-      "ms": 7.85,
-      "rows": 3,
-      "at": 1792279126169,
-      "evidence_id": "ev_900e486b49",
+      "ms": 3.15,
+      "rows": 4,
+      "at": 1792323311306,
+      "evidence_id": "ev_9d6de6569b",
       "kind": "learned",
-      "summary": "65 recorded choice(s) for payment: flip_flag 0.62, open_issue 0.15, rollback_deploy 0.02; 28 guideline(s); 1 contract suggestion(s)",
+      "summary": "162 recorded choice(s) for payment: flip_flag 0.58, open_issue 0.15, data_repair 0.03; 50 guideline(s); 1 contract suggestion(s)",
       "params": {
         "Q-CONTRACT-MATCH": {
           "family": "payment",
           "kind": "flip_flag",
-          "now": 1792279126157,
+          "now": 1792323311301,
           "params_hash": "9d7169b8b70f8d92ae043f3253674438227e0bb5c5003004db49968222bd74b3"
         },
         "Q-LEARN-GUIDE": {
@@ -1121,24 +1256,40 @@
         "Q-LEARN-PREF": {
           "family": "payment",
           "half_life_ms": 1209600000.0,
-          "now": 1792279126157
+          "now": 1792323311301
         },
         "Q-LEARN-SUGGEST": {
           "family": "payment",
           "k": 2
         }
       },
-      "digest": "940a7a114f82a5eaa34acc4412323675e7024d0e63257eb3fa924a8d4e4f8a56"
+      "digest": "a73a856445cf65459c6f53d3a55553cb7b2842053970027e5c393f6b455c208d"
+    },
+    {
+      "id": "run-s2-2defc7b1-tc0057",
+      "tool": "incident_families",
+      "template": "Q-MEM-6",
+      "ms": 5.94,
+      "rows": 6,
+      "at": 1792323313029,
+      "evidence_id": "ev_dcf54d0b06",
+      "kind": "recall",
+      "summary": "6 families; inc-s2-2defc7b1 is in one of 7",
+      "params": {
+        "inc": "inc-s2-2defc7b1"
+      },
+      "digest": "545de7d413e10592fc110b0e7c6ea8306c91c792ea948bd59b99259f314ef517"
     }
   ],
   "hypotheses": [
     {
-      "id": "hyp-inc-s2-99a4f2f6-D-cutover-1",
+      "id": "hyp-inc-s2-2defc7b1-D-cutover-1",
       "cause": "D-cutover-1",
       "status": "confirmed",
       "score": 0.1537,
       "reason": "gate passed",
       "origin": "code",
+      "status_by": "gate",
       "supports": [
         "ev_7cf2442039",
         "ev_201daec0f6",
@@ -1149,23 +1300,24 @@
       "refutes": []
     },
     {
-      "id": "hyp-inc-s2-99a4f2f6-D-fx-pause-7",
+      "id": "hyp-inc-s2-2defc7b1-D-fx-pause-7",
       "cause": "D-fx-pause-7",
       "status": "eliminated",
       "score": 0.1449,
       "reason": "G5: max flow 0.0692 < needed 0.8000 (observed 1.0000 \u00d7 0.8); another suspect alone can carry 1.0000",
       "origin": "code",
+      "status_by": "sweep",
       "supports": [],
       "refutes": [
-        "ev_eae6fb8db2",
         "ev_41900686e1",
+        "ev_eae6fb8db2",
         "ev_99167a4ab6"
       ]
     }
   ],
   "gate_runs": [
     {
-      "id": "gr-inc-s2-99a4f2f6-b984be4a",
+      "id": "gr-inc-s2-2defc7b1-ca260895",
       "cause": "D-cutover-1",
       "passed": true,
       "confident": false,
@@ -1205,10 +1357,10 @@
       ],
       "attempt": 0,
       "origin": "sweep",
-      "at": 1792279125588
+      "at": 1792323310786
     },
     {
-      "id": "gr-inc-s2-99a4f2f6-e2b89f58",
+      "id": "gr-inc-s2-2defc7b1-1d527e29",
       "cause": "D-fx-pause-7",
       "passed": false,
       "confident": false,
@@ -1248,10 +1400,10 @@
       ],
       "attempt": 0,
       "origin": "sweep",
-      "at": 1792279125593
+      "at": 1792323310789
     },
     {
-      "id": "gr-inc-s2-99a4f2f6-61d42206",
+      "id": "gr-inc-s2-2defc7b1-b678c231",
       "cause": "D-cutover-1",
       "passed": true,
       "confident": true,
@@ -1271,7 +1423,7 @@
             "ids": [
               "D-cutover-1"
             ],
-            "run": "run-s2-99a4f2f6"
+            "run": "run-s2-2defc7b1"
           },
           "passed": true,
           "template": "Q-GATE-G1"
@@ -1329,7 +1481,7 @@
               "ev_201daec0f6",
               "ev_41900686e1"
             ],
-            "run": "run-s2-99a4f2f6"
+            "run": "run-s2-2defc7b1"
           },
           "passed": true,
           "template": "Q-GATE-4"
@@ -1359,7 +1511,7 @@
               "ev_201daec0f6",
               "ev_41900686e1"
             ],
-            "run": "run-s2-99a4f2f6"
+            "run": "run-s2-2defc7b1"
           },
           "passed": true,
           "template": "Q-GATE-4"
@@ -1411,14 +1563,14 @@
           "evidence_ids": [],
           "name": "G6 competitors",
           "params": {
-            "inc": "inc-s2-99a4f2f6"
+            "inc": "inc-s2-2defc7b1"
           },
           "passed": true,
           "template": "Q-HYP-1"
         },
         {
           "attach_only": false,
-          "detail": "independent channels on the chain: ['falkordb', 'warehouse']",
+          "detail": "independent channels on the chain: falkordb, warehouse",
           "downgrade_only": true,
           "evidence_ids": [],
           "name": "G7 agreement",
@@ -1439,7 +1591,7 @@
               "ev_41900686e1",
               "ev_f7f81dcffd"
             ],
-            "run": "run-s2-99a4f2f6"
+            "run": "run-s2-2defc7b1"
           },
           "passed": true,
           "template": "Q-GATE-7"
@@ -1466,7 +1618,7 @@
               "code",
               "data"
             ],
-            "run": "run-s2-99a4f2f6"
+            "run": "run-s2-2defc7b1"
           },
           "passed": true,
           "template": "Q-GATE-CORR"
@@ -1486,7 +1638,7 @@
       ],
       "attempt": 1,
       "origin": "confirm",
-      "at": 1792279125626
+      "at": 1792323310816
     }
   ],
   "crew": {
@@ -1520,6 +1672,7 @@
         "tools": [
           "finish",
           "incident_families",
+          "recall_notes",
           "runbook_for",
           "session_history",
           "similar_incidents"
@@ -1676,10 +1829,14 @@
           "PLAN"
         ],
         "tools": [
+          "change_details",
           "finish",
           "learned_preferences",
           "propose_plan",
-          "remedy_stats"
+          "read_transform",
+          "remedy_stats",
+          "repair_targets",
+          "unit_shift_check"
         ],
         "writes": "plan and options (W-PLAN)",
         "model": "none"
@@ -1734,27 +1891,27 @@
     ],
     "steps": [
       {
-        "task": "crew-run-s2-99a4f2f6-triage-intake",
+        "task": "crew-run-s2-2defc7b1-triage-intake",
         "kind": "crew",
         "role": "triage",
         "stage": "INTAKE",
         "agent": "crew-triage",
         "state": "done",
         "status": "done",
-        "claimed_at": 1792279125039,
-        "done_at": 1792279125041,
-        "summary": "opened inc-s2-99a4f2f6 from 1 alert(s) on kpi.exec_revenue",
+        "claimed_at": 1792323310329,
+        "done_at": 1792323310332,
+        "summary": "opened inc-s2-2defc7b1 from 1 alert(s) on kpi.exec_revenue",
         "after": [],
         "names": [],
         "cites": 0,
         "calls": [
           {
-            "id": "run-s2-99a4f2f6-intake-tc0001",
+            "id": "run-s2-2defc7b1-intake-tc0001",
             "tool": "group_alerts",
             "template": "Q-ALERT-1+Q-STORM-EDGES+Q-STORM-ORIGINS+Q-STORM-WCC+Q-STORM-ATTACH",
-            "ms": 4.41,
+            "ms": 3.66,
             "rows": 1,
-            "at": 1792279125032
+            "at": 1792323310317
           }
         ],
         "unknowns": null,
@@ -1762,37 +1919,45 @@
         "reaps": 0
       },
       {
-        "task": "crew-run-s2-99a4f2f6-historian-recall",
+        "task": "crew-run-s2-2defc7b1-historian-recall",
         "kind": "crew",
         "role": "historian",
         "stage": "RECALL",
         "agent": "crew-historian",
         "state": "done",
         "status": "done",
-        "claimed_at": 1792279125138,
-        "done_at": 1792279125156,
-        "summary": "5 precedent(s), 1 runbook(s) recalled; prior on exec_revenue_metric.sql, fct_revenue.sql, stg_orders.sql",
+        "claimed_at": 1792323310408,
+        "done_at": 1792323310453,
+        "summary": "2 lead(s) other agents left near kpi.exec_revenue (never evidence)",
         "after": [
-          "crew-run-s2-99a4f2f6-triage-intake"
+          "crew-run-s2-2defc7b1-triage-intake"
         ],
         "names": [],
         "cites": 0,
         "calls": [
           {
-            "id": "run-s2-99a4f2f6-tc0001",
+            "id": "run-s2-2defc7b1-tc0001",
             "tool": "similar_incidents",
             "template": "Q-MEM-1",
-            "ms": 2.41,
+            "ms": 2.11,
             "rows": 5,
-            "at": 1792279125142
+            "at": 1792323310413
           },
           {
-            "id": "run-s2-99a4f2f6-tc0002",
+            "id": "run-s2-2defc7b1-tc0002",
             "tool": "runbook_for",
             "template": "Q-MEM-3",
-            "ms": 1.0,
+            "ms": 0.86,
             "rows": 1,
-            "at": 1792279125149
+            "at": 1792323310445
+          },
+          {
+            "id": "run-s2-2defc7b1-tc0003",
+            "tool": "recall_notes",
+            "template": "Q-NOTE-RECALL",
+            "ms": 2.25,
+            "rows": 2,
+            "at": 1792323310451
           }
         ],
         "unknowns": null,
@@ -1800,53 +1965,53 @@
         "reaps": 0
       },
       {
-        "task": "crew-run-s2-99a4f2f6-cartographer-localize",
+        "task": "crew-run-s2-2defc7b1-cartographer-localize",
         "kind": "crew",
         "role": "cartographer",
         "stage": "LOCALIZE",
         "agent": "crew-cartographer",
         "state": "done",
         "status": "done",
-        "claimed_at": 1792279125160,
-        "done_at": 1792279125193,
+        "claimed_at": 1792323310455,
+        "done_at": 1792323310467,
         "summary": "11 upstream node(s) in scope; blast radius of 1 symptom(s): 1 node(s); top chokepoint frontend",
         "after": [
-          "crew-run-s2-99a4f2f6-historian-recall"
+          "crew-run-s2-2defc7b1-historian-recall"
         ],
         "names": [],
         "cites": 0,
         "calls": [
           {
-            "id": "run-s2-99a4f2f6-tc0003",
+            "id": "run-s2-2defc7b1-tc0004",
             "tool": "service_context",
             "template": "Q-CTX-1",
-            "ms": 1.68,
+            "ms": 0.6,
             "rows": 1,
-            "at": 1792279125164
+            "at": 1792323310457
           },
           {
-            "id": "run-s2-99a4f2f6-tc0004",
+            "id": "run-s2-2defc7b1-tc0005",
             "tool": "upstream_scope",
             "template": "Q-LIN-1",
-            "ms": 1.54,
+            "ms": 0.32,
             "rows": 11,
-            "at": 1792279125171
+            "at": 1792323310459
           },
           {
-            "id": "run-s2-99a4f2f6-tc0005",
+            "id": "run-s2-2defc7b1-tc0006",
             "tool": "blast_radius",
-            "template": "Q-BLAST-1",
-            "ms": 1.45,
+            "template": "Q-BLAST-3",
+            "ms": 1.67,
             "rows": 1,
-            "at": 1792279125182
+            "at": 1792323310463
           },
           {
-            "id": "run-s2-99a4f2f6-tc0006",
+            "id": "run-s2-2defc7b1-tc0007",
             "tool": "chokepoints",
             "template": "Q-CHOKE-1",
-            "ms": 1.24,
+            "ms": 0.4,
             "rows": 10,
-            "at": 1792279125187
+            "at": 1792323310465
           }
         ],
         "unknowns": null,
@@ -1854,45 +2019,45 @@
         "reaps": 0
       },
       {
-        "task": "crew-run-s2-99a4f2f6-profiler-hypothesize",
+        "task": "crew-run-s2-2defc7b1-profiler-hypothesize",
         "kind": "crew",
         "role": "profiler",
         "stage": "HYPOTHESIZE",
         "agent": "crew-profiler",
         "state": "done",
         "status": "done",
-        "claimed_at": 1792279125196,
-        "done_at": 1792279125231,
+        "claimed_at": 1792323310468,
+        "done_at": 1792323310479,
         "summary": "2 suspect change(s) ranked in code: D-cutover-1, D-fx-pause-7",
         "after": [
-          "crew-run-s2-99a4f2f6-cartographer-localize"
+          "crew-run-s2-2defc7b1-cartographer-localize"
         ],
         "names": [],
         "cites": 0,
         "calls": [
           {
-            "id": "run-s2-99a4f2f6-tc0007",
+            "id": "run-s2-2defc7b1-tc0008",
             "tool": "upstream_suspects",
             "template": "Q-SUS-1",
-            "ms": 1.63,
+            "ms": 0.62,
             "rows": 2,
-            "at": 1792279125201
+            "at": 1792323310470
           },
           {
-            "id": "run-s2-99a4f2f6-tc0008",
+            "id": "run-s2-2defc7b1-tc0009",
             "tool": "window_changes",
             "template": "Q-SUS-2",
-            "ms": 1.33,
+            "ms": 0.39,
             "rows": 2,
-            "at": 1792279125207
+            "at": 1792323310472
           },
           {
-            "id": "run-s2-99a4f2f6-tc0009",
+            "id": "run-s2-2defc7b1-tc0010",
             "tool": "rank_causes",
             "template": "Q-RANK-1",
-            "ms": 1.11,
+            "ms": 0.27,
             "rows": 12,
-            "at": 1792279125219
+            "at": 1792323310475
           }
         ],
         "unknowns": null,
@@ -1900,18 +2065,18 @@
         "reaps": 0
       },
       {
-        "task": "crew-run-s2-99a4f2f6-lead-investigate",
+        "task": "crew-run-s2-2defc7b1-lead-investigate",
         "kind": "crew",
         "role": "lead",
         "stage": "INVESTIGATE",
         "agent": "crew-lead",
         "state": "done",
         "status": "done",
-        "claimed_at": 1792279125234,
-        "done_at": 1792279125629,
+        "claimed_at": 1792323310480,
+        "done_at": 1792323310820,
         "summary": "baseline-policy (deterministic, no LLM): 5 specialist(s) dispatched, 3 complete; 1 cause(s) put to the gate",
         "after": [
-          "crew-run-s2-99a4f2f6-profiler-hypothesize"
+          "crew-run-s2-2defc7b1-profiler-hypothesize"
         ],
         "names": [],
         "cites": 0,
@@ -1921,15 +2086,15 @@
         "reaps": 0
       },
       {
-        "task": "spec-run-s2-99a4f2f6-topology-d3feebee",
+        "task": "spec-run-s2-2defc7b1-topology-d3feebee",
         "kind": "specialist",
         "role": "topology",
         "stage": null,
-        "agent": "topology-specialist-ac01adcf",
+        "agent": "topology-specialist-bc67a523",
         "state": "done",
         "status": "complete",
-        "claimed_at": 1792279125236,
-        "done_at": 1792279125504,
+        "claimed_at": 1792323310481,
+        "done_at": 1792323310715,
         "summary": null,
         "after": [],
         "names": [
@@ -1939,20 +2104,20 @@
         "cites": 2,
         "calls": [
           {
-            "id": "run-s2-99a4f2f6-tc0012",
-            "tool": "causal_paths",
-            "template": "Q-GATE-1",
-            "ms": 0.94,
-            "rows": 1,
-            "at": 1792279125451
-          },
-          {
-            "id": "run-s2-99a4f2f6-tc0016",
+            "id": "run-s2-2defc7b1-tc0014",
             "tool": "causal_paths",
             "template": "Q-GATE-1",
             "ms": 1.05,
             "rows": 1,
-            "at": 1792279125460
+            "at": 1792323310682
+          },
+          {
+            "id": "run-s2-2defc7b1-tc0020",
+            "tool": "causal_paths",
+            "template": "Q-GATE-1",
+            "ms": 2.09,
+            "rows": 1,
+            "at": 1792323310712
           }
         ],
         "unknowns": [],
@@ -1962,15 +2127,15 @@
         "reaps": 0
       },
       {
-        "task": "spec-run-s2-99a4f2f6-telemetry-d3feebee",
+        "task": "spec-run-s2-2defc7b1-telemetry-d3feebee",
         "kind": "specialist",
         "role": "telemetry",
         "stage": null,
-        "agent": "telemetry-specialist-ac01adcf",
+        "agent": "telemetry-specialist-bc67a523",
         "state": "done",
         "status": "insufficient",
-        "claimed_at": 1792279125239,
-        "done_at": 1792279125248,
+        "claimed_at": 1792323310482,
+        "done_at": 1792323310485,
         "summary": null,
         "after": [],
         "names": [],
@@ -1986,15 +2151,15 @@
         "reaps": 0
       },
       {
-        "task": "spec-run-s2-99a4f2f6-data-d3feebee",
+        "task": "spec-run-s2-2defc7b1-data-d3feebee",
         "kind": "specialist",
         "role": "data",
         "stage": null,
-        "agent": "data-specialist-ac01adcf",
+        "agent": "data-specialist-bc67a523",
         "state": "done",
         "status": "complete",
-        "claimed_at": 1792279125249,
-        "done_at": 1792279125521,
+        "claimed_at": 1792323310485,
+        "done_at": 1792323310726,
         "summary": null,
         "after": [],
         "names": [
@@ -2003,60 +2168,60 @@
         "cites": 5,
         "calls": [
           {
-            "id": "run-s2-99a4f2f6-tc0010",
+            "id": "run-s2-2defc7b1-tc0011",
             "tool": "get_metric_history",
             "template": null,
-            "ms": 2.14,
+            "ms": 0.83,
             "rows": 1,
-            "at": 1792279125255
+            "at": 1792323310487
           },
           {
-            "id": "run-s2-99a4f2f6-tc0011",
+            "id": "run-s2-2defc7b1-tc0012",
             "tool": "compare_to_baseline",
             "template": null,
-            "ms": 184.92,
+            "ms": 186.94,
             "rows": 7,
-            "at": 1792279125443
+            "at": 1792323310676
           },
           {
-            "id": "run-s2-99a4f2f6-tc0014",
+            "id": "run-s2-2defc7b1-tc0013",
             "tool": "upstream_scope",
             "template": "Q-LIN-1",
-            "ms": 1.28,
+            "ms": 1.0,
             "rows": 11,
-            "at": 1792279125453
+            "at": 1792323310681
           },
           {
-            "id": "run-s2-99a4f2f6-tc0017",
+            "id": "run-s2-2defc7b1-tc0016",
             "tool": "baseline_columns",
             "template": null,
-            "ms": 2.21,
+            "ms": 0.5,
             "rows": 1,
-            "at": 1792279125461
+            "at": 1792323310685
           },
           {
-            "id": "run-s2-99a4f2f6-tc0018",
+            "id": "run-s2-2defc7b1-tc0018",
             "tool": "anomalous_row_share",
             "template": null,
-            "ms": 13.97,
+            "ms": 7.38,
             "rows": 1,
-            "at": 1792279125497
+            "at": 1792323310703
           },
           {
-            "id": "run-s2-99a4f2f6-tc0019",
+            "id": "run-s2-2defc7b1-tc0019",
             "tool": "causal_paths",
             "template": "Q-GATE-1",
-            "ms": 1.73,
+            "ms": 2.37,
             "rows": 1,
-            "at": 1792279125503
+            "at": 1792323310708
           },
           {
-            "id": "run-s2-99a4f2f6-tc0023",
+            "id": "run-s2-2defc7b1-tc0022",
             "tool": "causal_paths",
             "template": "Q-GATE-1",
-            "ms": 0.92,
+            "ms": 0.48,
             "rows": 0,
-            "at": 1792279125512
+            "at": 1792323310714
           }
         ],
         "unknowns": [],
@@ -2066,15 +2231,15 @@
         "reaps": 0
       },
       {
-        "task": "spec-run-s2-99a4f2f6-change-d3feebee",
+        "task": "spec-run-s2-2defc7b1-change-d3feebee",
         "kind": "specialist",
         "role": "change",
         "stage": null,
-        "agent": "change-specialist-ac01adcf",
+        "agent": "change-specialist-bc67a523",
         "state": "done",
         "status": "complete",
-        "claimed_at": 1792279125445,
-        "done_at": 1792279125531,
+        "claimed_at": 1792323310677,
+        "done_at": 1792323310740,
         "summary": null,
         "after": [],
         "names": [
@@ -2084,36 +2249,36 @@
         "cites": 4,
         "calls": [
           {
-            "id": "run-s2-99a4f2f6-tc0013",
+            "id": "run-s2-2defc7b1-tc0015",
             "tool": "change_details",
             "template": "Q-CHANGE-2",
-            "ms": 0.64,
+            "ms": 2.75,
             "rows": 1,
-            "at": 1792279125453
+            "at": 1792323310683
           },
           {
-            "id": "run-s2-99a4f2f6-tc0020",
+            "id": "run-s2-2defc7b1-tc0023",
             "tool": "decision_check",
             "template": "Q-DEC-1",
-            "ms": 0.91,
+            "ms": 1.97,
             "rows": 0,
-            "at": 1792279125503
+            "at": 1792323310714
           },
           {
-            "id": "run-s2-99a4f2f6-tc0022",
+            "id": "run-s2-2defc7b1-tc0024",
             "tool": "change_details",
             "template": "Q-CHANGE-2",
-            "ms": 0.72,
+            "ms": 0.42,
             "rows": 1,
-            "at": 1792279125510
+            "at": 1792323310729
           },
           {
-            "id": "run-s2-99a4f2f6-tc0024",
+            "id": "run-s2-2defc7b1-tc0025",
             "tool": "decision_check",
             "template": "Q-DEC-1",
-            "ms": 0.74,
+            "ms": 0.6,
             "rows": 0,
-            "at": 1792279125525
+            "at": 1792323310736
           }
         ],
         "unknowns": [],
@@ -2123,35 +2288,35 @@
         "reaps": 0
       },
       {
-        "task": "spec-run-s2-99a4f2f6-code-d3feebee",
+        "task": "spec-run-s2-2defc7b1-code-d3feebee",
         "kind": "specialist",
         "role": "code",
         "stage": null,
-        "agent": "code-specialist-ac01adcf",
+        "agent": "code-specialist-bc67a523",
         "state": "done",
         "status": "insufficient",
-        "claimed_at": 1792279125447,
-        "done_at": 1792279125513,
+        "claimed_at": 1792323310679,
+        "done_at": 1792323310718,
         "summary": null,
         "after": [],
         "names": [],
         "cites": 2,
         "calls": [
           {
-            "id": "run-s2-99a4f2f6-tc0015",
+            "id": "run-s2-2defc7b1-tc0017",
             "tool": "diff_summary",
             "template": "Q-CODE-1",
-            "ms": 2.21,
+            "ms": 4.85,
             "rows": 1,
-            "at": 1792279125458
+            "at": 1792323310686
           },
           {
-            "id": "run-s2-99a4f2f6-tc0021",
+            "id": "run-s2-2defc7b1-tc0021",
             "tool": "diff_summary",
             "template": "Q-CODE-1",
-            "ms": 1.97,
+            "ms": 2.17,
             "rows": 1,
-            "at": 1792279125508
+            "at": 1792323310713
           }
         ],
         "unknowns": [
@@ -2166,45 +2331,45 @@
         "reaps": 0
       },
       {
-        "task": "crew-run-s2-99a4f2f6-gatekeeper-gate",
+        "task": "crew-run-s2-2defc7b1-gatekeeper-gate",
         "kind": "crew",
         "role": "gatekeeper",
         "stage": "GATE",
         "agent": "crew-gatekeeper",
         "state": "done",
         "status": "done",
-        "claimed_at": 1792279125630,
-        "done_at": 1792279125649,
+        "claimed_at": 1792323310822,
+        "done_at": 1792323310845,
         "summary": "accepted D-cutover-1 (confident)",
         "after": [
-          "crew-run-s2-99a4f2f6-lead-investigate"
+          "crew-run-s2-2defc7b1-lead-investigate"
         ],
         "names": [],
         "cites": 0,
         "calls": [
           {
-            "id": "run-s2-99a4f2f6-tc0036",
+            "id": "run-s2-2defc7b1-tc0037",
             "tool": "alert_coverage",
             "template": "Q-CHAIN-MON",
-            "ms": 0.97,
+            "ms": 1.17,
             "rows": 7,
-            "at": 1792279125633
+            "at": 1792323310826
           },
           {
-            "id": "run-s2-99a4f2f6-tc0037",
+            "id": "run-s2-2defc7b1-tc0038",
             "tool": "residue_check",
             "template": "Q-RESIDUE-1",
-            "ms": 0.9,
+            "ms": 1.65,
             "rows": 4,
-            "at": 1792279125636
+            "at": 1792323310832
           },
           {
-            "id": "run-s2-99a4f2f6-tc0038",
+            "id": "run-s2-2defc7b1-tc0039",
             "tool": "blast_radius",
-            "template": "Q-BLAST-1",
-            "ms": 1.07,
+            "template": "Q-BLAST-3",
+            "ms": 3.75,
             "rows": 12,
-            "at": 1792279125645
+            "at": 1792323310841
           }
         ],
         "unknowns": null,
@@ -2212,53 +2377,53 @@
         "reaps": 0
       },
       {
-        "task": "crew-run-s2-99a4f2f6-containment-contain",
+        "task": "crew-run-s2-2defc7b1-containment-contain",
         "kind": "crew",
         "role": "containment",
         "stage": "CONTAIN",
         "agent": "crew-containment",
         "state": "done",
         "status": "done",
-        "claimed_at": 1792279125653,
-        "done_at": 1792279126057,
+        "claimed_at": 1792323310848,
+        "done_at": 1792323311216,
         "summary": "min-cut of 2 edge(s) between payment and 2 protected node(s); 5 option(s) tried on clean rooms",
         "after": [
-          "crew-run-s2-99a4f2f6-gatekeeper-gate"
+          "crew-run-s2-2defc7b1-gatekeeper-gate"
         ],
         "names": [],
         "cites": 0,
         "calls": [
           {
-            "id": "run-s2-99a4f2f6-tc0039",
+            "id": "run-s2-2defc7b1-tc0040",
             "tool": "connectivity_check",
             "template": "Q-CONN-2",
-            "ms": 1.23,
+            "ms": 1.36,
             "rows": 1,
-            "at": 1792279125657
+            "at": 1792323310852
           },
           {
-            "id": "run-s2-99a4f2f6-tc0040",
+            "id": "run-s2-2defc7b1-tc0041",
             "tool": "containment_cut",
-            "template": "Q-CUT-1",
-            "ms": 2.91,
+            "template": "Q-CUT-3",
+            "ms": 3.82,
             "rows": 2,
-            "at": 1792279125666
+            "at": 1792323310860
           },
           {
-            "id": "run-s2-99a4f2f6-tc0041",
+            "id": "run-s2-2defc7b1-tc0042",
             "tool": "whatif",
             "template": "Q-WHATIF-1",
-            "ms": 1.05,
+            "ms": 0.31,
             "rows": 1,
-            "at": 1792279125792
+            "at": 1792323310950
           },
           {
-            "id": "run-s2-99a4f2f6-tc0042",
+            "id": "run-s2-2defc7b1-tc0043",
             "tool": "futures",
             "template": "Q-WHATIF-2+Q-FUTURE-1+Q-FUTURE-1+Q-FUTURE-1+Q-WHATIF-2+Q-FUTURE-1+Q-WHATIF-2+Q-FUTURE-1",
-            "ms": 8.33,
+            "ms": 5.47,
             "rows": 5,
-            "at": 1792279126053
+            "at": 1792323311213
           }
         ],
         "unknowns": null,
@@ -2266,77 +2431,77 @@
         "reaps": 0
       },
       {
-        "task": "crew-run-s2-99a4f2f6-dispatcher-route",
+        "task": "crew-run-s2-2defc7b1-dispatcher-route",
         "kind": "crew",
         "role": "dispatcher",
         "stage": "ROUTE",
         "agent": "crew-dispatcher",
         "state": "done",
         "status": "done",
-        "claimed_at": 1792279126059,
-        "done_at": 1792279126142,
+        "claimed_at": 1792323311217,
+        "done_at": 1792323311250,
         "summary": "fixer p-017; bus factor 2; 4 to notify",
         "after": [
-          "crew-run-s2-99a4f2f6-containment-contain"
+          "crew-run-s2-2defc7b1-containment-contain"
         ],
         "names": [],
         "cites": 0,
         "calls": [
           {
-            "id": "run-s2-99a4f2f6-tc0043",
+            "id": "run-s2-2defc7b1-tc0044",
             "tool": "who_fixes",
             "template": "Q-ORG-WHO+Q-ORG-KNOWS+Q-ORG-HARM",
-            "ms": 6.61,
+            "ms": 4.47,
             "rows": 6,
-            "at": 1792279126075
+            "at": 1792323311226
           },
           {
-            "id": "run-s2-99a4f2f6-tc0044",
+            "id": "run-s2-2defc7b1-tc0045",
             "tool": "bus_factor",
             "template": "Q-ORG-BUS",
-            "ms": 1.23,
+            "ms": 0.66,
             "rows": 1,
-            "at": 1792279126080
+            "at": 1792323311229
           },
           {
-            "id": "run-s2-99a4f2f6-tc0045",
+            "id": "run-s2-2defc7b1-tc0046",
             "tool": "escalation_tree",
             "template": "Q-ORG-MGR+Q-ORG-COLLAB-W+Q-ORG-MSF",
-            "ms": 5.56,
+            "ms": 2.11,
             "rows": 5,
-            "at": 1792279126097
+            "at": 1792323311234
           },
           {
-            "id": "run-s2-99a4f2f6-tc0046",
+            "id": "run-s2-2defc7b1-tc0047",
             "tool": "obligation_clock",
             "template": "Q-OBL-SLO+Q-OBL-CUST",
-            "ms": 5.79,
+            "ms": 1.62,
             "rows": 4,
-            "at": 1792279126112
+            "at": 1792323311238
           },
           {
-            "id": "run-s2-99a4f2f6-tc0047",
+            "id": "run-s2-2defc7b1-tc0048",
             "tool": "notify_set",
-            "template": "Q-NOTIFY-1",
-            "ms": 1.74,
+            "template": "Q-NOTIFY-2",
+            "ms": 1.9,
             "rows": 4,
-            "at": 1792279126121
+            "at": 1792323311242
           },
           {
-            "id": "run-s2-99a4f2f6-tc0048",
+            "id": "run-s2-2defc7b1-tc0049",
             "tool": "owner_at",
             "template": "Q-OWN-AT",
-            "ms": 1.33,
+            "ms": 0.29,
             "rows": 1,
-            "at": 1792279126127
+            "at": 1792323311244
           },
           {
-            "id": "run-s2-99a4f2f6-tc0049",
+            "id": "run-s2-2defc7b1-tc0050",
             "tool": "learned_responders",
             "template": "Q-LEARN-RESP",
-            "ms": 1.25,
+            "ms": 0.58,
             "rows": 2,
-            "at": 1792279126136
+            "at": 1792323311248
           }
         ],
         "unknowns": null,
@@ -2344,39 +2509,134 @@
         "reaps": 0
       },
       {
-        "task": "crew-run-s2-99a4f2f6-planner-plan",
+        "task": "crew-run-s2-2defc7b1-planner-plan",
         "kind": "crew",
         "role": "planner",
         "stage": "PLAN",
         "agent": "crew-planner",
         "state": "done",
         "status": "done",
-        "claimed_at": 1792279126145,
-        "done_at": 1792279126188,
-        "summary": "4 option(s), 1 enabled; awaiting two-step approval",
+        "claimed_at": 1792323311251,
+        "done_at": 1792323311318,
+        "summary": "4 option(s), 2 enabled; awaiting two-step approval",
         "after": [
-          "crew-run-s2-99a4f2f6-dispatcher-route"
+          "crew-run-s2-2defc7b1-dispatcher-route"
         ],
         "names": [],
         "cites": 0,
         "calls": [
           {
-            "id": "run-s2-99a4f2f6-tc0050",
-            "tool": "remedy_stats",
-            "template": "Q-REM-1",
-            "ms": 2.98,
+            "id": "run-s2-2defc7b1-tc0051",
+            "tool": "change_details",
+            "template": "Q-CHANGE-2",
+            "ms": 0.42,
             "rows": 1,
-            "at": 1792279126154
+            "at": 1792323311252
           },
           {
-            "id": "run-s2-99a4f2f6-tc0051",
+            "id": "run-s2-2defc7b1-tc0052",
+            "tool": "repair_targets",
+            "template": "Q-REPAIR-TARGETS",
+            "ms": 0.78,
+            "rows": 1,
+            "at": 1792323311254
+          },
+          {
+            "id": "run-s2-2defc7b1-tc0053",
+            "tool": "unit_shift_check",
+            "template": null,
+            "ms": 29.1,
+            "rows": 1,
+            "at": 1792323311295
+          },
+          {
+            "id": "run-s2-2defc7b1-tc0054",
+            "tool": "read_transform",
+            "template": null,
+            "ms": 0.13,
+            "rows": 1,
+            "at": 1792323311296
+          },
+          {
+            "id": "run-s2-2defc7b1-tc0055",
+            "tool": "remedy_stats",
+            "template": "Q-REM-1",
+            "ms": 1.17,
+            "rows": 1,
+            "at": 1792323311300
+          },
+          {
+            "id": "run-s2-2defc7b1-tc0056",
             "tool": "learned_preferences",
             "template": "Q-LEARN-PREF+Q-LEARN-GUIDE+Q-LEARN-SUGGEST+Q-CONTRACT-MATCH",
-            "ms": 7.85,
-            "rows": 3,
-            "at": 1792279126169
+            "ms": 3.15,
+            "rows": 4,
+            "at": 1792323311306
           }
         ],
+        "unknowns": null,
+        "limits": null,
+        "reaps": 0
+      },
+      {
+        "task": "crew-run-s2-2defc7b1-operator-execute-act-inc-s2-2defc7b1-4",
+        "kind": "crew",
+        "role": "operator",
+        "stage": "EXECUTE",
+        "agent": "crew-operator",
+        "state": "done",
+        "status": "done",
+        "claimed_at": 1792323311500,
+        "done_at": 1792323311677,
+        "summary": "executed data_repair act-inc-s2-2defc7b1-4: intent recorded first, idempotency key, the single write tool",
+        "after": [
+          "crew-run-s2-2defc7b1-planner-plan"
+        ],
+        "names": [],
+        "cites": 0,
+        "calls": [],
+        "unknowns": null,
+        "limits": null,
+        "reaps": 0
+      },
+      {
+        "task": "crew-run-s2-2defc7b1-auditor-verify-act-inc-s2-2defc7b1-4",
+        "kind": "crew",
+        "role": "auditor",
+        "stage": "VERIFY",
+        "agent": "crew-auditor",
+        "state": "done",
+        "status": "done",
+        "claimed_at": 1792323311678,
+        "done_at": 1792323313021,
+        "summary": "left note note-c326f6d245ce for other agents about kpi.exec_revenue, payment",
+        "after": [
+          "crew-run-s2-2defc7b1-operator-execute-act-inc-s2-2defc7b1-4"
+        ],
+        "names": [],
+        "cites": 0,
+        "calls": [],
+        "unknowns": null,
+        "limits": null,
+        "reaps": 0
+      },
+      {
+        "task": "crew-run-s2-2defc7b1-librarian-learn-act-inc-s2-2defc7b1-4",
+        "kind": "crew",
+        "role": "librarian",
+        "stage": "LEARN",
+        "agent": "crew-librarian",
+        "state": "done",
+        "status": "done",
+        "claimed_at": 1792323313022,
+        "done_at": 1792323313035,
+        "summary": "family of 7 incident(s); runbook rb-derived-32def3f1f2 support 3",
+        "after": [
+          "crew-run-s2-2defc7b1-auditor-verify-act-inc-s2-2defc7b1-4"
+        ],
+        "names": [],
+        "cites": 0,
+        "calls": [],
         "unknowns": null,
         "limits": null,
         "reaps": 0
@@ -2385,7 +2645,7 @@
     "template": "Q-CREW-1"
   },
   "report": {
-    "incident_id": "inc-s2-99a4f2f6",
+    "incident_id": "inc-s2-2defc7b1",
     "outcome": "CONFIRMED",
     "confident": true,
     "cause_id": "D-cutover-1",
@@ -2454,7 +2714,7 @@
         "check": "G6 competitors"
       },
       {
-        "claim": "G7 agreement: independent channels on the chain: ['falkordb', 'warehouse']",
+        "claim": "G7 agreement: independent channels on the chain: falkordb, warehouse",
         "evidence_ids": [],
         "check": "G7 agreement"
       },
@@ -2549,9 +2809,11 @@
       "summary": "the confirmed cause explains 4 of 4 anomalous components"
     },
     "remedy": {
-      "applied": false,
-      "lines": [],
-      "note": "no usable history for the offered fixes: static order kept (no-op)"
+      "applied": true,
+      "lines": [
+        "history: data repair worked 6/6 times on past incidents sharing a symptom with this one (smoothed success 0.88)"
+      ],
+      "note": "options ordered by past outcomes on incidents sharing a symptom"
     },
     "futures": [
       {
@@ -2767,7 +3029,7 @@
       {
         "cause": "D-fx-pause-7",
         "origin": "sweep",
-        "gate_run": "gr-inc-s2-99a4f2f6-e2b89f58",
+        "gate_run": "gr-inc-s2-2defc7b1-1d527e29",
         "failed": [
           "G5 sufficiency: G5: max flow 0.0692 < needed 0.8000 (observed 1.0000 \u00d7 0.8); another suspect alone can carry 1.0000"
         ]

@@ -190,7 +190,7 @@ def test_a_question_no_keyword_matches_is_routed_by_the_graph():
 @pytest.mark.parametrize("q,kind,matched", [
     ("Which services have no owner?", "gaps", "no owner"),
     ("What breaks if cart fails?", "blast", "breaks"),
-    ("Who was the owner of ad on 2026-06-01?", "owner_then", "owner + a date or incident"),
+    ("Who was the owner of ad on 2026-06-01?", "owner_then", "owner + a time"),
     ("Who is the owner on call for checkout?", "people", "Who"),
 ])
 def test_a_keyword_match_decides_without_calling_the_graph_router(q, kind, matched):

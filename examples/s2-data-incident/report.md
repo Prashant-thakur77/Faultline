@@ -1,4 +1,4 @@
-# Incident inc-s2-99a4f2f6: CONFIRMED
+# Incident inc-s2-2defc7b1: CONFIRMED
 
 **Cause (gate-accepted):** `D-cutover-1` · confident: **True**
 
@@ -14,7 +14,7 @@
 - G4 upstream: no anomalous component upstream can carry the changed component's excess [ev_a558c98853]
 - G5 sufficiency: kpi.exec_revenue: max flow 1.0000 ≥ needed 0.8000 [ev_41900686e1, ev_f7f81dcffd]
 - G6 competitors: every competitor eliminated with evidence
-- G7 agreement: independent channels on the chain: ['falkordb', 'warehouse']
+- G7 agreement: independent channels on the chain: falkordb, warehouse
 - G7 correlation: change and data specialists both name D-cutover-1 (CHANGED → payment)
 
 ## Inferred / not established
@@ -45,7 +45,7 @@ the confirmed cause explains 4 of 4 anomalous components.
 
 ## Learned remediation ordering (reorders options only)
 
-- no usable history for the offered fixes: static order kept (no-op)
+- history: data repair worked 6/6 times on past incidents sharing a symptom with this one (smoothed success 0.88)
 
 ## Futures (each option predicted on its own GRAPH.COPY branch before approval, Q-FUTURE-1)
 
@@ -77,7 +77,7 @@ Customers reached through the failure: 5 (each counted once), 28,600 MRR at risk
 
 ## Rejected by the gate (first-class, with the failing checks)
 
-- `D-fx-pause-7` (sweep, gr-inc-s2-99a4f2f6-e2b89f58): G5 sufficiency: G5: max flow 0.0692 < needed 0.8000 (observed 1.0000 × 0.8); another suspect alone can carry 1.0000
+- `D-fx-pause-7` (sweep, gr-inc-s2-2defc7b1-1d527e29): G5 sufficiency: G5: max flow 0.0692 < needed 0.8000 (observed 1.0000 × 0.8); another suspect alone can carry 1.0000
 
 ## Evidence
 

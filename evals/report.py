@@ -212,6 +212,7 @@ def summarize(out: dict) -> dict:
     s.update(context_summary(c.get("context_eval") or {}))
     s.update({f"skill.{k}": v for k, v in (c.get("skill") or {}).items() if k != "rows"})
     s.update(live_summary(live_bench()))
+    s.update(example_summary("s2-data-incident", "example.s2"))
     # what one decision costs in model tokens, per LLM arm (recorded usage; the graph's own check costs none)
     for arm in ("A0", "A1", "A3L"):
         toks = sorted(int((t.get("usage") or {}).get("input_tokens", 0)) + int((t.get("usage") or {}).get("output_tokens", 0))
@@ -1366,6 +1367,38 @@ def live_bench() -> dict:
 
     p = Path(__file__).resolve().parent / "results" / "live_bench.json"
     return json.loads(p.read_text()) if p.exists() else {}
+
+
+def example_summary(name: str, prefix: str) -> dict:
+    """latest.json keys from a committed example recorded through the API (scripts/record_demo.py): the final stage,
+    the approved action's kind and verdict, and what its verification channels measured (examples/<name>/)."""
+    import json
+    import re
+    from pathlib import Path
+
+    d = Path(__file__).resolve().parents[1] / "examples" / name
+    if not (d / "manifest.json").exists():
+        return {}
+    man = json.loads((d / "manifest.json").read_text())
+    k = {f"{prefix}.final_stage": man.get("final_stage"), f"{prefix}.tool_calls": man.get("tool_calls"),
+         f"{prefix}.gate_runs": man.get("gate_runs")}
+    plan = json.loads((d / "plan.json").read_text()) if (d / "plan.json").exists() else {}
+    done = [o for o in plan.get("options") or [] if o.get("verdict")]
+    if done:
+        o = done[0]
+        k.update({f"{prefix}.action_kind": o.get("kind"), f"{prefix}.verdict": o.get("verdict")})
+        m = re.search(r"passed (\d+)/(\d+) invariants", o.get("explanation") or "")
+        if m:
+            k[f"{prefix}.invariants"] = f"{m.group(1)}/{m.group(2)}"
+            k[f"{prefix}.invariants.passed"], k[f"{prefix}.invariants.total"] = int(m.group(1)), int(m.group(2))
+        m = re.search(r"KPI anomaly ratio is ([0-9.]+)", o.get("explanation") or "")
+        if m:
+            k[f"{prefix}.kpi_ratio"] = float(m.group(1))
+    v = (d / "verify.txt").read_text() if (d / "verify.txt").exists() else ""
+    m = re.search(r"write-back: verified (\d+)/(\d+)", v)
+    if m:
+        k[f"{prefix}.writeback"] = f"{m.group(1)}/{m.group(2)}"
+    return k
 
 
 def live_summary(x: dict) -> dict:

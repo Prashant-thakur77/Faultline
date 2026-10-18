@@ -33,7 +33,7 @@ from ..text import plural
 BRAIN_TOOLS = ["resolve_entity", "find_entities", "service_context", "people_who_worked_on", "decisions_about",
                "trace_decision", "missing_guardrails", "blast_radius", "runbook_for", "run_cypher_readonly",
                "session_history", "owner_at", "beliefs_at", "component_timeline", "knowledge_health", "hidden_coupling", "graph_schema",
-               "obligation_clock", "search_knowledge"]
+               "obligation_clock", "search_knowledge", "runbooks_about"]
 
 # Question routing has two stages (DECISIONS 2026-10-16, hybrid router):
 # 1. the keyword router below: precise where its vocabulary matches, so it decides whenever any pattern matches;
@@ -42,23 +42,38 @@ BRAIN_TOOLS = ["resolve_entity", "find_entities", "service_context", "people_who
 #    question no kind matches closely enough is refused. No similarity is computed in Python.
 # ROUTE_TOOL is called by the deterministic answerer only; the LLM answerer picks its own tools and is not offered it.
 INTENTS: list[tuple[str, re.Pattern]] = [  # first match wins; order matters ("lack … owner" is a gap question)
-    ("knowledge", re.compile(r"\b(stale|outdated|out of date|knowledge (health|gaps?|decay|loss)|(lost|losing) knowledge|"
-                             r"knowledge (is |was )?(lost|stale|decayed)|handovers?|handed over|changed hands)\b", re.I)),
+    ("knowledge", re.compile(r"\b(stale|outdated|out of date|knowledge (health|gaps?|decay\w*|loss)|(lost|losing) knowledge|"
+                             r"knowledge (is |was )?(lost|stale|decayed)|handovers?|handed over|changed hands|"
+                             r"(changed|switched|moved) (teams?|owners?)|overdue|due for (a )?review|not been reviewed|"
+                             r"orphan\w*|(everyone|everybody|all|nobody|no one)( still here)? who (made|decided)|"
+                             r"(made|decided) (them|it|they) ha(ve|s) (since )?left|(nobody|no one) (is )?left who)\b", re.I)),
     ("owner_then", re.compile(r"\b(who owned|owned by|previous owners?)\b", re.I)),
     ("asof", re.compile(r"\b(as of|back then|at the time|as it was)\b", re.I)),
     ("history", re.compile(r"\b(history|timeline|what happened|happened to)\b", re.I)),
-    ("gaps", re.compile(r"\b(lack|lacks|missing|without|guardrails?|gaps?|no (runbook|owner))\b", re.I)),
-    ("decision", re.compile(r"\b(decide|decided|decision|decisions|adr|policy|still current|rule)\b", re.I)),
+    ("gaps", re.compile(r"\b(lack|lacks|missing|without|guardrails?|gaps?|(no|zero) (runbooks?|playbooks?|owners?)|unowned|"
+                        r"(don'?t|doesn'?t|do not|does not)( we)? have (a |an |any )?(runbooks?|playbooks?|owners?)|"
+                        r"(nobody|no one) owns?|do all\b.{0,60}\bhave (a |an |any )?(runbooks?|playbooks?|owners?))\b", re.I)),
+    # which runbook to follow (a stale or missing runbook is a knowledge or gap question, matched above)
+    ("runbook", re.compile(r"\b(runbooks?|run books?|playbooks?|procedures?|sops?|steps (to|for)|"
+                           r"how (do|should|can|would) (we|i|you) (fix|handle|mitigate|recover|resolve|deal with|respond to)|"
+                           r"what (should|do) (i|we|on-?call) do|remediat\w*|mitigat\w*|(what|which) steps|"
+                           r"steps (do|should) (we|i)|what('s| is) the (fix|procedure)|how to (fix|handle|recover))\b", re.I)),
+    ("decision", re.compile(r"\b(decide|decided|decision|decisions|adrs?|policy|still current|rule|made the call|"
+                            r"signed off|sign-?off|chose|agreed|approved|supposed to|meant to|freeze|frozen|"
+                            r"put\b.{0,40}\bin place)\b", re.I)),
     # who we would be failing: customers reached through a failure, SLOs that depend on a component (obligation clock)
-    ("obligations", re.compile(r"\b(customers?|slos?|error budgets?|obligations?|promises?|revenue at risk|mrr)\b", re.I)),
-    ("blast", re.compile(r"\b(break|breaks|goes down|go down|outage|blast|impact|affected|depends on)\b", re.I)),
-    ("people", re.compile(r"\b(who|worked on|knows?|expert|experts|owners?|on-?call)\b", re.I)),
+    ("obligations", re.compile(r"\b(customers?|slos?|service[- ]level objectives?|error budgets?|obligations?|promises?|revenue at risk|mrr)\b", re.I)),
+    ("blast", re.compile(r"\b(break|breaks|goes down|go down|outage|blast|impact|affected|depends on|rel(y|ies|ying) on|"
+                         r"downstream)\b", re.I)),
+    ("people", re.compile(r"\b(who|worked on|working on|hacking on|knows?|expert|experts|owners?|owns|owning|on-?call|"
+                          r"go-?to (person|people|engineer)|contribut\w*)\b", re.I)),
 ]
 ROUTE_TOOL = "route_question"
 REFUSAL = "I can't answer that from the graph"
 # The kinds the deterministic composer answers: exactly the answerable intents of the seeded exemplars and the
 # keyword router's kinds (unit tests keep them equal, so neither stage can route to a kind the composer does not handle).
-KINDS = ("knowledge", "gaps", "decision", "obligations", "owner_then", "asof", "history", "people", "blast", "context")
+KINDS = ("knowledge", "gaps", "runbook", "decision", "obligations", "owner_then", "asof", "history", "people", "blast",
+         "context")
 TIER1 = {"resolve_entity", "find_entities", "session_history", ROUTE_TOOL}
 # Words never sent to entity resolution (question words and the vocabulary of the question kinds themselves).
 STOP = set("""a an the and or of on in to for if is are was were be been what which who whom whose how why when where
@@ -67,9 +82,45 @@ breaks worked work knows know expert experts lack lacks missing without services
 decide decided decision decisions policy rule guardrails guardrail gaps gap revenue path revenue-path before ever
 anyone someone people person me tell show list owned stale outdated knowledge history timeline happened changes
 handover handovers handed hands changed time then back previous during customers customer slo slos
-affected affect depend depends obligations obligation promise promises budget budgets error risk mrr""".split())
+affected affect depend depends obligations obligation promise promises budget budgets error risk mrr
+january february march april may june july august september october november december jan feb mar apr jun jul aug sep
+sept oct nov dec ago last past week weeks month months year years yesterday early mid late since""".split())
 DATE = re.compile(r"\b(20\d\d)-(\d\d)-(\d\d)\b")
+# a month ("April 2026", "in July", "last June", "3 March 2026", "March 3, 2026"), an ISO month, a year, or a time ago
+_MON = (r"(?P<mon>jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?|sep(?:t(?:ember)?)?|"
+        r"oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\.?")
+MONTH = re.compile(r"\b(?:(?P<pre>in|on|last|during|since|by|early|mid|late|back in|of)\s+)?(?:(?P<d1>\d{1,2})(?:st|nd|rd|th)?\s+)?"
+                   + _MON + r"(?:\s+(?P<d2>\d{1,2})(?:st|nd|rd|th)?,?)?(?:\s+(?P<year>20\d\d))?\b", re.I)
+ISO_MONTH = re.compile(r"\b(20\d\d)-(0[1-9]|1[0-2])\b(?!-\d)")
+SEASON = re.compile(r"\b(spring|summer|autumn|fall|winter)\s+(?:of\s+)?(20\d\d)\b", re.I)   # northern seasons
+YEAR = re.compile(r"\b(?:in|during|back in|since|by|early|mid|late)\s+(20\d\d)\b", re.I)
+AGO = re.compile(r"\b(\d{1,3}|a|an|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\s+(day|week|month|year)s?\s+ago\b"
+                 r"|\b(last|past) (week|month|year)\b|\byesterday\b", re.I)
+_NUM = {"a": 1, "an": 1, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9,
+        "ten": 10, "eleven": 11, "twelve": 12}
+# the kinds of knowledge decay a question can name (knowledge_health's finding kinds): those are shown first, in full
+KNOWLEDGE_ASKS = {
+    "stale_runbook": re.compile(r"\b(stale|overdue|outdated|out of date|due for (a )?review|not been reviewed|unreviewed)\b", re.I),
+    "handover_without_runbook": re.compile(r"\b(handovers?|handed over|changed hands|(changed|switched|moved) (teams?|owners?))\b", re.I),
+    "decision_deciders_left": re.compile(r"\b(orphan\w*|ha(ve|s) (since )?left|left the company|(nobody|no one) (is )?left|"
+                                         r"(everyone|everybody|all) who (made|decided))\b", re.I),
+    "decision_at_risk": re.compile(r"\b(violat\w*|at risk)\b", re.I),
+    "missing_edge": re.compile(r"\b(missing (edges?|links?|dependenc\w*)|coupl\w*|hidden)\b", re.I),
+}
+# two-letter words never tried as a component id (a two-letter id such as a service called "ad" is tried exactly)
+SHORT_STOP = set("an as at be by do go he hi if in is it me my no of ok on or so to up us we vs am pm id ip".split())
+# words that name a symptom kind (Symptom.kind in the graph): the runbook for that symptom ranks first
+SYMPTOM_WORDS = {
+    "latency": re.compile(r"\b(slow\w*|latenc\w*|timeouts?|timing out|p9\d|sluggish)\b", re.I),
+    "error_rate": re.compile(r"\b(errors?|error rate|failing|failures?|5xx|500s|exceptions?|crash\w*)\b", re.I),
+    "lag": re.compile(r"\b(lag\w*|backlog\w*|backed up|behind)\b", re.I),
+    "kpi_jump": re.compile(r"\b(kpis?|jump\w*|metric spikes?|numbers? (jump|spike)\w*)\b", re.I),
+}
 INCIDENT = re.compile(r"\b((?:gx-)?inc-[a-z0-9-]+)\b", re.I)
+# a question that asks for an explanation: the reasons live in the documents (an ADR's context, a postmortem), not in
+# a structured kind, so the documents are searched before any kind is guessed from a weak match
+WHY = re.compile(r"^\s*why\b|\b(reason|reasons|rationale|motivation|justification|background) (for|behind|of)\b|"
+                 r"\bwhy (do|does|did|is|are|was|were|would|should)\b", re.I)
 
 
 @dataclass
@@ -151,21 +202,42 @@ def _first(r: dict, what: str) -> dict | None:
 
 
 def _entity(s: _Session, q: str, user: str | None = None) -> dict | None:
-    """The component a question is about. Every exact id match (word pairs first: "product catalog") is tried
-    before any fuzzy match, so "Check what depends on cart" finds cart, not checkout by spelling. Fuzzy (FLEX
-    Jaro-Winkler) and full-text name matching run only when nothing matched exactly, and never on generic words
+    """The component a question is about. Every exact id match (word pairs first: "product catalog"; then single
+    words, two-letter words and singulars: "ads" → ad) is tried before any fuzzy match, so "Check what depends on cart"
+    finds cart, not checkout by spelling. Then the components whose NAME or id words the question uses (one query,
+    Q-FIND-NAME): a name that covers more of the question's words than the exact hit wins ("the shipping quote
+    calculator" is quote, not shipping), and with no exact hit a clear name match is taken ("valkey" → cache). Fuzzy
+    (FLEX Jaro-Winkler) and full-text name matching run only when neither found it, and never on generic words
     (tools.FUZZY_STOP) or on the words the question kinds are asked with (route_question's question_words, read
     from the IntentExemplar full-text index: "feature" in "show me the feature flags" is not a component's name)."""
     toks = _tokens(q)
     pairs = lambda ts: [ts[i] + ts[i + 1] for i in range(len(ts) - 1)]  # noqa: E731
-    for text in pairs(toks) + toks:
-        hit = _first(s.call("resolve_entity", text=text, fuzzy=False), f"resolve_entity({text!r})")
-        if hit:
-            return hit
+    short = list(dict.fromkeys(w.lower() for w in re.findall(r"\b[A-Za-z]{2}\b", q) if w.lower() not in SHORT_STOP | STOP))
+    singular = [t[:-1] for t in toks if len(t) >= 3 and t.endswith("s") and not t.endswith("ss")]
+    exact = None
+    for text in dict.fromkeys(pairs(toks) + toks + short + singular):   # a two-letter word only ever as an exact id
+        exact = _first(s.call("resolve_entity", text=text, fuzzy=False), f"resolve_entity({text!r})")
+        if exact:
+            break
     asked = set(s.route.get("question_words") or [])  # words of the question kinds (the graph's Q-BRAIN-VOCAB)
     specific = [t for t in toks if t not in T.FUZZY_STOP and t not in asked]
+    named: list[dict] = []
+    words = " ".join(specific + [w for w in short if w not in asked])
+    if T._name_words(words):
+        r = s.call("resolve_entity", text=words, fuzzy=False, by_name=True)
+        if r.get("error"):
+            raise BrainToolError(f"resolve_entity(by_name): {r['error']}")
+        named = r.get("rows") or []
+    if exact:
+        mine = next((x["matched"] for x in named if x["id"] == exact["id"]), 0)
+        if named and named[0]["id"] != exact["id"] and named[0]["matched"] > max(mine, 1):
+            return named[0]
+        return exact
+    if named and (named[0]["matched"] >= 2 or len(named) == 1 or named[1]["matched"] < named[0]["matched"]):
+        return named[0]
     min_len = int(weights()["brain"]["fuzzy_min_len"])
-    for text in [p for p in pairs(specific) + specific if len(p) >= min_len]:
+    fuzzy_words = specific + [w for w in short if w not in asked]   # "astronmy db" → astronmydb
+    for text in [p for p in pairs(fuzzy_words) + specific if len(p) >= min_len]:
         hit = _first(s.call("resolve_entity", text=text, fuzzy=True), f"resolve_entity({text!r})")
         if hit:
             return hit
@@ -201,18 +273,89 @@ def citation_guard(tenant: str, run_id: str, text: str, graph: str | None = None
 
 
 # ------------------------------------------------------------------ deterministic composer (keyless)
-def _when(q: str) -> dict:
-    """The time a question is about: an ISO date (UTC midnight) or an incident id (its onset, read from the graph)."""
+def _when(q: str, now: float | None = None) -> dict:
+    """The time a question is about: an ISO date (UTC midnight), an incident id (its onset, read from the graph), or a
+    period: a month ("April 2026", "in July", "last June"), an ISO month, a year ("in 2025"), "3 weeks ago", "last
+    month". A period is read at its first day (UTC midnight), and the label says which date was used; `end` (ms) is
+    where the period ends. A month without a year is its latest occurrence that has begun ("last" skips this one)."""
+    import datetime as dt
+    utc = dt.timezone.utc
+    today = dt.datetime.fromtimestamp(time.time() if now is None else now, tz=utc).replace(hour=0, minute=0, second=0,
+                                                                                           microsecond=0)
+
+    def ms(d: dt.datetime) -> int:
+        return int(d.timestamp() * 1000)
+
+    def day(y: int, mo: int, d: int) -> dt.datetime | None:
+        try:
+            return dt.datetime(y, mo, d, tzinfo=utc)
+        except ValueError:
+            return None
+
+    def month_start(y: int, mo: int, add: int = 0) -> dt.datetime:
+        k = y * 12 + (mo - 1) + add
+        return dt.datetime(k // 12, k % 12 + 1, 1, tzinfo=utc)
+
+    def period(start: dt.datetime, end: dt.datetime, name: str) -> dict:
+        return {"at": ms(start), "end": ms(end), "period": name,
+                "label": f"the start of {name} ({start.strftime('%Y-%m-%d')})"}
+
     m = DATE.search(q)
     if m:
-        import datetime as dt
-        try:
-            d = dt.datetime(int(m[1]), int(m[2]), int(m[3]), tzinfo=dt.timezone.utc)
-            return {"at": int(d.timestamp() * 1000), "label": m[0]}
-        except ValueError:
-            return {}
+        d = day(int(m[1]), int(m[2]), int(m[3]))
+        return {"at": ms(d), "label": m[0]} if d else {}
     m = INCIDENT.search(q)
-    return {"incident_id": m[1].lower(), "label": m[1].lower()} if m else {}
+    if m:
+        return {"incident_id": m[1].lower(), "label": m[1].lower()}
+    m = ISO_MONTH.search(q)
+    if m:
+        start = month_start(int(m[1]), int(m[2]))
+        return period(start, month_start(start.year, start.month, 1), start.strftime("%B %Y"))
+    for m in MONTH.finditer(q):   # a month name counts only with a preposition, a day or a year ("who may know" is not May)
+        if not (m["pre"] or m["d1"] or m["d2"] or m["year"]):
+            continue
+        mo = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"].index(m["mon"][:3].lower()) + 1
+        y = int(m["year"]) if m["year"] else (today.year if mo < today.month or (
+            mo == today.month and (m["pre"] or "").lower() != "last") else today.year - 1)
+        dd = m["d1"] or m["d2"]
+        if dd:
+            d = day(y, mo, int(dd))
+            return {"at": ms(d), "label": d.strftime("%Y-%m-%d")} if d else {}
+        start = month_start(y, mo)
+        return period(start, month_start(y, mo, 1), start.strftime("%B %Y"))
+    m = SEASON.search(q)
+    if m:   # spring Mar–May, summer Jun–Aug, autumn Sep–Nov, winter Dec–Feb (the December of that year)
+        first = {"spring": 3, "summer": 6, "autumn": 9, "fall": 9, "winter": 12}[m[1].lower()]
+        start = month_start(int(m[2]), first)
+        return period(start, month_start(start.year, start.month, 3), f"{m[1].lower()} {m[2]}")
+    m = YEAR.search(q)
+    if m:
+        y = int(m[1])
+        return period(dt.datetime(y, 1, 1, tzinfo=utc), dt.datetime(y + 1, 1, 1, tzinfo=utc), str(y))
+    m = AGO.search(q)
+    if m:
+        text = m[0].lower()
+        if text == "yesterday":
+            d = today - dt.timedelta(days=1)
+            return {"at": ms(d), "label": f"yesterday ({d.strftime('%Y-%m-%d')})"}
+        if m[3]:   # last / past week, month, year
+            if m[4].lower() == "week":
+                d = today - dt.timedelta(days=7)
+                return {"at": ms(d), "label": f"a week ago ({d.strftime('%Y-%m-%d')})"}
+            if m[4].lower() == "month":
+                start = month_start(today.year, today.month, -1)
+                return period(start, month_start(today.year, today.month), start.strftime("%B %Y"))
+            return period(dt.datetime(today.year - 1, 1, 1, tzinfo=utc), dt.datetime(today.year, 1, 1, tzinfo=utc),
+                          str(today.year - 1))
+        n = int(m[1]) if m[1].isdigit() else _NUM[m[1].lower()]
+        unit = m[2].lower()
+        if unit in ("day", "week"):
+            d = today - dt.timedelta(days=n * (7 if unit == "week" else 1))
+        else:
+            first = month_start(today.year, today.month, -n * (12 if unit == "year" else 1))
+            d = day(first.year, first.month, min(today.day, 28)) or first
+        return {"at": ms(d), "label": f"{m[0]} ({d.strftime('%Y-%m-%d')})"}
+    return {}
 
 
 def _fmt_day(ms: int | None) -> str:
@@ -223,8 +366,16 @@ def _fmt_day(ms: int | None) -> str:
 def _keyword(q: str) -> tuple[str, str] | None:
     """Stage 1, the keyword router: (kind, matched words) for the first pattern that matches, else None."""
     hit = next(((name, m.group(0)) for name, rx in INTENTS if (m := rx.search(q))), None)
-    if hit and hit[0] == "people" and re.search(r"\bowner\b", q, re.I) and (DATE.search(q) or INCIDENT.search(q)):
-        return "owner_then", "owner + a date or incident"  # "who was the owner on <date> / during <incident>" is the past
+    if (hit is None or hit[0] not in ("knowledge", "owner_then", "asof")) and _when(q) and \
+            re.search(r"\bwhat did (we|they|the team) (believe|know|think|hold)\b", q, re.I):
+        return "asof", "what we believed + a time"
+    if hit and hit[0] in ("runbook", "decision") and _when(q) and not re.search(r"\bwho\b", q, re.I):
+        return "asof", f"{hit[1]} + a time"   # the runbooks / decisions in effect at a time: what we believed then
+    if hit and hit[0] in ("people", "asof") and _when(q):   # "who … on <date> / during <incident> / last June": the past
+        if re.search(r"\bon[- ]?call\b|\bpaged\b|\bdecisions?\b|\brunbooks?\b|\bbeliev\w*", q, re.I):
+            return ("asof", hit[1]) if hit[0] == "asof" else ("asof", "on call + a time")
+        if re.search(r"\b(owners?|own|owned|responsible|in charge|ran|maintained|handled|looked after|team)\b", q, re.I):
+            return "owner_then", "owner + a time"   # ownership at a time: its history, who held it then and now
     return hit
 
 
@@ -291,8 +442,81 @@ def _from_documents(s: _Session, q: str) -> str | None:
             "(found by both words and meaning):\n" + "\n".join(lines))
 
 
+def _runbook_line(x: dict, now_ms: int) -> str:
+    if x.get("source") == "derived":
+        how = f"learned from fixes that worked {plural(x.get('worked') or 0, 'time')}"
+        if x.get("steps"):
+            how += "; steps: " + "; ".join(str(st) for st in x["steps"][:4])
+    else:
+        how = "written by the team"
+        if x.get("reviewed_at") is not None:
+            age = (now_ms - int(x["reviewed_at"])) // 86_400_000
+            how += f", last reviewed {_fmt_day(x['reviewed_at'])}"
+            if age > int(weights()["knowledge"]["stale_days"]):
+                how += f" ({age} days ago: due for review)"
+    title = re.sub(r"\s*\(worked \d+×\)$", "", x.get("title") or "")   # derived titles repeat the count shown here
+    return f"- [{x['id']}] {title} ({how})"
+
+
+def _runbooks(s: _Session, q: str, ent: dict | None, sources: list[str]) -> str:
+    """Which runbook to follow: runbooks_about (Q-RUNBOOK-ABOUT) for the component, the symptom kind the question
+    names first; with no component, runbooks found by name and meaning (find_entities over Runbook)."""
+    now_ms = int(time.time() * 1000)
+    if ent is None:
+        hits = s.call("find_entities", text=" ".join(_tokens(q)[:6]) or q, labels=["Runbook"])
+        rows = [x for x in hits.get("rows") or [] if x.get("label") in (None, "Runbook")][:4]
+        if not rows:
+            return "No runbook matching that is documented in the graph, and I could not tell which component it is about."
+        return "Runbooks that match what you asked (by name and meaning):\n" + "\n".join(
+            f"- [{x['id']}] {x.get('name') or x.get('title') or ''}" for x in rows)
+    kinds = [k for k, rx in SYMPTOM_WORDS.items() if rx.search(q)]
+    r = s.call("runbooks_about", component_id=ent["id"], symptom_kinds=kinds)
+    if r.get("error"):
+        return f"Runbooks are unavailable: {r['error']}"
+    text = _runbooks_for(s, ent, kinds, r.get("rows") or [], sources, now_ms)
+    # a runbook whose title uses the question's own words ("the recs cache stampede thing"), if not listed already
+    listed = set(_cited(text))
+    words = [t for t in _tokens(q) if t not in T.FUZZY_STOP and t != ent["id"]]
+    titled = [x for x in (s.call("find_entities", text=" ".join(words[:6]), labels=["Runbook"]).get("rows") or [] if words else [])
+              if "fulltext" in (x.get("via") or []) and x["id"] not in listed][:2]
+    if titled:
+        text = ("Named like what you asked: " + ", ".join(f"[{x['id']}]" for x in titled) + " (its title uses your words).\n"
+                + text)
+    return text
+
+
+def _runbooks_for(s: _Session, ent: dict, kinds: list[str], rows: list[dict], sources: list[str], now_ms: int) -> str:
+    """The runbooks_about rows as an answer: the component's own (the symptom asked about first), else the nearest
+    one failure hop away, else none, with whom to ask."""
+    sources += [x["url"] for x in rows if x.get("url")]
+    direct, near = [x for x in rows if not x["dist"]], [x for x in rows if x["dist"]]
+    what = f"[{ent['id']}]" + (f"'s {' / '.join(k.replace('_', ' ') for k in kinds)}" if kinds else "")
+    if direct:
+        first = [x for x in direct if x["symptom_named"]] or direct
+        rest = [x for x in direct if x not in first]
+        text = f"Runbooks for {what}, best first:\n" + "\n".join(_runbook_line(x, now_ms) for x in first[:4])
+        if rest:
+            text += f"\nAlso for [{ent['id']}]:\n" + "\n".join(_runbook_line(x, now_ms) for x in rest[:3])
+        if near:
+            text += f"\n{plural(len(near), 'more runbook')} one failure hop away."
+        return text
+    ctx = (s.call("service_context", id=ent["id"], now=now_ms).get("rows") or [{}])[0]
+    owner = (f" Ask its owner [{ctx['team']}]" + (f" (on call now: {', '.join('[' + p + ']' for p in ctx.get('oncall') or [])})"
+                                                   if ctx.get("oncall") else "") + ".") if ctx.get("team") else ""
+    if near:
+        return (f"No runbook is written for [{ent['id']}] itself. The nearest are for components one failure hop away:\n"
+                + "\n".join(_runbook_line(x, now_ms) + " for " + ", ".join(f"[{c}]" for c in x["covers"][:2])
+                            for x in (([x for x in near if x["symptom_named"]] or near)[:4])) + ("\n" + owner.strip() if owner else ""))
+    return f"No current runbook covers [{ent['id']}], its symptoms, or anything one failure hop away.{owner}"
+
+
 def _baseline(s: _Session, q: str, user: str | None = None) -> tuple[str, str, list[str]]:
     sources: list[str] = []
+    if WHY.search(q) and _keyword(q) is None:   # "why …": what the documents say, when two indexes agree on the source
+        found = _from_documents(s, q)
+        if found:
+            s.route = {"stage": "documents", "routed": "documents", "matched": WHY.search(q).group(0)}
+            return "documents", found, sources
     try:
         intent = _route(s, q)
     except BrainToolError as e:  # fail loudly: a broken router is not "I can't answer that"
@@ -310,13 +534,27 @@ def _baseline(s: _Session, q: str, user: str | None = None) -> tuple[str, str, l
         if not rows:
             return intent, "No stale runbooks, unrecorded handovers or at-risk decisions are documented.", sources
         label = {"stale_runbook": "stale runbook", "handover_without_runbook": "handover with no runbook since",
+                 "decision_deciders_left": "decision nobody who made it is left to explain",
                  "decision_at_risk": "decision at risk", "missing_edge": "graph probably missing an edge"}
-        shown = [x for k in label for x in [r for r in rows if r["kind"] == k][:3]]  # every kind, at most 3 of each
-        lines = [f"- [{x['id']}] {label[x['kind']]}: " + re.sub(r"\b((?:gx-)?p-\d+|rb-[\w-]+|team-[\w-]+)\b", r"[\1]", x["why"])
-                 for x in shown]
-        if len(shown) < len(rows):
-            lines.append(f"…and {len(rows) - len(shown)} more of the same kinds.")
-        return intent, f"{len(rows)} places where what the organisation knows has decayed:\n" + "\n".join(lines), sources
+        asked = [k for k, rx in KNOWLEDGE_ASKS.items() if rx.search(q)]   # the kinds of decay the question names
+        order = asked + [k for k in label if k not in asked]
+        per = {k: (8 if k in asked else 3) for k in label}   # what was asked about first and in full; the rest, 3 each
+        shown = [x for k in order for x in [r for r in rows if r["kind"] == k][:per[k]]]
+        lines = [f"- [{x['id']}] {label.get(x['kind'], x['kind'])}: "
+                 + re.sub(r"\b((?:gx-)?p-\d+|rb-[\w-]+|team-[\w-]+|ADR-\d+)\b", r"[\1]", x["why"]) for x in shown]
+        rest = [x for x in rows if x not in shown]
+        if rest:
+            kinds = sorted({label.get(x["kind"], x["kind"]) for x in rest})
+            lines.append(f"…and {len(rest)} more ({', '.join(kinds)}).")
+        head = f"{len(rows)} places where what the organisation knows has decayed"
+        n_asked = sum(1 for x in shown if x["kind"] in asked)
+        if asked and n_asked:
+            head += f", the {plural(n_asked, 'one')} you asked about first:" if n_asked > 1 else ", the one you asked about first:"
+        elif asked:
+            head += ", none of the kind you asked about:"
+        else:
+            head += ":"
+        return intent, head + "\n" + "\n".join(lines), sources
     if intent == "gaps":
         r = s.call("missing_guardrails")
         rows = r.get("rows") or []
@@ -330,11 +568,18 @@ def _baseline(s: _Session, q: str, user: str | None = None) -> tuple[str, str, l
     except BrainToolError as e:  # fail loudly: a broken tool is not "that component does not exist"
         return intent, f"Entity resolution is unavailable, so I cannot answer: {e}", sources
     if intent == "decision":
+        named = []   # a decision named by its id ("ADR-009", "adr-9"): read it directly
+        for tok in dict.fromkeys(re.findall(r"\b[A-Za-z]{2,10}-\d{1,6}\b", q)):
+            pre, num = tok.rsplit("-", 1)
+            for cand in dict.fromkeys((tok, tok.upper(), f"{pre.upper()}-{int(num):03d}")):   # "adr-21" → ADR-021
+                if (s.call("trace_decision", decision_id=cand).get("rows") or []):
+                    named.append(cand)
+                    break
         hits = s.call("find_entities", text=" ".join(_stem(t) for t in _tokens(q)[:5]) or q, labels=["Decision"])
         about = s.call("decisions_about", target_id=ent["id"]) if ent else {"rows": []}
-        ids = [x["id"] for x in hits.get("rows") or []] + [x["id"] for x in about.get("rows") or []]
+        ids = named + [x["id"] for x in hits.get("rows") or []] + [x["id"] for x in about.get("rows") or []]
         ids = list(dict.fromkeys(ids))[:4]
-        if not ids:
+        if not ids and not about.get("policies"):
             return intent, "No decision about that is documented in the graph.", sources
         lines = []
         for did in ids:
@@ -353,14 +598,28 @@ def _baseline(s: _Session, q: str, user: str | None = None) -> tuple[str, str, l
                 lines.append(f"- [{did}] {title}: {row.get('status', 'unknown')}, and still current (nothing supersedes it).")
             if d and d.get("url"):
                 sources.append(d["url"])
-            who = (about.get("deciders") or {}).get(did) or []
+            who = (about.get("deciders") or {}).get(did) or (tr.get("deciders") or {}).get(did) or []
             if who:   # who decided it, and whether they are still here (DECIDED, active, MEMBER_OF the owning team)
                 lines[-1] += " Decided by " + ", ".join(
                     f"[{p['person']}] {p.get('name') or ''}".strip() + (" (still on the owning team)" if p.get("on_owning_team") and p.get("active")
                                                                        else " (still here, another team)" if p.get("active") else " (has left)")
                     for p in who) + "."
+        pols = []   # the policies that govern it (a change freeze), and who decided them
+        for p in about.get("policies") or []:
+            who = ", ".join(f"[{d['person']}] {d.get('name') or ''}".strip() + ("" if d.get("active") else " (has left)")
+                            for d in p.get("deciders") or [])
+            pols.append(f"- [{p['policy']}] {p.get('title') or ''}: policy, {p.get('status') or 'unknown'}"
+                        + (f". Decided by {who}." if who else "."))
+            if p.get("url"):
+                sources.append(p["url"])
         lead = f"Decisions about [{ent['id']}]:" if ent else "Decisions:"
-        return intent, lead + "\n" + "\n".join(lines), sorted(set(sources))
+        if pols and (not lines or re.search(r"\b(freez\w*|frozen|polic\w*)\b", q, re.I)):   # asked about a policy: it first
+            text = f"Policies on [{ent['id']}]:\n" + "\n".join(pols) + (("\n" + lead + "\n" + "\n".join(lines)) if lines else "")
+        else:
+            text = lead + "\n" + "\n".join(lines) + ((f"\nPolicies on [{ent['id']}]:\n" + "\n".join(pols)) if pols else "")
+        return intent, text, sorted(set(sources))
+    if intent == "runbook":
+        return intent, _runbooks(s, q, ent, sources), sources
     if ent is None:
         return intent, "I could not find that component in the graph (no id or name match).", sources
     if intent == "obligations":
@@ -399,7 +658,7 @@ def _baseline(s: _Session, q: str, user: str | None = None) -> tuple[str, str, l
             if intent == "asof":
                 return intent, "As of when? Give a date (YYYY-MM-DD) or an incident id.", sources
             when = {"at": int(time.time() * 1000), "label": "now"}
-        args = {k: v for k, v in when.items() if k != "label"}
+        args = {k: v for k, v in when.items() if k in ("at", "incident_id")}
         if intent == "owner_then":
             r = s.call("owner_at", target_id=ent["id"], **args)
             if r.get("error"):
@@ -420,6 +679,12 @@ def _baseline(s: _Session, q: str, user: str | None = None) -> tuple[str, str, l
                         for p in knew[:5])
             else:
                 text += ", and still is."
+            if "end" in when:   # a period asked about (a month, a year): every team that owned it at some point in it
+                during = [x for x in r.get("rows") or []
+                          if x["since"] < when["end"] and (x["until"] is None or x["until"] > when["at"])]
+                if len(during) > 1:
+                    text += f"\nDuring {when['period']} it changed hands: " + ", then ".join(
+                        f"[{x['team']}] from {_fmt_day(max(x['since'], when['at']))}" for x in during) + "."
             return intent, text + f"\nOwnership history: {hist}.", sources
         r = s.call("beliefs_at", target_id=ent["id"], **args)
         if r.get("error"):
@@ -441,8 +706,6 @@ def _baseline(s: _Session, q: str, user: str | None = None) -> tuple[str, str, l
     if intent == "people":
         r = s.call("people_who_worked_on", target_id=ent["id"])
         rows = r.get("rows") or []
-        if not rows:
-            return intent, f"Nobody has committed to [{ent['id']}] in the recorded history.", sources
         lines = [f"- {x['name']} [{x['person']}]: {plural(x['commits'], 'commit')}, resolved "
                  f"{plural(x['incidents_resolved'], 'incident')} there"
                  + (f"; {', '.join('[' + t + ']' for t in x['teams'])}" if x["teams"] else "")
@@ -454,6 +717,8 @@ def _baseline(s: _Session, q: str, user: str | None = None) -> tuple[str, str, l
             head = (f"[{ent['id']}] is owned by [{ctx['team']}]"
                     + (f"; on call now: {', '.join('[' + p + ']' for p in ctx.get('oncall') or [])}" if ctx.get("oncall") else "")
                     + ".\n")
+        if not rows:
+            return intent, head + f"Nobody has committed to [{ent['id']}] in the recorded history.", sources
         return intent, head + f"People who have worked on [{ent['id']}], most work first:\n" + "\n".join(lines), sources
     if intent == "blast":
         r = s.call("blast_radius", id=ent["id"])

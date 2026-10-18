@@ -59,6 +59,11 @@ obligation:
   page_within_min: 1440   # A budget that runs out within a day at the current burn breaks the promise before the next business-hours handoff, so it pages now (the SRE-workbook fast-burn page, 14.4x, empties a whole 30-day budget in ~50 h; a part-spent budget gets less).
   fast_burn: 14.4          # The simulator raises an slo_burn alert when the trailing burn crosses 14.4x: at that rate 2% of a 30-day budget goes in one hour (SRE workbook fast-burn page).
   burn_window_min: 5        # The trailing window the simulator's burn alert averages over (the workbook's short window for a fast-burn page).
+repair:
+  unit_shift_tolerance: 0.15   # A 10^k unit shift measured by medians: 15% covers the mix of a day's orders against the days before; a 32× change is not a unit shift.
+  segment_purity: 0.95         # A segment carries the anomaly when 95% of its rows are outside the healthy range, it holds 95% of the outside rows, and the other rows are 95% inside: one value of one column, not a mix.
+  segment_min_rows: 20         # Fewer than 20 rows cannot establish a shift; the day's segments in the seeded warehouse hold hundreds.
+  segment_max_values: 12       # A text column with more than 12 distinct values on the day is an identifier or free text, not a segment.
 brain:
   knowledge_rrf_k: 60           # Reciprocal-rank fusion constant (the usual 60): a source ranked first in two lists beats one ranked first in one, and no single list dominates.
   knowledge_min_similarity: 0.6 # Vector hits for knowledge search below this cosine are not about the question (calibrated on the development questions only).

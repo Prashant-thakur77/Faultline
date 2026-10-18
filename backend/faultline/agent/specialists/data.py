@@ -1,4 +1,4 @@
-"""Data specialist: the existing warehouse/pipeline tools (system under observation), for KPI/data symptoms.
+"""Data specialist: the warehouse and pipeline tools (the system under observation), for KPI/data symptoms.
 
 KPI vs its baseline (get_metric_history, compare_to_baseline), then the anomalous-row share of every baselined column
 of the tables upstream of the symptom (anomalous_row_share). Which measurement is anomalous is read back from the

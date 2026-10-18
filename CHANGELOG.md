@@ -2,6 +2,19 @@
 
 All notable changes to Faultline. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [1.4.0] - 2026-10-18
+
+### The agent acts on the data incident too (track T1)
+- **A measured data repair, no model needed.** After the gate confirms a data cutover, the run asks the warehouse whether the anomalous column's bad rows are one segment (one value of one text column) a power of ten off the healthy rows (`unit_shift_check`, recorded as Evidence with the numbers), asks the graph which transform writes the anomalous table nearest the cause along the proof path (`repair_targets`, Q-REPAIR-TARGETS, ordered in the engine), and wraps that column in a CASE for those rows only (`agent/unit_shift.py`, validated like any patch). The data_repair option is then enabled with the exact diff and a reasoning line that cites the evidence; two segments that fit equally are no answer.
+- **Verified by the world.** Two-step approval of the exact diff, then the file on disk, the warehouse rebuilt on the incident's own data, the invariant suite and the KPI decide: the recorded S2 example ends <!-- claim:example.s2.verdict -->APPLIED<!-- /claim --> with <!-- claim:example.s2.invariants -->32/32<!-- /claim --> invariants, KPI anomaly ratio <!-- claim:example.s2.kpi_ratio -->0.933<!-- /claim -->, write-back <!-- claim:example.s2.writeback -->7/7<!-- /claim -->, final stage <!-- claim:example.s2.final_stage -->RESOLVED<!-- /claim -->; a wrong patch is still reverted (s5). The approval card shows the patch.
+
+### The company brain answers what on-call actually asks (track T3)
+- **Which runbook to follow.** A runbook kind: `runbooks_about` (one query, Q-RUNBOOK-ABOUT) returns a component's own runbooks and its symptoms', the symptom kind the question names first (slow → latency, errors → error rate, lag, a KPI jump), then the runbooks one failure hop away, with how often a learned runbook's fix worked and when a written one was last reviewed.
+- **Who decided, for any decision.** `trace_decision` names the deciders of a decision and of its head (Q-DEC-WHO), so "who wrote ADR-009, are they still here?" is answered for a decision found by its id or name, not only through a component; "adr-21" reads as ADR-021. `decisions_about` also returns the policies that govern a component (a change freeze) and who put them in place (Q-POLICY-ABOUT).
+- **Time, as people write it.** "in April 2026", "last June", "March 3, 2026", "2026-02", "spring 2026", "3 weeks ago", "last month": read at the period's first day, the date used stated in the answer; a month-long question says when a component changed hands within it.
+- **Names, not only ids.** A component resolves from the words of its name in one query (Q-FIND-NAME: "the shipping quote calculator" is quote, "valkey" is cache); two-letter ids ("ad") resolve exactly, never fuzzily; knowledge-health answers lead with the kind of decay asked about (overdue runbooks, handovers without a runbook, decisions whose deciders have all left) and name the people who left; the policies that govern a component (a change freeze) and who put them in place (Q-POLICY-ABOUT); a "why" question is answered from the documents when two indexes agree on the source.
+- **Measured blind, twice.** Two new blind sets of 40 questions, each written by an agent that never saw the brain and pre-registered before its one scoring: set 3 after the runbook and decision work <!-- claim:brain_blind.s3.m22_runbooks.correct -->29<!-- /claim -->/<!-- claim:brain_blind.s3.m22_runbooks.questions -->40<!-- /claim --> (set 2 after the fact: <!-- claim:brain_blind.s2.m22_runbooks.correct -->28<!-- /claim -->/40, from 24), then set 4 after the names, policies and why-questions work <!-- claim:brain_blind.s4.m22_names.correct -->36<!-- /claim -->/<!-- claim:brain_blind.s4.m22_names.questions -->40<!-- /claim -->; the sets 1 to 3 re-scored after the fact: <!-- claim:brain_blind.s1.m22_names.correct -->38<!-- /claim -->, <!-- claim:brain_blind.s2.m22_names.correct -->39<!-- /claim --> and <!-- claim:brain_blind.s3.m22_names.correct -->39<!-- /claim --> of 40; the development sets stay at <!-- claim:brain.correct -->33<!-- /claim -->/33 and <!-- claim:brain_para.correct -->31<!-- /claim -->/33.
+
 ## [1.3.1] - 2026-10-18
 
 ### The gate, tighter
@@ -117,6 +130,7 @@ First public release: the version deployed at [13-203-185-119.sslip.io](https://
 - Live deployment: one VM with Docker Compose (FalkorDB never exposed, ACL users per tenant, Caddy with TLS), public mode with run tokens, rate limits and no LLM spend.
 - Keyless reproduction: `make setup && make judge-check` prints PASS with no API key.
 
+[1.4.0]: https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.4.0
 [1.3.1]: https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.3.1
 [1.3.0]: https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.3.0
 [1.2.0]: https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.2.0

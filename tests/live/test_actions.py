@@ -186,7 +186,7 @@ def test_s2_data_repair_is_gated_applied_and_verified_by_rebuild():
     try:
         assert res.outcome == "CONFIRMED" and res.cause_id == "D-cutover-1"
         o = next(o for o in res.post_gate["options"] if o["kind"] == "data_repair")
-        assert not o["enabled"]  # keyless: nobody authored a patch, so it is not offered
+        assert o["enabled"] and "unit shift measured" in o["reason"]   # keyless: the measured repair (M23) proposed it
         with pytest.raises(ValueError):  # repairs may only touch allowlisted transforms
             act.propose_data_repair(c, file="pipeline/run.py", new_content="x", reasoning="nope")
         act.propose_data_repair(c, file="pipeline/transforms/stg_orders.sql", new_content=_CENTS_FIX,

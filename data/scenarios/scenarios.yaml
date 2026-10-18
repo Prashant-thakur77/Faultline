@@ -2,7 +2,7 @@
 # (evals/); the product package never reads truth files (scripts/lint_no_leaks.py).
 # Times: `onset` is relative to the history anchor (2026-10-15T00:00Z); `at` is relative to onset.
 - id: S2
-  name: existing_data_incident_cross_domain
+  name: data_incident_cross_domain
   tenant: acme
   onset: anchor+2h
   pipeline_mode: incident

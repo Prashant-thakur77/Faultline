@@ -1,4 +1,4 @@
-"""Company-brain held-out eval: questions written blind (data/brain/heldout_blind.truth.json, heldout_blind2.truth.json).
+"""Company-brain held-out eval: questions written blind (data/brain/heldout_blind.truth.json, heldout_blind2.truth.json, heldout_blind3.truth.json).
 
 A separate agent wrote these questions from the README's claims and the synthetic org's data. It never saw the
 router, its intents or its templates. Expected ids were derived from read-only queries. The router is never tuned on
@@ -31,7 +31,8 @@ from faultline.graph import client as gclient  # noqa: E402
 from faultline.graph import copy as gcopy  # noqa: E402
 from faultline.graph.tenant import golden_graph  # noqa: E402
 
-SETS = {"1": "heldout_blind.truth.json", "2": "heldout_blind2.truth.json"}
+SETS = {"1": "heldout_blind.truth.json", "2": "heldout_blind2.truth.json", "3": "heldout_blind3.truth.json",
+        "4": "heldout_blind4.truth.json"}
 SIDE = ROOT / "evals" / "results" / "brain_heldout.json"
 
 

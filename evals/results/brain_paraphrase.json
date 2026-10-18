@@ -1,15 +1,15 @@
 {
  "paraphrase": {
   "questions": 33,
-  "correct": 30,
+  "correct": 31,
   "graph": "clean room (copy of golden)",
   "answerable": 27,
   "unanswerable_honest": 6,
   "unanswerable": 6,
-  "intent_correct": 30,
+  "intent_correct": 31,
   "guard_ok": 33,
-  "ms_p50": 15.4,
-  "ms_max": 398.5,
+  "ms_p50": 16.5,
+  "ms_max": 377.4,
   "knowledge_unchanged": true,
   "failures": [
    {
@@ -18,7 +18,7 @@
     "expected_intent": "decision",
     "ok": false,
     "citation_precision": 0.0,
-    "cited": 16,
+    "cited": 18,
     "cites_ok": false,
     "missing": [
      "ADR-009",
@@ -40,25 +40,10 @@
     ],
     "guard_ok": true,
     "tier": 2
-   },
-   {
-    "q": "Which team was responsible for fraud-detection at the time of inc-h002?",
-    "intent": "asof",
-    "expected_intent": "owner_then",
-    "ok": false,
-    "citation_precision": 0.6667,
-    "cited": 3,
-    "cites_ok": false,
-    "missing": [
-     "p-004",
-     "team-platform"
-    ],
-    "guard_ok": true,
-    "tier": 2
    }
   ],
-  "citation_precision_mean": 0.2935,
-  "cites_ok": 30
+  "citation_precision_mean": 0.2803,
+  "cites_ok": 31
  },
  "original": {
   "questions": 33,
@@ -69,14 +54,14 @@
   "unanswerable": 6,
   "intent_correct": 33,
   "guard_ok": 33,
-  "ms_p50": 7.2,
-  "ms_max": 18.6,
+  "ms_p50": 8.9,
+  "ms_max": 26.3,
   "knowledge_unchanged": true,
   "failures": [],
-  "citation_precision_mean": 0.3118,
+  "citation_precision_mean": 0.3021,
   "cites_ok": 33
  },
- "started": "2026-10-16T15:44:23",
- "finished": "2026-10-16T15:44:24",
- "reason": "hybrid router: keyword patterns first, graph-native Q-BRAIN-INTENT (IntentExemplar vector + full-text, similarity floor refusal) only when no pattern matches"
+ "started": "2026-10-18T16:25:56",
+ "finished": "2026-10-18T16:25:57",
+ "reason": "M22: runbook kind, deciders by id, months and seasons, names; the development set re-run after the changes"
 }

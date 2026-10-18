@@ -35,14 +35,16 @@ const noSubscribe = () => () => {};
 const EXAMPLES = [
   "Who on the team has worked on payment before?",
   "What did we decide about payment timeouts, and is it still current?",
+  "Which runbook do I follow when checkout errors spike?",
   "Which revenue-path services lack a runbook or owner?",
   "What breaks if productcatalog goes down?",
-  "What breaks if recommendation goes down?",
+  "Who decided the payment retry rule, and are they still here?",
 ];
 
 /** Company brain over time (M12): ownership history, as-of beliefs, component timelines, knowledge health. */
 const TIME_EXAMPLES = [
   "Who owned fraud-detection during inc-h002?",
+  "Who owned fraud-detection in August 2026?",
   "What did we know about product-catalog as of 2025-11-01?",
   "What is the history of fraud-detection?",
   "Where is our knowledge stale?",
@@ -58,6 +60,7 @@ const EXAMPLES_BY_TENANT: Record<string, { now: string[]; time: string[] }> = {
     now: [
       "Who on the team has worked on card-gateway before?",
       "What did we decide about card gateway timeouts, and is it still current?",
+      "Which runbook do I follow when the event bus lags?",
       "Which revenue-path services lack a runbook or owner?",
       "What breaks if session-service goes down?",
     ],

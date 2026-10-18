@@ -1,5 +1,5 @@
 {
-  "incident_id": "inc-s2-99a4f2f6",
+  "incident_id": "inc-s2-2defc7b1",
   "outcome": "CONFIRMED",
   "confident": true,
   "cause_id": "D-cutover-1",
@@ -68,7 +68,7 @@
       "check": "G6 competitors"
     },
     {
-      "claim": "G7 agreement: independent channels on the chain: ['falkordb', 'warehouse']",
+      "claim": "G7 agreement: independent channels on the chain: falkordb, warehouse",
       "evidence_ids": [],
       "check": "G7 agreement"
     },
@@ -163,9 +163,11 @@
     "summary": "the confirmed cause explains 4 of 4 anomalous components"
   },
   "remedy": {
-    "applied": false,
-    "lines": [],
-    "note": "no usable history for the offered fixes: static order kept (no-op)"
+    "applied": true,
+    "lines": [
+      "history: data repair worked 6/6 times on past incidents sharing a symptom with this one (smoothed success 0.88)"
+    ],
+    "note": "options ordered by past outcomes on incidents sharing a symptom"
   },
   "futures": [
     {
@@ -381,7 +383,7 @@
     {
       "cause": "D-fx-pause-7",
       "origin": "sweep",
-      "gate_run": "gr-inc-s2-99a4f2f6-e2b89f58",
+      "gate_run": "gr-inc-s2-2defc7b1-1d527e29",
       "failed": [
         "G5 sufficiency: G5: max flow 0.0692 < needed 0.8000 (observed 1.0000 × 0.8); another suspect alone can carry 1.0000"
       ]

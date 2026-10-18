@@ -34,7 +34,12 @@ PHASE_TOOLS: dict[Stage, list[str]] = {
     # (CONTAIN also runs blast_radius on the cause's target to find what must be protected)
     # remedy_stats only reorders the options (Q-REM-1); learned_preferences (M21) blends the team's recent choices into
     # that order within one predicted-future class, flags options against an active guideline, suggests contracts
-    Stage.PLAN: ["propose_plan", "remedy_stats", "learned_preferences"],
+    # the measured data repair a keyless run proposes (loop.propose_measured_repair): change_details says whether the
+    # cause is a data cutover, repair_targets which transform builds the anomalous table nearest it (Q-REPAIR-TARGETS),
+    # unit_shift_check whether one segment is a power of ten off, read_transform the SQL to patch; the proposal only
+    # enables the data_repair option, the exact diff still needs two-step approval
+    Stage.PLAN: ["propose_plan", "remedy_stats", "learned_preferences", "change_details", "repair_targets",
+                 "unit_shift_check", "read_transform"],
     Stage.AWAITING_APPROVAL: [],
     Stage.EXECUTE: ["execute_action"],
     Stage.VERIFY: ["verify_action"],

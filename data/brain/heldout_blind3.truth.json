@@ -1,0 +1,390 @@
+{
+  "written": "2026-10-18T10:32:54Z",
+  "author": "third blind subagent (never saw the router, its exemplars or earlier sets)",
+  "tenant": "acme",
+  "questions": [
+    {
+      "id": "b3-01",
+      "kind": "owner",
+      "question": "who owns the kafka order queue these days?",
+      "expect_ids": [
+        "team-checkout"
+      ],
+      "notes": "MATCH (t:Team)-[:OWNS]->(c {id:'queue'}) RETURN t.id -> team-checkout. 'kafka order queue' is the name of Datastore queue; OWNED_AT shows team-checkout since 2025-09-10 with no end."
+    },
+    {
+      "id": "b3-02",
+      "kind": "owner",
+      "question": "Which team is fraud-detection with now?",
+      "expect_ids": [
+        "team-platform"
+      ],
+      "notes": "MATCH (t:Team)-[:OWNS]->(c {id:'fraud-detection'}) RETURN t.id -> team-platform. OWNED_AT: team-payments 2025-09-10 to 2026-08-06, team-platform from 2026-08-06 (to null), so the current owner is team-platform, not payments."
+    },
+    {
+      "id": "b3-03",
+      "kind": "owner",
+      "question": "Quick one: who's the owning team for the exec revenue KPI?",
+      "expect_ids": [
+        "team-data"
+      ],
+      "notes": "MATCH (t:Team)-[:OWNS]->(c {id:'kpi.exec_revenue'}) RETURN t.id -> team-data (KPI name 'Executive Revenue KPI')."
+    },
+    {
+      "id": "b3-04",
+      "kind": "owner",
+      "question": "I need to get a change into the shipping quote calculator. Which team owns it?",
+      "expect_ids": [
+        "team-catalog"
+      ],
+      "notes": "MATCH (t:Team)-[:OWNS]->(c {id:'quote'}) RETURN t.id -> team-catalog. Service quote is named 'shipping quote calculator'; note it is owned by catalog, not storefront (which owns shipping)."
+    },
+    {
+      "id": "b3-05",
+      "kind": "owner_at",
+      "question": "Back in March 2026, which team owned the ad service?",
+      "expect_ids": [
+        "team-storefront"
+      ],
+      "notes": "MATCH (t:Team)-[r:OWNED_AT]->(c {id:'ad'}) RETURN t.id, r.from, r.to -> team-storefront 2025-09-10..2026-08-31, team-growth from 2026-08-31. March 2026 falls in the storefront window."
+    },
+    {
+      "id": "b3-06",
+      "kind": "owner_at",
+      "question": "When inc-h006 happened, who was responsible for fraud detection?",
+      "expect_ids": [
+        "team-payments"
+      ],
+      "notes": "MATCH (i:Incident {id:'inc-h006'}) RETURN i.onset_at -> 2026-07-17T12:51Z (fraud-detection is AFFECTED role impacted). MATCH (t:Team)-[r:OWNED_AT]->(c {id:'fraud-detection'}) -> team-payments 2025-09-10..2026-08-06, team-platform after. Onset is inside the payments window."
+    },
+    {
+      "id": "b3-07",
+      "kind": "owner_at",
+      "question": "who had ownership of ad as of 2026-09-15",
+      "expect_ids": [
+        "team-growth"
+      ],
+      "notes": "MATCH (t:Team)-[r:OWNED_AT]->(c {id:'ad'}) RETURN t.id, r.from, r.to -> team-growth from 2026-08-31 (to null); team-storefront ended 2026-08-31. 2026-09-15 is in the growth window."
+    },
+    {
+      "id": "b3-08",
+      "kind": "people_who_worked_on",
+      "question": "Who's done most of the actual coding on payment?",
+      "expect_ids": [
+        "p-017",
+        "p-036",
+        "p-030"
+      ],
+      "notes": "MATCH (p:Person)-[r:COMMITTED]->(c {id:'payment'}) RETURN p.id, r.n ORDER BY r.n DESC -> p-017 32, p-036 22, p-030 14, p-034 8, p-004 7, p-038 7 (cross-checked with AUTHORED->Commit->TOUCHES->File->PART_OF, same counts). p-017 also RESOLVED the most payment-caused incidents. Top three are essential."
+    },
+    {
+      "id": "b3-09",
+      "kind": "people_who_worked_on",
+      "question": "anyone who really knows the quote service code?",
+      "expect_ids": [
+        "p-035"
+      ],
+      "notes": "MATCH (p:Person)-[r:COMMITTED]->(c {id:'quote'}) RETURN p.id, r.n -> p-035 25 commits; everyone else <= 2 (p-006 2, p-016 2, p-012 1, p-027 1). p-035 is active."
+    },
+    {
+      "id": "b3-10",
+      "kind": "people_who_worked_on",
+      "question": "I'm digging into the recommendation cache. Who has worked on recommendation before?",
+      "expect_ids": [
+        "p-020",
+        "p-013"
+      ],
+      "notes": "MATCH (p:Person)-[r:COMMITTED]->(c {id:'recommendation'}) -> p-020 16 (inactive, left 2026-08-30), p-010 10, p-013 10, p-031 9, p-035 6. RESOLVED on recommendation-caused incidents: p-013 3 (inc-h010, h023, h034), p-020 2 (h017, h022), p-031 1. p-020 and p-013 are top on both signals; p-010/p-031 are nice to have."
+    },
+    {
+      "id": "b3-11",
+      "kind": "people_who_worked_on",
+      "question": "Who has been changing exec_revenue_metric.sql?",
+      "expect_ids": [
+        "p-009",
+        "p-026"
+      ],
+      "notes": "MATCH (p:Person)-[r:COMMITTED]->(c {id:'exec_revenue_metric.sql'}) -> p-009 15, p-026 5, p-029 5, p-033 3, p-015 2. RESOLVED incidents caused there: inc-h009 p-009, inc-h031 p-026, inc-h038 p-026. p-009 and p-026 essential."
+    },
+    {
+      "id": "b3-12",
+      "kind": "people_who_worked_on",
+      "question": "Who's worked on the currency service, and have any of them left?",
+      "expect_ids": [
+        "p-032",
+        "p-038"
+      ],
+      "notes": "MATCH (p:Person)-[r:COMMITTED]->(c {id:'currency'}) RETURN p.id, r.n, p.active -> p-032 19 (active=false, valid_to 2026-10-03), p-038 6, p-027 3, p-028 1, p-034 1. The main contributor p-032 has left; p-038 is the top active one."
+    },
+    {
+      "id": "b3-13",
+      "kind": "decisions",
+      "question": "Did we ever decide whether checkout should wait for the order confirmation email to go out?",
+      "expect_ids": [
+        "ADR-004"
+      ],
+      "notes": "MATCH (d:Decision)-[:CONSTRAINS]->(:Service {id:'checkout'}) RETURN d.id, d.title, d.status -> ADR-004 'Order confirmation email is best-effort', active, rule checkout.email.blocking == false; nothing SUPERSEDES it."
+    },
+    {
+      "id": "b3-14",
+      "kind": "decisions",
+      "question": "Is the off-peak window for catalog database migrations still the rule, or did that change?",
+      "expect_ids": [
+        "ADR-009",
+        "ADR-021"
+      ],
+      "notes": "MATCH (d:Decision {id:'ADR-009'}) RETURN d.status -> superseded; MATCH (n)-[s:SUPERSEDES]->(:Decision {id:'ADR-009'}) RETURN n.id, s.at -> ADR-021 (2026-06-03, online migrations, active, the head). Answer must name both."
+    },
+    {
+      "id": "b3-15",
+      "kind": "decisions",
+      "question": "what's the agreed retry policy for the payment client, and does it still stand?",
+      "expect_ids": [
+        "ADR-013"
+      ],
+      "notes": "MATCH (d:Decision)-[:CONSTRAINS]->(:Service {id:'payment'}) -> ADR-012 (timeout) and ADR-013 'Payment client keeps >= 2 retries' (rule_key payment.client.retries, active, not superseded). Retries -> ADR-013."
+    },
+    {
+      "id": "b3-16",
+      "kind": "decisions",
+      "question": "What decisions are in force for the postgres product database right now?",
+      "expect_ids": [
+        "ADR-021"
+      ],
+      "notes": "MATCH (d:Decision)-[:CONSTRAINS]->(:Datastore {id:'astronomy-db'}) -> ADR-009 (superseded) and ADR-021 (active, nothing supersedes it). Datastore astronomy-db is named 'postgres product database'. In force now: ADR-021 only."
+    },
+    {
+      "id": "b3-17",
+      "kind": "decision_people",
+      "question": "Who signed off on moving catalog schema changes to online migrations? Are they still with us?",
+      "expect_ids": [
+        "ADR-021",
+        "p-006",
+        "p-016"
+      ],
+      "notes": "MATCH (p:Person)-[:DECIDED]->(d:Decision {id:'ADR-021'}) RETURN p.id, p.active -> p-006 Florin Ashcombe (lead) and p-016 Pavel Kingsbarrow, both active, both MEMBER_OF team-catalog (to null), which owns product-catalog/astronomy-db."
+    },
+    {
+      "id": "b3-18",
+      "kind": "decision_people",
+      "question": "who decided the confirmation email is best-effort, and can I still go ask them?",
+      "expect_ids": [
+        "ADR-004",
+        "p-019"
+      ],
+      "notes": "MATCH (p:Person)-[:DECIDED]->(d:Decision {id:'ADR-004'}) RETURN p.id, p.active, p.valid_to -> p-019 Soren Orrinwood only; active=false, valid_to 2026-07-19 (MEMBER_OF team-checkout ended then). So: no, the only decider has left."
+    },
+    {
+      "id": "b3-19",
+      "kind": "decision_people",
+      "question": "Who came up with the original off-peak migration rule for astronomy-db, and are they still here?",
+      "expect_ids": [
+        "ADR-009",
+        "p-025"
+      ],
+      "notes": "MATCH (p:Person)-[:DECIDED]->(d:Decision {id:'ADR-009'}) RETURN p.id, p.active -> p-025 Yara Umberfield, active=false, valid_to 2026-09-16. ADR-009 is itself superseded by ADR-021 (nice to have)."
+    },
+    {
+      "id": "b3-20",
+      "kind": "decision_people",
+      "question": "Who put the weekend freeze on payment changes in place?",
+      "expect_ids": [
+        "POL-freeze-payment-weekend",
+        "p-004"
+      ],
+      "notes": "MATCH (x:Person)-[:DECIDED]->(p:Policy)-[:FREEZES]->(s) RETURN p.id, x.id, s.id -> POL-freeze-payment-weekend (no payment changes Fri 16:00 to Mon 09:00 IST, active, decided_by p-004) decided by p-004 Dorian Marrowby (active, payments lead); FREEZES payment."
+    },
+    {
+      "id": "b3-21",
+      "kind": "runbook",
+      "question": "Order event consumers are falling behind on kafka again. Is there a runbook for that?",
+      "expect_ids": [
+        "rb-kafka-lag"
+      ],
+      "notes": "MATCH (r:Runbook)-[:RUNBOOK_FOR]->(x) WHERE x.id IN ['queue','sym-lag-queue','accounting'] RETURN r.id -> rb-kafka-lag 'Order queue consumer lag' (human; RUNBOOK_FOR accounting and sym-lag-queue, target queue) and the derived rb-derived-73947d9c45 'open issue queue' (nice to have)."
+    },
+    {
+      "id": "b3-22",
+      "kind": "runbook",
+      "question": "recs latency just spiked after a release and product-catalog is getting hammered. what's the procedure?",
+      "expect_ids": [
+        "rb-recs-cache"
+      ],
+      "notes": "MATCH (r:Runbook)-[:RUNBOOK_FOR]->(x) WHERE x.id IN ['recommendation','sym-latency-recommendation'] RETURN r.id -> rb-recs-cache 'Recommendation cache stampede' (human, RUNBOOK_FOR recommendation + sym-latency-recommendation) and derived rb-derived-3cfa56a626 (flip flag recommendationCacheFailure, nice to have)."
+    },
+    {
+      "id": "b3-23",
+      "kind": "runbook",
+      "question": "cart error rate is climbing. Do we have a playbook for that?",
+      "expect_ids": [
+        "rb-derived-b085b89b99"
+      ],
+      "notes": "MATCH (r:Runbook)-[:RUNBOOK_FOR]->(x) WHERE x.id IN ['cart','sym-error_rate-cart'] RETURN r.id, r.title -> only rb-derived-b085b89b99 'Derived: flip flag cartFailure (worked 3x)' via Symptom sym-error_rate-cart (DERIVED_FROM pm-h001, pm-h013, pm-h033). No human runbook targets cart."
+    },
+    {
+      "id": "b3-24",
+      "kind": "runbook",
+      "question": "The exec revenue number jumped overnight. What steps do we follow?",
+      "expect_ids": [
+        "rb-derived-32def3f1f2"
+      ],
+      "notes": "MATCH (r:Runbook)-[:RUNBOOK_FOR]->(s:Symptom {target_id:'kpi.exec_revenue'}) RETURN r.id -> rb-derived-32def3f1f2 'Derived: data repair exec_revenue_metric.sql (worked 3x)' via sym-kpi_jump-kpi.exec_revenue (DERIVED_FROM pm-h009, pm-h031, pm-h038). The only runbook for that symptom."
+    },
+    {
+      "id": "b3-25",
+      "kind": "blast_radius",
+      "question": "If valkey goes down, what breaks?",
+      "expect_ids": [
+        "cart",
+        "checkout",
+        "frontend"
+      ],
+      "notes": "Datastore cache is named 'valkey cart cache'. MATCH p=(a:Node {id:'cache'})-[:PROPAGATES_TO*1..10]->(b) RETURN b.id, min(length(p)) -> cart 1; checkout 2, frontend 2; agent, frontend-proxy, mcp 3; chatbot 4. Essential: the first two hops."
+    },
+    {
+      "id": "b3-26",
+      "kind": "blast_radius",
+      "question": "what's the fallout if the quote service dies?",
+      "expect_ids": [
+        "shipping",
+        "checkout",
+        "frontend"
+      ],
+      "notes": "MATCH p=(a:Node {id:'quote'})-[:PROPAGATES_TO*1..10]->(b) RETURN b.id, min(length(p)) -> shipping 1; checkout 2, frontend 2; agent, frontend-proxy, mcp 3; chatbot 4."
+    },
+    {
+      "id": "b3-27",
+      "kind": "blast_radius",
+      "question": "Suppose payment falls over completely. What's downstream of it, all the way to the revenue numbers?",
+      "expect_ids": [
+        "checkout",
+        "raw.raw_orders",
+        "kpi.exec_revenue"
+      ],
+      "notes": "MATCH p=(a:Node {id:'payment'})-[:PROPAGATES_TO*1..10]->(b) RETURN b.id, min(length(p)) -> checkout 1, raw.raw_orders 1 (cross-domain edge); frontend 2, staging.stg_orders 2; marts.fct_revenue 3, agent/frontend-proxy/mcp 3; marts.exec_revenue_metric 4, chatbot 4; kpi.exec_revenue 5; dash.exec_morning 6. The question asks for the path to the revenue numbers, so kpi.exec_revenue is essential."
+    },
+    {
+      "id": "b3-28",
+      "kind": "blast_radius",
+      "question": "What depends on stg_fx_rates.sql? If that transform breaks, what gets hit?",
+      "expect_ids": [
+        "staging.stg_fx_rates",
+        "marts.fct_revenue",
+        "kpi.exec_revenue"
+      ],
+      "notes": "MATCH p=(a:Node {id:'stg_fx_rates.sql'})-[:PROPAGATES_TO*1..10]->(b) RETURN b.id, min(length(p)) -> staging.stg_fx_rates 1, marts.fct_revenue 2 (edge cap 0.0692), marts.exec_revenue_metric 3, kpi.exec_revenue 4, dash.exec_morning 5."
+    },
+    {
+      "id": "b3-29",
+      "kind": "missing_guardrails",
+      "question": "On the revenue path, which services are missing a runbook or an owning team?",
+      "expect_ids": [
+        "currency",
+        "frontend",
+        "quote",
+        "shipping"
+      ],
+      "notes": "MATCH (s:Service {revenue_path:true}) OPTIONAL MATCH (rb:Runbook)-[:RUNBOOK_FOR]->(s) OPTIONAL MATCH (t:Team)-[:OWNS]->(s) -> all 9 revenue-path services have an owner; no service-level runbook for cart, currency, frontend, frontend-proxy, quote, shipping. cart is ambiguous (a derived runbook targets its symptom sym-error_rate-cart) so it is not required; frontend-proxy also belongs in a full answer (expect list capped at 4)."
+    },
+    {
+      "id": "b3-30",
+      "kind": "missing_guardrails",
+      "question": "For the revenue-critical services storefront owns, where don't we have runbooks?",
+      "expect_ids": [
+        "currency",
+        "frontend",
+        "frontend-proxy",
+        "shipping"
+      ],
+      "notes": "MATCH (:Team {id:'team-storefront'})-[:OWNS]->(s:Service {revenue_path:true}) OPTIONAL MATCH (rb:Runbook)-[:RUNBOOK_FOR]->(s) -> cart, currency, frontend, frontend-proxy, shipping, none with a service-level runbook; cart only has the derived symptom runbook rb-derived-b085b89b99, so it is left out as ambiguous."
+    },
+    {
+      "id": "b3-31",
+      "kind": "missing_guardrails",
+      "question": "Are there any tier 2 services on the revenue path with no runbook?",
+      "expect_ids": [
+        "quote"
+      ],
+      "notes": "MATCH (s:Service {revenue_path:true, tier:2}) OPTIONAL MATCH (rb:Runbook)-[:RUNBOOK_FOR]->(s) OPTIONAL MATCH (rb2:Runbook)-[:RUNBOOK_FOR]->(:Symptom {target_id:s.id}) -> quote only (tier 2, revenue_path true, owned by team-catalog, no runbook of either kind)."
+    },
+    {
+      "id": "b3-32",
+      "kind": "knowledge_health",
+      "question": "Which of our runbooks are overdue for a review?",
+      "expect_ids": [
+        "rb-kafka-lag"
+      ],
+      "notes": "MATCH (r:Runbook) RETURN r.id, r.reviewed_at -> rb-kafka-lag reviewed 2026-07-14 (96 days before 2026-10-18; 94 before seeded_at 2026-10-16), the only human runbook past the 90-day stale threshold the README cites; rb-checkout-degraded 2026-07-30, rb-recs-cache 2026-08-05, rb-payment-errors 2026-08-20, rb-catalog-lock 2026-09-10 are within 90 days. Derived runbooks were created 2026-10-16 (no reviewed_at)."
+    },
+    {
+      "id": "b3-33",
+      "kind": "knowledge_health",
+      "question": "Are any of our active decisions orphaned, meaning everyone who made them has since left?",
+      "expect_ids": [
+        "ADR-004",
+        "p-019"
+      ],
+      "notes": "MATCH (d:Decision {status:'active'}) MATCH (p:Person)-[:DECIDED]->(d) WITH d, collect(p.active) AS a WHERE NONE(x IN a WHERE x) RETURN d.id -> ADR-004 only; its sole decider p-019 is active=false (valid_to 2026-07-19). ADR-009's decider p-025 also left, but ADR-009 is superseded, not active. The policy's decider p-004 is active."
+    },
+    {
+      "id": "b3-34",
+      "kind": "knowledge_health",
+      "question": "Which components changed teams and still have no runbook from the new owners?",
+      "expect_ids": [
+        "fraud-detection",
+        "ad"
+      ],
+      "notes": "MATCH (t:Team)-[r:OWNED_AT]->(c) WHERE r.to IS NOT NULL RETURN c.id -> fraud-detection (payments -> platform 2026-08-06) and ad (storefront -> growth 2026-08-31). MATCH (rb:Runbook)-[:RUNBOOK_FOR]->(x) WHERE x.id IN ['fraud-detection','ad'] OR x.target_id IN ['fraud-detection','ad'] -> none, so no runbook since the handover."
+    },
+    {
+      "id": "b3-35",
+      "kind": "beliefs_at",
+      "question": "What were the rules for schema migrations on astronomy-db back in January 2026?",
+      "expect_ids": [
+        "ADR-009"
+      ],
+      "notes": "MATCH (d:Decision)-[:CONSTRAINS]->(:Datastore {id:'astronomy-db'}) RETURN d.id, d.decided_at -> ADR-009 decided 2025-09-18; ADR-021 decided 2026-06-03 with SUPERSEDES {at: 2026-06-03} -> ADR-009. In January 2026 ADR-009 (off-peak window) was in force and ADR-021 did not exist yet."
+    },
+    {
+      "id": "b3-36",
+      "kind": "beliefs_at",
+      "question": "As of 20 March 2026, which decisions and runbooks covered checkout?",
+      "expect_ids": [
+        "ADR-004",
+        "rb-checkout-degraded"
+      ],
+      "notes": "MATCH (d:Decision)-[:CONSTRAINS]->(:Service {id:'checkout'}) -> ADR-004 decided 2025-11-04 (active, never superseded). MATCH (r:Runbook)-[:RUNBOOK_FOR]->(x) WHERE x.id IN ['checkout','sym-error_rate-checkout'] RETURN r.id, r.valid_from -> rb-checkout-degraded valid_from 2026-03-01 (in effect); rb-payment-errors valid_from 2026-04-02 and rb-derived-0b6bb0db12 valid_from 2026-10-16 were not yet in effect."
+    },
+    {
+      "id": "b3-37",
+      "kind": "beliefs_at",
+      "question": "Just before inc-h004, what did we believe about product-catalog: which decision was in force and which runbook applied?",
+      "expect_ids": [
+        "ADR-021",
+        "rb-catalog-lock"
+      ],
+      "notes": "inc-h004 onset 2026-07-04T15:28Z. Decisions CONSTRAINS product-catalog: ADR-009 (superseded 2026-06-03) and ADR-021 (decided 2026-06-03) -> ADR-021 in force. Runbooks RUNBOOK_FOR product-catalog / sym-latency-product-catalog: rb-catalog-lock valid_from 2026-06-05 (in effect); rb-derived-e5b43bfd48 valid_from 2026-10-16 (not yet)."
+    },
+    {
+      "id": "b3-38",
+      "kind": "unanswerable",
+      "question": "How much does Dorian Marrowby earn?",
+      "expect_ids": [],
+      "notes": "Person properties are only id, name, role, active, tenant, valid_to (MATCH (n) UNWIND keys(n) ... lists no salary/pay key); no text in the graph mentions salary. Personal compensation is not in the graph."
+    },
+    {
+      "id": "b3-39",
+      "kind": "unanswerable",
+      "question": "Who owns the loyalty-points service?",
+      "expect_ids": [],
+      "notes": "MATCH (n) WHERE id/name/title/text/body/summary CONTAINS 'loyal' -> 0 rows. No such component exists in golden_acme."
+    },
+    {
+      "id": "b3-40",
+      "kind": "unanswerable",
+      "question": "What did we spend on cloud hosting for checkout last quarter?",
+      "expect_ids": [],
+      "notes": "No cost/spend/billing property on any node (keys() scan) and no text mentioning AWS or hosting cost; Customer.mrr is revenue from synthetic customers, not infrastructure spend."
+    }
+  ]
+}

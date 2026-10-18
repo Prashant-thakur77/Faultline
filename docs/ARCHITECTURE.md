@@ -107,7 +107,7 @@ flowchart TB
 | API | REST and SSE. The SSE stream is built from `StageEvent` reads. Public mode adds run tokens, rate limits and clean-room copies for visitors. | `api.py`, [API.md](API.md), `SECURITY.md` |
 | UI | Incident room (graph view, gate checklist, Cypher panel with PROFILE and RO re-run, approval), brain, preflight, an Explore view on `@falkordb/canvas`, and a static replay. | `frontend/src/app/`, `frontend/src/components/incident/`, `frontend/src/components/cypher/CypherPanel.tsx`, `frontend/src/components/explore/FalkorCanvas.tsx` |
 | Simulator | Generates service telemetry from the graph topology and the scenario's effects, and writes `MetricWindow` nodes. It reads flag state from simulated GitHub main, not from the graph. | `sim/telemetry.py`, `scenario.py` |
-| Warehouse and pipeline | The existing DuckDB pipeline and invariant suite. It is the system under observation for data incidents and the verifier of data repairs. | `warehouse.py`, `repair.py`, `pipeline/`, `agent/datatools.py` |
+| Warehouse and pipeline | The DuckDB pipeline and invariant suite. It is the system under observation for data incidents and the verifier of data repairs. | `warehouse.py`, `repair.py`, `pipeline/`, `agent/datatools.py` |
 | Ingest and seed | Builds topology, lineage, org, history, documents, obligations and embeddings as bundles, then seeds `golden_<t>` with batched `UNWIND … MERGE`. | `ingest/`, `scripts/seed.py` |
 
 ## One incident, end to end (S1, the hero)

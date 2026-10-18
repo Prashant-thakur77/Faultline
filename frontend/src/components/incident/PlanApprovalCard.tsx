@@ -1485,6 +1485,22 @@ function ActionOutcome({
               </dd>
             </>
           ) : null}
+          {spec?.diff ? (
+            <>
+              <dt className="text-zinc-400">patch</dt>
+              <dd className="min-w-0">
+                <pre
+                  className="max-h-56 overflow-auto rounded border border-zinc-800 bg-zinc-950 p-2 text-[11px] leading-snug text-zinc-200"
+                  aria-label="the exact diff that will be applied"
+                >
+                  {spec.diff}
+                </pre>
+                {spec.reasoning ? (
+                  <p className="mt-1 text-xs text-zinc-400">{spec.reasoning}</p>
+                ) : null}
+              </dd>
+            </>
+          ) : null}
           {approvedBy ? (
             <>
               <dt className="text-zinc-400">approver</dt>

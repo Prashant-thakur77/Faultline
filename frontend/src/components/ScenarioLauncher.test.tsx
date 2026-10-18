@@ -12,7 +12,7 @@ vi.mock("next/navigation", () => ({
 
 // the API's order: the hero is third
 const SCENARIOS = [
-  { id: "S2", name: "existing_data_incident_cross_domain", tenant: "globex", report: "revenue dashboard looks wrong" },
+  { id: "S2", name: "data_incident_cross_domain", tenant: "globex", report: "revenue dashboard looks wrong" },
   { id: "S4D", name: "data_control_no_incident", tenant: "globex", report: "is the revenue table late?" },
   { id: "S1", name: "hero_bad_payment_deploy_with_same_minute_distractor", tenant: "acme", report: "checkout is failing" },
 ];

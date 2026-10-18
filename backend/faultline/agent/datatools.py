@@ -1,4 +1,4 @@
-"""Data tools: the existing warehouse/pipeline tools (system under observation), wrapped so every
+"""Data tools: the warehouse and pipeline tools (the system under observation), wrapped so every
 observation is recorded as (:Evidence)-[:ABOUT]->(graph node) in FalkorDB BEFORE anything uses it.
 
 Numbers (ratios, bands, shares) are computed here in code from the warehouse and the committed
@@ -22,6 +22,7 @@ from ..graph import client, writes
 from ..graph.errors import GraphError
 from ..graph.ro import RO
 from ..mcp_server import context
+from . import unit_shift
 from .weights import weights
 
 KPI_ID = "kpi.exec_revenue"
@@ -217,6 +218,81 @@ def _iso_day(day: str) -> str:
 
 
 @_tool
+def unit_shift_check(table: str, column: str, day: str) -> dict:
+    """Is the anomaly in `table.column` on `day` ONE segment's unit shift? Every text column of the table with at
+    most repair.segment_max_values distinct values that day is tried as a segment: per value, its rows, how many lie
+    outside the column's healthy baseline range (the graph's Q-BASE-2), their median, and the complement's (the
+    other values that day, or the 14 days before when the day has no other rows). The rule (agent/unit_shift.py
+    find_shift, thresholds in weights.yaml `repair`) names the segment whose rows are nearly all outside, hold nearly
+    all the outside rows, whose complement is clean, and whose median is 10^k the complement's. Recorded as Evidence
+    (anomalous = a shift was found). What a keyless data repair starts from: a measurement, not a guess."""
+    warehouse._validate_ident(table)
+    warehouse._validate_ident(column)
+    if table.count(".") != 1:
+        raise ValueError("table must be schema.table")
+    lo, hi = column_range(f"{table}.{column}")
+    ts = warehouse._pick_time_column(table)
+    d = _iso_day(day)
+    w = weights()["repair"]
+    purity = float(w["segment_purity"])
+    t0 = time.perf_counter()
+    schema, name = table.split(".", 1)
+    outside = f"CASE WHEN {column} < {float(lo)} OR {column} > {float(hi)} THEN 1 ELSE 0 END"  # noqa: S608
+    on_day = f"CAST({ts} AS DATE) = DATE '{d}'"
+    before = f"CAST({ts} AS DATE) BETWEEN DATE '{d}' - 14 AND DATE '{d}' - 1"
+    segments: list[dict] = []
+    with warehouse._connect() as con:
+        total = con.execute(f"SELECT count(*), sum({outside}) FROM {table} WHERE {on_day}").fetchone()  # noqa: S608
+        total_rows, total_outside = int(total[0] or 0), int(total[1] or 0)
+        cols = [r[0] for r in con.execute(
+            "SELECT column_name FROM information_schema.columns WHERE table_schema = ? AND table_name = ? "
+            "AND data_type ILIKE '%CHAR%' ORDER BY ordinal_position", [schema, name]).fetchall()]
+        for c in cols:
+            warehouse._validate_ident(c)
+            if c == column:
+                continue
+            k = con.execute(f"SELECT count(DISTINCT {c}) FROM {table} WHERE {on_day}").fetchone()[0]  # noqa: S608
+            if not k or int(k) > int(w["segment_max_values"]):
+                continue
+            rows = con.execute(f"SELECT {c}, count(*), sum({outside}), median({column}) FROM {table} "  # noqa: S608
+                               f"WHERE {on_day} AND {c} IS NOT NULL GROUP BY 1 ORDER BY 1").fetchall()
+            for v, n, out, med in rows:
+                v = str(v)
+                o = con.execute(f"SELECT count(*), sum({outside}), median({column}) FROM {table} "  # noqa: S608
+                                f"WHERE {on_day} AND ({c} IS NULL OR {c} <> ?)", [v]).fetchone()
+                basis = "other values that day"
+                if not o[0]:   # the day holds no other value: the other values over the 14 days before (never this one)
+                    o = con.execute(f"SELECT count(*), sum({outside}), median({column}) FROM {table} "  # noqa: S608
+                                    f"WHERE {before} AND ({c} IS NULL OR {c} <> ?)", [v]).fetchone()
+                    basis = "other values, the 14 days before"
+                first = con.execute(f"SELECT min(dd) FROM (SELECT CAST({ts} AS DATE) AS dd, avg({outside}) AS sh FROM {table} "  # noqa: S608
+                                    f"WHERE {c} = ? GROUP BY 1) WHERE sh >= ?", [v, purity]).fetchone()[0]
+                existed_before = 0
+                if first is not None:
+                    existed_before = con.execute(f"SELECT count(*) FROM {table} WHERE {c} = ? AND CAST({ts} AS DATE) < DATE '{first}'",  # noqa: S608
+                                                 [v]).fetchone()[0]
+                segments.append({"segment": c, "value": v, "n": int(n), "outside": int(out or 0),
+                                 "median": float(med) if med is not None else None, "other_n": int(o[0] or 0),
+                                 "other_outside": int(o[1] or 0), "other_median": float(o[2]) if o[2] is not None else None,
+                                 "other_basis": basis, "total_outside": total_outside,
+                                 "since_day": str(first) if first is not None else None,
+                                 "existed_before": bool(existed_before)})
+    hit = unit_shift.find_shift(segments, tolerance=float(w["unit_shift_tolerance"]), purity=purity,
+                                min_rows=int(w["segment_min_rows"]))
+    payload = {"table": table, "column": column, "day": d, "time_column": ts, "baseline_range": [lo, hi],
+               "rows": total_rows, "total_outside": total_outside, "segments": segments[:50], "shift": hit,
+               "rule": {k: w[k] for k in ("unit_shift_tolerance", "segment_purity", "segment_min_rows", "segment_max_values")}}
+    about = [table, f"{table}.{column}"] + ([f"{table}.{hit['segment']}"] if hit else [])
+    summary = (f"unit shift on {table}.{column} ({d}): rows with {hit['segment']} = {hit['value']!r} are "
+               f"{hit['factor']:.1f}× the others (10^{hit['power']}), {hit['outside']}/{hit['n']} outside the healthy range"
+               if hit else f"no single segment of {table} carries the {total_outside}/{total_rows} outside rows on {d} as a unit shift")
+    ev = _record("unit_shift_check", "unit_shift", payload, about, summary, {"table": table, "column": column, "day": d},
+                 (time.perf_counter() - t0) * 1000, value=hit["factor"] if hit else None, ratio=hit["factor"] if hit else None,
+                 anomalous=bool(hit))
+    return {"evidence_id": ev, **payload}
+
+
+@_tool
 def run_sql(query: str) -> dict:
     """Read-only SQL against the warehouse (sandboxed: SELECT/WITH only, no external access)."""
     t0 = time.perf_counter()
@@ -300,5 +376,5 @@ def metric_window(target_id: str, onset_ms: int) -> dict:
 TOOLS: dict[str, Callable[..., dict]] = {f.__name__: f for f in (
     metric_window,
     get_metric_history, compare_to_baseline, profile_column, baseline_columns, anomalous_row_share, run_sql, list_transforms,
-    read_transform, run_invariants,
+    read_transform, run_invariants, unit_shift_check,
 )}

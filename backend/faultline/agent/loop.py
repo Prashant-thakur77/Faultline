@@ -409,6 +409,59 @@ def protect_entries(prot, target: str) -> tuple[list[str], str | None]:
     return entry, None
 
 
+async def propose_measured_repair(box: ToolBox, run: RunState, res: GateResult, shift: "crew.Shift | None" = None) -> dict | None:
+    """T1: a keyless run proposes the data repair its own measurements support, for a gate-confirmed data cutover.
+    Every read is a tool call with its Cypher receipt in the run: change_details says the cause is a data cutover;
+    repair_targets (Q-REPAIR-TARGETS) joins the row-share measurements this run recorded anomalous to the Transform
+    the lineage graph says WRITES each table, nearest the cause first along the proof path; unit_shift_check asks
+    the warehouse whether that column's anomaly is one segment's unit shift (recorded as Evidence); read_transform
+    fetches the SQL; agent/unit_shift.scoped_fix wraps the output column in a CASE scoped to that segment, and the
+    same propose_repair workflow tool a model uses records it. It only enables the data_repair option: a human
+    approves the exact diff, and the rebuild, the invariant suite and the KPI decide whether it worked. No model,
+    no scenario text; the reasoning cites every evidence id."""
+    from . import unit_shift
+
+    detail = await box.call("change_details", {"deploy_id": res.cause_id})
+    if detail.get("error") or not detail.get("rows") or detail["rows"][0].get("kind") != "data_cutover":
+        return None
+    targets = await box.call("repair_targets", {"chain": list(res.chain or [])[:20]})
+    if targets.get("error"):
+        log.warning("run %s: repair_targets: %s", run.run_id, targets["error"])
+        return None
+    for m in targets.get("rows") or []:   # engine order: the anomalous table nearest the cause first
+        try:
+            day = json.loads(m.get("params") or "{}").get("day")
+        except ValueError:
+            day = None
+        column = m["column"].rsplit(".", 1)[-1]
+        if not day:
+            continue
+        chk = await box.call("unit_shift_check", {"table": m["table"], "column": column, "day": day})
+        hit = chk.get("shift") if not chk.get("error") else None
+        if not hit:
+            continue
+        src = await box.call("read_transform", {"name": m["transform"]})
+        if src.get("error"):
+            continue
+        new = unit_shift.scoped_fix(src["sql"], column, hit["segment"], hit["value"], hit["power"],
+                                    since_day=hit["since_day"] if hit.get("existed_before") else None,
+                                    ts_expr=chk.get("time_column"))
+        if new is None:
+            log.info("run %s: %s defines %s in a shape the scoped fix does not rewrite", run.run_id, src["file"], column)
+            continue
+        why = unit_shift.explain(hit, m["table"], column, src["file"],
+                                 [m["evidence"], targets["evidence_id"], chk["evidence_id"], src["evidence_id"]],
+                                 dated="TIMESTAMP '" in new)
+        out = run.propose_repair(file=src["file"], new_content=new, reasoning=why)
+        if out.get("error"):
+            log.warning("run %s: measured repair refused: %s", run.run_id, out["error"])
+            continue
+        if shift:
+            shift.note(f"measured repair: {src['file']} scoped to {hit['segment']} = {hit['value']!r} (10^{hit['power']})")
+        return {"file": src["file"], "table": m["table"], "column": column, "shift": hit, "evidence": chk["evidence_id"]}
+    return None
+
+
 async def post_gate(box: ToolBox, run: RunState, res: GateResult | None, onset_ms: int, target: str | None = None,
                     symptoms: list[str] | None = None, shift: "crew.Shift | None" = None) -> dict:
     from ..actions import act
@@ -487,6 +540,9 @@ async def post_gate(box: ToolBox, run: RunState, res: GateResult | None, onset_m
     run.stage(Stage.PLAN)
     if shift:
         shift.begin("planner", Stage.PLAN)
+    # the measured data repair (T1): proposed from this run's own evidence when nobody (no model) authored one
+    if run.repair_proposal is None and res is not None and res.passed:
+        await propose_measured_repair(box, run, res, shift)
     hub = gh.client(run.graph)
     c = act.Ctx(run.tenant, run.graph, run.inc, run.run_id)
     act.ensure_infra_repo(c, hub)
@@ -506,7 +562,8 @@ async def post_gate(box: ToolBox, run: RunState, res: GateResult | None, onset_m
     if run.repair_proposal and any(o["kind"] == "data_repair" for o in options):
         rp = act.propose_data_repair(c, file=run.repair_proposal["file"], new_content=run.repair_proposal["new_content"],
                                      reasoning=run.repair_proposal["reasoning"])
-        options = [{**o, "enabled": True, "args": rp} if o["id"] == rp["id"] else o for o in options]
+        options = [{**o, "enabled": True, "args": rp, "reason": f"proposed patch to {rp['file']}: {rp['reasoning'][:200]}"}
+                   if o["id"] == rp["id"] else o for o in options]
     if shift:
         shift.note(f"{len(options)} option(s), {sum(1 for o in options if o.get('enabled'))} enabled; awaiting two-step approval")
         shift.end()

@@ -1,12 +1,12 @@
 {
   "scenario": "S2",
-  "incident": "inc-s2-99a4f2f6",
-  "run": "run-s2-99a4f2f6",
-  "graph": "eval_acme_api_v2_s2_4150_99a4f2f6",
-  "final_stage": "AWAITING_APPROVAL",
+  "incident": "inc-s2-2defc7b1",
+  "run": "run-s2-2defc7b1",
+  "graph": "eval_acme_api_v2_s2_8945_2defc7b1",
+  "final_stage": "RESOLVED",
   "github": "simulated",
   "investigator": "baseline-policy (deterministic, no LLM)",
-  "events": 65,
+  "events": 76,
   "gate_runs": 3,
-  "tool_calls": 51
+  "tool_calls": 57
 }

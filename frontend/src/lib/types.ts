@@ -696,6 +696,9 @@ export interface ExactAction {
   body?: string | null;
   /** PR description the server will open (includes the reviewers). */
   pr_body?: string | null;
+  /** data_repair: the exact unified diff that will be applied to the transform (computed server-side). */
+  diff?: string | null;
+  reasoning?: string | null;
   plan_hash: string;
 }
 
@@ -889,12 +892,16 @@ export type BrainIntent =
   | "people"
   | "decision"
   | "gaps"
+  | "runbook"
   | "blast"
+  | "obligations"
   | "context"
   | "knowledge"
   | "owner_then"
   | "asof"
   | "history"
+  | "documents"
+  | "none"
   | "llm";
 
 export interface BrainStep {

@@ -385,7 +385,7 @@ def render(c: Ctx, option: dict, hub: gh.GitHub) -> dict:
         _pr_body(spec, c, args)
     elif kind == "data_repair":
         spec.update(file=args["file"], before=args["before"], after=args["after"], diff=args["diff"],
-                    commit=f"fix(data): {args['reasoning'][:60]} ({c.inc})\n\nFaultline-Idem: {idem}",
+                    commit=f"fix(data): {_subject(args['reasoning'])} ({c.inc})\n\nFaultline-Idem: {idem}",
                     rollback=f"restore {args['file']} to the plan's `before` (or its pristine copy) and rebuild the warehouse")
     elif kind == "open_issue":
         who = ", ".join(args.get("reviewers") or []) or "the owner team"
@@ -394,6 +394,15 @@ def render(c: Ctx, option: dict, hub: gh.GitHub) -> dict:
         raise ValueError(f"{kind} would change nothing ({spec.get('file')} already in that state at main): not offered")
     spec["plan_hash"] = plan_hash({k: v for k, v in spec.items() if k != "plan_hash"})
     return spec
+
+
+def _subject(text: str, limit: int = 60) -> str:
+    """A commit subject from a reasoning line: cut at a word boundary, never mid-word, with an ellipsis when cut."""
+    text = " ".join(text.split())
+    if len(text) <= limit:
+        return text
+    cut = text[:limit].rsplit(" ", 1)[0].rstrip(" ,;:")
+    return (cut or text[:limit]) + "…"
 
 
 def _pr_body(spec: dict, c: Ctx, args: dict) -> None:

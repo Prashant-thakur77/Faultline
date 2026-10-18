@@ -224,12 +224,30 @@ logs log logging cache caches update updates release releases version versions f
 """.split())
 
 
+def _name_words(text: str) -> list[str]:
+    """The words of `text` a component's name or id could start with: split on anything not a letter or digit, two
+    letters or more, generic words (FUZZY_STOP) dropped, cut to a 5-letter prefix ("calculates" → "calcu")."""
+    out = [w[:5] for w in re.split(r"[^a-z0-9]+", text.lower()) if len(w) >= 2 and w not in FUZZY_STOP]
+    return list(dict.fromkeys(out))[:12]
+
+
 @_guard
-def resolve_entity(text: str, fuzzy: bool = True) -> dict[str, Any]:
+def resolve_entity(text: str, fuzzy: bool = True, by_name: bool = False) -> dict[str, Any]:
     """Resolve a component by its id, ignoring case and hyphens ("productcatalog" → product-catalog). Tier 1.
     With fuzzy (default) and no exact match, a misspelling resolves in the engine (FLEX Jaro-Winkler) unless the
-    text is a generic word or differs too much in length; fuzzy=false asks for exact matches only."""
+    text is a generic word or differs too much in length; fuzzy=false asks for exact matches only. With by_name,
+    the components whose name or id words begin with the text's words ("shipping quote calculator" → quote, "valkey"
+    → cache), most words matched first (`matched`), in one query (Q-FIND-NAME)."""
     a = _Text(text=text)
+    if by_name:
+        words = _name_words(a.text)
+        if not words:
+            return {"error": "invalid arguments: no words to match a name with"}
+        r = _ro().run("Q-FIND-NAME", {"words": words})
+        return _envelope(r, tool="resolve_entity", via="name / id words (prefix match)", kind="lookup",
+                         about=[x["id"] for x in r.rows],
+                         summary=f"{len(r.rows)} components named like {a.text!r}"
+                                 + (f" (best: {r.rows[0]['id']}, {r.rows[0]['matched']} words)" if r.rows else ""))
     raw = a.text.strip().lower()
     norm = "".join(ch for ch in raw if ch.isalnum() or ch in "._")
     ro = _ro()
@@ -939,13 +957,14 @@ def knowledge_health(now: int) -> dict[str, Any]:
             "why": f"{x['co_failures']} incidents caused at {x['cause']} also hit {x['hit']}, but the graph has no failure path "
                    f"{x['cause']} → {x['hit']}"} for x in cpl.rows]
         + [{"kind": "decision_deciders_left", "id": x["decision"], "ref": x["decision"], "tier": None,
+            "deciders": list(x["deciders"]),
             "why": f"everyone who decided it has left ({', '.join(x['deciders'])}); nobody who made the call can explain it"
                    + (f"; it constrains {', '.join(x['constrains'])}" if x["constrains"] else "")} for x in orph.rows])
     for f, x in zip(findings, rb.rows + ho.rows + dec.rows + cpl.rows + orph.rows):
         f["owner"] = x.get("owner")
     rb = _combine([rb, ho, dec, cpl, orph], findings)
     about = sorted({f["id"] for f in findings} | {f["ref"] for f in findings} | {f["owner"] for f in findings if f["owner"]}
-                   | {p for f in findings for p in f.get("ask", [])})
+                   | {p for f in findings for p in f.get("ask", []) + f.get("deciders", [])})
     return _envelope(rb, tool="knowledge_health", via="Runbook.reviewed_at vs OWNED_AT handovers; VIOLATES history; co-failure without a path",
                      kind="gap", about=about, extra={"stale_days": stale_days,
                                                      "templates": ["Q-KH-1", "Q-KH-2", "Q-KH-3", "Q-COUPLE-1", "Q-DEC-ORPHAN"]},
@@ -967,8 +986,11 @@ class _Question(BaseModel):
 
 # Slot words: a literal date or incident id says WHEN a question is about, not what kind of question it is. Both are
 # replaced by the words the IntentExemplar texts use for them (data/brain/intent_exemplars.yaml), so "on <YYYY-MM-DD>"
-# and "during <incident id>" read like the exemplars' "on a past date" / "during an incident". Nothing else is rewritten.
-_SLOT_DATE = re.compile(r"\b20\d\d-\d\d-\d\d\b")
+# and "during <incident id>" read like the exemplars' "on a past date" / "during an incident". A date is an ISO date or
+# month, or a month name with its year ("April 2026", "March 3, 2026"). Nothing else is rewritten.
+_SLOT_DATE = re.compile(r"\b20\d\d-\d\d(?:-\d\d)?\b|\b(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|"
+                        r"aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\.?"
+                        r"(?:\s+\d{1,2}(?:st|nd|rd|th)?,?)?\s+20\d\d\b", re.I)
 _SLOT_INCIDENT = re.compile(r"\b(?:[a-z]{1,4}-)?inc-[a-z0-9-]+\b", re.I)
 _WORD = re.compile(r"[a-z0-9]+")
 
@@ -1029,17 +1051,30 @@ def missing_guardrails() -> dict[str, Any]:
 
 @_guard
 def decisions_about(target_id: str) -> dict[str, Any]:
-    """Company brain: every decision constraining a component, and what superseded it."""
+    """Company brain: every decision constraining a component, and what superseded it; who decided each one; and
+    the policies that govern it (a change freeze), with who decided them (`policies`)."""
     a = _IdArg(id=target_id)
-    r = _ro().run("Q-DEC-ABOUT", {"id": a.id})
-    people = _ro().run("Q-DEC-PEOPLE", {"target": a.id}).rows   # who decided each one, and are they still here
+    ro = _ro()
+    r = ro.run("Q-DEC-ABOUT", {"id": a.id})
+    who = ro.run("Q-DEC-PEOPLE", {"target": a.id})   # who decided each one, and are they still here
+    pol = ro.run("Q-POLICY-ABOUT", {"id": a.id})
     deciders: dict[str, list[dict]] = {}
-    for p in people:
+    for p in who.rows:
         if p.get("person"):
             deciders.setdefault(p["decision"], []).append({k: p[k] for k in ("person", "name", "active", "on_owning_team")})
-    return _envelope(r, tool="decisions_about", via=f"(:Decision)-[:CONSTRAINS]->({a.id}), SUPERSEDES, (:Person)-[:DECIDED]->",
-                     kind="decision", about=[a.id] + [x["id"] for x in r.rows] + sorted({p["person"] for p in people if p.get("person")}),
-                     summary=f"{len(r.rows)} decisions about {a.id}", extra={"deciders": deciders, "templates": ["Q-DEC-ABOUT", "Q-DEC-PEOPLE"]})
+    policies: dict[str, dict] = {}
+    for x in pol.rows:
+        e = policies.setdefault(x["policy"], {k: x[k] for k in ("policy", "title", "status", "decided_at", "url")} | {"deciders": []})
+        if x.get("person"):
+            e["deciders"].append({k: x[k] for k in ("person", "name", "active")})
+    people = sorted({p["person"] for p in who.rows + pol.rows if p.get("person")})
+    res = _combine([r, who, pol], r.rows)
+    return _envelope(res, tool="decisions_about", kind="decision",
+                     via=f"(:Decision)-[:CONSTRAINS]->({a.id}), SUPERSEDES, (:Policy)-->({a.id}), (:Person)-[:DECIDED]->",
+                     about=[a.id] + [x["id"] for x in r.rows] + sorted(policies) + people,
+                     summary=f"{len(r.rows)} decisions and {len(policies)} policies about {a.id}",
+                     extra={"deciders": deciders, "policies": list(policies.values()),
+                            "templates": ["Q-DEC-ABOUT", "Q-DEC-PEOPLE", "Q-POLICY-ABOUT"]})
 
 
 class _User(BaseModel):
@@ -1176,16 +1211,24 @@ def preflight_change(pr_id: str) -> dict[str, Any]:
 
 @_guard
 def trace_decision(decision_id: str) -> dict[str, Any]:
-    """A decision's current head through SUPERSEDES, plus its cited sources."""
+    """A decision's current head through SUPERSEDES, its cited sources, and who decided it and the head (`deciders`:
+    each person, still active or not, still on a team owning what it constrains or not)."""
     a = _IdArg(id=decision_id)
     ro = _ro()
     head = ro.run("Q-DEC-2", {"id": a.id})
     if not head.rows:
         return _envelope(head, tool="trace_decision", via="not documented", kind="decision", about=[], summary="unknown decision")
-    src = ro.run("Q-DEC-3", {"id": head.rows[0]["head"]})
-    head.rows = [{**head.rows[0], **(src.rows[0] if src.rows else {})}]
-    return _envelope(head, tool="trace_decision", via=f"{a.id} <-[:SUPERSEDES*]- {head.rows[0]['head']}",
-                     kind="decision", about=[a.id, head.rows[0]["head"]], summary=f"head {head.rows[0]['head']}")
+    h = head.rows[0]["head"]
+    src = ro.run("Q-DEC-3", {"id": h})
+    who = ro.run("Q-DEC-WHO", {"ids": sorted({a.id, h})})
+    deciders: dict[str, list[dict]] = {}
+    for p in who.rows:
+        deciders.setdefault(p["decision"], []).append({k: p[k] for k in ("person", "name", "active", "on_owning_team")})
+    rows = [{**head.rows[0], **(src.rows[0] if src.rows else {})}]
+    res = _combine([head, src, who], rows)
+    return _envelope(res, tool="trace_decision", via=f"{a.id} <-[:SUPERSEDES*]- {h}, (:Person)-[:DECIDED]->",
+                     kind="decision", about=[a.id, h] + sorted({p["person"] for p in who.rows}),
+                     summary=f"head {h}", extra={"deciders": deciders})
 
 
 @_guard
@@ -1688,6 +1731,50 @@ def runbook_for(ids: list[str]) -> dict[str, Any]:
                      about=xs[:5], summary=f"{len(r.rows)} runbooks")
 
 
+class _RepairTargets(BaseModel):
+    chain: list[str] = Field(default_factory=list, max_length=20)
+
+
+@_guard
+def repair_targets(chain: list[str] | None = None) -> dict[str, Any]:
+    """Where a measured data repair can be applied, for the run this call belongs to (ONE query, Q-REPAIR-TARGETS):
+    the row-share measurements the run recorded anomalous, each joined to the Transform the lineage graph says WRITES
+    that table (a source table nobody builds is left out), ordered nearest the confirmed cause first along the
+    gate's proof path (`chain`). The loop asks `unit_shift_check` about the first one; a human still approves the
+    exact diff."""
+    a = _RepairTargets(chain=chain or [])
+    b = context.current()
+    if not b.run_id:
+        return {"error": "invalid arguments: repair_targets needs a run to read the measurements of"}
+    chain_ids = [_IdArg(id=c).id for c in a.chain]
+    r = _ro().run("Q-REPAIR-TARGETS", {"run": b.run_id, "chain": chain_ids})
+    return _envelope(r, tool="repair_targets", kind="lineage",
+                     via="(:Run)-[:HAS_TOOL_CALL]->()-[:PRODUCED_EVIDENCE]->(:Evidence {anomalous})-[:ABOUT]->(:Table)<-[:WRITES]-(:Transform)",
+                     about=[x["table"] for x in r.rows] + [x["transform"] for x in r.rows],
+                     summary=(f"{len(r.rows)} anomalous tables a transform builds; nearest the cause: {r.rows[0]['table']} "
+                              f"(written by {r.rows[0]['transform']})" if r.rows else "no anomalous table a transform builds"))
+
+
+class _RunbooksAbout(BaseModel):
+    component_id: str = Id
+    symptom_kinds: list[str] = Field(default_factory=list, max_length=8)
+
+
+@_guard
+def runbooks_about(component_id: str, symptom_kinds: list[str] | None = None) -> dict[str, Any]:
+    """Company brain: which runbook to follow for a component, in ONE query (Q-RUNBOOK-ABOUT): the current runbooks
+    written for it or for one of its symptoms, then those for a component one failure hop away (`dist` 1). Runbooks
+    for a symptom kind in `symptom_kinds` (latency, error_rate, lag, kpi_jump) rank first; derived runbooks (learned
+    from fixes that worked) carry how often they worked (`worked`)."""
+    a = _RunbooksAbout(component_id=component_id, symptom_kinds=symptom_kinds or [])
+    kinds = sorted({k for k in a.symptom_kinds if re.fullmatch(r"[a-z_]{2,20}", k)})
+    r = _ro().run("Q-RUNBOOK-ABOUT", {"id": a.component_id, "kinds": kinds})
+    near = sum(1 for x in r.rows if x["dist"])
+    return _envelope(r, tool="runbooks_about", kind="recall", about=[a.component_id] + [x["id"] for x in r.rows[:5]],
+                     via=f"(:Runbook)-[:RUNBOOK_FOR]->({a.component_id} | its Symptom | one PROPAGATES_TO hop)",
+                     summary=f"{len(r.rows) - near} runbooks for {a.component_id}, {near} one hop away")
+
+
 # ------------------------------------------------------------------ learned remediation ordering + residue (advisory)
 class _Remedy(BaseModel):
     incident_id: str = Id
@@ -2040,7 +2127,7 @@ TOOLS: dict[str, Callable[..., dict]] = {f.__name__: f for f in (
     run_cypher_readonly, preflight_change, session_history, notify_set, alert_coverage, owner_at, component_timeline,
     beliefs_at, topology_at, knowledge_health, hidden_coupling, resolve_entity, people_who_worked_on, missing_guardrails, decisions_about,
     route_question,
-    similar_incidents, incident_families, runbook_for,
+    similar_incidents, incident_families, runbook_for, runbooks_about, repair_targets,
     remedy_stats, residue_check, obligation_clock,
     whatif, futures,
     who_fixes, escalation_tree,

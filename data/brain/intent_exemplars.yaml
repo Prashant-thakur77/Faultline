@@ -64,6 +64,21 @@ intents:
       - List the services that have no runbook.
       - Which tier-1 services lack operational coverage?
       - Which services nobody owns?
+  runbook:
+    definition: Which runbook or procedure to follow for a component or one of its symptoms (slowness, errors, lag, a metric that jumps), the runbook for the symptom asked about first, including runbooks learned from fixes that worked.
+    exemplars:
+      - Which runbook should I follow for this service?
+      - Is there a playbook for this component?
+      - What is the procedure when this service misbehaves?
+      - What are the steps to recover this service?
+      - Which runbook covers this symptom?
+      - How do we usually mitigate this kind of problem?
+      - What runbooks exist for this service?
+      - Is there a documented fix for this alert?
+      - What is the standard operating procedure for this system?
+      - Where are the instructions for handling this failure?
+      - What has worked before to fix this symptom?
+      - What remediation steps apply to this component?
   blast:
     definition: What is downstream of a component and breaks or is affected when it fails (its blast radius), ranked by impact.
     exemplars:
@@ -86,7 +101,6 @@ intents:
       - What is this component?
       - Describe this service.
       - Who owns this service, and which runbooks and decisions apply to it?
-      - What runbooks exist for this service?
       - Which feature flags affect this service?
       - Which flags control this component?
       - Give me the details of this component.

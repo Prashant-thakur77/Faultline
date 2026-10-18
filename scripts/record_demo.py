@@ -234,7 +234,13 @@ def main() -> int:
         # "already off at main (drift)"
         if "s2" in which:
             gh.reset_sim()
-            print(record(c, "S2", "s2-data-incident", None))
+            try:
+                print(record(c, "S2", "s2-data-incident", "data_repair"))
+            finally:  # the approved repair stays applied on disk, as it would in production: put the fixture back
+                from faultline import repair, scenario
+
+                repair.restore_pristine()
+                scenario.set_pipeline_mode("incident")
         if "s4" in which:
             gh.reset_sim()
             print(record(c, "S4S", "s4-no-incident", None))
