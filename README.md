@@ -151,6 +151,28 @@ The rules and the organiser's day-1 post ("How to Build an Agent That Reasons Ov
 | "One instance can hold thousands of isolated graphs, so each user, agent, or tenant gets its own" (about the sponsor) | one graph per tenant with its own read-only ACL user; a tenant is a `GRAPH.COPY` | <!-- claim:tenants.n -->250<!-- /claim --> tenant graphs on one engine, <!-- claim:tenants.acl.leaks -->0<!-- /claim --> leaks in <!-- claim:tenants.acl.cross.n -->1000<!-- /claim --> cross-tenant reads (95 % upper bound <!-- claim:tenants.acl.leak.ci_hi -->0.0038<!-- /claim -->); p99 <!-- claim:tenants.c64.p99_ms -->6.62<!-- /claim --> ms with 64 investigators in parallel, <!-- claim:tenants.c64.errors -->0<!-- /claim --> errors |
 | "Traversals are fast enough to run on every step of an agent loop" (about the sponsor) | the gate runs its path, capacity and blast reads on every incident | at <!-- claim:scale.10k.services -->10000<!-- /claim --> services, engine p99: `algo.SPpaths` <!-- claim:scale.10k.tail.Q-GATE-1.engine_ms_p99 -->8.926<!-- /claim --> ms, `algo.maxFlow` <!-- claim:scale.10k.tail.Q-GATE-3.engine_ms_p99 -->22.261<!-- /claim --> ms, `algo.BFS` <!-- claim:scale.10k.tail.Q-BLAST-1.engine_ms_p99 -->3.279<!-- /claim --> ms |
 
+## Track fit
+
+Each track's own bullets, and where Faultline answers them: the feature, the code and the measured evidence.
+
+| Track bullet | In Faultline | Code | Evidence |
+|---|---|---|---|
+| **T1** multi-hop reasoning | causes 1 to 4 hops upstream proven by `algo.SPpaths`; blast radius by `algo.BFS` | `agent/gate.py`, `templates/gate_path.cypher` | deep bench: <!-- claim:seedsall.deep.wrong_confident -->0<!-- /claim --> confident wrong blames in <!-- claim:seedsall.deep.cases -->1540<!-- /claim --> worlds |
+| **T1** graph queries and algorithms as agent tools | <!-- claim:repo.algorithms -->10<!-- /claim --> `algo.*` procedures and <!-- claim:repo.templates -->226<!-- /claim --> templates behind typed tools; every result carries its Cypher | `mcp_server/tools.py`, `graph/algo/registry.py` | without `algo.maxFlow`: <!-- claim:decisive.full.g5_only.right_cause -->20<!-- /claim -->/<!-- claim:decisive.full.g5_only.cases -->20<!-- /claim --> → <!-- claim:decisive.no_maxflow.g5_only.right_cause -->0<!-- /claim --> right |
+| **T1** tool selection through MCP | <!-- claim:repo.mcp_tools -->57<!-- /claim --> MCP tools (stdio), <!-- claim:repo.mcp_tools_hosted -->51<!-- /claim --> hosted over HTTP; an npm bridge for any client | `mcp_server/`, `packages/faultline-mcp` | [docs/MCP.md](docs/MCP.md) |
+| **T1** actions based on what the graph shows | the min-cut containment, tried on a `GRAPH.COPY`; one approved action, verified APPLIED / NOT_APPLIED / UNKNOWN | `actions/act.py`, `templates/cut_flow.cypher` | live: verified APPLIED <!-- claim:live.hero.applied -->5<!-- /claim -->/<!-- claim:live.hero.n -->5<!-- /claim -->; real pull requests on faultline-demo-infra |
+| **T1** explainable results | the proof path, "why do you believe this" provenance, the Cypher behind every element | `agent/report.py`, `templates/run_provenance.cypher` | [See it](#see-it) |
+| **T2** episodic / semantic / procedural memory | past incidents recalled by vector + graph (episodic), decisions and runbooks (semantic), runbooks derived from verified fixes (procedural) | `memory/`, `templates/recall.cypher` | warm repeat recalls its precedent: <!-- claim:memory.warm_top_precedent_is_s1 -->True<!-- /claim -->; a learned link fixes the next incident <!-- claim:learning.i2_learned_correct -->24<!-- /claim -->/<!-- claim:learning.cases -->24<!-- /claim --> |
+| **T2** persistent conversation history | brain sessions and turns stored as `Session`/`Turn` nodes, read back on a separate read-only connection | `brain/ask.py`, `mcp_server/tools.py::session_history` | <!-- claim:t2.session.sessions -->2<!-- /claim --> sessions, <!-- claim:t2.session.turns -->4<!-- /claim --> turns read back |
+| **T2** shared state and hand-offs | the crew's tasks, claims and hand-offs are graph records; on-call hand-offs and shift reports | `agent/crew.py`, `actions/oncall.py` | [Crew board](#screens) |
+| **T2** high-concurrency reads and writes | atomic conditional claims; one approval wins among many | `graph/writes.py` (`W-CLAIM-1`) | <!-- claim:s13.rounds_one_owner -->100<!-- /claim -->/<!-- claim:s13.rounds -->100<!-- /claim --> rounds with one owner, <!-- claim:s13.lost_updates -->0<!-- /claim --> lost updates; <!-- claim:contention.responders -->24<!-- /claim --> approvals → <!-- claim:contention.same.accepted -->1<!-- /claim --> accepted |
+| **T2** separate memory per user and tenant | one graph and one read-only ACL user per tenant; learning only from trusted people, forget with a receipt | `graph/tenant.py`, `memory/learning.py` | <!-- claim:tenants.n -->250<!-- /claim --> tenants, <!-- claim:tenants.acl.leaks -->0<!-- /claim --> leaks in <!-- claim:tenants.acl.cross.n -->1000<!-- /claim --> cross-tenant reads; forget leaves <!-- claim:learn.forget.events_left -->0<!-- /claim --> events |
+| **T3** docs, tickets and chats in one graph | ADRs, runbooks, postmortems, chats and issues ingested beside the topology and the people | `ingest/`, `data/gen/docs/` | [Graph model](#graph-model) |
+| **T3** who owns and who knows what | ownership over time, who worked on a component, bus factor | `templates/owner_at.cypher`, `templates/who_knows.cypher` | brain <!-- claim:brain.correct -->33<!-- /claim -->/<!-- claim:brain.questions -->33<!-- /claim --> on our questions |
+| **T3** tracing decisions to their source | `trace_decision`, `decisions_about`, supersession chains | `templates/decision_*.cypher` | preflight blocks a PR that contradicts recorded decisions |
+| **T3** keeping knowledge current | knowledge health, knowledge gaps from unanswered questions, forget with a receipt | `mcp_server/tools.py::knowledge_health`, `memory/forget.py` | [What it learned](#see-it) |
+| **T3** answers with clear sources | every name in an answer is a node id a query returned; unanswerable questions say so | `brain/ask.py` | <!-- claim:brain.unanswerable_honest -->6<!-- /claim -->/<!-- claim:brain.unanswerable -->6<!-- /claim --> unanswerable questions answered honestly; blind set <!-- claim:brain_blind.s2.hybrid.correct -->24<!-- /claim -->/40 |
+
 ## Why FalkorDB, in numbers
 
 Measured on the pinned engine (FalkorDB 6.0.2), in the terms FalkorDB uses for itself: graphs per instance, p99 under concurrent clients, memory, algorithm speed. These are Faultline's own workloads on one laptop, not a comparison with another database. Methods were pre-registered ([evals/PREREGISTRATION.md](evals/PREREGISTRATION.md), addendum of 2026-10-17); details in [docs/EVALS.md](docs/EVALS.md#engine-numbers-in-falkordbs-own-terms-pre-registered-2026-10-17).
@@ -173,6 +195,7 @@ Measured on the pinned engine (FalkorDB 6.0.2), in the terms FalkorDB uses for i
 - [Proof at a glance](#proof-at-a-glance)
 - [See it](#see-it)
 - [What the judges asked for](#what-the-judges-asked-for)
+- [Track fit](#track-fit)
 - [Why FalkorDB, in numbers](#why-falkordb-in-numbers)
 - [Reproduce it](#reproduce-it)
 - [Why existing approaches fall short](#why-existing-approaches-fall-short)
