@@ -770,7 +770,11 @@ def read_room(page: Page, a: argparse.Namespace) -> tuple[SimpleNamespace, dict]
     suspects = sorted({re.match(r"Checks for (\S+)", x).group(1) for x in labels if x} - {"NO_INCIDENT"})
     L.root = page.locator("section[aria-labelledby='root-h']")
     links = L.root.get_by_role("list", name="Mechanism chain").get_by_role("button")
-    expect(links.first).to_be_visible(timeout=60_000)   # the report arrives a moment after the stage does
+    try:
+        expect(links.first).to_be_visible(timeout=60_000)   # the report arrives a moment after the stage does
+    except AssertionError:   # a room opened before its report was assembled keeps the first answer: load it again
+        page.reload(wait_until="networkidle")
+        expect(links.first).to_be_visible(timeout=60_000)
     try:   # the root-cause card can render a moment after the pause line (the check below says what is missing)
         expect(links.nth(1)).to_be_visible(timeout=20_000)
     except AssertionError:
