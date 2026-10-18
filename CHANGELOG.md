@@ -87,7 +87,7 @@ The version deployed at [13-203-185-119.sslip.io](https://13-203-185-119.sslip.i
 - FaultBench-OTel: the real OpenTelemetry Demo, its own fault flags and real telemetry (pre-registered).
 - The company brain run beside FalkorDB's GraphRAG-SDK on a blind question set, with the same knowledge (`evals/graphrag_sdk_arm.py`).
 - FalkorDB's own yardsticks: 250 tenant graphs on one engine with 0 cross-tenant leaks, p99 under 64 parallel investigators, a 1k to 10k scale curve with tail latency, and all 10 `algo.*` procedures against NetworkX.
-- Upstream: a fix to GraphRAG-SDK (#345), FalkorDB issues #3349, #3376 and #3377, new evidence on #3150 and #2502, and one private report.
+- Upstream: a pull request to GraphRAG-SDK (#345, later closed in favour of the maintainers' fuller fix #348–#350), FalkorDB issues #3349, #3376 and #3377, new evidence on #3150 and #2502, and one private report.
 
 ### Video and docs
 - A 4:25 narrated video recorded in one real take, with two real pull requests; "Proof at a glance" and "Why FalkorDB, in numbers" in the README; refreshed screenshots.

@@ -32,7 +32,7 @@ Each draft is reproducible with the pinned digests in docs/FALKORDB_COMPAT.md. T
 
 ## Filed upstream (2026-10-17)
 
-- [FalkorDB/GraphRAG-SDK#345](https://github.com/FalkorDB/GraphRAG-SDK/pull/345): fix for GraphRAG-SDK#344. Fulltext indexes are created with the `CREATE FULLTEXT INDEX` DDL, vector indexes are dropped with `DROP VECTOR INDEX`, and rejected statements no longer feed the circuit breaker. On 6.0.2 the SDK's full suite goes from 124 failures to the 2 environment-only ones that also fail on `main`; tested on 4.18.0, 4.22.0 and 6.0.2.
+- [FalkorDB/GraphRAG-SDK#345](https://github.com/FalkorDB/GraphRAG-SDK/pull/345) (closed 2026-10-18: a maintainer confirmed the index DDL on 4.22.0 and 6.0.2 and closed it in favour of their fuller fix, #348–#350, after the issue grew to eight items): fix for GraphRAG-SDK#344. Fulltext indexes are created with the `CREATE FULLTEXT INDEX` DDL, vector indexes are dropped with `DROP VECTOR INDEX`, and rejected statements no longer feed the circuit breaker. On 6.0.2 the SDK's full suite goes from 124 failures to the 2 environment-only ones that also fail on `main`; tested on 4.18.0, 4.22.0 and 6.0.2.
 - [FalkorDB#3376](https://github.com/FalkorDB/FalkorDB/issues/3376): a relationship range index makes traversals from bound nodes much slower on 6.0.2 (5 ms → 5.4 s, draft 24).
 - [FalkorDB#3377](https://github.com/FalkorDB/FalkorDB/issues/3377): the Docker image's default `IMPORT_FOLDER` does not exist, so `LOAD CSV FROM 'file://…'` fails out of the box.
 - [New evidence on FalkorDB#2502](https://github.com/FalkorDB/FalkorDB/issues/2502#issuecomment-6237945777): the pattern-comprehension form of draft 20 silently drops the row.

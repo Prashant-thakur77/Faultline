@@ -137,7 +137,7 @@ We pinned 6.0.2 by digest after running our engine smoke suite on both candidate
 - An `OPTIONAL MATCH` after an aggregating `WITH` returned no rows.
 - Aggregating `SSpaths` output together with a null property crashed the whole server, from a read-only query. It turned out to be a known bug; we added a smaller repro and two more triggers to [the thread](https://github.com/FalkorDB/FalkorDB/issues/3150). We aggregate per node first.
 - `algo.WCC` and `algo.pageRank` fail when the projected label set holds exactly one node, which happens naturally when a time window holds a single alert. Filed as [FalkorDB#3349](https://github.com/FalkorDB/FalkorDB/issues/3349); we add an anchor node until it is fixed.
-- FalkorDB's own GraphRAG-SDK could not create its fulltext indexes on `6.0.x`. We sent the fix: [GraphRAG-SDK#345](https://github.com/FalkorDB/GraphRAG-SDK/pull/345).
+- FalkorDB's own GraphRAG-SDK could not create its fulltext indexes on `6.0.x`. We sent a fix ([GraphRAG-SDK#345](https://github.com/FalkorDB/GraphRAG-SDK/pull/345)); a maintainer confirmed the index fix and closed it in favour of their fuller fix ([#348](https://github.com/FalkorDB/GraphRAG-SDK/pull/348)–[#350](https://github.com/FalkorDB/GraphRAG-SDK/pull/350)).
 - Two more engine findings went upstream as minimal repros ([FalkorDB#3376](https://github.com/FalkorDB/FalkorDB/issues/3376), [#3377](https://github.com/FalkorDB/FalkorDB/issues/3377)), and one security-relevant finding was reported privately.
 
 ## Try it
