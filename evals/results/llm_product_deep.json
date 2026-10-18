@@ -1,0 +1,851 @@
+{
+  "bench": "deep",
+  "seed": 20261016,
+  "categories": [
+    "two_causes_chain",
+    "weak_link"
+  ],
+  "model": "claude-opus-5-5",
+  "arm": "A3L (LLMInvestigator + gate)",
+  "price_per_mtok": {
+    "in": 4.0,
+    "out": 20.0
+  },
+  "approved_budget_usd": 9.0,
+  "reason": "pre-registered 2026-10-18 14:31 IST: the LLM driving the product on the deep bench's two_causes_chain and weak_link worlds (where the LLM alone failed most); owner-approved credit",
+  "started": "2026-10-18T14:32:23",
+  "rows": [
+    {
+      "id": "db061",
+      "category": "two_causes_chain",
+      "outcome": "NOT_CONFIDENT",
+      "blamed": null,
+      "expected": null,
+      "error": null,
+      "ok": true,
+      "wrong_confident": false,
+      "abstained": true,
+      "right_cause": false,
+      "decoys_by": {},
+      "correct": true,
+      "why": [],
+      "tool_calls": 33,
+      "usage": {
+        "input_tokens": 84555,
+        "output_tokens": 4269,
+        "turns": 8
+      },
+      "usd": 0.4236,
+      "seconds": 46.2
+    },
+    {
+      "id": "db062",
+      "category": "two_causes_chain",
+      "outcome": "NOT_CONFIDENT",
+      "blamed": null,
+      "expected": null,
+      "error": null,
+      "ok": true,
+      "wrong_confident": false,
+      "abstained": true,
+      "right_cause": false,
+      "decoys_by": {},
+      "correct": true,
+      "why": [],
+      "tool_calls": 31,
+      "usage": {
+        "input_tokens": 34065,
+        "output_tokens": 2576,
+        "turns": 5
+      },
+      "usd": 0.1878,
+      "seconds": 26.7
+    },
+    {
+      "id": "db063",
+      "category": "two_causes_chain",
+      "outcome": "CONFIRMED",
+      "blamed": "D-97bdbb14",
+      "expected": null,
+      "error": null,
+      "ok": false,
+      "wrong_confident": true,
+      "abstained": false,
+      "right_cause": false,
+      "decoys_by": {},
+      "correct": false,
+      "why": [
+        "outcome CONFIRMED (expected an abstention: NOT_CONFIDENT or UNKNOWN_ESCALATED)",
+        "blamed D-97bdbb14 (expected None)"
+      ],
+      "tool_calls": 30,
+      "usage": {
+        "input_tokens": 47568,
+        "output_tokens": 2652,
+        "turns": 7
+      },
+      "usd": 0.2433,
+      "seconds": 33.9
+    },
+    {
+      "id": "db064",
+      "category": "two_causes_chain",
+      "outcome": "NOT_CONFIDENT",
+      "blamed": null,
+      "expected": null,
+      "error": null,
+      "ok": true,
+      "wrong_confident": false,
+      "abstained": true,
+      "right_cause": false,
+      "decoys_by": {},
+      "correct": true,
+      "why": [],
+      "tool_calls": 30,
+      "usage": {
+        "input_tokens": 47653,
+        "output_tokens": 2898,
+        "turns": 6
+      },
+      "usd": 0.2486,
+      "seconds": 35.4
+    },
+    {
+      "id": "db065",
+      "category": "two_causes_chain",
+      "outcome": "NOT_CONFIDENT",
+      "blamed": null,
+      "expected": null,
+      "error": null,
+      "ok": true,
+      "wrong_confident": false,
+      "abstained": true,
+      "right_cause": false,
+      "decoys_by": {},
+      "correct": true,
+      "why": [],
+      "tool_calls": 28,
+      "usage": {
+        "input_tokens": 35472,
+        "output_tokens": 2123,
+        "turns": 5
+      },
+      "usd": 0.1843,
+      "seconds": 22.0
+    },
+    {
+      "id": "db066",
+      "category": "two_causes_chain",
+      "outcome": "CONFIRMED",
+      "blamed": "D-268f6327",
+      "expected": null,
+      "error": null,
+      "ok": false,
+      "wrong_confident": true,
+      "abstained": false,
+      "right_cause": false,
+      "decoys_by": {},
+      "correct": false,
+      "why": [
+        "outcome CONFIRMED (expected an abstention: NOT_CONFIDENT or UNKNOWN_ESCALATED)",
+        "blamed D-268f6327 (expected None)"
+      ],
+      "tool_calls": 32,
+      "usage": {
+        "input_tokens": 82298,
+        "output_tokens": 3183,
+        "turns": 8
+      },
+      "usd": 0.3929,
+      "seconds": 38.3
+    },
+    {
+      "id": "db067",
+      "category": "two_causes_chain",
+      "outcome": "NOT_CONFIDENT",
+      "blamed": null,
+      "expected": null,
+      "error": null,
+      "ok": true,
+      "wrong_confident": false,
+      "abstained": true,
+      "right_cause": false,
+      "decoys_by": {},
+      "correct": true,
+      "why": [],
+      "tool_calls": 30,
+      "usage": {
+        "input_tokens": 41740,
+        "output_tokens": 2943,
+        "turns": 6
+      },
+      "usd": 0.2258,
+      "seconds": 31.6
+    },
+    {
+      "id": "db068",
+      "category": "two_causes_chain",
+      "outcome": "NOT_CONFIDENT",
+      "blamed": null,
+      "expected": null,
+      "error": null,
+      "ok": true,
+      "wrong_confident": false,
+      "abstained": true,
+      "right_cause": false,
+      "decoys_by": {},
+      "correct": true,
+      "why": [],
+      "tool_calls": 32,
+      "usage": {
+        "input_tokens": 49945,
+        "output_tokens": 3076,
+        "turns": 7
+      },
+      "usd": 0.2613,
+      "seconds": 31.0
+    },
+    {
+      "id": "db069",
+      "category": "two_causes_chain",
+      "outcome": "NOT_CONFIDENT",
+      "blamed": null,
+      "expected": null,
+      "error": null,
+      "ok": true,
+      "wrong_confident": false,
+      "abstained": true,
+      "right_cause": false,
+      "decoys_by": {},
+      "correct": true,
+      "why": [],
+      "tool_calls": 28,
+      "usage": {
+        "input_tokens": 36967,
+        "output_tokens": 2785,
+        "turns": 5
+      },
+      "usd": 0.2036,
+      "seconds": 27.3
+    },
+    {
+      "id": "db070",
+      "category": "two_causes_chain",
+      "outcome": "NOT_CONFIDENT",
+      "blamed": null,
+      "expected": null,
+      "error": null,
+      "ok": true,
+      "wrong_confident": false,
+      "abstained": true,
+      "right_cause": false,
+      "decoys_by": {},
+      "correct": true,
+      "why": [],
+      "tool_calls": 33,
+      "usage": {
+        "input_tokens": 50306,
+        "output_tokens": 2878,
+        "turns": 7
+      },
+      "usd": 0.2588,
+      "seconds": 30.2
+    },
+    {
+      "id": "db071",
+      "category": "two_causes_chain",
+      "outcome": "CONFIRMED",
+      "blamed": "D-a556c1cd",
+      "expected": null,
+      "error": null,
+      "ok": false,
+      "wrong_confident": true,
+      "abstained": false,
+      "right_cause": false,
+      "decoys_by": {},
+      "correct": false,
+      "why": [
+        "outcome CONFIRMED (expected an abstention: NOT_CONFIDENT or UNKNOWN_ESCALATED)",
+        "blamed D-a556c1cd (expected None)"
+      ],
+      "tool_calls": 32,
+      "usage": {
+        "input_tokens": 68718,
+        "output_tokens": 3146,
+        "turns": 8
+      },
+      "usd": 0.3378,
+      "seconds": 37.1
+    },
+    {
+      "id": "db072",
+      "category": "two_causes_chain",
+      "outcome": "CONFIRMED",
+      "blamed": "D-c4749dbe",
+      "expected": null,
+      "error": null,
+      "ok": false,
+      "wrong_confident": true,
+      "abstained": false,
+      "right_cause": false,
+      "decoys_by": {},
+      "correct": false,
+      "why": [
+        "outcome CONFIRMED (expected an abstention: NOT_CONFIDENT or UNKNOWN_ESCALATED)",
+        "blamed D-c4749dbe (expected None)"
+      ],
+      "tool_calls": 30,
+      "usage": {
+        "input_tokens": 46296,
+        "output_tokens": 2654,
+        "turns": 7
+      },
+      "usd": 0.2383,
+      "seconds": 31.2
+    },
+    {
+      "id": "db073",
+      "category": "two_causes_chain",
+      "outcome": "NOT_CONFIDENT",
+      "blamed": null,
+      "expected": null,
+      "error": null,
+      "ok": true,
+      "wrong_confident": false,
+      "abstained": true,
+      "right_cause": false,
+      "decoys_by": {},
+      "correct": true,
+      "why": [],
+      "tool_calls": 33,
+      "usage": {
+        "input_tokens": 58020,
+        "output_tokens": 3360,
+        "turns": 7
+      },
+      "usd": 0.2993,
+      "seconds": 32.4
+    },
+    {
+      "id": "db074",
+      "category": "two_causes_chain",
+      "outcome": "CONFIRMED",
+      "blamed": "D-6cfdc7bb",
+      "expected": null,
+      "error": null,
+      "ok": false,
+      "wrong_confident": true,
+      "abstained": false,
+      "right_cause": false,
+      "decoys_by": {},
+      "correct": false,
+      "why": [
+        "outcome CONFIRMED (expected an abstention: NOT_CONFIDENT or UNKNOWN_ESCALATED)",
+        "blamed D-6cfdc7bb (expected None)"
+      ],
+      "tool_calls": 34,
+      "usage": {
+        "input_tokens": 71373,
+        "output_tokens": 3532,
+        "turns": 9
+      },
+      "usd": 0.3561,
+      "seconds": 39.7
+    },
+    {
+      "id": "db075",
+      "category": "two_causes_chain",
+      "outcome": "CONFIRMED",
+      "blamed": "D-1f9e83a0",
+      "expected": null,
+      "error": null,
+      "ok": false,
+      "wrong_confident": true,
+      "abstained": false,
+      "right_cause": false,
+      "decoys_by": {},
+      "correct": false,
+      "why": [
+        "outcome CONFIRMED (expected an abstention: NOT_CONFIDENT or UNKNOWN_ESCALATED)",
+        "blamed D-1f9e83a0 (expected None)"
+      ],
+      "tool_calls": 33,
+      "usage": {
+        "input_tokens": 59888,
+        "output_tokens": 3791,
+        "turns": 8
+      },
+      "usd": 0.3154,
+      "seconds": 38.4
+    },
+    {
+      "id": "db076",
+      "category": "two_causes_chain",
+      "outcome": "NOT_CONFIDENT",
+      "blamed": null,
+      "expected": null,
+      "error": null,
+      "ok": true,
+      "wrong_confident": false,
+      "abstained": true,
+      "right_cause": false,
+      "decoys_by": {},
+      "correct": true,
+      "why": [],
+      "tool_calls": 31,
+      "usage": {
+        "input_tokens": 43663,
+        "output_tokens": 2818,
+        "turns": 6
+      },
+      "usd": 0.231,
+      "seconds": 33.4
+    },
+    {
+      "id": "db077",
+      "category": "two_causes_chain",
+      "outcome": "CONFIRMED",
+      "blamed": "D-6e92fec8",
+      "expected": null,
+      "error": null,
+      "ok": false,
+      "wrong_confident": true,
+      "abstained": false,
+      "right_cause": false,
+      "decoys_by": {},
+      "correct": false,
+      "why": [
+        "outcome CONFIRMED (expected an abstention: NOT_CONFIDENT or UNKNOWN_ESCALATED)",
+        "blamed D-6e92fec8 (expected None)"
+      ],
+      "tool_calls": 30,
+      "usage": {
+        "input_tokens": 48512,
+        "output_tokens": 2542,
+        "turns": 7
+      },
+      "usd": 0.2449,
+      "seconds": 34.4
+    },
+    {
+      "id": "db078",
+      "category": "two_causes_chain",
+      "outcome": "CONFIRMED",
+      "blamed": "D-36ff8708",
+      "expected": null,
+      "error": null,
+      "ok": false,
+      "wrong_confident": true,
+      "abstained": false,
+      "right_cause": false,
+      "decoys_by": {},
+      "correct": false,
+      "why": [
+        "outcome CONFIRMED (expected an abstention: NOT_CONFIDENT or UNKNOWN_ESCALATED)",
+        "blamed D-36ff8708 (expected None)"
+      ],
+      "tool_calls": 32,
+      "usage": {
+        "input_tokens": 63643,
+        "output_tokens": 3100,
+        "turns": 7
+      },
+      "usd": 0.3166,
+      "seconds": 33.1
+    },
+    {
+      "id": "db079",
+      "category": "two_causes_chain",
+      "outcome": "NOT_CONFIDENT",
+      "blamed": null,
+      "expected": null,
+      "error": null,
+      "ok": true,
+      "wrong_confident": false,
+      "abstained": true,
+      "right_cause": false,
+      "decoys_by": {},
+      "correct": true,
+      "why": [],
+      "tool_calls": 34,
+      "usage": {
+        "input_tokens": 47405,
+        "output_tokens": 3453,
+        "turns": 6
+      },
+      "usd": 0.2587,
+      "seconds": 35.1
+    },
+    {
+      "id": "db080",
+      "category": "two_causes_chain",
+      "outcome": "NOT_CONFIDENT",
+      "blamed": null,
+      "expected": null,
+      "error": null,
+      "ok": true,
+      "wrong_confident": false,
+      "abstained": true,
+      "right_cause": false,
+      "decoys_by": {},
+      "correct": true,
+      "why": [],
+      "tool_calls": 36,
+      "usage": {
+        "input_tokens": 80671,
+        "output_tokens": 3585,
+        "turns": 9
+      },
+      "usd": 0.3944,
+      "seconds": 36.4
+    },
+    {
+      "id": "db081",
+      "category": "weak_link",
+      "outcome": "CONFIRMED",
+      "blamed": "D-11939c0f",
+      "expected": "D-11939c0f",
+      "error": null,
+      "ok": true,
+      "wrong_confident": false,
+      "abstained": false,
+      "right_cause": true,
+      "decoys_by": {},
+      "correct": true,
+      "why": [],
+      "tool_calls": 29,
+      "usage": {
+        "input_tokens": 54999,
+        "output_tokens": 2103,
+        "turns": 6
+      },
+      "usd": 0.2621,
+      "seconds": 26.8
+    },
+    {
+      "id": "db082",
+      "category": "weak_link",
+      "outcome": "CONFIRMED",
+      "blamed": "D-9795599f",
+      "expected": "D-9795599f",
+      "error": null,
+      "ok": true,
+      "wrong_confident": false,
+      "abstained": false,
+      "right_cause": true,
+      "decoys_by": {},
+      "correct": true,
+      "why": [],
+      "tool_calls": 29,
+      "usage": {
+        "input_tokens": 20886,
+        "output_tokens": 1962,
+        "turns": 4
+      },
+      "usd": 0.1228,
+      "seconds": 19.1
+    },
+    {
+      "id": "db083",
+      "category": "weak_link",
+      "outcome": "CONFIRMED",
+      "blamed": "D-8f8a2c51",
+      "expected": "D-8f8a2c51",
+      "error": null,
+      "ok": true,
+      "wrong_confident": false,
+      "abstained": false,
+      "right_cause": true,
+      "decoys_by": {},
+      "correct": true,
+      "why": [],
+      "tool_calls": 29,
+      "usage": {
+        "input_tokens": 30024,
+        "output_tokens": 2402,
+        "turns": 5
+      },
+      "usd": 0.1681,
+      "seconds": 25.6
+    },
+    {
+      "id": "db084",
+      "category": "weak_link",
+      "outcome": "CONFIRMED",
+      "blamed": "D-ffd08245",
+      "expected": "D-ffd08245",
+      "error": null,
+      "ok": true,
+      "wrong_confident": false,
+      "abstained": false,
+      "right_cause": true,
+      "decoys_by": {},
+      "correct": true,
+      "why": [],
+      "tool_calls": 27,
+      "usage": {
+        "input_tokens": 18825,
+        "output_tokens": 1897,
+        "turns": 4
+      },
+      "usd": 0.1132,
+      "seconds": 19.1
+    },
+    {
+      "id": "db085",
+      "category": "weak_link",
+      "outcome": "CONFIRMED",
+      "blamed": "D-1d21233a",
+      "expected": "D-1d21233a",
+      "error": null,
+      "ok": true,
+      "wrong_confident": false,
+      "abstained": false,
+      "right_cause": true,
+      "decoys_by": {},
+      "correct": true,
+      "why": [],
+      "tool_calls": 28,
+      "usage": {
+        "input_tokens": 27998,
+        "output_tokens": 1856,
+        "turns": 4
+      },
+      "usd": 0.1491,
+      "seconds": 18.9
+    },
+    {
+      "id": "db086",
+      "category": "weak_link",
+      "outcome": "NOT_CONFIDENT",
+      "blamed": null,
+      "expected": "D-6e22d76f",
+      "error": null,
+      "ok": true,
+      "wrong_confident": false,
+      "abstained": true,
+      "right_cause": false,
+      "decoys_by": {},
+      "correct": false,
+      "why": [
+        "outcome NOT_CONFIDENT (expected CONFIRMED)",
+        "blamed None (expected D-6e22d76f)"
+      ],
+      "tool_calls": 32,
+      "usage": {
+        "input_tokens": 59475,
+        "output_tokens": 3079,
+        "turns": 6
+      },
+      "usd": 0.2995,
+      "seconds": 33.7
+    },
+    {
+      "id": "db087",
+      "category": "weak_link",
+      "outcome": "NOT_CONFIDENT",
+      "blamed": null,
+      "expected": "D-8b9e57f6",
+      "error": null,
+      "ok": true,
+      "wrong_confident": false,
+      "abstained": true,
+      "right_cause": false,
+      "decoys_by": {},
+      "correct": false,
+      "why": [
+        "outcome NOT_CONFIDENT (expected CONFIRMED)",
+        "blamed None (expected D-8b9e57f6)"
+      ],
+      "tool_calls": 34,
+      "usage": {
+        "input_tokens": 117735,
+        "output_tokens": 4888,
+        "turns": 10
+      },
+      "usd": 0.5687,
+      "seconds": 61.6
+    },
+    {
+      "id": "db088",
+      "category": "weak_link",
+      "outcome": "NOT_CONFIDENT",
+      "blamed": null,
+      "expected": "D-b197e5ea",
+      "error": null,
+      "ok": true,
+      "wrong_confident": false,
+      "abstained": true,
+      "right_cause": false,
+      "decoys_by": {},
+      "correct": false,
+      "why": [
+        "outcome NOT_CONFIDENT (expected CONFIRMED)",
+        "blamed None (expected D-b197e5ea)"
+      ],
+      "tool_calls": 31,
+      "usage": {
+        "input_tokens": 47330,
+        "output_tokens": 3389,
+        "turns": 7
+      },
+      "usd": 0.2571,
+      "seconds": 36.7
+    },
+    {
+      "id": "db089",
+      "category": "weak_link",
+      "outcome": "CONFIRMED",
+      "blamed": "D-831304eb",
+      "expected": "D-831304eb",
+      "error": null,
+      "ok": true,
+      "wrong_confident": false,
+      "abstained": false,
+      "right_cause": true,
+      "decoys_by": {},
+      "correct": true,
+      "why": [],
+      "tool_calls": 26,
+      "usage": {
+        "input_tokens": 17642,
+        "output_tokens": 1692,
+        "turns": 4
+      },
+      "usd": 0.1044,
+      "seconds": 21.2
+    },
+    {
+      "id": "db090",
+      "category": "weak_link",
+      "outcome": "NOT_CONFIDENT",
+      "blamed": null,
+      "expected": "D-79eb3049",
+      "error": null,
+      "ok": true,
+      "wrong_confident": false,
+      "abstained": true,
+      "right_cause": false,
+      "decoys_by": {},
+      "correct": false,
+      "why": [
+        "outcome NOT_CONFIDENT (expected CONFIRMED)",
+        "blamed None (expected D-79eb3049)"
+      ],
+      "tool_calls": 34,
+      "usage": {
+        "input_tokens": 69904,
+        "output_tokens": 3950,
+        "turns": 9
+      },
+      "usd": 0.3586,
+      "seconds": 46.9
+    },
+    {
+      "id": "db091",
+      "category": "weak_link",
+      "outcome": "NOT_CONFIDENT",
+      "blamed": null,
+      "expected": "D-d4a3275d",
+      "error": null,
+      "ok": true,
+      "wrong_confident": false,
+      "abstained": true,
+      "right_cause": false,
+      "decoys_by": {},
+      "correct": false,
+      "why": [
+        "outcome NOT_CONFIDENT (expected CONFIRMED)",
+        "blamed None (expected D-d4a3275d)"
+      ],
+      "tool_calls": 33,
+      "usage": {
+        "input_tokens": 56548,
+        "output_tokens": 2695,
+        "turns": 7
+      },
+      "usd": 0.2801,
+      "seconds": 35.1
+    },
+    {
+      "id": "db092",
+      "category": "weak_link",
+      "outcome": "CONFIRMED",
+      "blamed": "D-fee83594",
+      "expected": "D-fee83594",
+      "error": null,
+      "ok": true,
+      "wrong_confident": false,
+      "abstained": false,
+      "right_cause": true,
+      "decoys_by": {},
+      "correct": true,
+      "why": [],
+      "tool_calls": 27,
+      "usage": {
+        "input_tokens": 18835,
+        "output_tokens": 1904,
+        "turns": 4
+      },
+      "usd": 0.1134,
+      "seconds": 19.4
+    },
+    {
+      "id": "db093",
+      "category": "weak_link",
+      "outcome": "CONFIRMED",
+      "blamed": "D-01dd7feb",
+      "expected": "D-01dd7feb",
+      "error": null,
+      "ok": true,
+      "wrong_confident": false,
+      "abstained": false,
+      "right_cause": true,
+      "decoys_by": {},
+      "correct": true,
+      "why": [],
+      "tool_calls": 31,
+      "usage": {
+        "input_tokens": 35051,
+        "output_tokens": 2699,
+        "turns": 5
+      },
+      "usd": 0.1942,
+      "seconds": 31.9
+    }
+  ],
+  "summary": {
+    "all": {
+      "cases": 33,
+      "ok": 25,
+      "right_cause": 8,
+      "wrong_confident": 8,
+      "abstained": 17,
+      "errors": 0
+    },
+    "by_category": {
+      "two_causes_chain": {
+        "cases": 20,
+        "ok": 12,
+        "right_cause": 0,
+        "wrong_confident": 8,
+        "abstained": 12,
+        "errors": 0
+      },
+      "weak_link": {
+        "cases": 13,
+        "ok": 13,
+        "right_cause": 8,
+        "wrong_confident": 0,
+        "abstained": 5,
+        "errors": 0
+      }
+    },
+    "usd": 8.6138,
+    "tool_calls_median": 31,
+    "seconds_median": 33.1
+  },
+  "complete": false,
+  "stopped": "budget: spent $8.61, the next world could cost $0.57",
+  "finished": "2026-10-18T14:50:13"
+}

@@ -551,6 +551,7 @@ def side_summaries(s: dict) -> dict:
     k.update(_seeds2_keys(sb))
     k.update(_deep_fresh_hop_keys())
     k.update(llm_deep_keys())
+    k.update(llm_product_keys())
     k.update(faultbench_otel_keys())
     k.update(udf_equivalence_keys())
     k.update(oncall_keys())
@@ -717,6 +718,32 @@ def _seeds2_keys(sb: dict) -> dict:
     if rows1:
         k.update(_pooled_deep_keys("seedsall.deep", seed_bench.summary(rows1 + rows2)))
         k["seedsall.deep.seeds"] = len(s2["deep"]) + len(sb["deep"])
+    return k
+
+
+def llm_product_keys() -> dict:
+    """llm_product.<decisive|deep>.<all|category>.* (addenda 2026-10-18 14:16 and 14:31 IST): the product with the LLM
+    driving (LLMInvestigator + the gate), from evals/results/llm_product.json and llm_product_deep.json (paid,
+    owner-approved; the deep run covers the two_causes_chain and weak_link worlds only)."""
+    k: dict = {}
+    for bench, name in (("decisive", "llm_product.json"), ("deep", "llm_product_deep.json"),
+                        ("deep_fix", "llm_product_deep_fix.json")):
+        x = _side(name)
+        if not x or not x.get("rows"):
+            continue
+        rows, p = x["rows"], f"llm_product.{bench}"
+        k.update({f"{p}.model": x.get("model"), f"{p}.complete": bool(x.get("complete")),
+                  f"{p}.usd": round(sum(r["usd"] for r in rows), 2),
+                  f"{p}.tool_calls_median": (x.get("summary") or {}).get("tool_calls_median")})
+        groups = {"all": rows, **{c: [r for r in rows if r["category"] == c] for c in sorted({r["category"] for r in rows})}}
+        for g, rs in groups.items():
+            q = f"{p}.{g}"
+            k[f"{q}.cases"] = len(rs)
+            for m in ("right_cause", "wrong_confident", "abstained", "ok"):
+                if m in rs[0]:
+                    k[f"{q}.{m}"] = sum(bool(r[m]) for r in rs)
+            k.update(wilson_keys(f"{q}.right_cause", k[f"{q}.right_cause"], len(rs)))
+            k.update(wilson_keys(f"{q}.wrong_confident", k[f"{q}.wrong_confident"], len(rs)))
     return k
 
 
