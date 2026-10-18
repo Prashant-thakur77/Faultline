@@ -29,7 +29,7 @@ const STEPS: Step[] = [
   },
   {
     bullet: "Tool selection through MCP",
-    what: "The agent calls its graph tools over MCP, stage by stage; your own client can call the same read-only tools.",
+    what: "The agent is an MCP client: each stage offers only its own whitelist of graph tools, and a call outside it is refused and recorded in the run. Your client can call the same read-only tools.",
     cta: "Connect an MCP client",
     href: "#api",
   },
