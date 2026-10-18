@@ -2,6 +2,15 @@
 
 All notable changes to Faultline. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [1.3.1] - 2026-10-18
+
+### The gate, tighter
+- G6 also counts a rival the gate already confirmed as a competitor, and reads who set a hypothesis's current status (`status_by`), so no investigator, however it writes, can clear a rival; two new mutants (G6 and the tool's refusal) are killed, <!-- claim:mutation.killed -->43<!-- /claim --> of <!-- claim:mutation.mutants -->43<!-- /claim --> in all.
+- Seed-time chunking reads the documents through the read-only wrapper.
+
+### Docs
+- Screenshots of the UDF libraries card and an agent's verdict note; the deep model-driving run's budget stop and the follow-up's scope are stated exactly; the clean-clone judge-check record at 004a6e8.
+
 ## [1.3.0] - 2026-10-18
 
 ### A model driving it stays honest (pre-registered, paid)
@@ -108,6 +117,7 @@ First public release: the version deployed at [13-203-185-119.sslip.io](https://
 - Live deployment: one VM with Docker Compose (FalkorDB never exposed, ACL users per tenant, Caddy with TLS), public mode with run tokens, rate limits and no LLM spend.
 - Keyless reproduction: `make setup && make judge-check` prints PASS with no API key.
 
+[1.3.1]: https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.3.1
 [1.3.0]: https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.3.0
 [1.2.0]: https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.2.0
 [1.1.1]: https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.1.1

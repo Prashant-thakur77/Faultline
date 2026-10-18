@@ -21,7 +21,7 @@
 
 ![The gate at work: a no-path rejection (G2), a max-flow rejection (G5), then the proof path](docs/media/hero.gif)
 
-<p align="center"><b><a href="https://13-203-185-119.sslip.io">Live demo</a> · <a href="https://github.com/Prashant-thakur77/Faultline/releases/latest/download/faultline-demo.mp4">Watch the video (4:25)</a> · <a href="docs/MCP.md#try-the-hosted-server-now-public-demo-key">Hosted MCP</a> · <a href="docs/PROOF.md">Every number, with intervals</a> · <a href="https://prashant-thakur77.github.io/Faultline/">Replay (no backend)</a> · <a href="https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.3.0">Release v1.3.0</a></b></p>
+<p align="center"><b><a href="https://13-203-185-119.sslip.io">Live demo</a> · <a href="https://github.com/Prashant-thakur77/Faultline/releases/latest/download/faultline-demo.mp4">Watch the video (4:25)</a> · <a href="docs/MCP.md#try-the-hosted-server-now-public-demo-key">Hosted MCP</a> · <a href="docs/PROOF.md">Every number, with intervals</a> · <a href="https://prashant-thakur77.github.io/Faultline/">Replay (no backend)</a> · <a href="https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.3.1">Release v1.3.1</a></b></p>
 
 ## At a glance
 
