@@ -49,17 +49,27 @@ export function WhyBelieveButton({
   const cls =
     "inline-flex min-h-8 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-sky-400";
   if (liveOnly) {
+    // the static site has no API: send the visitor to a live run, where the same button draws the graph
+    const live = STATIC_SITE ? "https://13-203-185-119.sslip.io/#run" : "/#run";
     return (
-      <button
-        type="button"
-        disabled
-        title="The provenance graph is a live FalkorDB query (Q-PROV-1); a recording has no API to ask."
-        className={cn(cls, "cursor-not-allowed border-white/[0.08] text-zinc-400")}
-      >
-        <GitFork aria-hidden className="size-3.5" />
-        Why do you believe this?
-        <span className="rounded border border-white/[0.12] px-1 font-mono text-[10px] text-zinc-300">live only</span>
-      </button>
+      <span className="inline-flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          disabled
+          title="The provenance graph is a live FalkorDB query (Q-PROV-1); a recording has no API to ask."
+          className={cn(cls, "cursor-not-allowed border-white/[0.08] text-zinc-400")}
+        >
+          <GitFork aria-hidden className="size-3.5" />
+          Why do you believe this?
+          <span className="rounded border border-white/[0.12] px-1 font-mono text-[10px] text-zinc-300">live only</span>
+        </button>
+        <a
+          href={live}
+          className="text-xs text-sky-300 underline underline-offset-2 outline-none focus-visible:ring-2 focus-visible:ring-sky-400"
+        >
+          see it on a live run
+        </a>
+      </span>
     );
   }
   return (
