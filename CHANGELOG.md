@@ -2,7 +2,7 @@
 
 All notable changes to Faultline. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [1.2.0] - 2026-10-18
 
 ### FalkorDB does the ranking, with our own UDF library
 - `deploy/udf/faultline-1.0.0.js`, loaded with `GRAPH.UDF LOAD` and pinned by sha256 like FLEX: the blast radius (`faultline.impact`), the notify list (`faultline.capImpact`, summed per team) and agent-note recall (`faultline.noteScore`) are scored and ordered inside FalkorDB, each in one read-only query. `faultline.round4` is Python's `round(x, 4)`, exact halves included, so engine and code agree on every number.
