@@ -165,6 +165,49 @@ def find_entities(text: str, labels: list[str] | None = None) -> dict[str, Any]:
                      summary=f"{len(r.rows)} matches for {a.text!r}" + (f" ({note})" if note else ""))
 
 
+# words that carry no topic: kept out of knowledge search's full-text lists, where they would match every document
+KNOW_STOP = frozenset("""
+a an and are as at be been but by can could did do does for from had has have how if in into is it its of on or our
+should so than that the their them then there these they this to was we were what when where which who whom whose why
+will with would you your about after before during any all ever us me my not no does doing done just also only very
+""".split())
+
+
+def _kq_query(text: str) -> str:
+    """Full-text query for knowledge search: topic words only (stopwords dropped), prefix-matched from four letters,
+    any of them ('|'). Empty when the text has no topic word (the full-text lists then stay off)."""
+    toks = ["".join(ch for ch in t if ch.isalnum()) for t in text.lower().split()]
+    toks = list(dict.fromkeys(t for t in toks if len(t) >= 3 and t not in KNOW_STOP))[:8]
+    return " | ".join(f"{t}*" if len(t) >= 4 else t for t in toks)
+
+
+@_guard
+def search_knowledge(text: str) -> dict[str, Any]:
+    """What the organisation's documents say (track T3): ADRs, runbooks, incident-channel chats, issues and
+    postmortems, searched in ONE query (Q-KNOW-1) by meaning (vecf32 over document text chunks, postmortems and
+    runbooks) and by words (full-text), the lists fused by reciprocal rank inside FalkorDB. Each hit comes with the
+    passage that matched and the ids it concerns (components, decisions, incidents, who decided). A document's text is
+    credited to the decision or runbook it produced."""
+    a = _Text(text=text)
+    w = weights()["brain"]
+    note = ""
+    try:
+        from ..memory.embed import embed_one
+
+        qv = embed_one(a.text)
+    except Exception as e:  # noqa: BLE001 (model missing: say so; the full-text lists still answer)
+        qv, note = None, f"vector lists unavailable ({type(e).__name__}); full-text only"
+    kq = _kq_query(a.text)
+    if qv is None and not kq:
+        return {"error": "invalid arguments: no topic words and no vector model"}
+    r = _ro().run("Q-KNOW-1", {"q": qv, "text": kq, "floor": float(w["knowledge_min_similarity"]),
+                               "k": int(w["knowledge_rrf_k"])})
+    return _envelope(r, tool="search_knowledge", kind="lookup", about=[x["id"] for x in r.rows[:5]],
+                     via="vecf32 + full-text over document chunks, postmortems, runbooks and decisions, "
+                         "reciprocal-rank fused in the engine, then 1-2 hops", extra={"note": note} if note else None,
+                     summary=f"{len(r.rows)} sources for {a.text!r}" + (f" ({note})" if note else ""))
+
+
 class _IdArg(BaseModel):
     id: str = Id
 
@@ -2002,5 +2045,5 @@ TOOLS: dict[str, Callable[..., dict]] = {f.__name__: f for f in (
     graph_schema,
     oncall_now, pages, oncall_stats,
     learned_preferences, learned_responders, knowledge_gaps, learned_state,
-    remember, recall_notes,
+    remember, recall_notes, search_knowledge,
 )}

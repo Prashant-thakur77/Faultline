@@ -60,6 +60,8 @@ obligation:
   fast_burn: 14.4          # The simulator raises an slo_burn alert when the trailing burn crosses 14.4x: at that rate 2% of a 30-day budget goes in one hour (SRE workbook fast-burn page).
   burn_window_min: 5        # The trailing window the simulator's burn alert averages over (the workbook's short window for a fast-burn page).
 brain:
+  knowledge_rrf_k: 60           # Reciprocal-rank fusion constant (the usual 60): a source ranked first in two lists beats one ranked first in one, and no single list dominates.
+  knowledge_min_similarity: 0.6 # Vector hits for knowledge search below this cosine are not about the question (calibrated on the development questions only).
   fuzzy_min: 0.92       # FLEX Jaro-Winkler floor for resolving a misspelt component: real misspellings of seeded ids score ≥ 0.94, unrelated words ≤ 0.90.
   fuzzy_min_len: 5      # Shorter tokens are too ambiguous to resolve by spelling alone ("cart", "ad").
   fuzzy_len_ratio: 0.8  # A fuzzy match needs the shorter of word and id to be ≥ 80% of the longer: "audit" (5) is a prefix of audit-log (8), not a misspelling of it; "pyment" (6) vs payment (7) passes.

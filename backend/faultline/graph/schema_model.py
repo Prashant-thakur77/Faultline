@@ -39,6 +39,8 @@ NODE_LABELS = frozenset({
     "Policy",
     # shared agent notes (T2, in agentmem_<t>): a lead one agent leaves for others about components, and its author
     "Note", "Author",
+    # document text (T3): a paragraph chunk of a Doc's body, PART_OF it, with a vecf32 embedding
+    "Chunk",
 })
 
 REL_TYPES = frozenset({

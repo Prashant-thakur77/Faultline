@@ -32,7 +32,7 @@ from ..mcp_server import tools as T
 BRAIN_TOOLS = ["resolve_entity", "find_entities", "service_context", "people_who_worked_on", "decisions_about",
                "trace_decision", "missing_guardrails", "blast_radius", "runbook_for", "run_cypher_readonly",
                "session_history", "owner_at", "beliefs_at", "component_timeline", "knowledge_health", "hidden_coupling", "graph_schema",
-               "obligation_clock"]
+               "obligation_clock", "search_knowledge"]
 
 # Question routing has two stages (DECISIONS 2026-10-16, hybrid router):
 # 1. the keyword router below: precise where its vocabulary matches, so it decides whenever any pattern matches;
@@ -270,6 +270,26 @@ def _refusal(route: dict) -> str:
             f"{best['intent']}, similarity {float(best['vsim']):.2f} < {float(w['route_min_similarity']):.2f}).")
 
 
+def _from_documents(s: _Session, q: str) -> str | None:
+    """When no question kind matches, what the organisation's documents say (search_knowledge, Q-KNOW-1), but only
+    when two independent indexes agree on the best source: its passage matched by words (full-text) AND by meaning
+    (vector). Otherwise None, and the brain refuses as before. Never for a request to act or small talk."""
+    if (s.route.get("best") or {}).get("refuse"):
+        return None
+    r = s.call("search_knowledge", text=q)
+    rows = r.get("rows") or []
+    if r.get("error") or not rows or set(rows[0]["via"]) != {"fulltext", "vector"}:
+        return None
+    lines = []
+    for x in [x for x in rows if set(x["via"]) == {"fulltext", "vector"}][:3]:
+        passage = re.sub(r"\s+", " ", x.get("snippet") or x.get("title") or "").strip()
+        rel = [i for i in x.get("related") or [] if i != x["id"]][:6]
+        lines.append(f"- [{x['id']}] {x.get('title') or ''}: \"{passage[:220]}{'…' if len(passage) > 220 else ''}\""
+                     + (" (concerns " + ", ".join(f"[{i}]" for i in rel) + ")" if rel else ""))
+    return ("No kind of question I answer matched exactly, so this is what the organisation's documents say "
+            "(found by both words and meaning):\n" + "\n".join(lines))
+
+
 def _baseline(s: _Session, q: str, user: str | None = None) -> tuple[str, str, list[str]]:
     sources: list[str] = []
     try:
@@ -277,7 +297,8 @@ def _baseline(s: _Session, q: str, user: str | None = None) -> tuple[str, str, l
     except BrainToolError as e:  # fail loudly: a broken router is not "I can't answer that"
         return "none", f"Question routing is unavailable, so I cannot answer: {e}", sources
     if intent is None:
-        return "none", _refusal(s.route), sources
+        found = _from_documents(s, q)
+        return ("documents", found, sources) if found else ("none", _refusal(s.route), sources)
     if intent not in KINDS:  # an exemplar kind the composer has no answer for: fail loudly, never fall through
         return "none", f"{REFUSAL}: the router chose {intent!r}, which this answerer does not handle.", sources
     if intent == "knowledge":

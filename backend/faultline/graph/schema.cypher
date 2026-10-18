@@ -45,6 +45,7 @@ CREATE INDEX FOR (n:Session) ON (n.id)
 CREATE INDEX FOR (n:Turn) ON (n.id)
 CREATE INDEX FOR (n:Run) ON (n.id)
 CREATE INDEX FOR (n:Note) ON (n.id)
+CREATE INDEX FOR (n:Chunk) ON (n.id)
 CREATE INDEX FOR (n:Author) ON (n.id)
 CREATE INDEX FOR (n:ToolCall) ON (n.id)
 CREATE INDEX FOR (n:StageEvent) ON (n.id)
@@ -75,6 +76,7 @@ CREATE FULLTEXT INDEX FOR (n:Runbook) ON (n.title)
 CREATE FULLTEXT INDEX FOR (n:Decision) ON (n.title)
 CREATE FULLTEXT INDEX FOR (n:Postmortem) ON (n.summary)
 CREATE FULLTEXT INDEX FOR (n:Note) ON (n.text)
+CREATE FULLTEXT INDEX FOR (n:Chunk) ON (n.text)
 CREATE FULLTEXT INDEX FOR (n:Doc) ON (n.title)
 CREATE FULLTEXT INDEX FOR (n:IntentExemplar) ON (n.text)
 // Vector (384-dim cosine; written only via vecf32(); query score is a distance). HNSW options measured by
@@ -85,3 +87,4 @@ CREATE VECTOR INDEX FOR (n:Runbook) ON (n.embedding) OPTIONS {dimension:384, sim
 CREATE VECTOR INDEX FOR (n:Postmortem) ON (n.embedding) OPTIONS {dimension:384, similarityFunction:'cosine', M:32, efConstruction:400, efRuntime:100}
 CREATE VECTOR INDEX FOR (n:IntentExemplar) ON (n.embedding) OPTIONS {dimension:384, similarityFunction:'cosine', M:32, efConstruction:400, efRuntime:100}
 CREATE VECTOR INDEX FOR (n:Note) ON (n.embedding) OPTIONS {dimension:384, similarityFunction:'cosine', M:32, efConstruction:400, efRuntime:100}
+CREATE VECTOR INDEX FOR (n:Chunk) ON (n.embedding) OPTIONS {dimension:384, similarityFunction:'cosine', M:32, efConstruction:400, efRuntime:100}

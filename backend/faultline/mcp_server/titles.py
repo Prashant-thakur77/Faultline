@@ -33,6 +33,7 @@ TITLES: dict[str, str] = {
     "learned_state": "What has Faultline learned from the people using it?",
     "remember": "Leave a note for other agents about these components",
     "recall_notes": "What have other agents noted about this, or near it?",
+    "search_knowledge": "What do our documents say about this?",
     "missing_guardrails": "Which revenue-path services lack an owner or a runbook?",
     "notify_set": "Who should hear about this failure?",
     "obligation_clock": "Which SLOs and customers does this failure put at risk?",

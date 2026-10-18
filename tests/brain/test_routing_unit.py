@@ -128,12 +128,13 @@ def _routed(rows, routed, mode="vector+fulltext", words=()):
     return {"rows": rows, "routed": routed, "mode": mode, "question_words": list(words), "evidence_id": "ev_x"}
 
 
-def test_a_weak_match_is_refused_without_any_other_tool_call():
+def test_a_weak_match_is_refused_after_one_document_search_finds_nothing():
     s = _FakeSession(_routed([_row("people", 0.55, answerable=False), _row("history", 0.5, answerable=False)], None))
     intent, text, _ = A._baseline(s, "What is the stock price of a fruit company?")
     assert intent == "none" and text.startswith(A.REFUSAL)
     assert "people" in text and "0.55" in text and f"{weights()['brain']['route_min_similarity']:.2f}" in text
-    assert [c[0] for c in s.calls] == [A.ROUTE_TOOL]          # no entity resolution, no answer template
+    # no entity resolution and no answer template: only the documents are searched (one read-only query) first
+    assert [c[0] for c in s.calls] == [A.ROUTE_TOOL, "search_knowledge"]
     assert s.route["stage"] == "graph" and s.route["routed"] is None
     assert not A._cited(text)                                   # a refusal cites nothing
 
@@ -142,6 +143,33 @@ def test_a_refusal_kind_is_refused_as_out_of_scope():
     s = _FakeSession(_routed([_row("out_of_scope", 0.8, answerable=False, refuse=True)], None))
     intent, text, _ = A._baseline(s, "Restart the pods please")
     assert intent == "none" and text.startswith(A.REFUSAL) and "not a question about" in text
+    assert [c[0] for c in s.calls] == [A.ROUTE_TOOL]          # a request to act is never searched for
+
+
+class _DocSession(_FakeSession):
+    def __init__(self, route: dict, docs: list[dict]):
+        super().__init__(route)
+        self.docs = docs
+
+    def call(self, name, **args):
+        if name == "search_knowledge":
+            self.calls.append((name, args))
+            return {"rows": self.docs}
+        return super().call(name, **args)
+
+
+def _doc(i, via, related=()):
+    return {"id": i, "title": f"title of {i}", "snippet": f"what {i} says", "via": list(via), "related": list(related)}
+
+
+def test_documents_answer_only_when_words_and_meaning_agree_on_the_best_source():
+    weak = _routed([_row("people", 0.55, answerable=False)], None)
+    s = _DocSession(weak, [_doc("ADR-1", ("fulltext", "vector"), ("svc-a",)), _doc("ADR-2", ("vector",))])
+    intent, text, _ = A._baseline(s, "why do we do it this way")
+    assert intent == "documents" and "[ADR-1]" in text and "[svc-a]" in text and "[ADR-2]" not in text
+    s = _DocSession(weak, [_doc("ADR-2", ("vector",)), _doc("ADR-1", ("fulltext", "vector"))])
+    intent, text, _ = A._baseline(s, "why do we do it this way")
+    assert intent == "none" and text.startswith(A.REFUSAL) and not A._cited(text)
 
 
 def test_a_router_error_is_unavailable_not_a_refusal():

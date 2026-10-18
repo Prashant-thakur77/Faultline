@@ -125,6 +125,10 @@ def seed(tenant: str, no_memory: bool = False, force: bool = False, only: list[s
     # company rules as data (M20 #6): applied AFTER every other node and edge, on a new or a reused golden graph alike,
     # so no existing node or edge id moves (some algorithms break ties by id); idempotent MERGE
     info["policies"] = policies.apply(g, tenant)
+    # document text as searchable chunks (T3, Q-KNOW-1): also applied after everything else, idempotent
+    from faultline.ingest import chunks
+
+    info["chunks"] = chunks.apply(g)
     if not no_memory:
         info["copy"] = gcopy.rearm(db, tenant, reason="seed")
     info["counts"] = writes.counts(db.select_graph(tenant_graph(tenant) if not no_memory else golden))

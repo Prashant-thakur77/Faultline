@@ -487,6 +487,29 @@ def advance_stage(g: Graph, *, inc: str, run: str, stage: str, ord_: int, note: 
                         timeout=WRITE_TIMEOUT_MS).result_set)
 
 
+W_CHUNKS = (
+    "UNWIND $rows AS r MATCH (d:Doc {id: r.doc}) "
+    "MERGE (c:Chunk {id: r.id}) SET c.doc = r.doc, c.ord = r.ord, c.text = r.text, c.digest = r.digest, "
+    "c.embedding = vecf32(r.v) "
+    "MERGE (c)-[:PART_OF]->(d) RETURN count(c)"
+)
+W_CHUNKS_STALE = "MATCH (c:Chunk) WHERE c.doc IN $docs AND NOT c.id IN $ids DETACH DELETE c RETURN count(c)"
+
+
+def upsert_chunks(g: Graph, rows: list[dict[str, Any]], *, docs: list[str]) -> int:
+    """Document chunks (ingest/chunks.py) with their vecf32 embeddings, each PART_OF its Doc; idempotent. Chunks of
+    `docs` that are no longer produced (the document shrank) are removed. Returns the chunks written."""
+    n = 0
+    for batch in _batches(rows):
+        n += g.query(W_CHUNKS, {"rows": [{**{k: r[k] for k in ("id", "doc", "ord", "text", "digest")},
+                                          "v": [float(x) for x in r["v"]]} for r in batch]},
+                     timeout=WRITE_TIMEOUT_MS).result_set[0][0]
+    if n != len(rows):
+        raise WriteError(f"Chunk: wrote {n}/{len(rows)} (a chunk's Doc is missing)")
+    g.query(W_CHUNKS_STALE, {"docs": docs, "ids": [r["id"] for r in rows]}, timeout=WRITE_TIMEOUT_MS)
+    return n
+
+
 # ------------------------------------------------------------------ shared agent notes (T2, agentmem_<tenant>)
 W_NOTE = (
     # ONE query, so every condition and the write are atomic together: every `about` id is a component of the graph,
