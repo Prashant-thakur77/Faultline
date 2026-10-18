@@ -51,6 +51,18 @@
 | Reproduce every number in this README | `git clone --depth 1 https://github.com/Prashant-thakur77/Faultline && cd Faultline && make setup && make judge-check` (prints PASS, no API key); see [Reproduce it](#reproduce-it). |
 | Just look | the [live demo](https://13-203-185-119.sslip.io) ("Reset demo data" in the menu next to "FalkorDB ready" restores it), the [video](https://github.com/Prashant-thakur77/Faultline/releases/latest), or the [replay](https://prashant-thakur77.github.io/Faultline/) with no backend. |
 
+## Track 1 in five clicks
+
+The five things the track is scored on, each with where to see it on the live site and the file behind it.
+
+| Bullet | See it | Behind it |
+|---|---|---|
+| **Multi-hop reasoning** | [Run the hero incident](https://13-203-185-119.sslip.io): the gate's proof path <!-- claim:s1.chain -->D-pay-417 → payment → checkout<!-- /claim --> from `algo.SPpaths`; [run the data incident](https://13-203-185-119.sslip.io): a seven-hop chain across service → lineage → KPI, <!-- claim:s2.chain -->D-cutover-1 → payment → raw.raw_orders → staging.stg_orders → marts.fct_revenue → marts.exec_revenue_metric → kpi.exec_revenue<!-- /claim --> | `templates/gate_path.cypher` (Q-GATE-1), `gate_flow.cypher` (Q-GATE-3) |
+| **Graph queries and algorithms as agent tools** | every card in the incident room says which procedure and template decided it ("via FalkorDB · `algo.maxFlow` · Q-GATE-3"); click the query id to read, profile and re-run it read-only | `graph/algo/registry.py` (<!-- claim:repo.algorithms -->10<!-- /claim --> procedures), <!-- claim:repo.templates -->241<!-- /claim --> templates; the ablation: without `algo.maxFlow` the right cause falls from <!-- claim:decisive.full.g5_only.right_cause -->20<!-- /claim -->/<!-- claim:decisive.full.g5_only.cases -->20<!-- /claim --> to <!-- claim:decisive.no_maxflow.g5_only.right_cause -->0<!-- /claim --> |
+| **Tool selection through MCP** | the Crew pane lists every tool call each specialist made, by stage; in your own client: `npx -y @prashantthakur77/faultline-mcp` ([docs/MCP.md](docs/MCP.md)) | `agent/loop.py` (`ToolBox.call`: the agent is an MCP client), `agent/phases.py` (a tool outside the stage's list is refused and recorded) |
+| **Actions based on what the graph shows** | hero: the min-cut `payment → checkout` → flag `paymentGate` off → a pull request → **APPLIED** (main re-read, telemetry back in band); data incident: the repair proposed from the run's own measurements → the warehouse rebuilt → **<!-- claim:example.s2.verdict -->APPLIED<!-- /claim -->**, <!-- claim:example.s2.invariants -->32/32<!-- /claim --> invariants, write-back <!-- claim:example.s2.writeback -->7/7<!-- /claim --> ([replay](https://prashant-thakur77.github.io/Faultline/replay/s2-data-incident)); the real-GitHub path: [PR #1](https://github.com/Prashant-thakur77/faultline-demo-infra/pull/1) | `actions/act.py`, `templates/cut_in_engine.cypher`, `agent/unit_shift.py` |
+| **Explainable results** | "Why do you believe this?" draws the provenance from the verdict to each tool call; rejected suspects show the check that rejected them, with its query | `templates/run_provenance.cypher`, `examples/s1-hero/tool_calls.json` (every call with its Cypher, params and row digest) |
+
 ## In short
 
 Faultline answers four questions during an incident. Each answer comes out of a FalkorDB query, and the agent cannot skip one.
