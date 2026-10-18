@@ -77,7 +77,7 @@ claude mcp add --transport http faultline http://127.0.0.1:8401/mcp --header "Au
 | schema | `graph_schema`: the live labels (counts, property keys, indexes) and relationship types (counts, from → to label pairs) of your tenant's graph |
 | last resort | `run_cypher_readonly`: guarded text2cypher (below) |
 
-The agent also uses four internal tools: `rank_causes` (pageRank), `whatif` (BFS/WCC on a GRAPH.COPY branch), `who_fixes` (HarmonicCentrality) and `escalation_tree` (MSF). These build engine-written scratch graphs, so they are never hosted. The stdio server for this repo includes them, annotated as writing.
+The agent also uses six internal tools: `rank_causes` (pageRank), `whatif` (BFS/WCC on a GRAPH.COPY branch), `futures` (one GRAPH.COPY branch per containment candidate), `who_fixes` (HarmonicCentrality), `escalation_tree` (MSF) and `group_alerts` (WCC). These build engine-written scratch graphs, so they are never hosted; with `remember` (a write) left out as well, that is how <!-- claim:repo.mcp_tools -->62<!-- /claim --> tools become <!-- claim:repo.mcp_tools_hosted -->55<!-- /claim --> hosted. The stdio server for this repo includes them, annotated as writing.
 
 ## Resources
 Resources are bound to a tenant the same way tools are. Over HTTP the bearer key picks the tenant; over stdio it is the session's tenant. A URI never names a graph.
