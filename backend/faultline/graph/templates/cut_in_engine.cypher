@@ -1,5 +1,5 @@
 // id: Q-CUT-3
-// purpose: containment in ONE read-only query: algo.maxFlow from $failing to the protected set over cut_cost, then the min-cut inside the engine. Residual reachability from $failing runs over every PROPAGATES_TO edge of the region algo.SSpaths reaches (forward while cut_cost − flow > 1e-9, backward while flow > 1e-9), iterated to a fixpoint as a list reduction; the cut is the edges leaving that source side. The code only checks that the cut capacity equals maxFlow and that no protected node is on the source side.
+// purpose: containment in ONE read-only query: algo.maxFlow from $failing to the protected set over cut_cost, then the min-cut inside the engine. Residual reachability from $failing runs over every PROPAGATES_TO edge of the region algo.SSpaths reaches (forward while cut_cost − flow > 1e-9, backward while flow > 1e-9), iterated to a fixpoint as a list reduction; the cut is the edges leaving that source side. A region of $max_edges candidate edges or more skips the fixpoint (the code refuses it). The code only checks that the cut capacity equals maxFlow and that no protected node is on the source side.
 // returns: single-row
 // seen: flow_edges
 MATCH (f:Node {id:$failing})
@@ -22,8 +22,9 @@ CALL {algo:maxflow}({sourceNodes: [f], targetNodes: targets, relationshipTypes: 
 WITH f, prot, cand, maxFlow,
      [i IN range(0, size(edges) - 1) | {rid: id(edges[i]), u: startNode(edges[i]).id, v: endNode(edges[i]).id, flow: edgeFlows[i]}] AS fe
 WITH f, prot, cand, maxFlow, fe,
-     [c IN cand | {u: c.u, v: c.v, cost: c.cost, domain: c.domain,
-                   flow: coalesce(head([x IN fe WHERE x.rid = c.rid | x.flow]), 0)}] AS arcs
+     [c IN CASE WHEN size(cand) < $max_edges THEN cand ELSE [] END |
+      {u: c.u, v: c.v, cost: c.cost, domain: c.domain,
+       flow: coalesce(head([x IN fe WHERE x.rid = c.rid | x.flow]), 0)}] AS arcs
 WITH f, prot, cand, maxFlow, fe, arcs,
      [a IN arcs WHERE a.cost - a.flow > 1e-9 | [a.u, a.v]] + [a IN arcs WHERE a.flow > 1e-9 | [a.v, a.u]] AS residual
 WITH f, prot, cand, maxFlow, fe, arcs,

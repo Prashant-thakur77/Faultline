@@ -1,5 +1,5 @@
 // id: Q-KNOW-1
-// purpose: company-brain knowledge search (T3) in ONE query: what the organisation's documents say. Seven ranked lists, each from a FalkorDB index (vecf32 over Doc text chunks, credited to the decision or runbook the document produced, postmortem summaries and runbooks with cosine at least $floor; full-text over chunks, postmortems, runbooks and decision titles), fused by reciprocal rank inside the engine (each list adds 1/($k + rank) for its best hit of a source), then expanded one and two hops: what each source is about, produced, constrains or documents, and who decided it
+// purpose: company-brain knowledge search (T3) in ONE query: what the organisation's documents say. Seven ranked lists, each from a FalkorDB index (vecf32 over Doc text chunks, credited to every decision or runbook the document produced, the best-ranked passage kept, postmortem summaries and runbooks with cosine at least $floor; full-text over chunks, postmortems, runbooks and decision titles), fused by reciprocal rank inside the engine (each list adds 1/($k + rank) for its best hit of a source), then expanded one and two hops: what each source is about, produced, constrains or documents, and who decided it
 // seen: id, related
 CALL {
   UNWIND CASE WHEN $q IS NULL THEN [] ELSE [1] END AS one
@@ -10,7 +10,9 @@ CALL {
   UNWIND range(0, size(hits) - 1) AS i
   WITH hits[i] AS n, i
   MATCH (n)-[:PART_OF]->(d:Doc)
-  WITH coalesce(head([(d)-[:PRODUCED]->(p) | p]), d) AS src, i, n
+  WITH d, i, n, [(d)-[:PRODUCED]->(p) | p] AS produced
+  UNWIND CASE WHEN size(produced) = 0 THEN [d] ELSE produced END AS src
+  WITH src, i, n ORDER BY i
   WITH src, min(i) AS i, head(collect(n.text)) AS snippet
   RETURN src, snippet, 1.0 / ($k + i + 1) AS rrf, 'vector' AS via
   UNION ALL
@@ -21,7 +23,9 @@ CALL {
   UNWIND range(0, size(hits) - 1) AS i
   WITH hits[i] AS n, i
   MATCH (n)-[:PART_OF]->(d:Doc)
-  WITH coalesce(head([(d)-[:PRODUCED]->(p) | p]), d) AS src, i, n
+  WITH d, i, n, [(d)-[:PRODUCED]->(p) | p] AS produced
+  UNWIND CASE WHEN size(produced) = 0 THEN [d] ELSE produced END AS src
+  WITH src, i, n ORDER BY i
   WITH src, min(i) AS i, head(collect(n.text)) AS snippet
   RETURN src, snippet, 1.0 / ($k + i + 1) AS rrf, 'fulltext' AS via
   UNION ALL
@@ -31,7 +35,7 @@ CALL {
   WITH node, score ORDER BY score, node.id
   WITH collect(node) AS hits
   UNWIND range(0, size(hits) - 1) AS i
-  WITH hits[i] AS n, i
+  WITH hits[i] AS n, i ORDER BY i
   WITH n AS src, min(i) AS i, head(collect(n.summary)) AS snippet
   RETURN src, snippet, 1.0 / ($k + i + 1) AS rrf, 'vector' AS via
   UNION ALL
@@ -40,7 +44,7 @@ CALL {
   WITH node, score ORDER BY score DESC, node.id LIMIT 20
   WITH collect(node) AS hits
   UNWIND range(0, size(hits) - 1) AS i
-  WITH hits[i] AS n, i
+  WITH hits[i] AS n, i ORDER BY i
   WITH n AS src, min(i) AS i, head(collect(n.summary)) AS snippet
   RETURN src, snippet, 1.0 / ($k + i + 1) AS rrf, 'fulltext' AS via
   UNION ALL
@@ -50,7 +54,7 @@ CALL {
   WITH node, score ORDER BY score, node.id
   WITH collect(node) AS hits
   UNWIND range(0, size(hits) - 1) AS i
-  WITH hits[i] AS n, i
+  WITH hits[i] AS n, i ORDER BY i
   WITH n AS src, min(i) AS i, head(collect(n.title)) AS snippet
   RETURN src, snippet, 1.0 / ($k + i + 1) AS rrf, 'vector' AS via
   UNION ALL
@@ -59,7 +63,7 @@ CALL {
   WITH node, score ORDER BY score DESC, node.id LIMIT 20
   WITH collect(node) AS hits
   UNWIND range(0, size(hits) - 1) AS i
-  WITH hits[i] AS n, i
+  WITH hits[i] AS n, i ORDER BY i
   WITH n AS src, min(i) AS i, head(collect(n.title)) AS snippet
   RETURN src, snippet, 1.0 / ($k + i + 1) AS rrf, 'fulltext' AS via
   UNION ALL
@@ -68,7 +72,7 @@ CALL {
   WITH node, score ORDER BY score DESC, node.id LIMIT 20
   WITH collect(node) AS hits
   UNWIND range(0, size(hits) - 1) AS i
-  WITH hits[i] AS n, i
+  WITH hits[i] AS n, i ORDER BY i
   WITH n AS src, min(i) AS i, head(collect(n.title)) AS snippet
   RETURN src, snippet, 1.0 / ($k + i + 1) AS rrf, 'fulltext' AS via
 }

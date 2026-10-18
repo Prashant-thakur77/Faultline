@@ -666,7 +666,7 @@ def containment_cut(failing_id: str, protect_ids: list[str]) -> dict[str, Any]:
     off."""
     f = _IdArg(id=failing_id).id
     prot = [_IdArg(id=p).id for p in protect_ids][:10]
-    r = _ro().run("Q-CUT-3", {"failing": f, "protect": prot})
+    r = _ro().run("Q-CUT-3", {"failing": f, "protect": prot, "max_edges": CUT_MAX_EDGES})
     if not r.rows:
         return {"error": f"containment: {f} or protected set {prot} not found in the graph"}
     row = r.rows[0]
@@ -1064,8 +1064,8 @@ def _principal(b: context.Binding) -> str:
 @_guard
 def remember(text: str, about: list[str], kind: str = "lead", agent_name: str = "", reply_to: str = "",
              stance: str = "adds") -> dict[str, Any]:
-    """Leave a note for other agents about components (track T2: shared memory). `about`: 1-10 component ids that
-    must exist in the graph; `kind`: lead | observation | hypothesis | handoff | verdict; `reply_to` (a note id) with
+    """Leave a note for other agents (track T2: shared memory). `about`: 1-10 ids of nodes in the graph (components,
+    decisions, incidents, people); `kind`: lead | observation | hypothesis | handoff | verdict; `reply_to` (a note id) with
     `stance` confirms | refutes | adds answers another agent's note. Written in ONE atomic query to the tenant's
     agentmem graph by an ACL user that can touch only that graph (the graph the gate reads stays read-only), under a
     daily quota per caller. A note is a lead for people and agents, never evidence: the evidence gate does not read it."""
@@ -1081,7 +1081,7 @@ def remember(text: str, about: list[str], kind: str = "lead", agent_name: str = 
         return {"error": f"refused: {e}"}
     except ValueError as e:
         return {"error": f"invalid arguments: {e}"}
-    return {**out, "via": "W-NOTE-1 (atomic: components exist, reply target exists, quota on the engine clock)",
+    return {**out, "via": "W-NOTE-1 (atomic: the about ids exist, reply target exists, quota on the engine clock)",
             "note": "a lead for other agents; never evidence for the gate"}
 
 

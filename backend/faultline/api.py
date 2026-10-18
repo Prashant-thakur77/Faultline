@@ -375,7 +375,8 @@ def _run_job(job: str, sid: str, llm: str, ledger_id: str | None = None, token_s
         res = anyio.run(lambda: run_incident(tenant=p.tenant, incident_id=p.incident_id, onset_ms=p.onset_ms,
                                              symptoms=p.symptoms, investigator=inv, graph=p.graph, run_id=p.run_id,
                                              window_min=p.scenario.get("window_min"),
-                                             oncall_home=oncall.home_graph(p.tenant), oncall_external=trusted))
+                                             oncall_home=oncall.home_graph(p.tenant), oncall_external=trusted,
+                                             share_notes=True))
         writes.index_run(audit, run=p.run_id, inc=p.incident_id, graph=p.graph, scenario=sid, tenant=p.tenant,
                          investigator=inv.name, outcome=res.outcome, cause=res.cause_id)
         state = "settled" if not res.error else "failed"
@@ -1364,8 +1365,11 @@ def _act_job(c, loc: dict, aid: str) -> None:
 
             done = act._action(c, aid)
             target = (c.ro().run("Q-CHANGE-1", {"id": cause}).rows or [{}])[0].get("target")
-            left = agent_notes.leave_verdict(
-                c.tenant, principal=f"faultline:{c.run}", about=[target, *list(w.get("symptom") or [])],
+            principal = f"faultline:{c.run}"   # the investigation's own author: the fix answers its verdict note
+            parent = agent_notes.last_note(c.tenant, principal) or ""
+            left = agent_notes.leave_note(
+                c.tenant, principal=principal, about=[target, *list(w.get("symptom") or [])], kind="observation",
+                reply_to=parent, stance="confirms",
                 text=f"{cause} caused {c.inc}; fixed by {done['option']} ({done.get('external_ref') or 'no ref'}), "
                      f"verified {v['verdict']} on a second channel; write-back re-read {wb['verified']}.")
             shift.note(f"left note {left['id']} for other agents about {', '.join(left['about'])}")
@@ -3124,7 +3128,8 @@ def _alert_job(job: str, t: str, alerts: list[dict], token_sha: str) -> None:
             res = anyio.run(lambda grp=grp: run_incident(tenant=t, incident_id=grp.incident_id,
                                                          onset_ms=grp.onset_ms or first, symptoms=grp.symptoms,
                                                          investigator=inv, graph=graph, run_id=grp.run_id,
-                                                         oncall_home=oncall.home_graph(t), oncall_external=True))
+                                                         oncall_home=oncall.home_graph(t), oncall_external=True,
+                                                         share_notes=True))
             writes.index_run(audit, run=grp.run_id, inc=grp.incident_id, graph=graph, scenario="", tenant=t,
                              investigator=inv.name, outcome=res.outcome, cause=res.cause_id)
             e.update(outcome=res.outcome, cause=res.cause_id, error=res.error)

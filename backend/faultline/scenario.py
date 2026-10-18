@@ -479,9 +479,9 @@ def embed_incident(g, inc: str, text: str, symptoms: list[str]) -> None:
 
 
 async def run(sid: str, investigator, tag: str | None = None, keep: bool = True, set_mode: bool = True,
-              graph: str | None = None, nomem: bool = False):
+              graph: str | None = None, nomem: bool = False, share_notes: bool = False):
     """One incident end to end. A scenario whose alerts INTAKE splits into several incidents needs run_all (this
-    refuses rather than silently investigating only the first)."""
+    refuses rather than silently investigating only the first). `share_notes` as in run_incident (off for evals)."""
     from .agent.loop import run_incident
 
     lease = _lease_for(sid, set_mode)
@@ -493,7 +493,7 @@ async def run(sid: str, investigator, tag: str | None = None, keep: bool = True,
             raise ValueError(f"{sid}: INTAKE opened {len(p.groups)} incidents; use scenario.run_all")
         res = await run_incident(tenant=p.tenant, incident_id=p.incident_id, onset_ms=p.onset_ms, symptoms=p.symptoms,
                                  investigator=investigator, graph=p.graph, run_id=p.run_id,
-                                 window_min=p.scenario.get("window_min"))
+                                 window_min=p.scenario.get("window_min"), share_notes=share_notes)
     finally:
         if lease is not None:
             lease.release()

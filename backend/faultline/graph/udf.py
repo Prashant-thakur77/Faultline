@@ -12,7 +12,8 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[3]
-# flex: FalkorDB's FLEX, vendored unmodified. faultline: ours, the in-engine scoring (impact, capImpact, round4).
+# flex: FalkorDB's FLEX, vendored unmodified. faultline: ours, the in-engine scoring (tierWeight, impact, capImpact,
+# noteScore, round4).
 UDF_LIBS = {
     "flex": ("deploy/udf/flex-1.0.1.js", "e7e833ba87f88c1e31913b58bb9bdeab231714f8af4b43b437d84277ee653ece"),
     "faultline": ("deploy/udf/faultline-1.0.0.js",

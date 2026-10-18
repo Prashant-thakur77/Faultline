@@ -5,7 +5,7 @@
 | stage | tools |
 |---|---|
 | INTAKE | `find_entities`, `service_context`, `group_alerts`, `context_pack` |
-| RECALL | `similar_incidents`, `incident_families`, `runbook_for`, `session_history` |
+| RECALL | `similar_incidents`, `incident_families`, `runbook_for`, `session_history`, `recall_notes` |
 | LOCALIZE | `find_entities`, `service_context`, `upstream_scope`, `column_lineage` |
 | BLAST | `blast_radius`, `chokepoints` |
 | HYPOTHESIZE | `upstream_suspects`, `window_changes`, `rank_causes`, `record_hypothesis` |

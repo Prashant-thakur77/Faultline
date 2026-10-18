@@ -1,5 +1,5 @@
 // id: Q-NOTE-REFUSED
-// purpose: why W-NOTE-1 wrote nothing, read-only on agentmem_<tenant>: which `about` ids are not components, whether the reply target exists, and how many notes the author wrote in the last 24 h (engine clock) against its quota
+// purpose: why W-NOTE-1 wrote nothing, read-only on agentmem_<tenant>: which `about` ids are not nodes of the graph, whether the reply target exists, and how many notes the author wrote in the last 24 h (engine clock) against its quota
 // home: agentmem
 // returns: single-row
 CALL {

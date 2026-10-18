@@ -512,7 +512,7 @@ def upsert_chunks(g: Graph, rows: list[dict[str, Any]], *, docs: list[str]) -> i
 
 # ------------------------------------------------------------------ shared agent notes (T2, agentmem_<tenant>)
 W_NOTE = (
-    # ONE query, so every condition and the write are atomic together: every `about` id is a component of the graph,
+    # ONE query, so every condition and the write are atomic together: every `about` id is a node of the graph,
     # the reply target exists, and the author is under its daily quota on the ENGINE clock (concurrent writers cannot
     # both take the last slot). A reply keeps the note it answers alive at least as long as itself.
     "OPTIONAL MATCH (p:Note {id: $reply_to}) "
@@ -536,7 +536,7 @@ W_NOTE = (
 def write_note(g: Graph, *, id: str, principal: str, name: str, session: str, kind: str, text: str, about: list[str],
                vec: list[float], ttl_ms: int, quota: int, reply_to: str = "", stance: str = "adds") -> dict | None:
     """W-NOTE-1 on agentmem_<tenant> (`g` is client.mem_graph: the mem_<tenant> ACL user, that key only). Returns the
-    written note's id, the author's count today and its times, or None when a condition refused it (unknown component,
+    written note's id, the author's count today and its times, or None when a condition refused it (an unknown id,
     unknown reply target, or the quota): the caller reads which one, read-only."""
     rows = g.query(W_NOTE, {"id": id, "principal": principal, "name": name, "session": session, "kind": kind,
                             "text": text, "about": sorted(set(about)), "vec": [float(v) for v in vec],
@@ -1708,7 +1708,7 @@ def write_back_not_applied(g: Graph, *, inc: str, aid: str, stage: str, owner: s
 
 
 # ---------------------------------------------------------------------------------------------
-# On-call (M19): pages, acks, escalation, standing contracts (Sleep Contracts, adapted from the author's Beacon project)
+# On-call (M19): pages, acks, escalation, standing contracts
 # and hand-offs. One atomic query each; every condition that makes a write safe (still unacked, still active, uses
 # below max, not expired) is checked inside the same query that writes. `$now` is the caller's wall clock (epoch ms):
 # the escalation tick and the contract checks compare against the same clock the page or grant was written with.
@@ -1996,7 +1996,7 @@ def grant_contract(g: Graph, *, cid: str, hash_: str, by: str, covers: str, now:
 
 
 W_CONTRACT_USE = (
-    # THE guarded use (Beacon's conditional update): active, same family + action + params, uses < max_uses, not
+    # THE guarded use (a conditional update): active, same family + action + params, uses < max_uses, not
     # expired, granted by a person still active; increments and records the use in the same query. The use is MERGEd by
     # its deterministic id (contract, graph, incident, action): a retry finds it and never counts it twice
     "MATCH (c:Contract {id: $id})-[:GRANTED_BY]->(p:Person) "

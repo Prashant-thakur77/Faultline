@@ -46,7 +46,7 @@ def test_a_note_is_recalled_by_meaning_and_by_graph_distance(acme):
               agent_name="claude-desktop")
     b = _note(acme, text=f"checkout 5xx line up with payment timeouts {tag}", about=["checkout"], kind="observation",
               agent_name="oncall-bot", reply_to=a["id"], stance="confirms")
-    near = T.recall_notes(focus_id="checkout")
+    near = T.recall_notes(text=f"payment timeouts after a config push {tag}", focus_id="checkout")  # both routes
     rows = {r["id"]: r for r in near["rows"]}
     assert near["template"] == "Q-NOTE-RECALL" and rows[b["id"]]["hops"] == 0 and rows[a["id"]]["hops"] == 1
     assert [r["score"] for r in near["rows"]] == sorted((r["score"] for r in near["rows"]), reverse=True)
@@ -66,7 +66,7 @@ def test_a_note_never_grounds_a_claim(acme):
 
 
 def test_refusals_come_from_the_graph(acme):
-    assert "not components" in T.remember(text="a note about nothing", about=["no-such-component"])["error"]
+    assert "not in this graph" in T.remember(text="a note about nothing", about=["no-such-component"])["error"]
     assert "to reply to" in T.remember(text="a reply to nothing", about=["payment"], reply_to="note-000000000000")["error"]
     assert T.remember(text="x", about=["payment"])["error"].startswith("invalid arguments")
     assert T.remember(text="a note", about=["payment"], kind="order")["error"].startswith("invalid arguments")

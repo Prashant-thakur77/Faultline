@@ -12,7 +12,8 @@ INTERNAL_TOOLS = {"rank_causes", "whatif", "futures", "who_fixes", "escalation_t
 PHASE_TOOLS: dict[Stage, list[str]] = {
     # group_alerts: which alerts are one incident (algo.WCC); run as code by agent/intake.py before an incident exists
     Stage.INTAKE: ["find_entities", "service_context", "group_alerts", "context_pack"],
-    Stage.RECALL: ["similar_incidents", "incident_families", "runbook_for", "session_history"],  # memory first
+    # memory first; recall_notes: what other agents left near the symptom (shared notes; leads, never evidence)
+    Stage.RECALL: ["similar_incidents", "incident_families", "runbook_for", "session_history", "recall_notes"],
     Stage.LOCALIZE: ["find_entities", "service_context", "upstream_scope", "column_lineage"],
     Stage.BLAST: ["blast_radius", "chokepoints"],
     Stage.HYPOTHESIZE: ["upstream_suspects", "window_changes", "rank_causes", "record_hypothesis"],

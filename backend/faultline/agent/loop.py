@@ -63,6 +63,7 @@ class RunResult:
     recall: dict | None = None
     inferred: dict | None = None
     residue: dict | None = None      # advisory residue check after a passed gate (never changes the outcome)
+    note: dict | None = None         # the shared note this run left for other agents (share_notes runs only)
     specialists: dict | None = None  # per-role contract summaries (the full contracts live on the run's Task nodes)
 
 
@@ -640,16 +641,48 @@ async def page_unrouted(box: ToolBox, run: RunState, symptoms: list[str], onset_
     return run.paged
 
 
+def _leave_run_note(tenant: str, run_id: str, result: RunResult, symptoms: list[str]) -> dict:
+    """The run's outcome as a shared note (T2) for the next agent: a verdict when the gate confirmed a cause, a
+    hand-off when it did not. About the proof chain's components and the symptoms that exist in the memory graph.
+    A failure to write is reported in the result, never a failed run (a note is advisory)."""
+    from ..memory import notes
+
+    chain = list((result.gate or {}).get("chain") or [])
+    if result.outcome == "CONFIRMED":
+        kind = "verdict"
+        text = (f"The gate confirmed {result.cause_id} as the cause of {', '.join(symptoms)} (proof path "
+                f"{' → '.join(chain)}); containment planned, a human approves the fix.")
+    elif result.outcome == "NOT_CONFIDENT":
+        kind = "handoff"
+        who = result.cause_id or (result.inferred or {}).get("id") or "a suspect"
+        text = (f"Not confident about {', '.join(symptoms)}: {who} was accepted without confidence; nothing is "
+                "blamed, a human decides.")
+    elif result.outcome == "UNKNOWN_ESCALATED":
+        kind = "handoff"
+        text = f"No cause of {', '.join(symptoms)} passed the gate; escalated to a human."
+    else:
+        return {"skipped": result.outcome}
+    try:
+        out = notes.leave_note(tenant, principal=f"faultline:{run_id}", text=text, about=chain + list(symptoms),
+                               kind=kind)
+        return {"id": out["id"], "kind": kind, "about": out["about"]}
+    except Exception as e:  # noqa: BLE001
+        return {"error": f"{type(e).__name__}: {e}"[:300], "kind": kind}
+
+
 # ---------------------------------------------------------------------------------------------
 # orchestration
 # ---------------------------------------------------------------------------------------------
 async def run_incident(*, tenant: str, incident_id: str, onset_ms: int, symptoms: list[str],
                        investigator: Investigator, graph: str | None = None, run_id: str | None = None,
                        window_min: int | None = None, oncall_home: str | None = None,
-                       oncall_external: bool = False) -> RunResult:
+                       oncall_external: bool = False, share_notes: bool = False) -> RunResult:
     """`oncall_home`: page humans and honour standing contracts from that graph (the on-call graph for API runs);
     None keeps paging off. `oncall_external`: a trusted run (keyed, or off the public demo): its pages may go to
-    external channels and a contract may act; otherwise in-app pages only and no contract."""
+    external channels and a contract may act; otherwise in-app pages only and no contract. `share_notes` (API runs;
+    off in every eval arm, so their tool counts stay as pre-registered): read the shared notes other agents left near
+    the symptom at RECALL (leads shown to people, never gate input) and leave this run's verdict or hand-off as a
+    note at the end (agentmem_<tenant>)."""
     graph = graph or tenant_graph(tenant)
     run_id = run_id or f"run-{uuid.uuid4().hex[:10]}"
     t0 = time.perf_counter()
@@ -684,6 +717,13 @@ async def run_incident(*, tenant: str, incident_id: str, onset_ms: int, symptoms
                              "prior": dict(sorted(prior_of_target.items()))}
             shift.note(f"{len(precedents)} precedent(s), {len(runbooks)} runbook(s) recalled"
                        + (f"; prior on {', '.join(sorted(prior_of_target))}" if prior_of_target else ""))
+            if share_notes and symptoms:  # T2: leads other agents left near the symptom; shown, never read by the gate
+                led = await box.call("recall_notes", {"focus_id": symptoms[0]})
+                result.recall["leads"] = [{k: x.get(k) for k in ("id", "agent", "name", "kind", "text", "about", "hops")}
+                                          for x in (led.get("rows") or [])[:5]]
+                if led.get("error"):
+                    result.recall["leads_error"] = led["error"]
+                shift.note(f"{len(result.recall['leads'])} lead(s) other agents left near {symptoms[0]} (never evidence)")
             # LOCALIZE: what the symptoms are, their upstream scope and context
             box.stage = Stage.LOCALIZE
             run.stage(Stage.LOCALIZE)
@@ -793,6 +833,10 @@ async def run_incident(*, tenant: str, incident_id: str, onset_ms: int, symptoms
                     result.outcome = "UNKNOWN_ESCALATED"
                     await page_unrouted(box, run, symptoms, onset_ms, "No cause was accepted by the gate: escalated to a "
                                                                       "human.")
+        if share_notes:
+            result.note = _leave_run_note(tenant, run_id, result, symptoms)
+            if result.note.get("id"):
+                shift.note(f"left note {result.note['id']} for other agents ({result.note['kind']})")
         shift.end()
     except Exception as e:  # fail loudly, record the failure in the graph
         if result_shift is not None:

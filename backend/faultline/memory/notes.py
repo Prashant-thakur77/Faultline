@@ -32,7 +32,7 @@ _lock = threading.Lock()
 
 
 class NoteRefused(ValueError):
-    """The graph refused the note (unknown component, unknown reply target or quota); the message says which."""
+    """The graph refused the note (an `about` id not in the graph, unknown reply target or quota); the message says which."""
 
     def __init__(self, msg: str, unknown: list[str] | None = None):
         super().__init__(msg)
@@ -72,7 +72,7 @@ def remember(tenant: str, *, principal: str, text: str, about: list[str], kind: 
         raise ValueError(f"text must be 3..{w['max_chars']} characters")
     ids = sorted({str(i) for i in about})
     if not 1 <= len(ids) <= int(w["max_about"]):
-        raise ValueError(f"about must name 1..{w['max_about']} component ids")
+        raise ValueError(f"about must name 1..{w['max_about']} node ids")
     if kind not in KINDS:
         raise ValueError(f"kind must be one of {', '.join(KINDS)}")
     if stance not in STANCES:
@@ -87,7 +87,7 @@ def remember(tenant: str, *, principal: str, text: str, about: list[str], kind: 
         why = RO(t, memory_graph(t)).run("Q-NOTE-REFUSED", {"about": ids, "reply_to": reply_to, "principal": principal})
         r = why.rows[0] if why.rows else {}
         if r.get("unknown_about"):
-            raise NoteRefused(f"not components of this graph: {', '.join(r['unknown_about'])}", r["unknown_about"])
+            raise NoteRefused(f"not in this graph: {', '.join(r['unknown_about'])}", r["unknown_about"])
         if not r.get("reply_ok", True):
             raise NoteRefused(f"no note {reply_to!r} to reply to")
         raise NoteRefused(f"daily note quota reached ({r.get('used')}/{w['quota_per_day']} in the last 24 h)")
@@ -95,17 +95,29 @@ def remember(tenant: str, *, principal: str, text: str, about: list[str], kind: 
             **({"reply_to": reply_to, "stance": stance} if reply_to else {})}
 
 
-def leave_verdict(tenant: str, *, principal: str, text: str, about: list[str]) -> dict[str, Any]:
-    """Faultline's own note after a verified fix, for the next agent: about the components that exist in the memory
-    graph (a scenario-only id is dropped and the write retried once; nothing left → nothing written)."""
+def last_note(tenant: str, principal: str) -> str | None:
+    """The newest note `principal` wrote (Q-NOTE-LAST), so a later step of the same run can reply to it."""
+    t = check_tenant(tenant)
+    ensure_memory_graph(t)
+    rows = RO(t, memory_graph(t)).run("Q-NOTE-LAST", {"principal": principal}).rows
+    return rows[0]["id"] if rows else None
+
+
+def leave_note(tenant: str, *, principal: str, text: str, about: list[str], kind: str, reply_to: str = "",
+               stance: str = "adds") -> dict[str, Any]:
+    """Faultline's own note for the next agent (an investigation's verdict or hand-off, a verified fix), about the ids
+    that exist in the memory graph: a scenario-only id (a change made inside a clean room) is dropped and the write
+    retried once; nothing left raises NoteRefused."""
     ids = sorted({i for i in about if i})
     try:
-        return remember(tenant, principal=principal, name="faultline", text=text, about=ids, kind="verdict")
+        return remember(tenant, principal=principal, name="faultline", text=text, about=ids, kind=kind,
+                        reply_to=reply_to, stance=stance)
     except NoteRefused as e:
         rest = [i for i in ids if i not in set(e.unknown)]
         if not e.unknown or not rest:
             raise
-        return remember(tenant, principal=principal, name="faultline", text=text, about=rest, kind="verdict")
+        return remember(tenant, principal=principal, name="faultline", text=text, about=rest, kind=kind,
+                        reply_to=reply_to, stance=stance)
 
 
 def recall(tenant: str, *, text: str = "", focus: str = "") -> QueryResult:
@@ -123,4 +135,4 @@ def recall(tenant: str, *, text: str = "", focus: str = "") -> QueryResult:
         "w": [float(w["w_meaning"]), float(w["w_near"]), float(w["w_fresh"]), float(w["fresh_tau_min"])]})
 
 
-__all__ = ["KINDS", "STANCES", "NoteRefused", "ensure_memory_graph", "leave_verdict", "recall", "remember"]
+__all__ = ["KINDS", "STANCES", "NoteRefused", "ensure_memory_graph", "last_note", "leave_note", "recall", "remember"]

@@ -83,8 +83,12 @@ def test_globex_routes_with_the_same_exemplars():
 def test_off_topic_questions_are_refused_with_nothing_cited(room, q):
     a = A.ask(q, "acme", graph=room)
     assert a.intent == "none" and a.answer.startswith(A.REFUSAL), a.answer
-    assert a.citations == [] and a.guard["ok"] and a.tier == 1
-    assert [s["tool"] for s in a.steps] == [A.ROUTE_TOOL]
+    assert a.citations == [] and a.guard["ok"]
+    # a request to act or small talk is refused at once; a weak match first asks the documents (one read-only query,
+    # Q-KNOW-1), which must agree by words AND meaning before the brain answers from them: here they do not
+    searched = not a.route["best"]["refuse"]
+    assert [s["tool"] for s in a.steps] == [A.ROUTE_TOOL] + (["search_knowledge"] if searched else [])
+    assert a.tier == (2 if searched else 1)
     assert a.route["stage"] == "graph" and a.route["routed"] is None and a.route["best"]["intent"]
 
 
