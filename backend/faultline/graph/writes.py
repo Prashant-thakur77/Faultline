@@ -556,7 +556,10 @@ W_HYPOTHESIS = (
     "MATCH (i:Incident {id: $inc}) MATCH (c:Node {id: $cause}) "
     "MERGE (h:Hypothesis:Node {id: $hid}) "
     "ON CREATE SET h.incident_id = $inc, h.cause_id = $cause, h.created_at = timestamp(), h.origin = $origin "
-    "SET h.status = $status, h.score = coalesce($score, h.score, 0.0), h.reason = $reason, h.updated_at = timestamp() "
+    # status_by: who set the CURRENT status (origin is only who created it): G6 counts an elimination only when the
+    # graph (the sweep or the gate) made it, never when an investigator did
+    "SET h.status = $status, h.status_by = $origin, h.score = coalesce($score, h.score, 0.0), h.reason = $reason, "
+    "h.updated_at = timestamp() "
     "MERGE (i)-[:HYPOTHESIZES {k: ''}]->(h) MERGE (h)-[:BLAMES {k: ''}]->(c) "
     "WITH h UNWIND (CASE WHEN size($supports) = 0 THEN [null] ELSE $supports END) AS sid "
     "OPTIONAL MATCH (e:Evidence {id: sid}) "

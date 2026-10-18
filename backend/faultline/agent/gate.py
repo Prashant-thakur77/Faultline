@@ -488,7 +488,7 @@ class Gate:
             # G6 competitors. Only the graph eliminates: an elimination asserted by an investigator (a model) instead
             # of by the sweep or the gate does not count, so whatever a model proposes cannot move G6
             open_ = sorted(h["cause"] for h in hyps if h["cause"] != cause_id and (
-                h["status"] == "open" or (h["status"] == "eliminated" and h.get("origin") == "investigator")))
+                h["status"] == "open" or (h["status"] == "eliminated" and h.get("status_by") == "investigator")))
             unresolved = sorted(h["cause"] for h in hyps if h["cause"] != cause_id and h["status"] == "unresolved")
             checks.append(Check("G6 competitors", not open_,
                                 f"open competitors must be eliminated or unresolved: {open_}" if open_
