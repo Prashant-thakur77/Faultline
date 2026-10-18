@@ -1,5 +1,5 @@
 // id: Q-LEARN-SUGGEST
-// purpose: contract suggestions (M21): for one family, every exact fix (action kind + params hash) a trusted person approved that was then verified APPLIED, on how many distinct incidents, when last and by whom; only those reaching $k (weights.yaml learn.contract_suggest_k). The plan then offers the M19 two-step grant; it never grants
+// purpose: contract suggestions: for one family, every exact fix (action kind + params hash) a trusted person approved that was then verified APPLIED, on how many distinct incidents, when last and by whom; only those reaching $k (weights.yaml learn.contract_suggest_k). The plan then offers the two-step standing-contract grant; it never grants
 // home: oncall
 // seen: events, incidents
 // (one LIST grouping key: on 6.0.2 a single-node MATCH grouped by two properties returns the first aggregate in every

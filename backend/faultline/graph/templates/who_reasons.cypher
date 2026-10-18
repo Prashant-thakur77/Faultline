@@ -1,5 +1,5 @@
 // id: Q-ORG-WHO
-// purpose: who_fixes people and the reasons for each, computed in Cypher (M14 #6): every active recent author (commits on the component's files since $since), past resolver (an incident that affected it), on-call person of the owner team at $now and active owner-team member, with how many recent commits they made on it, which of its incidents they resolved (sorted), whether they are on call and whether they are an owner-team member; name, teams and the owner team for display. The caller only formats the reasons
+// purpose: who_fixes people and the reasons for each, computed in Cypher: every active recent author (commits on the component's files since $since), past resolver (an incident that affected it), on-call person of the owner team at $now and active owner-team member, with how many recent commits they made on it, which of its incidents they resolved (sorted), whether they are on call and whether they are an owner-team member; name, teams and the owner team for display. The caller only formats the reasons
 // seen: person
 // (no top-level OPTIONAL MATCH: on 6.0.2 a CALL subquery after one misplaces its WHERE filter on a node it binds and
 //  returns nothing, docs/upstream/17; the owner team is read in its own subquery instead)

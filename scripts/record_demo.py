@@ -1,6 +1,6 @@
 """Record demo runs THROUGH THE API (keyless, simulated GitHub) and export everything the incident room reads, for
 the static replay: examples/<name>/{incident,plan,blast,graph}.json + the graph exports (events, gate runs, tool
-calls, hypotheses, report) + the §8.3 artefacts (transcript.jsonl, verify.txt, pr.md, cost.json; scripts/
+calls, hypotheses, report) + the run artefacts (transcript.jsonl, verify.txt, pr.md, cost.json; scripts/
 run_artefacts.py). The graph is the record; these are exports of it.
 
     PYTHONPATH=backend uv run python scripts/record_demo.py                 # s1-hero (approved → RESOLVED), s2-data-incident
@@ -231,7 +231,7 @@ def main() -> int:
         if "s1" in which:
             print(record(c, "S1", "s1-hero", "flip_flag"))
         # each recording starts from a fresh simulated GitHub: S1's approved flag must not leak into S2's plan as
-        # "already off at main (drift)" (prejudge 2026-10-13)
+        # "already off at main (drift)"
         if "s2" in which:
             gh.reset_sim()
             print(record(c, "S2", "s2-data-incident", None))

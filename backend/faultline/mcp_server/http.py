@@ -102,7 +102,7 @@ class RateLimit:
 
 def transport_security(public_url: str):
     """DNS-rebinding protection that admits the public host Caddy forwards (Host: <domain>) plus loopback. The SDK's
-    default only admits localhost, so behind a reverse proxy every request got 421 (review round 4, B1)."""
+    default only admits localhost, so behind a reverse proxy every request got 421."""
     from urllib.parse import urlparse
 
     from mcp.server.transport_security import TransportSecuritySettings

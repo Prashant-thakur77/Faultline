@@ -586,8 +586,8 @@ W_EDGE_PROPOSAL = (
 )
 
 # one query: the proposal must still be 'proposed' with the same plan hash, its fix still verified APPLIED, the
-# approver an active person, and the graph must still have no path from src to dst (re-checked at write time,
-# prejudge 2026-10-13); the edge pair is written and the proposal marked approved together. Otherwise nothing.
+# approver an active person, and the graph must still have no path from src to dst (re-checked at write time);
+# the edge pair is written and the proposal marked approved together. Otherwise nothing.
 W_EDGE_APPROVE = (
     "MATCH (p:EdgeProposal {id: $pid}) WHERE p.status = 'proposed' AND p.plan_hash = $hash "
     "MATCH (x:Action) WHERE x.id = p.action_id AND x.verdict = 'APPLIED' "
@@ -1059,7 +1059,7 @@ def record_verdict(g: Graph, *, aid: str, verdict: str, why: str, channels: dict
                                "by another writer")
 
 
-# Intent leases (review round 4, M5; round 5: engine clock, boot epochs): the execute job leases its intent at approval
+# Intent leases (on the engine clock, with process boot epochs): the execute job leases its intent at approval
 # and renews it at every step; the reconciler claims an intent (atomically) before it settles it. Every time comparison
 # runs on the ENGINE clock (timestamp(), the clock that wrote created_at and lease_until), never on a caller's clock.
 # A lease also names the process boot that holds it (lease_boot): a boot with no recent heartbeat in the audit graph
@@ -1079,7 +1079,7 @@ W_INTENT_RELEASE = (
     "MATCH (a:Action {id: $aid}) MATCH (it:Intent) WHERE it.idem = a.idem AND it.lease_by = $owner "
     "SET it.lease_until = 0 RETURN it.idem"
 )
-# A failure BEFORE anything outside the graph was touched (review round 5, minor 3): the intent becomes FAILED and the
+# A failure BEFORE anything outside the graph was touched: the intent becomes FAILED and the
 # incident's stage moves in the SAME query, so a reconciler can never resurrect the incident from a PENDING intent.
 W_INTENT_FAIL_UNTOUCHED = (
     "MATCH (i:Incident {id: $inc})-[:HAS_PLAN]->(a:Action {id: $aid}) MATCH (run:Run {id: $run}) "
@@ -1145,7 +1145,7 @@ def boot_prune(g: Graph, *, keep_ms: int) -> None:
     g.query(W_BOOT_PRUNE, {"keep_ms": int(keep_ms)}, timeout=WRITE_TIMEOUT_MS)
 
 
-# Content epoch (review round 5, minor 5): re-arm and an operator's forget stamp the tenant graph; brain scratch copies
+# Content epoch: re-arm and an operator's forget stamp the tenant graph; brain scratch copies
 # inherit the stamp and are stale once it differs. A scratch copy is also stamped with its birth (engine clock).
 W_META_EPOCH = "MATCH (m:Meta) SET m.epoch = $epoch RETURN m.epoch"
 W_META_SCRATCH_BORN = "MATCH (m:Meta) SET m.scratch_born = timestamp() RETURN m.scratch_born"

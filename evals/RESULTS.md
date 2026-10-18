@@ -34,7 +34,7 @@ False blame is measured on the scenarios with a true cause only (the controls an
 | S1b | 0.0 | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 | 0.0 | 1.0 | 1.0 | 1.0 |
 | S3b | 0.0 | 0.0 | 1.0 | 1.0 | 1.0 | 1.0 | 0.0 | 0.6667 | 0.6667 | 1.0 |
 
-## Per distinct scenario, with 95 % intervals (M18 audit)
+## Per distinct scenario, with 95 % intervals (numbers audit)
 
 Each scenario counts once (its identical trials are one case). Strict: a tie between changes is never a correct verdict (arms N and T break ties alphabetically in the trial field above, which credited T with S2 where both changes measure 0.0). Wrong blame: any blame of a change that is not the cause, on any of the 8 scenarios, controls included (the false-blame column above counts only the 5 with a cause).
 
@@ -305,7 +305,7 @@ Incident 1 paged 5 people (the failing component's owner on-call and the on-call
 
 This is run 5 (every run is kept in evals/results/oncall_night.json). The first passed 13 of 14 steps (its one failure a harness set-up check); the second passed every step before approval was made to count as the acknowledgement; the third passed every step but read the night's numbers from every graph of the tenant; the fourth read them from the night's own graphs; this one runs on the product after the security review's fixes (PREREGISTRATION amendments 1–4, 2026-10-17). No contract fired in a negative case in any run: True.
 
-## Learning from the people who use it (M21, evals/learning_night.py)
+## Learning from the people who use it (evals/learning_night.py)
 
 The real API in-process, the keyless investigator, clean rooms, off the public demo (trusted runs); what is learned lives in a fresh copy of golden_acme per phase. Pre-registered steps passed: 13 of 13.
 
@@ -374,7 +374,7 @@ Paired: both right 28, brain only 5, SDK only 0, neither 0 (exact McNemar p 0.06
 By question kind (brain / SDK of n): asof 1/1 of 1; blast 7/7 of 7; context 5/4 of 5; decision 5/5 of 5; gaps 1/1 of 1; history 1/1 of 1; knowledge 1/0 of 1; obligations 2/1 of 2; owner_then 3/2 of 3; people 7/6 of 7.
 
 
-## Tenant density, isolation and concurrent investigators (evals/tenants_bench.py, M20)
+## Tenant density, isolation and concurrent investigators (evals/tenants_bench.py)
 
 One pinned engine (maxmemory <!-- claim:tenants.maxmemory_mb -->3500.0<!-- /claim --> MB, THREAD_COUNT <!-- claim:tenants.threads -->20<!-- /claim -->, MAX_QUEUED_QUERIES <!-- claim:tenants.max_queued -->50<!-- /claim -->), shared with the product's own graphs; clients on the same <!-- claim:tenants.cpus -->20<!-- /claim -->-core laptop. MB per tenant is the settled growth of the engine's used_memory (GRAPH.MEMORY USAGE, shown for the source graph, rounds to whole MB and leaves out most index memory).
 
@@ -394,7 +394,7 @@ One pinned engine (maxmemory <!-- claim:tenants.maxmemory_mb -->3500.0<!-- /clai
 
 A gate step is Q-GATE-1 (algo.SPpaths), Q-GATE-3 (algo.maxFlow) and Q-BLAST-1 (algo.BFS) on a random tenant, through the product's RO wrapper as that tenant's ACL user; latency is the client's wall time per read (network, queueing, engine and the wrapper's parsing).
 
-## All 10 algo.* procedures at 10k services, against NetworkX (evals/algo10k.py, M20)
+## All 10 algo.* procedures at 10k services, against NetworkX (evals/algo10k.py)
 
 Graph: the <!-- claim:algo10k.services -->10000<!-- /claim -->-service scale world (<!-- claim:algo10k.nodes -->296261<!-- /claim --> nodes, <!-- claim:algo10k.edges -->1097675<!-- /claim --> edges). FalkorDB: <!-- claim:algo10k.runs -->20<!-- /claim --> runs per workload through GRAPH.RO_QUERY on the product graph and on a projection holding exactly the extracted input. NetworkX <!-- claim:algo10k.networkx -->3.7<!-- /claim --> (an eval-only comparator, never in the product) on that same input. Same answers by the pre-registered criterion; × = NetworkX p50 / FalkorDB wall p50 (the client-observed time, network and result parsing included).
 
@@ -503,7 +503,7 @@ Source: evals/results/scale.json (make scale, newer than the run's copy). Each s
 
 "(trunc.)" = the RO wrapper saw LIMIT n+1 rows for at least one instance. Growth shapes compare engine-ms p50 between consecutive sizes (exponent of the time ratio over the size ratio; above 1.3 is called superlinear).
 
-### The gate path's tail at each size (M20; nearest-rank over the tail runs, engine-reported ms)
+### The gate path's tail at each size (nearest-rank over the tail runs, engine-reported ms)
 
 | size | services | bytes per node-or-edge (GRAPH.MEMORY USAGE / used_memory growth) | Q-GATE-1 p50 / p95 / p99 | Q-GATE-3 p50 / p95 / p99 | Q-BLAST-1 p50 / p95 / p99 |
 |---|---|---|---|---|---|
@@ -788,29 +788,29 @@ Each safety invariant was broken in a scratch copy of the package; 41/41 mutants
 | M-GUARD | guarded text2cypher rejects write keywords | KILLED | tests/mcpserver/test_guard_blocks_writes.py |
 | M-CITE | the brain's citation guard refuses ids no tool call of the question returned | KILLED | tests/brain/test_citation_guard.py |
 | M-TENANT | tenant names are validated (no cross-tenant or injected graph names) | KILLED | tests/graph/test_tenant_names.py, tests/isolation |
-| M-G7CORR | G7: a code/data specialist naming another change than the cause downgrades confidence (§6.4) | KILLED | tests/agent/test_gate_decide.py |
-| M-STAGE-TOOLS | a tool outside the stage whitelist is refused, logged and recorded (§6.2) | KILLED | tests/agent/test_toolbox_whitelist.py |
-| M-SPEC-CLAIM | two dispatches of the same specialist work item never both run it (W-CLAIM-1, §6.13): every caller wins the claim (claim_epoch returns an epoch to everyone) | KILLED | test_two_dispatches_of_the_same_work_item_never_both_run_it |
+| M-G7CORR | G7: a code/data specialist naming another change than the cause downgrades confidence | KILLED | tests/agent/test_gate_decide.py |
+| M-STAGE-TOOLS | a tool outside the stage whitelist is refused, logged and recorded | KILLED | tests/agent/test_toolbox_whitelist.py |
+| M-SPEC-CLAIM | two dispatches of the same specialist work item never both run it (W-CLAIM-1): every caller wins the claim (claim_epoch returns an epoch to everyone) | KILLED | test_two_dispatches_of_the_same_work_item_never_both_run_it |
 | M-STORM-MERGE | alert grouping links two alerts only over edges that can carry an alert-worthy rise (a grouping that joins every edge in the region merges unrelated faults into one incident) | KILLED | test_s14_two_groups_and_each_gate_decides_its_own_cause |
 | M-STORM-OPEN | only OPEN incidents absorb new alerts (a resolved incident's origin never attaches one) | KILLED | test_a_resolved_incident_never_absorbs_a_new_alert |
 | M-PRIMARY-CARRY | a target is a consequence of another alert only when a failure can cross the edges between them (Q-PRIMARY-1 uses the grouping's carry rule) | KILLED | test_ungrouped_storm_is_escalated_not_blamed_on_one_change |
 | M-VERIFY-ALLOW | verification allows the share of a symptom another OPEN incident still owns (without it, S14's real payment fix reads NOT_APPLIED because the concurrent fraud fault still leaks into checkout) | KILLED | test_the_real_fix_is_applied_once_the_other_incidents_share_is_allowed |
 | M-VERIFY-OWN | the allowance never covers this incident's own fault (counting its own confirmed origin turns a fix that does not contain it into APPLIED) | KILLED | test_a_failed_fix_stays_not_applied_while_another_incident_is_open |
 | M-VERIFY-MAXFLOW | the allowance is an upper bound under the telemetry model: the other origin's path transfer over uncut edges (sum of cap products), never the bottleneck max flow over the full topology (which over-states a multi-hop leak and lets a partial fix hide its own residual inside the allowance) | KILLED | test_a_partial_fix_that_leaves_our_own_leak_stays_not_applied |
-| M-VERDICT-UNCOND | a verdict is written only while its intent is PENDING and leased to the writer (review round 4, M5): an unconditional verdict lets a late reconciler or a stalled execute job overwrite the settled outcome | KILLED | test_the_job_settles_first_and_the_reconciler_writes_nothing, test_a_takeover_between_execute_and_verify_stops_the_job |
-| M-REPAIR-FIXTURE | a data repair is executed and verified on its incident's own warehouse fixture (review round 5, M2): without re-establishing the recorded mode and sources digest, a healthy-mode run in between makes a patch that fixes nothing verify APPLIED | KILLED | test_an_unrelated_patch_never_verifies_applied_after_a_healthy_switch, test_sources_that_cannot_be_reestablished_make_the_verdict_unknown |
-| M-SQL-ACCEPT | an LLM-authored transform must be one plain CTAS of its own target (review round 5, M4): a validator that accepts anything lets `COPY … TO` write files from the build | KILLED | test_the_validator_refuses_anything_but_one_plain_ctas[copy-to] |
-| M-SESS-PREFIX | brain session ids are server-issued (sess-…) and never take another node's id (review round 4, M1): unprefixed client sessions make a second node with a component's id | KILLED | test_a_session_can_never_take_a_component_id |
-| M-FUTURE-BRANCH | each containment candidate's future is read on its own GRAPH.COPY branch with ITS cut edges removed (M14 #1): a branch that keeps them predicts every flag fails, and the plan buries the working lever | KILLED | test_each_candidate_has_its_own_predicted_future |
+| M-VERDICT-UNCOND | a verdict is written only while its intent is PENDING and leased to the writer: an unconditional verdict lets a late reconciler or a stalled execute job overwrite the settled outcome | KILLED | test_the_job_settles_first_and_the_reconciler_writes_nothing, test_a_takeover_between_execute_and_verify_stops_the_job |
+| M-REPAIR-FIXTURE | a data repair is executed and verified on its incident's own warehouse fixture: without re-establishing the recorded mode and sources digest, a healthy-mode run in between makes a patch that fixes nothing verify APPLIED | KILLED | test_an_unrelated_patch_never_verifies_applied_after_a_healthy_switch, test_sources_that_cannot_be_reestablished_make_the_verdict_unknown |
+| M-SQL-ACCEPT | an LLM-authored transform must be one plain CTAS of its own target: a validator that accepts anything lets `COPY … TO` write files from the build | KILLED | test_the_validator_refuses_anything_but_one_plain_ctas[copy-to] |
+| M-SESS-PREFIX | brain session ids are server-issued (sess-…) and never take another node's id: unprefixed client sessions make a second node with a component's id | KILLED | test_a_session_can_never_take_a_component_id |
+| M-FUTURE-BRANCH | each containment candidate's future is read on its own GRAPH.COPY branch with ITS cut edges removed: a branch that keeps them predicts every flag fails, and the plan buries the working lever | KILLED | test_each_candidate_has_its_own_predicted_future |
 | M-FUTURE-CLASS | learned ordering never lifts an option the futures predict will not contain above one they predict will (history reorders within a predicted-future class only) | KILLED | test_history_never_lifts_an_option_across_a_predicted_future_class |
 | M-G4-UPSTREAM | a suspect whose whole anomaly an earlier upstream fault accounts for (strict lower bound) is not the origin (deep bench: without the G4 rules a look-alike downstream of an unchanged break was confirmed in 16 of 20 worlds) | KILLED | tests/live/test_gate_upstream.py |
 | M-G4-UPSTREAM-SLACK | elimination takes no slack: a surplus at the suspect may be its own fault (adversarial review: two causes in a chain) | KILLED | tests/live/test_gate_upstream.py |
 | M-N0-UNMEASURED | the negative proof requires every alerting symptom to be measured (N0, found by the robustness eval: deleted telemetry was read as 'no incident') | KILLED | tests/live/test_negative_proof_missing.py |
 | M-WORLD-SEED | verification's post-action telemetry keeps the world's base error rates (found by the futures eval: re-drawing them from the noise seed read a contained fault as not contained) | KILLED | test_verification_records_whether_the_prediction_came_true |
-| M-WHO-PAGES | who_fixes reads every page of its projection (M14 #6): stopping after the first silently drops the pairs of a busy component, the LIMIT-100 truncation the Cypher move fixed | KILLED | test_pairs_are_paged_disjoint_and_complete_on_the_busiest_component |
-| M-OVERRIDE-ANY | only an INTENTIONAL reviewer answer takes a decision out of G8 for that change (M15 #3): honouring any answer would let "accidental" or "discuss" silently waive a violation | KILLED | test_accidental_keeps_the_violation_and_names_the_answer |
-| M-LEARN-UNVERIFIED | the graph learns a failure link only from a fix VERIFIED APPLIED (M15 #4): learning from an unverified or failed rollback turns a wrong human guess into a wrong edge | KILLED | test_a_wrong_human_guess_verifies_not_applied_and_teaches_nothing |
-| M-EDGE-APPROVE-RECHECK | approving a learned link re-checks, in the write itself, that its fix is still APPLIED, the approver is an active person and the graph still has no path (prejudge 2026-10-13) | KILLED | test_approval_re_checks_at_write_time |
+| M-WHO-PAGES | who_fixes reads every page of its projection: stopping after the first silently drops the pairs of a busy component, the LIMIT-100 truncation the Cypher move fixed | KILLED | test_pairs_are_paged_disjoint_and_complete_on_the_busiest_component |
+| M-OVERRIDE-ANY | only an INTENTIONAL reviewer answer takes a decision out of G8 for that change: honouring any answer would let "accidental" or "discuss" silently waive a violation | KILLED | test_accidental_keeps_the_violation_and_names_the_answer |
+| M-LEARN-UNVERIFIED | the graph learns a failure link only from a fix VERIFIED APPLIED: learning from an unverified or failed rollback turns a wrong human guess into a wrong edge | KILLED | test_a_wrong_human_guess_verifies_not_applied_and_teaches_nothing |
+| M-EDGE-APPROVE-RECHECK | approving a learned link re-checks, in the write itself, that its fix is still APPLIED, the approver is an active person and the graph still has no path | KILLED | test_approval_re_checks_at_write_time |
 
 ## Query cost (GRAPH.PROFILE, engine ms, nearest-rank p50 / p95 of 20)
 

@@ -1,5 +1,5 @@
 // id: Q-PRE-FLOW
-// purpose: preflight v2 exposure (M15 #6, a pre-registered backtest variant): the most failure a PR's changed components can push into the revenue path and tier-1 nodes, algo.maxFlow over PROPAGATES_TO.cap. Read on the graph as of the merge (the backtest runs it on a GRAPH.COPY branch per topology epoch with the calls introduced later removed). No source or no target means no row
+// purpose: preflight v2 exposure (a pre-registered backtest variant): the most failure a PR's changed components can push into the revenue path and tier-1 nodes, algo.maxFlow over PROPAGATES_TO.cap. Read on the graph as of the merge (the backtest runs it on a GRAPH.COPY branch per topology epoch with the calls introduced later removed). No source or no target means no row
 // returns: single-row
 // seen: flow
 MATCH (pr:PR {id: $pr})-[:TOUCHES]->(:File)-[:PART_OF]->(s)

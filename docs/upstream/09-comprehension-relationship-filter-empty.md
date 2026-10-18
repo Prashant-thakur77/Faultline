@@ -1,5 +1,7 @@
 # Pattern comprehension with a relationship-property filter returns [] when another comprehension follows (6.0.2)
 
+**Status:** related to [FalkorDB#3004](https://github.com/FalkorDB/FalkorDB/issues/3004); comment prepared, not posted.
+
 ```
 MATCH (c:Node {id:$t})
 RETURN [(o:Person)-[oc:ON_CALL]->(:Team)-[:OWNS]->(c) WHERE oc.from <= $now AND $now < oc.to | o.id] AS oncall,

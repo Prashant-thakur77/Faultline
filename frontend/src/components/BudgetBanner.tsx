@@ -5,7 +5,7 @@ import { MonitorPlay, Wallet } from "lucide-react";
 import type { StatusResponse } from "@/lib/types";
 
 /**
- * §9.1.9 / §11.3: when this hour's live-LLM budget is spent (/api/status llm_budget.replay_only), say
+ * Budget banner: when this hour's live-LLM budget is spent (/api/status llm_budget.replay_only), say
  * so plainly. Live LLM runs are refused by the server until the hour rolls over; baseline runs (no LLM)
  * and the recorded replays still work. Never shown when the backend does not report a budget.
  */

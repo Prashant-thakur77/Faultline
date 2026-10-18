@@ -33,7 +33,7 @@ export interface StatusResponse {
   graph_disabled: boolean;
   models: { orchestrator: string; specialists: string };
   llm_configured: boolean;
-  /** Live-LLM spend in the last hour (audit graph); replay_only once over the hourly limit (§11.3). Absent on older backends. */
+  /** Live-LLM spend in the last hour (audit graph); replay_only once over the hourly limit. Absent on older backends. */
   llm_budget?: {
     usd_last_hour: number;
     runs_last_hour?: number;

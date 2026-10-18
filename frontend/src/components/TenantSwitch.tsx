@@ -80,7 +80,7 @@ export function TenantSwitch() {
  * "graph: tenant_globex · isolated". Isolation is structural: one graph per tenant, every API read
  * is bound to the selected tenant's graph (the RO wrapper refuses another tenant's graph), plus the
  * read-only ACL user when configured. The badge only says "isolated" when /api/status reports the
- * graph of the selected tenant; the last eval's S7 cross-tenant test counts are in its tooltip.
+ * graph of the selected tenant; the last eval's cross-tenant isolation test counts are in its tooltip.
  */
 export function IsolationBadge({ status }: { status: StatusResponse | null }) {
   const tenant = useTenant();
@@ -91,9 +91,9 @@ export function IsolationBadge({ status }: { status: StatusResponse | null }) {
   const run = evals.state === "ok" ? evals.summary.run : null;
   const s7 =
     passed !== null && failed !== null
-      ? `S7 cross-tenant isolation tests in the last eval (${run ?? "run unknown"}): ${passed} passed, ${failed} failed.`
+      ? `Cross-tenant isolation tests in the last eval (${run ?? "run unknown"}): ${passed} passed, ${failed} failed.`
       : evals.state === "error"
-        ? `S7 eval results unavailable (${evals.error}).`
+        ? `Cross-tenant isolation eval results unavailable (${evals.error}).`
         : "";
   if (!status) return <span className="font-mono text-zinc-100">graph: {want}</span>;
   if (status.graph !== want) {

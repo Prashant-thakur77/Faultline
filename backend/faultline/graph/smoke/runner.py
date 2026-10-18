@@ -839,7 +839,7 @@ class Smoke:
                     "GRAPH.CONSTRAINT CREATE g MANDATORY|UNIQUE NODE|RELATIONSHIP L PROPERTIES n p…; "
                     "CALL db.constraints() YIELD type, label, properties, entitytype, status (PENDING → OPERATIONAL)")
 
-        self.probe("25", "M20 MANDATORY/UNIQUE constraints on nodes and edges (+ GRAPH.COPY carries them)", True, run)
+        self.probe("25", "MANDATORY/UNIQUE constraints on nodes and edges (+ GRAPH.COPY carries them)", True, run)
 
     def p_vector_options_m20(self):
         def run():
@@ -866,7 +866,7 @@ class Smoke:
                     "CREATE VECTOR INDEX FOR (n:L) ON (n.p) OPTIONS {dimension, similarityFunction, M, efConstruction, "
                     "efRuntime}; DROP VECTOR INDEX FOR (n:L) ON (n.p); poll db.indexes() status until OPERATIONAL")
 
-        self.probe("26", "M20 vector index HNSW options (M, efConstruction, efRuntime) + DROP + async build", True, run)
+        self.probe("26", "vector index HNSW options (M, efConstruction, efRuntime) + DROP + async build", True, run)
 
     def p_aggregates_m20(self):
         def run():
@@ -885,7 +885,7 @@ class Smoke:
                         f"aggregates skip CASE nulls; over no rows avg={empty[0]} stDevP={empty[1]}",
                     "avg / stDevP / percentileCont(x, 0.95) over CASE WHEN … THEN x END (nulls skipped)")
 
-        self.probe("27", "M20 avg / stDevP / percentileCont (the gate band in the engine)", True, run)
+        self.probe("27", "avg / stDevP / percentileCont (the gate band in the engine)", True, run)
 
     def p_temporal_m20(self):
         def run():
@@ -902,7 +902,7 @@ class Smoke:
                     "localdatetime('1970-01-01T00:00:00') + duration({seconds: toInteger($ms / 1000) + offset_s}) then "
                     ".dayOfWeek (Sunday 0) / .weekDay (Sunday 7) / .hour / .minute; never {epochMillis} or {milliseconds}")
 
-        self.probe("28", "M20 temporal accessors for wall-clock rules (epoch ms → local time)", True, run)
+        self.probe("28", "temporal accessors for wall-clock rules (epoch ms → local time)", True, run)
 
     def p_engine_catalogue_m20(self):
         def run():
@@ -930,7 +930,7 @@ class Smoke:
                     "CALL dbms.functions() YIELD name, udf; XREVRANGE telemetry{<graph>} + - COUNT n; "
                     "GRAPH.CONFIG SET QUERY_MEM_CAPACITY <bytes> (error: Query's mem consumption exceeded capacity)")
 
-        self.probe("29", "M20 engine catalogues: dbms.functions, telemetry{graph} stream, QUERY_MEM_CAPACITY", False, run)
+        self.probe("29", "engine catalogues: dbms.functions, telemetry{graph} stream, QUERY_MEM_CAPACITY", False, run)
 
     def p_waitaof_m20(self):
         def run():
@@ -954,7 +954,7 @@ class Smoke:
                         "(appendfsync everysec waits for the next fsync)",
                     "same connection: GRAPH.QUERY … then WAITAOF numlocal numreplicas timeout_ms → [local, replicas]")
 
-        self.probe("30", "M20 WAITAOF after a write (durable before verified)", False, run)
+        self.probe("30", "WAITAOF after a write (durable before verified)", False, run)
 
     def run_all(self) -> list[Result]:
         for p in (self.p_names, self.p_bfs, self.p_sppaths, self.p_sspaths, self.p_pagerank, self.p_betweenness,

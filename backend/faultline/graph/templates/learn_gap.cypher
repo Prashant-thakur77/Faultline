@@ -1,5 +1,5 @@
 // id: Q-LEARN-GAP
-// purpose: memory that changes the answer (M15 #4): after a verified fix of change $change, for each of the incident symptoms, is there a PROPAGATES_TO path from the changed component within the gate bound of 8 hops? Where there is none, the graph is missing a link the fix just demonstrated; the measured share (the symptom excess over the component excess in this incident windows, peak since $since minus the pre-onset mean, capped at 1) is what a learned edge would carry
+// purpose: memory that changes the answer: after a verified fix of change $change, for each of the incident symptoms, is there a PROPAGATES_TO path from the changed component within the gate bound of 8 hops? Where there is none, the graph is missing a link the fix just demonstrated; the measured share (the symptom excess over the component excess in this incident windows, peak since $since minus the pre-onset mean, capped at 1) is what a learned edge would carry
 // seen: origin, symptom
 MATCH (c:Node {id: $change})-[:CHANGED]->(o:Node)
 MATCH (s:Node) WHERE s.id IN $symptoms AND s.id <> o.id

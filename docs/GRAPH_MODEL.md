@@ -170,14 +170,14 @@ erDiagram
 
 `audit_<t>` is a separate graph for records that must survive Re-arm: `RunIndex`, `ForgetReceipt` and `Rearm` (`graph/writes.py::index_run`, `::append_audit`).
 
-## M15 additions
+## Versioned topology, decision overrides and learned links
 
 - `PROPAGATES_TO` / `DEPENDS_ON`: `valid_from`, `introduced_by` on the calls a past PR introduced (versioned topology; absent = always there); `learned: true`, `from_incident`, `approved_by` on a learned failure link.
 - `(:Override)-[:OVERRIDES]->(:Decision)`, `-[:FOR_CHANGE]->(change)`: a reviewer's answer to a contradiction for one change, bound to the asserted value (`actual`).
 - `(:Incident)-[:HAS_PROPOSAL]->(:EdgeProposal {src, dst, cap, status, plan_hash})`: a link a verified fix showed was missing, until a human approves it.
 - `(:PlaygroundRun {kind, result})` in `audit_<t>`: a recorded "break the graph" diff.
 
-## M19 additions: on-call (pages, acks, escalation, standing contracts, hand-offs)
+## On-call (pages, acks, escalation, standing contracts, hand-offs)
 
 ```mermaid
 erDiagram
@@ -197,10 +197,10 @@ erDiagram
 
 - **Pages live with their incident** (the run's clean room, or the tenant graph for an alert-intake incident): `(:Page {id, tenant, incident, kind: page|escalation|report|contract_notice, urgency, sent_at, ack_due_at, status: sent|delivery_failed|acked|escalated|resolved|superseded, attempt, detail, reason, team, channel, channels, delivery, deep_link})`. `deep_link` never holds the ack token (it is an HMAC over tenant and page id, delivered only in the link a channel sends). Delivery results are written back on the page (one write per update).
 - **The escalation order** is recorded on the incident at ROUTE: `(:Incident)-[:ESCALATES_TO {rank, w, via}]->(:Person)`, ranked in Cypher from the algo.MSF escalation tree's edges (the strongest tie that names a person first; the who_fixes order when the tree has no edge). `Q-PAGE-NEXT` reads it; `Q-PAGE-OVERDUE` decides what is late.
-- **Standing contracts and hand-offs live in the tenant's on-call home** (the tenant graph; an eval's own room), because they outlive the incident that granted them: `(:Contract {id, family, action_kind, params_hash, params, max_uses, uses, expires_at, granted_at, status: offered|active|exhausted|revoked (expired is read at query time), hash, offer_expires_at, quote, source_incident, source_graph, source_action})`. A use is a `(:ContractUse {incident, graph, action, at, verdict})` node, linked `FOR` the incident when it is in the same graph: a clean-room incident is in another graph, and an edge cannot cross graphs (a change from the plan's `USED_IN → Incident`, docs/API.md "Contract changes").
-- **Who may approve** (`Q-APPROVER-1`, fixed in M19): an active person on call (an `ON_CALL` shift overlapping the incident, onset to now) for, or a member of, a team that `OWNS` an impacted component (the failing component, its blast radius, the symptoms).
+- **Standing contracts and hand-offs live in the tenant's on-call home** (the tenant graph; an eval's own room), because they outlive the incident that granted them: `(:Contract {id, family, action_kind, params_hash, params, max_uses, uses, expires_at, granted_at, status: offered|active|exhausted|revoked (expired is read at query time), hash, offer_expires_at, quote, source_incident, source_graph, source_action})`. A use is a `(:ContractUse {incident, graph, action, at, verdict})` node, linked `FOR` the incident when it is in the same graph: a clean-room incident is in another graph, and an edge cannot cross graphs (which is why a use is a node rather than a `USED_IN` edge straight to the incident).
+- **Who may approve** (`Q-APPROVER-1`): an active person on call (an `ON_CALL` shift overlapping the incident, onset to now) for, or a member of, a team that `OWNS` an impacted component (the failing component, its blast radius, the symptoms).
 
-## M21 additions: learning from the people who use it
+## Learning from the people who use it
 
 ```mermaid
 erDiagram
@@ -221,9 +221,9 @@ erDiagram
 - **`(:Person)-[:RESPONDED]->(component)`**: recomputed per person and family (`W_LEARN_RESPONDED`) from their acks, approvals and verified fixes (weights in `learn`), with the mean ack delay and the events it rests on; no event left ⇒ no edge.
 - **`(:KnowledgeGap {text, n, first_at, last_at, status: open|dismissed, intent, reason, about, events})`**: recomputed per normalised question (`W_LEARN_GAP`); `ABOUT` the components the question resolved to, so `Q-KGAP-1` can name the teams that own them.
 - **Forget:** `W_LEARN_FORGET` deletes exactly a person's approved events and the guidelines their rejections proposed in one query; every preference, responder edge and gap they fed is then recomputed (one query each); the `ForgetReceipt {kind: 'learned_influence'}` goes to `audit_<t>` (`Q-LEARN-RECEIPTS`).
-- **Indexes:** `LearnEvent(id)`, `LearnEvent(family)`, `LearnEvent(person)`, `Preference(id)`, `Preference(family)`, `Guideline(id)`, `KnowledgeGap(id)`; applied once per process to a home graph made before M21.
+- **Indexes:** `LearnEvent(id)`, `LearnEvent(family)`, `LearnEvent(person)`, `Preference(id)`, `Preference(family)`, `Guideline(id)`, `KnowledgeGap(id)`; applied once per process to an older home graph that lacks them.
 
-## M20 additions: company rules as data
+## Company rules as data
 
 - `(:Policy {id, kind:'change_freeze', status, title, why, effect: block|require_review, from_day, from_hour, to_day,
   to_hour, utc_offset_min, decided_by, decided_at, url})`, from `data/gen/policies/<tenant>.yaml` (acme: no payment changes
@@ -264,7 +264,7 @@ The pair is written by `ingest/otel_topology.py` and `ingest/lineage_to_graph.py
 - `w`: the SPpaths weight;
 - `domain` (`service` or `data`) and `cap_why`, a one-line justification.
 
-**`cap` semantics** (decision of record; full reasoning in [EXPLAINER.md](EXPLAINER.md) and `docs/design/scenario_numbers.md` §1):
+**`cap` semantics** (decision of record; full reasoning in [EXPLAINER.md](EXPLAINER.md) and section 1 of [design/scenario_numbers.md](design/scenario_numbers.md)):
 - **Service edges:** `cap` = criticality, a property of the call type set per edge in `data/topology/*.yaml`. It is never a traffic share. <!-- noclaim: configured constants -->A synchronous, error-propagating call has `cap` 1.0; a best-effort or async call has a small criticality, such as 0.02 for the order-confirmation email.
 - **Lineage edges:** `cap` = the end-to-end row share: the fraction of the symptom's contributing rows that are derived from that input. Only the edge into the join table carries a share below 1, and upstream lineage edges are 1.0, so the minimum along a path equals the end-to-end share. <!-- noclaim: configured constant --> For example, the FX feed touches only non-USD orders, so its max flow to the revenue KPI is <!-- claim:s2.D-fx-pause-7.max_flow -->0.0692<!-- /claim -->.
 - **Control-plane edges:** `CHANGED` (Deploy → component) and `GATES` (FeatureFlag → component) carry `cap` 1.0, so a max-flow from the deploy equals one from the changed node. <!-- noclaim: configured constant -->
@@ -296,7 +296,7 @@ Tools built on these: `owner_at`, `beliefs_at`, `component_timeline` and `knowle
 
 ## Indexes and constraints
 
-All in [`schema.cypher`](../backend/faultline/graph/schema.cypher), except the constraint, which is created by `graph/writes.py::ensure_constraints`.
+All in [`schema.cypher`](../backend/faultline/graph/schema.cypher), except the constraints, which are created by `graph/writes.py::ensure_constraints` (below).
 - **Range indexes** on `id` for every label, on `:Node(id)`, and on `Deploy.at`, `MetricWindow.target_id` and `Intent.idem`.
 - **Full-text, DDL form only** (the procedure form fails on the pinned engine):
   - `Service.name`, `Table.name`, `Runbook.title`, `Decision.title`, `Postmortem.summary`, `Doc.title`;
@@ -306,12 +306,12 @@ All in [`schema.cypher`](../backend/faultline/graph/schema.cypher), except the c
   - written only through `vecf32()` (`graph/writes.py::set_vectors`);
   - queried with `db.idx.vector.queryNodes`, which returns a distance that the template converts to a similarity;
   - used by recall (`recall.cypher`), `find_incident_vector.cypher` and the forget proof (`forget_vector_probe.cypher`).
-- **Vector index options (M20):** `M 32`, `efConstruction 400`, `efRuntime 100` on all four vector indexes (Incident,
+- **Vector index options:** `M 32`, `efConstruction 400`, `efRuntime 100` on all four vector indexes (Incident,
   Runbook, Postmortem, IntentExemplar), chosen by `evals/vector_recall.py`: recall@10 against an exact cosine scan
   <!-- claim:vector.recall_at_10.tuned -->1.0<!-- /claim --> on every measured set (the default index:
   <!-- claim:vector.recall_at_10.default -->0.9767<!-- /claim -->). `writes.apply_schema` rebuilds an index whose options
   differ and waits until it is OPERATIONAL (an index built over existing nodes is asynchronous on 6.0.2).
-- **Engine-enforced constraints (M20)**: <!-- claim:repo.constraints -->15<!-- /claim --> `GRAPH.CONSTRAINT`s, declared in
+- **Engine-enforced constraints**: <!-- claim:repo.constraints -->15<!-- /claim --> `GRAPH.CONSTRAINT`s, declared in
   [`graph/constraints.py`](../backend/faultline/graph/constraints.py) and created by `writes.ensure_constraints` (called by
   `apply_schema`, so seed, every copy, the on-call home graph and the scale worlds get them; `GRAPH.COPY` carries them):
   - UNIQUE `Run.id`, `Intent.idem` (one run per id; one intent per idempotency key, which makes execute idempotent
@@ -326,7 +326,7 @@ All in [`schema.cypher`](../backend/faultline/graph/schema.cypher), except the c
     `OWNED_AT.from`.
 
   Creation is asynchronous (PENDING → OPERATIONAL); a constraint the existing data violates ends FAILED, is dropped
-  again, and seeding fails loudly naming up to five violators. Every Run writer writes `Run:Node` (before M20 one writer
+  again, and seeding fails loudly naming up to five violators. Every Run writer writes `Run:Node` (before the constraints were added, one writer
   wrote a label-less `Run`, which a later `Run:Node` MERGE could not match: a second Run with the same id).
 
 `graph/copy.py` re-applies the schema after every `GRAPH.COPY` and checks `db.indexes()`.

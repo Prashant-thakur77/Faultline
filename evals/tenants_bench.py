@@ -1,4 +1,4 @@
-"""Tenant density, isolation and concurrent investigators on ONE pinned FalkorDB engine (M20 Wave B).
+"""Tenant density, isolation and concurrent investigators on ONE pinned FalkorDB engine.
 
 Pre-registered in evals/PREREGISTRATION.md (addendum 2026-10-17, 21:10 IST). FalkorDB markets "10K+ multi-graphs
 (tenants)" and p99 under N clients; this bench measures what Faultline's own tenants cost and how its gate reads
@@ -699,7 +699,7 @@ def main() -> int:
     ap.add_argument("--cmd-sample", type=int, default=CMD_SAMPLE)
     ap.add_argument("--warmup", type=float, default=WARMUP_S)
     ap.add_argument("--duration", type=float, default=DURATION_S)
-    ap.add_argument("--reason", default="M20 Wave B pre-registered run (PREREGISTRATION addendum 2026-10-17 21:10 IST)")
+    ap.add_argument("--reason", default="pre-registered run (PREREGISTRATION addendum 2026-10-17 21:10 IST)")
     ap.add_argument("--out", default=str(OUT))
     ap.add_argument("--quiet", action="store_true")
     a = ap.parse_args()

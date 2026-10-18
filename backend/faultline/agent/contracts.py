@@ -63,7 +63,7 @@ class SpecialistReport(BaseModel):
 
     @model_validator(mode="after")
     def _complete_needs_evidence(self) -> "SpecialistReport":
-        # §6.3: empty evidence is rejected. An `insufficient` report may carry none (its tools all failed); it then
+        # A complete specialist report needs evidence: empty evidence is rejected. An `insufficient` report may carry none (its tools all failed); it then
         # names nothing, so it can never support a claim.
         if self.status == "complete" and not self.evidence:
             raise ValueError("a complete report needs at least one evidence item")

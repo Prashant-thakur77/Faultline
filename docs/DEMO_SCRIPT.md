@@ -35,11 +35,11 @@ How it is recorded:
    - Next serves only the public files that existed when it started: rebuild and restart the UI after adding a file under `frontend/public/`. Edits to existing files are served as they are.
 2. After `scripts/gen_charts.py`, run `cp docs/media/charts/*.svg frontend/public/media/charts/`.
 3. The GitHub CLI must be signed in. The recorder uses it to check the merged pull request, the flag state at main of the demo infra repo, and the upstream issue's title and state.
-4. A full Chrome is needed for WebGL: `--chromium ~/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome`, plus `--gpu` for smooth 3D.
+4. A full Chrome is needed for WebGL: `--chromium <path-to-chromium>`, plus `--gpu` for smooth 3D.
 5. **Dry run (simulated GitHub).** It writes only to `tmp/demo-video/`; drop `--no-encode` to get `tmp/demo-video/narrated_sim.mp4`.
    ```bash
    .venv/bin/python frontend/scripts/record_demo_video.py --ui http://localhost:3000 --api http://localhost:8400 \
-       --narration tmp/narration --chromium ~/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome --no-encode
+       --narration tmp/narration --chromium <path-to-chromium> --no-encode
    ```
    - **On screen.** A simulated take shows a "Dry run: simulated GitHub" badge from the approval on. Its github.com shot is the pull request an earlier real take merged, labelled as such.
    - **Safeguard.** A simulated take refuses to write `docs/media/demo.mp4`.
@@ -50,7 +50,6 @@ How it is recorded:
    - The recorder refuses to start unless the API acts on real GitHub and `paymentGate` is `on` at main of `faultline-demo-infra`.
    - It types the key into the password-type approver key field and never prints it.
    - After a real take the flag is off at main (two pull requests merged). Turn it back on in that repo before another real take.
-   - The Telegram still (`oc_telegram`) joins the cut once `frontend/public/media/telegram.png` exists: add the segment back to `narrate.SEGMENTS` and to `ONCALL` in the recorder.
 7. `--reencode tmp/demo-video/meta.json` encodes an earlier take again, with no browser.
 
 | Segment | Starts | Voice | On screen |

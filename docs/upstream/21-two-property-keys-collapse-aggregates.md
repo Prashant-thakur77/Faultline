@@ -1,6 +1,8 @@
 # Grouping a single-node MATCH by two properties returns the first aggregate in every aggregate column (6.0.2): silent wrong result
 
-Found writing the contract-suggestion read (`Q-LEARN-SUGGEST`, M21): `events` came back as an integer. Verified on the
+**Status:** known upstream as [FalkorDB#3375](https://github.com/FalkorDB/FalkorDB/issues/3375) (fix PR #3374); not refiled.
+
+Found writing the contract-suggestion read (`Q-LEARN-SUGGEST`): `events` came back as an integer. Verified on the
 pinned 6.0.2 digest only (docs/FALKORDB_COMPAT.md); module `graph` version 60002.
 
 ```cypher

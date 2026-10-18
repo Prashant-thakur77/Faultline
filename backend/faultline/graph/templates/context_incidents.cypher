@@ -1,5 +1,5 @@
 // id: Q-CTX-INC
-// purpose: context pack (M16.1), what happened last time: for past incidents found by meaning, the title, the change that CAUSED it and the component it changed, the action that RESOLVED it and its verdict, and who resolved it (episodic memory an agent can act on, not a bare id)
+// purpose: context pack, what happened last time: for past incidents found by meaning, the title, the change that CAUSED it and the component it changed, the action that RESOLVED it and its verdict, and who resolved it (episodic memory an agent can act on, not a bare id)
 // seen: id, cause, cause_target, fix_target, resolvers
 MATCH (i:Incident) WHERE i.id IN $ids
 WITH i, [(d:Deploy)-[:CAUSED]->(i) | d] AS ds, [(i)-[:RESOLVED_BY]->(a:Action) | a] AS acts,

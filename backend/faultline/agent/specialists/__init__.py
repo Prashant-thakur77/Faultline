@@ -1,4 +1,4 @@
-"""Specialists dispatched in parallel from INVESTIGATE, with W-CLAIM-1 work-item claims (§6.13).
+"""Specialists dispatched in parallel from INVESTIGATE, with W-CLAIM-1 work-item claims (each item runs once).
 
     reports = await dispatch(box, run, packet)
 
@@ -47,7 +47,7 @@ REGISTRY: dict[str, type[Specialist]] = {
     "topology": TopologySpecialist, "telemetry": TelemetrySpecialist, "data": DataSpecialist,
     "change": ChangeSpecialist, "code": CodeSpecialist,
 }
-MAX_ATTEMPTS = 2  # one answer + one retry (§6.3), then status="insufficient"
+MAX_ATTEMPTS = 2  # one answer + one retry, then status="insufficient"
 # evidence the deterministic investigator cites to the gate: the measurements (what G4/G5 and N1 read)
 MEASUREMENT_TOOLS = ("metric_window", "get_metric_history", "compare_to_baseline", "anomalous_row_share")
 

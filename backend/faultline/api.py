@@ -1101,7 +1101,7 @@ _ops_state: dict[str, threading.Thread | None] = {"thread": None}
 
 
 def _ops_loop(stop: threading.Event) -> None:
-    """Review round 5, M1: the API's background housekeeping. Every actions.boot_heartbeat_s it heartbeats this boot
+    """The API's background housekeeping. Every actions.boot_heartbeat_s it heartbeats this boot
     in every tenant's audit graph (so its intent leases are known to be alive); every actions.reconcile_every_s it
     reconciles every graph with PENDING intents. The first periodic pass runs once a killed predecessor's heartbeat is
     stale (boot_stale_s + one heartbeat after startup), so a crashed execute job's intent is settled about a minute
@@ -1199,7 +1199,7 @@ def _gc_hold(tenant: str, graph: str) -> str | None:
 
 
 def gc_run_graphs(tenant: str) -> dict:
-    """Review round 4, M3 (round 5, M5): the live stack collects its own run graphs. Deletes this tenant's API clean
+    """The live stack collects its own run graphs. Deletes this tenant's API clean
     rooms (`eval_<t>_api_…`, only ones the API made) except: the graphs of the weights.yaml engine.keep_recent_runs
     most recent indexed runs, any graph a running job uses, any graph an execute job or reconciler is working on
     (`_acting`, checked under the collector's lock right before each delete), and any graph Q-GC-HOLD holds (a PENDING
@@ -1650,9 +1650,9 @@ def _approve_checked(c, body: "ApproveIn", inc: str, override: dict | None = Non
     return {"approved": True, **res, "approver": who}
 
 
-# ------------------------------------------------------------------ M13 workstream C: reject + read-only UI views
-# Reject (§6.8 / §9.1.3), then read-only, tenant-bound GETs for the naive-vs-Faultline contrast, the Memory tab and
-# the Brain widgets. The GETs only call existing MCP tools (bound with record=False: nothing is written) or catalogue
+# ------------------------------------------------------------------ reject + read-only UI views
+# Reject (a human refuses the exact chosen action, with a reason), then read-only, tenant-bound GETs for the
+# naive-vs-Faultline contrast, the Memory tab and the Brain widgets. The GETs only call existing MCP tools (bound with record=False: nothing is written) or catalogue
 # templates through the RO wrapper; no decision is made here.
 class RejectIn(BaseModel):
     action_id: str = Field(..., max_length=120)
@@ -2194,7 +2194,7 @@ def preflight(body: dict, request: Request, tenant: str = "acme") -> dict:
         raise HTTPException(401, "preflight key required")
     t = check_tenant(tenant)
     try:
-        if "files" not in body and {"repo", "number"} <= set(body):  # §6.14: fetch the PR itself by {repo, number}
+        if "files" not in body and {"repo", "number"} <= set(body):  # fetch the PR itself by {repo, number}
             from .actions import github as gh
             from .preflight.engine import PRRef, fetch
 
@@ -2321,7 +2321,7 @@ def _ip_hash(ip: str) -> str:
 def rearm(request: Request, tenant: str = "acme") -> dict:
     """Re-arm the tenant graph from its golden copy (copy-then-swap). Sheds load first (a re-arm copies a whole graph),
     retires the brain copies, resets the tenant graph's simulated world and puts the warehouse transforms back to
-    pristine (review round 5, M3). The swap IS the re-arm: a failed audit write afterwards is reported as
+    pristine. The swap IS the re-arm: a failed audit write afterwards is reported as
     "re-armed (audit write failed)", never as a failed re-arm."""
     ip = request.client.host if request.client else "-"
     _limit(f"rearm:{ip}", 1, 60)

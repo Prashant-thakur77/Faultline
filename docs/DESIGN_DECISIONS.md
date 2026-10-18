@@ -8,7 +8,7 @@ A readable summary of the decisions that shape Faultline and why. The limits the
 |---|---|
 | Pin `falkordb/falkordb:6.0.2` by digest, never `latest` | Smoke ran on both candidates. 6.0.2 passed every critical item. v4.22.0 ranked betweenness wrongly on a simple chain and let two workers own one task in a contention round. |
 | 6.0.2 is the only acceptable 6.x | 6.0.0/6.0.1 silently dropped the `RO_QUERY` TIMEOUT. <!-- noclaim: engine versions --> |
-| One `algo.maxFlow` form; the min-cut is computed in code from `edges`/`edgeFlows` | Both engines accept only the single-map form with node arrays. The positional forms in the plan do not exist. `min_cut` asserts that the cut's capacity equals the engine's max flow, or fails loudly. |
+| One `algo.maxFlow` form; the min-cut is computed in code from `edges`/`edgeFlows` | Both engines accept only the single-map form with node arrays. The positional forms shown in a FalkorDB news post do not exist. `min_cut` asserts that the cut's capacity equals the engine's max flow, or fails loudly. |
 | Canonical procedure names in `graph/algo/registry.py`, resolved by smoke into `resolved.json` | Names are case-insensitive, but one spelling keeps templates and lint simple. `algo.betweenness` always gets a fixed sampling seed, because seed 0 is time-based. |
 | Full-text in DDL form only, never on an attribute with a range index | The procedure form fails on 6.0.2, and an open 6.0 issue returns no rows for a range + full-text pair. <!-- noclaim: engine version --> |
 | Smoke facts treated as contracts | `SSpaths` `pathCount` is a global top-k, so a full result means "possibly truncated" and gives UNKNOWN. The vector score is a distance. `EXISTS {}` is unsupported. The unique constraint is created asynchronously. |
@@ -71,7 +71,7 @@ The full table of what the agent cannot do is [SAFETY.md](SAFETY.md).
 | Pre-register, keep the debug run, log every re-run | `evals/PREREGISTRATION.md` was written after one harness-debugging run, which is kept and never reported. Each later run states why it re-ran and that outcomes were unchanged. |
 | Every published number is tagged and checked | `check_claims` compares each tagged number with `latest.json` and fails untagged measured-looking numbers. `RESULTS.md` is generated, never hand-edited. |
 | Ablations that isolate the graph | A4 (FalkorDB off) fails closed. A3-noG5 switches off only the max-flow check. V is vector-only cosine in FalkorDB. N is naive recency. |
-| LLM arms run only with an approved budget | They are skipped without an API key and a budget the owner approved; a paid run writes a side file, so it can never replace the keyless results. |
+| LLM arms run only with an approved budget | They are skipped without an API key and an approved spending cap; a paid run writes a side file, so it can never replace the keyless results. |
 | The preflight backtest is as-of and not re-tuned | Every historical PR is scored by the production formula as of its merge time through as-of templates, with a memory-term ablation. Negative results are reported. |
 
 ## 7. Tenancy and public-mode security
@@ -96,4 +96,4 @@ Each feature is a template plus a tool, and each changes a decision or a reporte
 | Learned remediation ordering, residue check | `Q-REM-1`, `Q-RESIDUE-1` | Reorder options; report anomalies the confirmed cause does not explain |
 | Graph schema for the model | `Q-SCHEMA-1..4` · `graph_schema` | Grounds text2cypher; a drift check against the declared model |
 
-Dropped or deferred, with reasons: `OVERRIDDEN_BY` (G8 never blocks, so it would be decoration); preflight formula changes (need a new pre-registration); the SIGKILL chaos test. See [HONEST_LIMITS.md](HONEST_LIMITS.md) §9.
+Dropped or deferred, with reasons: `OVERRIDDEN_BY` (G8 never blocks, so it would be decoration); preflight formula changes (need a new pre-registration). See [HONEST_LIMITS.md, section 9](HONEST_LIMITS.md#9-deferred-dropped-or-not-built).

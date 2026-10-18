@@ -1,5 +1,5 @@
 // id: Q-KGAP-1
-// purpose: knowledge gaps (M21): company-brain questions trusted users asked that the graph could not answer (refused or nothing documented), how often and when, in the given statuses; the teams that own what each question was about are who should document it
+// purpose: knowledge gaps: company-brain questions trusted users asked that the graph could not answer (refused or nothing documented), how often and when, in the given statuses; the teams that own what each question was about are who should document it
 // home: oncall
 // seen: id, about, owners
 MATCH (k:KnowledgeGap)

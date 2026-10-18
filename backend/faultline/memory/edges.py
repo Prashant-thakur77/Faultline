@@ -23,7 +23,7 @@ def human_fix_option(c: act.Ctx, *, change: str, by: str, why: str) -> dict:
     from ..agent.state import Stage, ordinal
 
     inc = (c.ro().run("Q-INC-1", {"inc": c.inc}).rows or [{}])[0]
-    if inc.get("confident"):  # the gate confirmed a cause: its own options stand (prejudge 2026-10-13)
+    if inc.get("confident"):  # the gate confirmed a cause: its own options stand
         raise ValueError(f"{c.inc} has a confirmed cause; a human-named fix is for an incident the gate did not confirm")
     onset = int(inc.get("onset_at") or 0)
     window = {r["deploy"] for r in c.ro().run("Q-SUS-2", {"onset": onset, "window_ms": 30 * 60_000}).rows}
@@ -72,7 +72,7 @@ def propose(c: act.Ctx, aid: str, *, onset_ms: int, symptoms: list[str]) -> list
                                       "base_until": onset_ms - int(iw["baseline_gap_min"]) * 60_000}).rows
     from ..agent.datatools import band_from, in_band
 
-    def anomalous(base, peak, vals) -> bool:  # verification's own band rule (prejudge 2026-10-13: no learning from noise)
+    def anomalous(base, peak, vals) -> bool:  # verification's own band rule (no learning from noise)
         vals = [float(v) for v in vals or []]
         return bool(vals) and peak is not None and not in_band(float(peak), float(base), band_from(vals))
 

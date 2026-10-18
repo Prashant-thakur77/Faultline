@@ -1,5 +1,7 @@
 # @falkordb/mcpserver 1.3.0 hangs silently at startup when the user may not run INFO
 
+**Status:** not filed (repro and draft here; for FalkorDB-MCPServer).
+
 **Setup.** A restricted Redis ACL user for read-only graph access:
 `resetchannels -@all +graph.ro_query +graph.explain +ping +hello +client|setname +client|setinfo ~tenant_acme`, with
 `FALKORDB_USERNAME`/`FALKORDB_PASSWORD` set, `FALKORDB_STRICT_READONLY=true`.

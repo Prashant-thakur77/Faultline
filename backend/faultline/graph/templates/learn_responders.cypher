@@ -1,5 +1,5 @@
 // id: Q-LEARN-RESP
-// purpose: learned responders (M21) of one component: active people with a RESPONDED edge to it (recomputed from their trusted acks, approvals and verified fixes with recency decay), the score decayed again from computed_at to $now, the counts, the mean ack delay, the last response and the events it rests on
+// purpose: learned responders of one component: active people with a RESPONDED edge to it (recomputed from their trusted acks, approvals and verified fixes with recency decay), the score decayed again from computed_at to $now, the counts, the mean ack delay, the last response and the events it rests on
 // home: oncall
 // seen: person, events
 MATCH (p:Person)-[r:RESPONDED]->(c:Node {id: $target})

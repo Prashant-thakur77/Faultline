@@ -1,6 +1,8 @@
 # A MATCH whose WHERE holds a pattern comprehension, followed by another MATCH, drops the row (6.0.2): silent wrong result
 
-Found writing the on-call escalation write (`W_PAGE_ESCALATE`, M19): it returned nothing while every part of it, run
+**Status:** posted [as new evidence on FalkorDB#2502](https://github.com/FalkorDB/FalkorDB/issues/2502#issuecomment-6237945777).
+
+Found writing the on-call escalation write (`W_PAGE_ESCALATE`): it returned nothing while every part of it, run
 alone, returned the expected rows. Verified on the pinned 6.0.2 digest only (docs/FALKORDB_COMPAT.md).
 
 ```cypher

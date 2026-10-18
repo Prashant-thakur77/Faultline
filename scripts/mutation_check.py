@@ -125,13 +125,13 @@ MUTANTS = [
            "if not isinstance(t, str) or not TENANT_RE.fullmatch(t):",
            "if False:",
            ("tests/graph/test_tenant_names.py", "tests/isolation")),
-    Mutant("M-G7CORR", "G7: a code/data specialist naming another change than the cause downgrades confidence (§6.4)",
+    Mutant("M-G7CORR", "G7: a code/data specialist naming another change than the cause downgrades confidence",
            "agent/gate.py", "    if agree:\n", "    if True:\n",
            ("tests/agent/test_gate_decide.py",)),
-    Mutant("M-STAGE-TOOLS", "a tool outside the stage whitelist is refused, logged and recorded (§6.2)", "agent/loop.py",
+    Mutant("M-STAGE-TOOLS", "a tool outside the stage whitelist is refused, logged and recorded", "agent/loop.py",
            "        if name not in allowed:\n", "        if False:\n",
            ("tests/agent/test_toolbox_whitelist.py",)),
-    Mutant("M-SPEC-CLAIM", "two dispatches of the same specialist work item never both run it (W-CLAIM-1, §6.13): "
+    Mutant("M-SPEC-CLAIM", "two dispatches of the same specialist work item never both run it (W-CLAIM-1): "
            "every caller wins the claim (claim_epoch returns an epoch to everyone)",
            "graph/writes.py",
            "    return int(r[0][1]) if r and r[0][0] == agent else 0\n", "    return 1\n",
@@ -173,16 +173,16 @@ MUTANTS = [
            "capacityProperty: 'cap'}) YIELD maxFlow\n"
            "WITH x, o, t, paths, hops, CASE WHEN maxFlow > 1.0 THEN 1.0 ELSE maxFlow END AS transfer,",
            ("tests/live/test_alert_storm.py::test_a_partial_fix_that_leaves_our_own_leak_stays_not_applied",)),
-    Mutant("M-VERDICT-UNCOND", "a verdict is written only while its intent is PENDING and leased to the writer (review round 4, "
-           "M5): an unconditional verdict lets a late reconciler or a stalled execute job overwrite the settled outcome",
+    Mutant("M-VERDICT-UNCOND", "a verdict is written only while its intent is PENDING and leased to the writer: "
+           "an unconditional verdict lets a late reconciler or a stalled execute job overwrite the settled outcome",
            "graph/writes.py",
            "\"MATCH (a:Action {id: $aid}) MATCH (it:Intent) WHERE it.idem = a.idem AND it.state = 'PENDING' AND "
            "($owner IS NULL OR it.lease_by = $owner) \"\n    \"SET a.verdict",
            "\"MATCH (a:Action {id: $aid}) \"\n    \"SET a.verdict",
            (R4 + "test_the_job_settles_first_and_the_reconciler_writes_nothing",
             R4 + "test_a_takeover_between_execute_and_verify_stops_the_job")),
-    Mutant("M-REPAIR-FIXTURE", "a data repair is executed and verified on its incident's own warehouse fixture (review round 5, "
-           "M2): without re-establishing the recorded mode and sources digest, a healthy-mode run in between makes a patch "
+    Mutant("M-REPAIR-FIXTURE", "a data repair is executed and verified on its incident's own warehouse fixture: "
+           "without re-establishing the recorded mode and sources digest, a healthy-mode run in between makes a patch "
            "that fixes nothing verify APPLIED",
            "actions/act.py",
            "    if warehouse.fixture_state() != {\"mode\": fx[\"mode\"], \"sources_sha256\": fx[\"sources_sha256\"]}:\n"
@@ -195,14 +195,14 @@ MUTANTS = [
            "    if False:",
            (R5 + "test_an_unrelated_patch_never_verifies_applied_after_a_healthy_switch",
             R5 + "test_sources_that_cannot_be_reestablished_make_the_verdict_unknown")),
-    Mutant("M-SQL-ACCEPT", "an LLM-authored transform must be one plain CTAS of its own target (review round 5, M4): a "
+    Mutant("M-SQL-ACCEPT", "an LLM-authored transform must be one plain CTAS of its own target: a "
            "validator that accepts anything lets `COPY … TO` write files from the build",
            "repair.py",
            "    try:\n        kinds = warehouse.statement_types(sql)",
            "    return\n    try:\n        kinds = warehouse.statement_types(sql)",
            ("tests/test_review5_units.py::test_the_validator_refuses_anything_but_one_plain_ctas[copy-to]",)),
-    Mutant("M-SESS-PREFIX", "brain session ids are server-issued (sess-…) and never take another node's id (review round 4, "
-           "M1): unprefixed client sessions make a second node with a component's id",
+    Mutant("M-SESS-PREFIX", "brain session ids are server-issued (sess-…) and never take another node's id: "
+           "unprefixed client sessions make a second node with a component's id",
            "brain/ask.py",
            'return session if session.startswith("sess-") else f"sess-{session}"',
            "return session",
@@ -211,7 +211,7 @@ MUTANTS = [
                  ("graph/writes.py", '"OPTIONAL MATCH (x:Node {id: $session}) WHERE NOT x:Session "\n    '
                                      '"WITH count(x) AS clash WHERE clash = 0 "\n    ', ""))),
     Mutant("M-FUTURE-BRANCH", "each containment candidate's future is read on its own GRAPH.COPY branch with ITS cut edges "
-           "removed (M14 #1): a branch that keeps them predicts every flag fails, and the plan buries the working lever",
+           "removed: a branch that keeps them predicts every flag fails, and the plan buries the working lever",
            "mcp_server/tools.py",
            "removed = writes.remove_flow_edges(db.select_graph(name), cuts)  # this candidate's own cuts",
            "removed = 0",
@@ -219,7 +219,7 @@ MUTANTS = [
     Mutant("M-FUTURE-CLASS", "learned ordering never lifts an option the futures predict will not contain above one they "
            "predict will (history reorders within a predicted-future class only)",
            "actions/act.py",
-           "key=lambda t: (future_class(opts[t[0]]), -t[1])", "key=lambda t: -t[1]",
+           "key=lambda t: (future_class(opts[t[0]]), t[2], -t[1])", "key=lambda t: (t[2], -t[1])",
            ("tests/test_futures_units.py::test_history_never_lifts_an_option_across_a_predicted_future_class",)),
     Mutant("M-G4-UPSTREAM", "a suspect whose whole anomaly an earlier upstream fault accounts for (strict lower bound) "
            "is not the origin (deep bench: without the G4 rules a look-alike downstream of an unchanged break was confirmed in "
@@ -245,26 +245,26 @@ MUTANTS = [
            "actions/act.py",
            "seed=int(at_ms % 10_000), base_seed=int(world_seed),", "seed=int(at_ms % 10_000),",
            ("tests/live/test_futures.py::test_verification_records_whether_the_prediction_came_true",)),
-    Mutant("M-WHO-PAGES", "who_fixes reads every page of its projection (M14 #6): stopping after the first silently "
+    Mutant("M-WHO-PAGES", "who_fixes reads every page of its projection: stopping after the first silently "
            "drops the pairs of a busy component, the LIMIT-100 truncation the Cypher move fixed",
            "mcp_server/tools.py",
            "        if not page.truncated:\n            break\n        after = (page.rows[-1][\"a\"], page.rows[-1][\"b\"])",
            "        break",
            ("tests/live/test_who_fixes_cypher.py::test_pairs_are_paged_disjoint_and_complete_on_the_busiest_component",)),
-    Mutant("M-OVERRIDE-ANY", "only an INTENTIONAL reviewer answer takes a decision out of G8 for that change (M15 #3): "
+    Mutant("M-OVERRIDE-ANY", "only an INTENTIONAL reviewer answer takes a decision out of G8 for that change: "
            "honouring any answer would let \"accidental\" or \"discuss\" silently waive a violation",
            "agent/rules.py",
            'row["overridden"] = bool(o and o.get("verdict") == "intentional" and row.get("violated"))',
            'row["overridden"] = bool(o and row.get("violated"))',
            ("tests/live/test_decision_override.py::test_accidental_keeps_the_violation_and_names_the_answer",)),
-    Mutant("M-LEARN-UNVERIFIED", "the graph learns a failure link only from a fix VERIFIED APPLIED (M15 #4): learning from an "
+    Mutant("M-LEARN-UNVERIFIED", "the graph learns a failure link only from a fix VERIFIED APPLIED: learning from an "
            "unverified or failed rollback turns a wrong human guess into a wrong edge",
            "memory/edges.py",
            'if a is None or a["kind"] != "rollback_deploy" or a["verdict"] != "APPLIED":',
            'if a is None or a["kind"] != "rollback_deploy":',
            ("tests/live/test_learned_edges.py::test_a_wrong_human_guess_verifies_not_applied_and_teaches_nothing",)),
     Mutant("M-EDGE-APPROVE-RECHECK", "approving a learned link re-checks, in the write itself, that its fix is still APPLIED, the "
-           "approver is an active person and the graph still has no path (prejudge 2026-10-13)",
+           "approver is an active person and the graph still has no path",
            "graph/writes.py",
            '    "MATCH (who:Person) WHERE who.id = $by AND who.active "\n', "",
            ("tests/live/test_learned_edges.py::test_approval_re_checks_at_write_time",),

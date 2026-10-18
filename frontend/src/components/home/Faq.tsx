@@ -27,7 +27,7 @@ export const FAQ_ITEMS: { q: string; a: ReactNode }[] = [
   },
   {
     q: "Is the data real?",
-    a: <>The engine and every query are real; the data is synthetic and public: an OpenTelemetry-Demo-shaped topology and a synthetic org with its history, decisions and runbooks.</>,
+    a: <>The engine and every query are real. The demo data is synthetic and public: an OpenTelemetry-Demo-shaped topology and a synthetic org with its history, decisions and runbooks. One benchmark runs on a real system: the OpenTelemetry Demo itself, broken with its own fault flags and read through its real telemetry.</>,
   },
   {
     q: "Where do the numbers on this page come from?",

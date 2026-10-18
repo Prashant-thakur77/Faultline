@@ -1,5 +1,5 @@
 // id: Q-DEC-PEOPLE
-// purpose: who decided (M17): for each decision constraining a component, the people who DECIDED it, whether each is still active, and whether each is still on a team that OWNS what the decision constrains; plus the decision in force if it was superseded. Answers "who decided X, and are they still here?"
+// purpose: who decided: for each decision constraining a component, the people who DECIDED it, whether each is still active, and whether each is still on a team that OWNS what the decision constrains; plus the decision in force if it was superseded. Answers "who decided X, and are they still here?"
 // seen: decision, person
 MATCH (d:Decision)-[:CONSTRAINS]->(n:Node {id: $target})
 OPTIONAL MATCH (p:Person)-[:DECIDED]->(d)

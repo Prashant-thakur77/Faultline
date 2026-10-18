@@ -1,5 +1,5 @@
 // id: Q-DEC-ORPHAN
-// purpose: knowledge health (M17): active decisions whose deciders have all left (every Person who DECIDED it is inactive), so nobody who made the call is around to explain it
+// purpose: knowledge health: active decisions whose deciders have all left (every Person who DECIDED it is inactive), so nobody who made the call is around to explain it
 // seen: decision
 MATCH (p:Person)-[:DECIDED]->(d:Decision {status: 'active'})
 WITH d, collect(p) AS deciders

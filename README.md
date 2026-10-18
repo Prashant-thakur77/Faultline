@@ -1,20 +1,42 @@
-<p><picture><source media="(prefers-color-scheme: dark)" srcset="frontend/public/brand/faultline-mark-light.svg"><img src="frontend/public/brand/faultline-mark.svg" width="64" height="64" alt="Faultline logo: a block split by an ember fault line"></picture></p>
+<p align="center"><picture><source media="(prefers-color-scheme: dark)" srcset="frontend/public/brand/faultline-mark-light.svg"><img src="frontend/public/brand/faultline-mark.svg" width="72" height="72" alt="Faultline logo: a block split by an ember fault line"></picture></p>
 
-# Faultline: no path, no claim
+<h1 align="center">Faultline: no path, no claim</h1>
 
-**An on-call agent that won't blame a change until FalkorDB returns the causal path, and won't keep a suspect the graph shows cannot carry the impact.** The model suggests; a read-only query decides.
+<p align="center"><b>An on-call agent that won't blame a change until FalkorDB returns the causal path, and won't keep a suspect the graph shows cannot carry the impact.</b><br>The model suggests; a read-only query decides.</p>
 
-[![CI](https://github.com/Prashant-thakur77/Faultline/actions/workflows/ci.yml/badge.svg)](https://github.com/Prashant-thakur77/Faultline/actions/workflows/ci.yml) [![Live demo](https://img.shields.io/badge/live%20demo-open-2ea44f)](https://13-203-185-119.sslip.io) [![FalkorDB 6.0.2, pinned by digest](https://img.shields.io/badge/FalkorDB-6.0.2%20pinned%20by%20digest-ff4e00)](docs/FALKORDB_COMPAT.md) [![judge-check: keyless PASS](https://img.shields.io/badge/make%20judge--check-keyless-2ea44f)](#reproduce-it)
-
-**Tracks:** T1 Agents That Act on Connected Data ([how one incident flows](#how-one-incident-flows)) · T3 Company Brain ([memory and brain](#memory-company-brain-preflight-coordination)) · T2 Agent Memory & Coordination ([learning from the people who use it](#learns-from-the-people-who-use-it-t2))
+<p align="center">
+<a href="https://github.com/Prashant-thakur77/Faultline/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Prashant-thakur77/Faultline/actions/workflows/ci.yml/badge.svg"></a>
+<a href="https://13-203-185-119.sslip.io"><img alt="Live demo" src="https://img.shields.io/badge/live%20demo-open-2ea44f"></a>
+<a href="docs/FALKORDB_COMPAT.md"><img alt="FalkorDB 6.0.2, pinned by digest" src="https://img.shields.io/badge/FalkorDB-6.0.2%20pinned%20by%20digest-ff4e00"></a>
+<a href="#reproduce-it"><img alt="make judge-check: keyless" src="https://img.shields.io/badge/make%20judge--check-keyless-2ea44f"></a>
+<a href="docs/MCP.md"><img alt="MCP: stdio and hosted HTTP" src="https://img.shields.io/badge/MCP-stdio%20%2B%20hosted%20HTTP-6f42c1"></a>
+<a href="LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-blue"></a>
+<br>
+<img alt="Python 3.11+" src="https://img.shields.io/badge/python-3.11%2B-3776ab"> <!-- noclaim: version -->
+<img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-backend-009688">
+<img alt="Next.js 16" src="https://img.shields.io/badge/Next.js-16-000000">
+<img alt="Tracks: T1, T3, T2" src="https://img.shields.io/badge/Graph%20Hacks-T1%20%C2%B7%20T3%20%C2%B7%20T2-ff4e00">
+</p>
 
 ![The gate at work: a no-path rejection (G2), a max-flow rejection (G5), then the proof path](docs/media/hero.gif)
 
-**Live demo: [13-203-185-119.sslip.io](https://13-203-185-119.sslip.io)** (keyless: deterministic investigator, simulated GitHub; press Re-arm to reset it) · **Hosted MCP:** `https://13-203-185-119.sslip.io/mcp` with a public read-only demo key ([try it in one command](docs/MCP.md#try-the-hosted-server-now-public-demo-key)) · **Recorded replay (no backend):** [prashant-thakur77.github.io/Faultline](https://prashant-thakur77.github.io/Faultline/) · **Release:** [v1.0.0](https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.0.0) ([changelog](CHANGELOG.md))
+<p align="center"><b><a href="https://13-203-185-119.sslip.io">Live demo</a> · <a href="https://github.com/Prashant-thakur77/Faultline/releases/download/v1.1.0/faultline-demo.mp4">Watch the video (4:27)</a> · <a href="docs/MCP.md#try-the-hosted-server-now-public-demo-key">Hosted MCP</a> · <a href="docs/PROOF.md">Every number, with intervals</a> · <a href="https://prashant-thakur77.github.io/Faultline/">Replay (no backend)</a> · <a href="https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.1.0">Release v1.1.0</a></b></p>
 
-**Demo video (4:27, narrated, captioned):** [watch or download](https://github.com/Prashant-thakur77/Faultline/releases/download/v1.0.0/faultline-demo.mp4) · 0:16 thesis · 0:31 how FalkorDB decides, in 3D · 1:41 the live incident · 2:08 a real PR, APPLIED · 2:38 on call · 3:22 company brain · 3:27 what it learned · 3:37 inside FalkorDB · 3:44 the numbers. Every number in it is read from the results file at record time; script: [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md). <!-- noclaim: chapter times -->
+## At a glance
 
-Built for Graph Hacks (WeMakeDevs × FalkorDB).
+| | |
+|---|---|
+| **What it is** | An on-call agent whose memory and reasoning live in a per-tenant **FalkorDB** operational context graph: services, deploys, flags, warehouse lineage, telemetry windows, people, decisions, runbooks and every step it takes. |
+| **The rule** | **No path, no claim.** A change is blamed only when `algo.SPpaths` returns a causal path from it to the symptom and `algo.maxFlow` shows it can carry the observed impact. Otherwise the agent abstains and hands the incident to a human. |
+| **What it does** | Blast radius (`algo.BFS`) → causal proof (`algo.SPpaths`, `algo.maxFlow`) → smallest containment (the max-flow min-cut, each option tried on its own `GRAPH.COPY`) → who should fix it (`algo.HarmonicCentrality`, escalation by `algo.MSF`) → pages the on-call → one human-approved action (a real pull request) → verifies it through a second channel (APPLIED, NOT_APPLIED or UNKNOWN) → writes the decision back. |
+| **Same graph, more jobs** | A pre-deploy gate that blocks risky PRs; a company brain ("who owns, knows and decided what", with cited node ids); standing approvals for repeat faults; learning from the people who use it; read-only MCP tools any agent can call. |
+| **FalkorDB depth** | The only database. <!-- claim:repo.algorithms -->10<!-- /claim --> `algo.*` procedures, each changing a decision; <!-- claim:repo.templates -->226<!-- /claim --> parameterised Cypher templates; one graph and one read-only ACL user per tenant; `GRAPH.COPY` clean rooms and what-if branches; vectors and full-text; <!-- claim:repo.constraints -->15<!-- /claim --> constraints; `WAITAOF` durability; the engine's own telemetry on a `/engine` page. |
+| **Proven** | <!-- claim:seedsall.deep.wrong_confident -->0<!-- /claim --> confident wrong blames in <!-- claim:seedsall.deep.cases -->1540<!-- /claim --> adversarial worlds (a telemetry heuristic: <!-- claim:seedsall.deep.T.wrong_any -->620<!-- /claim -->; a strong LLM alone: <!-- claim:llm_deep.deep.all.wrong_confident -->37<!-- /claim --> of <!-- claim:deep.fresh.all.cases -->140<!-- /claim -->); on the real OpenTelemetry Demo, <!-- claim:otel.faultline.wrong.k -->0<!-- /claim --> wrong blames in <!-- claim:otel.faultline.wrong.n -->40<!-- /claim --> windows; without `algo.maxFlow` the right cause drops from <!-- claim:decisive.full.g5_only.right_cause -->20<!-- /claim -->/<!-- claim:decisive.full.g5_only.cases -->20<!-- /claim --> to <!-- claim:decisive.no_maxflow.g5_only.right_cause -->0<!-- /claim -->. The cost is recall, stated next to every number ([Proof at a glance](#proof-at-a-glance)). |
+| **Run it** | Live: [13-203-185-119.sslip.io](https://13-203-185-119.sslip.io) (keyless; press Re-arm to reset). Locally: `make setup && make judge-check` prints PASS with no API key. |
+| **Stack** | FalkorDB 6.0.2 (pinned by digest) · Python 3.11 and FastAPI · Next.js 16, React Three Fiber · MCP over stdio and HTTP · Docker Compose on one AWS EC2 VM with Caddy. <!-- noclaim: versions --> |
+| **Built for** | Graph Hacks (WeMakeDevs × FalkorDB). Tracks: T1 Agents That Act on Connected Data ([how one incident flows](#how-one-incident-flows)) · T3 Company Brain ([memory and brain](#memory-company-brain-preflight-coordination)) · T2 Agent Memory & Coordination ([learning from the people who use it](#learns-from-the-people-who-use-it-t2)). |
+
+**[Video](https://github.com/Prashant-thakur77/Faultline/releases/download/v1.1.0/faultline-demo.mp4) (4:27, narrated, captioned)** chapters: 0:16 thesis · 0:31 how FalkorDB decides, in 3D · 1:41 the live incident · 2:08 a real PR, APPLIED · 2:38 on call · 3:22 company brain · 3:27 what it learned · 3:37 inside FalkorDB · 3:44 the numbers. Every number in it is read from the results file at record time; script: [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md). <!-- noclaim: chapter times -->
 
 ---
 
@@ -55,14 +77,54 @@ Every result in one table. Each number is tagged and checked against [`evals/res
 | The graph decides, not the model | right cause <!-- claim:decisive.full.g5_only.right_cause -->20<!-- /claim -->/<!-- claim:decisive.full.g5_only.cases -->20<!-- /claim --> with `algo.maxFlow`, <!-- claim:decisive.no_maxflow.g5_only.right_cause -->0<!-- /claim -->/20 without it | a strong LLM alone on the same <!-- claim:llm_deep.decisive.g5_only.cases -->20<!-- /claim --> worlds: <!-- claim:llm_deep.decisive.g5_only.right_cause -->14<!-- /claim --> right, <!-- claim:llm_deep.decisive.g5_only.wrong_confident -->3<!-- /claim --> wrong | [decisive bench](docs/EVALS.md#the-numbers-audit-2026-10-16-intervals-new-seeds-and-harder-comparisons) |
 | It holds on a real running system | on the OpenTelemetry Demo's real services and telemetry, broken with its own fault flags (topology, decoys and page rule ours), the right cause in <!-- claim:otel.faultline.right_cause.k -->11<!-- /claim -->/<!-- claim:otel.faultline.right_cause.n -->20<!-- /claim --> fault windows and <!-- claim:otel.faultline.wrong.k -->0<!-- /claim --> wrong blames in <!-- claim:otel.faultline.wrong.n -->40<!-- /claim --> windows [0–<!-- claim:otel.faultline.wrong.ci_hi -->8.8%<!-- /claim -->]; the rest abstained (<!-- claim:otel.accepted_nc.bystander -->3<!-- /claim --> naming an innocent "not confident" suspect); no causal path removed <!-- claim:otel.gate.decoys.G2 -->73<!-- /claim --> of <!-- claim:otel.gate.decoys -->120<!-- /claim --> decoys | thresholded telemetry (T+): <!-- claim:otel.Tplus.right_cause.k -->13<!-- /claim --> right, <!-- claim:otel.Tplus.wrong.k -->8<!-- /claim --> wrong; recency: <!-- claim:otel.N.right_cause.k -->17<!-- /claim --> right, <!-- claim:otel.N.wrong.k -->23<!-- /claim --> wrong | [FaultBench-OTel](docs/EVALS.md#faultbench-otel-a-real-system-real-telemetry-pre-registered-2026-10-16) |
 | On call, end to end | <!-- claim:oncall.night.steps_passed -->14<!-- /claim -->/<!-- claim:oncall.night.steps -->14<!-- /claim --> steps: page, escalate, acknowledge, approve, verified APPLIED; the same fault again paged <!-- claim:oncall.night.inc2.people_woken -->0<!-- /claim --> people under a standing contract (only <!-- claim:oncall.night.inc2.notices -->5<!-- /claim --> silent information notices); the contract fired in <!-- claim:oncall.night.negatives_fired -->0<!-- /claim --> of <!-- claim:oncall.night.negatives -->5<!-- /claim --> cases outside its terms | the first time, by design: <!-- claim:oncall.night.inc1.people_woken -->5<!-- /claim --> people paged | [on-call night](#on-call-page-acknowledge-escalate-standing-approval) |
-| It learns from the people who use it | the fix the on-call keeps choosing ranked first on both scenarios (<!-- claim:learn.choices.scenarios -->S1,S1b<!-- /claim -->; a deterministic check, three identical runs each); gate verdicts unchanged; T2 go/no-go <!-- claim:t2.green -->5<!-- /claim -->/<!-- claim:t2.items -->5<!-- /claim --> | cold: the rollback first on both | [learning night](#learns-from-the-people-who-use-it-t2) |
+| It learns from the people who use it | the fix the on-call keeps choosing ranked first on both scenarios (<!-- claim:learn.choices.scenarios -->S1,S1b<!-- /claim -->; a deterministic check, three identical runs each); gate verdicts unchanged; memory and coordination checklist (track T2) <!-- claim:t2.green -->5<!-- /claim -->/<!-- claim:t2.items -->5<!-- /claim --> | cold: the rollback first on both | [learning night](#learns-from-the-people-who-use-it-t2) |
 | The company brain on questions it never saw | <!-- claim:brain_blind.s2.hybrid.correct -->24<!-- /claim -->/<!-- claim:brain_blind.s2.hybrid.questions -->40<!-- /claim --> with FalkorDB vector + full-text routing | keyword routing alone <!-- claim:brain_blind.s2.keyword_router.correct -->19<!-- /claim -->/<!-- claim:brain_blind.s2.keyword_router.questions -->40<!-- /claim --> | [blind set](docs/EVALS.md#the-numbers-audit-2026-10-16-intervals-new-seeds-and-harder-comparisons) |
 | The vector index, tuned on the engine | recall@10 <!-- claim:vector.recall_at_10.tuned -->1.0<!-- /claim --> on <!-- claim:vector.queries -->702<!-- /claim --> queries over <!-- claim:vector.sets -->9<!-- /claim --> sets (M 32, efConstruction 400, efRuntime 100) | the defaults: <!-- claim:vector.recall_at_10.default -->0.9767<!-- /claim --> on the hardest set (<!-- claim:vector.history2k_incident.queries -->60<!-- /claim --> queries over <!-- claim:vector.history2k_incident.vectors -->2040<!-- /claim --> vectors); the settings were chosen on these same queries | [vector recall](docs/GRAPH_MODEL.md#indexes-and-constraints) (`evals/vector_recall.py`) |
 | The company brain against FalkorDB's own GraphRAG-SDK | on blind questions <!-- claim:graphrag.s2.fl.correct -->24<!-- /claim -->/<!-- claim:graphrag.s2.questions -->40<!-- /claim -->, p50 <!-- claim:graphrag.s2.fl.ms_p50 -->18.1<!-- /claim --> ms and no model call | **the SDK answered more:** <!-- claim:graphrag.s2.sdk.correct -->32<!-- /claim -->/<!-- claim:graphrag.s2.questions -->40<!-- /claim --> (paired p <!-- claim:graphrag.s2.paired.mcnemar_p -->0.12<!-- /claim -->), at <!-- claim:graphrag.s2.sdk.s_p50 -->3.09<!-- /claim --> s and $<!-- claim:graphrag.s2.sdk.usd_per_question -->0.009<!-- /claim --> a question | [GraphRAG-SDK arm](docs/EVALS.md#company-brain-vs-falkordbs-graphrag-sdk-pre-registered-2026-10-17) |
 | It cannot act twice | <!-- claim:contention.responders -->24<!-- /claim --> approvals of one plan at once: <!-- claim:contention.same.accepted -->1<!-- /claim --> accepted, <!-- claim:contention.same.prs -->1<!-- /claim --> PR; killed between execute and verify: exactly once; <!-- claim:mutation.killed -->41<!-- /claim -->/<!-- claim:mutation.mutants -->41<!-- /claim --> safety mutants caught | a retry without the idempotency key merged <!-- claim:chaos.control_merged_prs -->2<!-- /claim --> PRs | [safety](#safety) |
 | It gives back to FalkorDB | a fix as a pull request to GraphRAG-SDK ([#345](https://github.com/FalkorDB/GraphRAG-SDK/pull/345)), so the SDK runs on the engine we pin; issues [#3349](https://github.com/FalkorDB/FalkorDB/issues/3349), [#3376](https://github.com/FalkorDB/FalkorDB/issues/3376) and [#3377](https://github.com/FalkorDB/FalkorDB/issues/3377); new evidence on [#3150](https://github.com/FalkorDB/FalkorDB/issues/3150#issuecomment-6201125566) (a server panic) and [#2502](https://github.com/FalkorDB/FalkorDB/issues/2502#issuecomment-6237945777); one finding reported privately | | [docs/upstream](docs/upstream/) |
 
-![On a real system: right causes, wrong blames and abstentions on the OpenTelemetry Demo, against a telemetry threshold and recency](docs/media/charts/otel.svg)
+<table>
+<tr>
+<td width="420"><img src="docs/media/charts/otel.svg" alt="On a real system, the OpenTelemetry Demo: right causes, wrong blames and abstentions for Faultline, a telemetry threshold and recency, with 95 % intervals"></td>
+<td width="420"><img src="docs/media/charts/ladder.svg" alt="Remove both the path and the flow check and true causes are lost; remove one and the other covers for it"></td>
+</tr>
+<tr>
+<td><img src="docs/media/charts/cost.svg" alt="The cost of a decision: zero model tokens for FalkorDB's no-path proof, thousands for a language model"></td>
+<td><img src="docs/media/charts/context_mrr.svg" alt="Where the context pack ranks the true cause, against telemetry ranking, vector RAG and recency"></td>
+</tr>
+<tr>
+<td><img src="docs/media/charts/live.svg" alt="The live deployment, measured over HTTPS: alert to verdict, approve to verified write-back, end to end"></td>
+<td><img src="docs/media/charts/vs_sql.svg" alt="The same graph questions answered by FalkorDB and by recursive SQL, with the same answers"></td>
+</tr>
+</table>
+
+<sub>Every chart is drawn from <code>evals/results/latest.json</code> by <code>scripts/gen_charts.py</code>; the methods are in <a href="docs/EVALS.md">docs/EVALS.md</a>.</sub>
+
+## See it
+
+<table>
+<tr>
+<td width="420" valign="top"><img src="docs/screenshots/02-incident-room.png" alt="Incident room, verdict first: the cause and its proven graph path in one line, then the timeline, the failure-flow graph and the root cause"><br><sub><b>Incident room, verdict first.</b> The cause and its proven path in one line; the timeline, the failure-flow graph and every suspect the gate tried, each ruled in or out by a query you can open.</sub></td>
+<td width="420" valign="top"><img src="docs/screenshots/27-explainer.png" alt="The 3D explainer at the max-flow scene: the look-alike's pipe is too narrow to carry checkout's impact"><br><sub><b>How FalkorDB decides, in 3D</b> (<a href="https://13-203-185-119.sslip.io/explainer">/explainer</a>). Each scene is one FalkorDB call from the hero incident; here <code>algo.maxFlow</code> shows the look-alike cannot carry the impact.</sub></td>
+</tr>
+<tr>
+<td valign="top"><img src="docs/screenshots/23-oncall.png" alt="On call: who is paged and why, who is on call now, the last seven days and the standing approvals"><br><sub><b>On call.</b> Pages go to whoever the graph says is on call for the owning team, escalate along the graph's spanning tree, and stop for a repeat a human already approved.</sub></td>
+<td valign="top"><img src="docs/screenshots/26-engine.png" alt="Inside FalkorDB: memory per graph from GRAPH.MEMORY USAGE and every query template timed by the engine's own telemetry"><br><sub><b>Inside FalkorDB</b> (<code>/engine</code>). Memory per graph from <code>GRAPH.MEMORY USAGE</code>, every template timed by the engine's own telemetry stream, the live tail.</sub></td>
+</tr>
+<tr>
+<td valign="top"><img src="docs/screenshots/25-learned.png" alt="What Faultline learned: proposed guidelines from rejections, standing approvals to consider, who actually responds"><br><sub><b>What it learned</b> (<code>/memory#learned</code>). Guidelines proposed from rejections, standing approvals to consider, who actually answers, and forget with a receipt.</sub></td>
+<td valign="top"><img src="docs/screenshots/28-break-it.png" alt="Break it: change one edge or call in a copy of the graph and watch which decisions follow"><br><sub><b>Break it</b> (<a href="https://13-203-185-119.sslip.io/playground">/playground</a>). Change one thing in a <code>GRAPH.COPY</code> of the graph and watch the verdict move: the graph is load-bearing, live.</sub></td>
+</tr>
+<tr>
+<td valign="top"><img src="docs/screenshots/18-provenance.png" alt="Why do you believe this: the verdict's provenance, from the agents' calls to the evidence that supports it"><br><sub><b>Why do you believe this?</b> Agent, tool call, evidence, verdict: every arrow is a stored edge, so the answer is itself a query.</sub></td>
+<td valign="top"><img src="docs/screenshots/20-brain-answer-graph.png" alt="A company-brain answer drawn as a graph: who decided, the decisions, and what they constrain"><br><sub><b>Company brain.</b> "Who decided the payment timeout?" answered from the graph, every name a node id a query returned.</sub></td>
+</tr>
+</table>
+
+<p align="center"><img src="docs/screenshots/24-phone-page.png" width="260" alt="A page on a phone: the verdict, the proof path, who fixes it and one-tap acknowledge"><br><sub><b>The page, on a phone.</b> The verdict, the proof path and who fixes it, all read from the graph; one tap acknowledges and stops the escalation.</sub></p>
+
+More screens (preflight, Cypher panel, crew board, tenant isolation, replay, FalkorDB Browser): [Screens](#screens).
 
 ## What the judges asked for
 
@@ -80,7 +142,7 @@ The rules and the organiser's day-1 post ("How to Build an Agent That Reasons Ov
 
 ## Why FalkorDB, in numbers
 
-Measured on the pinned engine (FalkorDB 6.0.2), in the terms FalkorDB uses for itself: graphs per instance, p99 under concurrent clients, memory, algorithm speed. These are Faultline's own workloads on one laptop, not a comparison with another database. Methods were pre-registered ([evals/PREREGISTRATION.md](evals/PREREGISTRATION.md), M20 addendum); details in [docs/EVALS.md](docs/EVALS.md#engine-numbers-in-falkordbs-own-terms-m20-pre-registered-2026-10-17).
+Measured on the pinned engine (FalkorDB 6.0.2), in the terms FalkorDB uses for itself: graphs per instance, p99 under concurrent clients, memory, algorithm speed. These are Faultline's own workloads on one laptop, not a comparison with another database. Methods were pre-registered ([evals/PREREGISTRATION.md](evals/PREREGISTRATION.md), addendum of 2026-10-17); details in [docs/EVALS.md](docs/EVALS.md#engine-numbers-in-falkordbs-own-terms-pre-registered-2026-10-17).
 
 | FalkorDB's yardstick | Faultline, measured | Source |
 |---|---|---|
@@ -97,6 +159,7 @@ Measured on the pinned engine (FalkorDB 6.0.2), in the terms FalkorDB uses for i
 ## Contents
 
 - [Proof at a glance](#proof-at-a-glance)
+- [See it](#see-it)
 - [What the judges asked for](#what-the-judges-asked-for)
 - [Why FalkorDB, in numbers](#why-falkordb-in-numbers)
 - [Reproduce it](#reproduce-it)
@@ -556,6 +619,14 @@ Headline results (method for each line: [docs/EVALS.md](docs/EVALS.md)):
 | Same answers as SQL? | the gate's lookups vs DuckDB recursive SQL on the same edges at 1k services: <!-- claim:perf.1k.reach_set.equal -->10<!-- /claim -->/<!-- claim:perf.1k.reach_set.instances -->10<!-- /claim --> reach sets and <!-- claim:perf.1k.shortest_causal_path.equal -->10<!-- /claim -->/<!-- claim:perf.1k.shortest_causal_path.instances -->10<!-- /claim --> shortest causal paths agree (<!-- claim:perf.1k.shortest_causal_path.non_empty -->5<!-- /claim --> have a path; the rest agree there is none); both are milliseconds at this size, so no speed claim (times in [docs/PROOF.md](docs/PROOF.md#why-falkordb-what-the-graph-engine-itself-contributes)) |
 | How fast? | a full scenario run (deterministic investigator, clean room) p50 <!-- claim:arm.A3.seconds_p50 -->0.84<!-- /claim --> s; the G2 query p50 <!-- claim:profile.Q-GATE-1.engine_ms_p50 -->0.025<!-- /claim --> ms engine time; a brain answer p50 <!-- claim:brain.ms_p50 -->11.8<!-- /claim --> ms; an alert is visible to decisions <!-- claim:perf.fresh.alert.p50_ms -->0.727<!-- /claim --> ms after the write |
 | Scale | <!-- claim:scale.10k.services -->10000<!-- /claim --> services, <!-- claim:scale.10k.nodes -->296261<!-- /claim --> nodes, <!-- claim:scale.10k.edges -->1097675<!-- /claim --> edges: decided correctly (<!-- claim:scale.10k.correct -->True<!-- /claim -->) in <!-- claim:scale.10k.run_s -->34.88<!-- /claim --> s end to end, most of it the futures stage (one `GRAPH.COPY` branch per containment option); the gate sweep that decides takes <!-- claim:scale.10k.sweep_ms_p50 -->463.421<!-- /claim --> ms (p50) |
+| On a real system? | FaultBench-OTel (the OpenTelemetry Demo, its own fault flags, its real telemetry; topology and decoys ours): right cause <!-- claim:otel.faultline.right_cause.k -->11<!-- /claim -->/<!-- claim:otel.faultline.right_cause.n -->20<!-- /claim -->, wrong blames <!-- claim:otel.faultline.wrong.k -->0<!-- /claim -->/<!-- claim:otel.faultline.wrong.n -->40<!-- /claim -->, controls blame-free <!-- claim:otel.faultline.control_blame_free.k -->20<!-- /claim -->/<!-- claim:otel.faultline.control_blame_free.n -->20<!-- /claim -->; a telemetry threshold <!-- claim:otel.Tplus.right_cause.k -->13<!-- /claim --> right and <!-- claim:otel.Tplus.wrong.k -->8<!-- /claim --> wrong, recency <!-- claim:otel.N.right_cause.k -->17<!-- /claim --> right and <!-- claim:otel.N.wrong.k -->23<!-- /claim --> wrong |
+| Against a strong LLM on the adversarial worlds? | `claude-opus-5-5` alone, the same telemetry and change list: right cause <!-- claim:llm_deep.deep.all.right_cause -->66<!-- /claim -->/<!-- claim:llm_deep.deep.all.cause_cases -->100<!-- /claim -->, confident wrong <!-- claim:llm_deep.deep.all.wrong_confident -->37<!-- /claim -->/<!-- claim:deep.fresh.all.cases -->140<!-- /claim -->; on the decisive worlds where only max flow separates cause from look-alike, <!-- claim:llm_deep.decisive.g5_only.right_cause -->14<!-- /claim -->/<!-- claim:llm_deep.decisive.g5_only.cases -->20<!-- /claim --> right and <!-- claim:llm_deep.decisive.g5_only.wrong_confident -->3<!-- /claim --> wrong (Faultline <!-- claim:decisive.full.g5_only.right_cause -->20<!-- /claim -->/<!-- claim:decisive.full.g5_only.cases -->20<!-- /claim -->, 0 wrong) |
+| Does on call work end to end? | a scripted night: <!-- claim:oncall.night.steps_passed -->14<!-- /claim -->/<!-- claim:oncall.night.steps -->14<!-- /claim --> steps (page, escalate, acknowledge, approve, APPLIED, standing approval, the same fault again with <!-- claim:oncall.night.inc2.people_woken -->0<!-- /claim --> people paged); the contract fired in <!-- claim:oncall.night.negatives_fired -->0<!-- /claim --> of <!-- claim:oncall.night.negatives -->5<!-- /claim --> cases outside its terms |
+| Does it learn from the people who use it? | the fix the on-call keeps choosing moves first on both scenarios checked (deterministic), gate verdicts unchanged; forget removes <!-- claim:learn.forget.events -->14<!-- /claim --> events with <!-- claim:learn.forget.events_left -->0<!-- /claim --> left; the memory and coordination checklist (track T2) <!-- claim:t2.green -->5<!-- /claim -->/<!-- claim:t2.items -->5<!-- /claim --> |
+| Many tenants on one engine? | <!-- claim:tenants.n -->250<!-- /claim --> tenant graphs, <!-- claim:tenants.acl.leaks -->0<!-- /claim --> leaks in <!-- claim:tenants.acl.cross.n -->1000<!-- /claim --> cross-tenant reads by per-tenant ACL users; gate reads p99 <!-- claim:tenants.c64.p99_ms -->6.62<!-- /claim --> ms with 64 parallel investigators, <!-- claim:tenants.c64.errors -->0<!-- /claim --> errors |
+| FalkorDB's algorithms against NetworkX? | all 10 `algo.*` at 10k services on the same input: same answers on <!-- claim:algo10k.same -->9<!-- /claim -->/<!-- claim:algo10k.comparable -->11<!-- /claim --> comparable workloads; engine time faster on <!-- claim:algo10k.faster_engine -->11<!-- /claim -->/<!-- claim:algo10k.timed_pairs -->12<!-- /claim --> (exact betweenness <!-- claim:algo10k.betweenness.falkor_ms_p50 -->255.217<!-- /claim --> ms against <!-- claim:algo10k.betweenness.nx_ms_p50 -->54707.892<!-- /claim --> ms); client wall time faster on only <!-- claim:algo10k.faster_wall -->5<!-- /claim --> |
+| The brain against FalkorDB's GraphRAG-SDK? | on blind questions the SDK won, <!-- claim:graphrag.s2.sdk.correct -->32<!-- /claim -->/<!-- claim:graphrag.s2.questions -->40<!-- /claim --> against <!-- claim:graphrag.s2.fl.correct -->24<!-- /claim -->/<!-- claim:graphrag.s2.questions -->40<!-- /claim --> (paired p <!-- claim:graphrag.s2.paired.mcnemar_p -->0.12<!-- /claim -->); the brain answers in <!-- claim:graphrag.s2.fl.ms_p50 -->18.1<!-- /claim --> ms with no model, the SDK in <!-- claim:graphrag.s2.sdk.s_p50 -->3.09<!-- /claim --> s |
+| Is the vector index tuned? | recall@10 <!-- claim:vector.recall_at_10.tuned -->1.0<!-- /claim --> on <!-- claim:vector.queries -->702<!-- /claim --> queries over <!-- claim:vector.sets -->9<!-- /claim --> sets with M 32, efConstruction 400, efRuntime 100 (the defaults: <!-- claim:vector.recall_at_10.default -->0.9767<!-- /claim --> on the hardest set) |
 | Would preflight have caught past bad PRs? | mixed, reported as is: AUROC <!-- claim:backtest.globex.full.all.auroc -->0.8075<!-- /claim --> on globex, <!-- claim:backtest.acme.full.all.auroc -->0.5179<!-- /claim --> (chance) on acme |
 | Is the method portable? | the four-query skill names the gate's cause in <!-- claim:skill.named_same -->4<!-- /claim -->/<!-- claim:skill.cause_scenarios -->5<!-- /claim --> scenarios that have one (its miss abstains), abstains with the gate in <!-- claim:skill.abstain_same -->3<!-- /claim -->/<!-- claim:skill.abstain_scenarios -->3<!-- /claim -->, and eliminated the gate's cause <!-- claim:skill.cause_eliminated -->0<!-- /claim --> times |
 
@@ -661,7 +732,7 @@ Containment options are reordered by what worked before: a Beta-smoothed success
 
 ## On-call: page, acknowledge, escalate, standing approval
 
-Faultline runs the on-call loop itself, and every step is a FalkorDB node or a catalogue query ([API](docs/API.md#m19-on-call-pages-acknowledgements-escalation-standing-contracts-hand-offs), [graph model](docs/GRAPH_MODEL.md#m19-additions-on-call-pages-acks-escalation-standing-contracts-hand-offs)):
+Faultline runs the on-call loop itself, and every step is a FalkorDB node or a catalogue query ([API](docs/API.md#on-call-pages-acknowledgements-escalation-standing-contracts-hand-offs), [graph model](docs/GRAPH_MODEL.md#on-call-pages-acks-escalation-standing-contracts-hand-offs)):
 
 - **Page.** When an incident becomes approvable, the on-call person of the team that owns the failing component (`who_fixes`, read from the `ON_CALL` rota) and the on-call of every team that owns something in its blast radius (`Q-NOTIFY-1`) each get a `(:Page)`. Urgency comes from the obligation clock, and "unknown" counts as urgent. An incident the gate cannot route (escalated, or accepted without confidence) still pages the symptom owners' on-call.
 - **Acknowledge.** With the page's signed link (HMAC over tenant and page id), the incident's run token or the approver key: `(:Person)-[:ACKED {at, via}]->(:Page)`. Telegram's Ack button does the same.
@@ -709,18 +780,18 @@ D-pay-417 caused this: D-pay-417 → payment → checkout
 
 ## Learns from the people who use it (T2)
 
-Faultline learns from recent work and from what its operators do, and all of it lives in FalkorDB: every trusted action is a `(:LearnEvent)` in the tenant's on-call graph, and what is learned is recomputed from those events by one Cypher query each, with recency decay written as an expression (`0.5 ^ (age / half-life)`, half-life in `weights.yaml learn`). Learning reorders, suggests and annotates. It never touches the gate, an approval rule or a contract's conditions, and every learned item names the events it came from ([API](docs/API.md#m21-what-faultline-learned), [graph model](docs/GRAPH_MODEL.md#m21-additions-learning-from-the-people-who-use-it)).
+Faultline learns from recent work and from what its operators do, and all of it lives in FalkorDB: every trusted action is a `(:LearnEvent)` in the tenant's on-call graph, and what is learned is recomputed from those events by one Cypher query each, with recency decay written as an expression (`0.5 ^ (age / half-life)`, half-life in `weights.yaml learn`). Learning reorders, suggests and annotates. It never touches the gate, an approval rule or a contract's conditions, and every learned item names the events it came from ([API](docs/API.md#learning-what-faultline-learned), [graph model](docs/GRAPH_MODEL.md#learning-from-the-people-who-use-it)).
 
 | Loop | What it learns from | Where it shows | What it may change |
 |---|---|---|---|
 | Choices | approvals and rejections per incident family and action kind → `(:Preference)` | PLAN (`learned_preferences`, `Q-LEARN-PREF`), with a why line | the order of options **within one predicted-future class**, blended with verified outcomes (`Q-REM-1`) |
 | Guidelines | a rejection's reason → `(:Guideline {status: proposed})` | the next plan for that family and action, with who, when and which incident | nothing until a human promotes it; then the option is flagged and approving it needs an explicit override (stricter, never weaker); dismiss removes it |
 | Responders | acknowledgements, approvals and verified fixes → `(:Person)-[:RESPONDED]->(component)` | ROUTE (`learned_responders`, `Q-LEARN-RESP`) | the person who answers is paged first, in addition to the rota (never instead of it) |
-| Standing approvals | the same exact fix approved and verified on K incidents | the plan option | a suggestion to grant one; the grant is still the two-step M19 contract |
+| Standing approvals | the same exact fix approved and verified on K incidents | the plan option | a suggestion to grant one; the grant is still the two-step standing-approval grant |
 | Recent work | recall ranks look-alike incidents by similarity and recency (`Q-MEM-1`) | RECALL, the context pack ("last seen 3 days ago; fixed by …, verified") | which precedent comes first |
 | Knowledge gaps | brain questions the graph could not answer → `(:KnowledgeGap)` | `GET /api/learned`, `knowledge_gaps` | a list of what to document, with the teams that own what each question was about |
 
-**Public demo: visitors cannot poison it.** An action is learned only from a trusted actor: a run off the public demo or started with the approver key, a keyed alert, the approver key itself, or the operator-mapped Telegram bot (M19's trust rule). An anonymous visitor's approvals, rejections, acknowledgements and brain questions are never recorded, and changing or forgetting learned state needs the approver key there (`tests/live/test_learning_live.py`).
+**Public demo: visitors cannot poison it.** An action is learned only from a trusted actor: a run off the public demo or started with the approver key, a keyed alert, the approver key itself, or the operator-mapped Telegram bot (the trust rule above). An anonymous visitor's approvals, rejections, acknowledgements and brain questions are never recorded, and changing or forgetting learned state needs the approver key there (`tests/live/test_learning_live.py`).
 
 **Forget with a receipt.** `POST /api/learned/forget {person}` lists every event the person contributed and returns a receipt token; with the token and an approver it deletes exactly that set in one write, recomputes every preference, responder edge and gap it fed, writes a `ForgetReceipt` to the audit graph, and re-reads that nothing of theirs is left.
 
@@ -734,42 +805,59 @@ Faultline learns from recent work and from what its operators do, and all of it 
 - **Recall:** the warm run's top precedent was the incident just resolved in <!-- claim:learn.recall.warm_top_first -->6<!-- /claim --> of <!-- claim:learn.recall.trials -->6<!-- /claim --> trials (<!-- claim:learn.recall.pairs -->S1->S1b,S3->S3b<!-- /claim -->), with gate verdicts identical in <!-- claim:learn.recall.gate_identical -->6<!-- /claim -->. On cold rooms, recency changed the top precedent in <!-- claim:learn.recall.top_changed -->3<!-- /claim --> of <!-- claim:learn.recall.scenarios_with_precedents -->3<!-- /claim --> scenarios that have precedents (on S1, from one <!-- claim:learn.recall.s1.w00.top_age_days -->92.5<!-- /claim --> days old to one <!-- claim:learn.recall.s1.w02.top_age_days -->2.5<!-- /claim --> days old).
 - **Knowledge gaps:** <!-- claim:learn.gaps.count -->2<!-- /claim --> unanswered questions became gaps (one asked <!-- claim:learn.gaps.asked_max -->2<!-- /claim --> times); the answered and the off-topic question did not.
 
-**T2 go/no-go** (the checklist we set before building it, `evals/t2_gonogo.py`): <!-- claim:t2.green -->5<!-- /claim --> of <!-- claim:t2.items -->5<!-- /claim --> green. Cold vs warm on two scenarios with three runs each (above); S13 concurrency <!-- claim:t2.s13.rounds_one_owner -->100<!-- /claim --> of <!-- claim:t2.s13.rounds -->100<!-- /claim --> rounds with exactly one owner and <!-- claim:t2.s13.lost_updates -->0<!-- /claim --> lost updates; S7 isolation <!-- claim:t2.s7.passed -->34<!-- /claim --> passed, <!-- claim:t2.s7.failed -->0<!-- /claim --> failed, also through the shipped read-only ACL users; S10 the forget receipt locally, and the live URL's read-only forget dry run answered <!-- claim:t2.s10.live_dry_run_status -->200<!-- /claim --> with a receipt token (an executed forget there would write the live audit graph, so it ran locally; the live URL serves learning: `GET /api/learned` <!-- claim:t2.s10.live_learned_status -->200<!-- /claim -->); session history: <!-- claim:t2.session.sessions -->2<!-- /claim --> sessions of one user, <!-- claim:t2.session.turns -->4<!-- /claim --> turns read back on a separate read-only connection.
+**The memory and coordination checklist (track T2)** (set before building it, `evals/t2_gonogo.py`): <!-- claim:t2.green -->5<!-- /claim --> of <!-- claim:t2.items -->5<!-- /claim --> green. Cold vs warm on two scenarios with three runs each (above); S13 concurrency <!-- claim:t2.s13.rounds_one_owner -->100<!-- /claim --> of <!-- claim:t2.s13.rounds -->100<!-- /claim --> rounds with exactly one owner and <!-- claim:t2.s13.lost_updates -->0<!-- /claim --> lost updates; S7 isolation <!-- claim:t2.s7.passed -->34<!-- /claim --> passed, <!-- claim:t2.s7.failed -->0<!-- /claim --> failed, also through the shipped read-only ACL users; S10 the forget receipt locally, and the live URL's read-only forget dry run answered <!-- claim:t2.s10.live_dry_run_status -->200<!-- /claim --> with a receipt token (an executed forget there would write the live audit graph, so it ran locally; the live URL serves learning: `GET /api/learned` <!-- claim:t2.s10.live_learned_status -->200<!-- /claim -->); session history: <!-- claim:t2.session.sessions -->2<!-- /claim --> sessions of one user, <!-- claim:t2.session.turns -->4<!-- /claim --> turns read back on a separate read-only connection.
 
 ## Screens
 
+All captured from the running product against the real backend (`frontend/scripts/screenshots.py`, `screenshots_oncall.py`, `screenshots_tour.py`). The main ones are in [See it](#see-it).
+
 <table>
 <tr>
-<td valign="top"><img src="docs/screenshots/02-incident-room.png" alt="Incident room, verdict first: the cause and its proven graph path in one line, then the timeline, the failure-flow graph and the root cause"><br><sub><b>Incident room, verdict first.</b> One line says what caused it and by which graph path; each card names the FalkorDB query behind it ("via FalkorDB · algo.SPpaths · Q-GATE-1").</sub></td>
-<td valign="top"><img src="docs/screenshots/03-naive-vs-faultline.png" alt="Naive recency ties two same-minute changes; the gate eliminates the look-alike by max flow and the decoy by no path"><br><sub><b>Naive vs the gate.</b> Recency ties the two same-minute deploys; the gate eliminates one by max flow (G5) and one by no path (G2).</sub></td>
+<td valign="top"><img src="docs/screenshots/03-naive-vs-faultline.png" alt="Naive recency ties two same-minute changes; the gate eliminates the look-alike by max flow and the decoy by no path"><br><sub><b>Naive vs the gate.</b> Recency ties the two same-minute changes; the gate rules out one by max flow and one by no path.</sub></td>
+<td valign="top"><img src="docs/screenshots/16-proof-story.png" alt="How it decides: a pinned proof graph follows the scroll, each step with the template Cypher that decides it"><br><sub><b>How it decides.</b> A pinned proof graph follows the scroll; each step shows the Cypher template that decides it.</sub></td>
 </tr>
 <tr>
-<td valign="top"><img src="docs/screenshots/16-proof-story.png" alt="How it decides: a pinned proof graph follows the scroll, each step with the template Cypher that decides it"><br><sub><b>How it decides.</b> A pinned proof graph follows the scroll; each step shows the template Cypher that decides it.</sub></td>
 <td valign="top"><img src="docs/screenshots/13-cypher-panel.png" alt="Cypher panel: every UI element opens the query that produced it"><br><sub><b>Cypher panel.</b> Every element on screen opens the query that produced it, with PROFILE and a read-only re-run.</sub></td>
+<td valign="top"><img src="docs/screenshots/17-crew-board.png" alt="Crew board: every step of the run as a record in FalkorDB, who claimed it, what it ran and who it handed to"><br><sub><b>Crew board.</b> Every step of the run is a FalkorDB record: who claimed it, the queries it ran, who it handed to.</sub></td>
 </tr>
 <tr>
-<td valign="top"><img src="docs/screenshots/18-provenance.png" alt="Why do you believe this: the verdict's provenance, from the agents' calls to the evidence that supports it"><br><sub><b>Why do you believe this?</b> The verdict's provenance, from the agents' calls to the evidence that supports it.</sub></td>
-<td valign="top"><img src="docs/screenshots/17-crew-board.png" alt="Crew board: every step of the run as a record in FalkorDB, who claimed it, what it ran and who it handed to"><br><sub><b>Crew board.</b> Every step of the run as a FalkorDB record: who claimed it, what it ran, who it handed to.</sub></td>
+<td valign="top"><img src="docs/screenshots/19-preflight-reversal.png" alt="Preflight reversal guard: the PR puts back a decision the organisation reversed, with the evidence for the reversal"><br><sub><b>Preflight reversal guard.</b> The PR puts back a decision the organisation reversed; the evidence for the reversal is shown.</sub></td>
+<td valign="top"><img src="docs/screenshots/10-preflight.png" alt="Preflight: a PR scored against the graph before it ships"><br><sub><b>Preflight.</b> A pull request scored against the graph before it ships: what it reaches, the decisions it contradicts, who must review.</sub></td>
 </tr>
 <tr>
-<td valign="top"><img src="docs/screenshots/19-preflight-reversal.png" alt="Preflight reversal guard: the PR puts back a decision the organisation reversed, with the evidence for the reversal"><br><sub><b>Preflight reversal guard.</b> The PR puts back a decision the organisation reversed, with the evidence for the reversal.</sub></td>
-<td valign="top"><img src="docs/screenshots/20-brain-answer-graph.png" alt="A brain answer drawn as a graph: who decided, the decisions, and what they constrain"><br><sub><b>Company brain.</b> An answer drawn as a graph: who decided, the decisions, and what they constrain.</sub></td>
+<td valign="top"><img src="docs/screenshots/07-brain.png" alt="Company brain: answers cite node ids"><br><sub><b>Company brain.</b> Answers cite the node ids their queries returned; a question the graph cannot answer is said so.</sub></td>
+<td valign="top"><img src="docs/screenshots/08-brain-widgets.png" alt="Brain widgets: the decision tracer, the ownership map and the guardrails"><br><sub><b>Brain widgets.</b> The decision tracer, the ownership map over time and the missing guardrails.</sub></td>
+</tr>
+<tr>
+<td valign="top"><img src="docs/screenshots/09-tenant-globex.png" alt="Tenant isolation: the brain on globex's own graph, with the isolation badge in the status panel"><br><sub><b>Tenant isolation.</b> The same page on another tenant's graph, read through that tenant's own read-only user.</sub></td>
+<td valign="top"><img src="docs/screenshots/11-explore.png" alt="Explore: the failure-flow graph in @falkordb/canvas"><br><sub><b>Explore.</b> The failure-flow graph in FalkorDB's own canvas component.</sub></td>
+</tr>
+<tr>
+<td valign="top"><img src="docs/screenshots/06-memory.png" alt="Memory: recall, incident families, derived runbooks, cold vs warm"><br><sub><b>Memory.</b> Recall of past incidents, incident families, runbooks derived from verified fixes, cold vs warm.</sub></td>
+<td valign="top"><img src="docs/screenshots/14-obligations.png" alt="Obligations at risk: SLO burn, customers reached, ownership when the change shipped"><br><sub><b>Obligations at risk.</b> SLO burn, the customers reached and the revenue at risk, from the graph.</sub></td>
+</tr>
+<tr>
+<td valign="top"><img src="docs/screenshots/04-reject-form.png" alt="Rejecting an option: the exact action rendered, a reason required"><br><sub><b>Two-step approval.</b> Choosing an option renders the exact action; rejecting needs a reason, which can become a guideline.</sub></td>
+<td valign="top"><img src="docs/screenshots/05-rejected.png" alt="The rejected option disabled, who rejected it and why recorded"><br><sub><b>Rejected, recorded.</b> The option is disabled and who rejected it, and why, is written to the graph; nothing is approved.</sub></td>
+</tr>
+<tr>
+<td valign="top"><img src="docs/screenshots/12-replay.png" alt="Replay: a recorded run played back with no backend"><br><sub><b>Replay.</b> A recorded run played back with no backend (the static replay site).</sub></td>
+<td valign="top"><img src="docs/screenshots/01-home.png" alt="Home: the promise, the cube that opens into the real graph, and the incident room below"><br><sub><b>Home.</b> The promise, the cube that opens into the hero incident's graph, the numbers.</sub></td>
+</tr>
+<tr>
+<td valign="top"><img src="docs/screenshots/21-system-map.png" alt="Where it sits: inputs, the per-tenant FalkorDB graph, the crew that proposes and the gate that decides, and what comes out"><br><sub><b>Where it sits.</b> Inputs, the per-tenant FalkorDB graph, the crew that proposes and the gate that decides.</sub></td>
+<td valign="top"><img src="docs/screenshots/22-product-tour.png" alt="Product tour: each tab is a real screenshot of a recorded run, with one callout"><br><sub><b>Product tour.</b> Each tab is a real screenshot of a run, with one callout on what matters.</sub></td>
 </tr>
 </table>
 
-<details><summary><b>More screens</b></summary>
-
-| | |
-|---|---|
-| ![Home: the promise, the glossy cube that splits into the real graph, and the incident room below](docs/screenshots/01-home.png) | ![Obligations at risk: SLO burn, customers reached, ownership when the change shipped](docs/screenshots/14-obligations.png) |
-| ![Preflight: a PR scored against the graph before it ships](docs/screenshots/10-preflight.png) | ![Company brain: answers cite node ids](docs/screenshots/07-brain.png) |
-| ![Explore: the failure-flow graph in @falkordb/canvas](docs/screenshots/11-explore.png) | ![Tenant isolation: the brain on globex's own graph, with the isolation badge in the status panel](docs/screenshots/09-tenant-globex.png) |
-| ![Where it sits: inputs, the per-tenant FalkorDB graph, the crew that proposes and the gate that decides, and what comes out](docs/screenshots/21-system-map.png) | ![Product tour: each tab is a real screenshot of a recorded run, with one callout on what matters](docs/screenshots/22-product-tour.png) |
-| ![FalkorDB Browser: the proof path in the tenant graph](docs/media/falkordb-browser-path.png) | ![FalkorDB Browser: the decisions constraining payment](docs/media/falkordb-browser-decisions.png) |
+<table>
+<tr>
+<td valign="top"><img src="docs/media/falkordb-browser-path.png" alt="FalkorDB Browser: the proof path in the tenant graph"><br><sub><b>FalkorDB Browser.</b> The same proof path, queried in FalkorDB's own browser.</sub></td>
+<td valign="top"><img src="docs/media/falkordb-browser-decisions.png" alt="FalkorDB Browser: the decisions constraining payment"><br><sub><b>FalkorDB Browser.</b> The decisions that constrain the payment service.</sub></td>
+</tr>
+</table>
 
 <img src="docs/screenshots/15-mobile.png" width="300" alt="On a phone: the incident room opens on its verdict, with Verdict, Graph, Crew and Timeline tabs">
-
-</details>
 
 ## Query catalogue
 

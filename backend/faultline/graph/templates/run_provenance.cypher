@@ -1,5 +1,5 @@
 // id: Q-PROV-1
-// purpose: "why do you believe this?" (M17): the run's own reasoning as a graph, bounded: the confirmed hypothesis and the change it BLAMES, the Evidence that SUPPORTS it, the ToolCall that PRODUCED each piece, the crew or specialist Task that MADE the call and its Agent, and the graph nodes the call SAW. Read-only, anchored on the incident
+// purpose: "why do you believe this?": the run's own reasoning as a graph, bounded: the confirmed hypothesis and the change it BLAMES, the Evidence that SUPPORTS it, the ToolCall that PRODUCED each piece, the crew or specialist Task that MADE the call and its Agent, and the graph nodes the call SAW. Read-only, anchored on the incident
 // seen: blames
 MATCH (i:Incident {id: $inc})-[:HYPOTHESIZES]->(h:Hypothesis)-[:BLAMES]->(c)
 WHERE h.status = 'confirmed'

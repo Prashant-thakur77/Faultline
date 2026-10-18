@@ -1,5 +1,7 @@
 # Pattern comprehension over an anonymous relationship collapses parallel edges (6.0.2)
 
+**Status:** known upstream as [FalkorDB#2501](https://github.com/FalkorDB/FalkorDB/issues/2501) (a duplicate of #1848); comment prepared, not posted.
+
 A pattern comprehension should produce one element per matched path. With an **anonymous** relationship, FalkorDB 6.0.2 produces one element per distinct end node, so parallel edges between the same two nodes are counted once. Naming the relationship variable restores per-path results.
 
 ```

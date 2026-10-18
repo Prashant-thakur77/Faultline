@@ -1,5 +1,7 @@
 # OPTIONAL MATCH after an aggregating WITH returns no rows (6.0.2)
 
+**Status:** related to [FalkorDB#3037](https://github.com/FalkorDB/FalkorDB/issues/3037); comment prepared, not posted.
+
 **Image:** falkordb/falkordb@sha256:107455e8… (6.0.2)
 ```
 CREATE (r:Run {id:'r'})-[:HAS_TOOL_CALL]->(t:ToolCall {id:'t'})-[:PRODUCED_EVIDENCE]->(e:Evidence {id:'e1'}), (t)-[:SAW]->(:N {id:'n1'})

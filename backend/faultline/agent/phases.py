@@ -1,6 +1,6 @@
 """Per-stage tool whitelists. The loop offers the model only these tools, recomputed for EVERY LLM call
 from the stage it is in; a call to any other tool returns {"error": "tool … not allowed in stage …"}, is logged and is
-recorded in the run as a refused ToolCall (never silently allowed). Specialists (§6.3) get a narrower list per role."""
+recorded in the run as a refused ToolCall (never silently allowed). Specialists get a narrower list per role."""
 
 from __future__ import annotations
 
@@ -41,17 +41,17 @@ PHASE_TOOLS: dict[Stage, list[str]] = {
     Stage.LEARN: ["consolidate"],
 }
 # The gate is entered FROM INVESTIGATE: confirm_root_cause / declare_no_incident are how an investigation asks for a
-# verdict, and the incident only reaches GATE when the gate accepts (§6.1). So these are callable in INVESTIGATE too.
+# verdict, and the incident only reaches GATE when the gate accepts. So these are callable in INVESTIGATE too.
 GATE_ENTRY = ["confirm_root_cause", "declare_no_incident", "reachable_from_changes"]
 ALWAYS = ["finish"]
 # Advisory, post-verdict reads: driven by code after the gate has decided, never offered to the investigator
 # (residue and alert coverage describe a verdict; they must not shape it)
 POST_VERDICT = {"alert_coverage", "residue_check"}
 
-# Specialists (§6.3): each role's own whitelist, always a subset of INVESTIGATE's. Deviations from the plan's table:
+# Specialists: each role's own whitelist, always a subset of INVESTIGATE's. Notes on the lists:
 # data also gets upstream_scope (to ground its scope) and causal_paths (to tie an anomaly it measured to a change);
 # no specialist gets update_hypothesis (hypotheses are owned by the sweep and the gate, so G6 cannot be moved by a
-# report); telemetry has metric_window only (the planned compare_baseline is not built: metric_window
+# report); telemetry has metric_window only (no separate compare_baseline tool: metric_window
 # returns the pre-onset baseline and band itself).
 SPECIALIST_TOOLS: dict[str, list[str]] = {
     "topology": ["causal_paths", "impact_bound", "upstream_scope"],

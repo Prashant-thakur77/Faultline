@@ -214,7 +214,7 @@ def plan_incident(w: W.World, onset: int, window_min: int, seed: int = SEED) -> 
         return "origin"
 
     # opaque ids from their own seeded stream, one title template for every change and injects in id order (as in the
-    # gate bench, review round 5, minor 9): no tie-break by id, title or ingest order can favour the cause. The grader
+    # gate bench): no tie-break by id, title or ingest order can favour the cause. The grader
     # keeps the role of each id in `roles`; the draw stream above is untouched, so the planted incident is the same.
     ids_rnd = random.Random(seed ^ 0x5CA1E)
 
@@ -576,7 +576,7 @@ def run_size(label: str, profile_n: int = PROFILE_N, keep: bool = False, progres
     budget = min(room_for) if room_for else None
     if budget is not None:
         # the clean room plus one what-if branch must fit in the host AND under FalkorDB's maxmemory (noeviction: a write
-        # past it fails), with headroom: the host is shared with the editor, other agents and the engine itself
+        # past it fails), with headroom: the host is shared with the editor, other processes and the engine itself
         if 2.2 * est > 0.85 * budget:
             res["skipped"] = (f"estimated {est:.0f} MB per graph; a clean room and a what-if branch would need "
                               f"~{2.2 * est:.0f} MB; available: host {avail:.0f} MB, FalkorDB maxmemory headroom "

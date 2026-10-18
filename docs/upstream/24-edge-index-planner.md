@@ -1,7 +1,9 @@
 # A relationship range index makes anchored and labelled traversals 13× to 240× slower, and one scan times out (6.0.2): performance cliff
 
-Found in the M20 FalkorDB depth pass (2026-10-17). Verified on the pinned 6.0.2 digest on a throwaway graph (numbers are
-single-run probes on a laptop, see docs/FALKORDB_COMPAT.md; re-measure before quoting). Draft only: not filed.
+**Status:** filed as [FalkorDB#3376](https://github.com/FalkorDB/FalkorDB/issues/3376).
+
+Found on 2026-10-17 while putting more of FalkorDB's engine features to use. Verified on the pinned 6.0.2 digest on a
+throwaway graph (numbers are single-run probes on a laptop, see docs/FALKORDB_COMPAT.md; re-measure before quoting).
 
 ```cypher
 UNWIND range(1, 3000) AS i CREATE (:N {id: i});

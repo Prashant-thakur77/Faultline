@@ -81,7 +81,7 @@ The keyboard checks ran on the incident room in the plan state.
 
 Note on the focus-trap row. Base UI's dialog did trap focus before the fix. The first version of the check read `document.activeElement` before Base UI's focus guard had moved focus back into the dialog, so it reported a false failure. The script now waits 150 ms after each Tab. It also measures focus rings strictly: a box-shadow layer only counts if it is non-transparent and non-zero, and the check waits for the 150 ms ring transition. That stricter check is what found the real graph-node problem.
 
-## M13 re-audit: reject, tenant switch, naive vs Faultline, Memory tab, Brain widgets (2026-10-13)
+## Re-audit (2026-10-13): reject, tenant switch, naive vs Faultline, Memory tab, Brain widgets
 
 The new UI was audited with the same script against the real backend (no mocks): a production build of the UI and a backend run from the same tree. Six new states were added to the audit:
 

@@ -1,5 +1,5 @@
 // id: Q-MEM-1
-// purpose: recall (recency = 0.5^(age/half-life), scenario clock via onset_at): vector seed (the incident's own embedding in the FalkorDB vector index) → structural confirmation (a shared Symptom node) → ranked by (1 - $w_recency) × similarity + $w_recency × recency (M21: among look-alikes the recent one first; $w_recency 0 is similarity only); returns what fixed it before and how long ago it was last seen
+// purpose: recall (recency = 0.5^(age/half-life), scenario clock via onset_at): vector seed (the incident's own embedding in the FalkorDB vector index) → structural confirmation (a shared Symptom node) → ranked by (1 - $w_recency) × similarity + $w_recency × recency (among look-alikes the recent one first; $w_recency 0 is similarity only); returns what fixed it before and how long ago it was last seen
 // seen: id, cause_targets
 MATCH (cur:Incident {id:$current})
 CALL db.idx.vector.queryNodes('Incident', 'embedding', 10, cur.embedding) YIELD node, score

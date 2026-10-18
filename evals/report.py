@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import re
 import statistics
+import sys
 from collections import defaultdict
 
 
@@ -72,7 +73,7 @@ def summarize(out: dict) -> dict:
         s[f"{p}.abstention_correct_rate"] = _mean([1.0 if t["abstention_correct"] else 0.0 for t in ts
                                                     if t["abstention_correct"] is not None])
         s[f"{p}.outcome_correct_rate"] = _mean([1.0 if t["outcome_correct"] else 0.0 for t in ts])
-        # only arms whose runs record a confidence (the graph arms); N/V/T/A0/A1 always commit and record none (M18 audit)
+        # only arms whose runs record a confidence (the graph arms); N/V/T/A0/A1 always commit and record none (numbers audit)
         s[f"{p}.confident_rate"] = (_mean([1.0 if t.get("confident") else 0.0 for t in ts if t.get("top1") is not None])
                                     if any("confident" in t for t in ts) else None)
         s[f"{p}.confirmed_causes"] = sum(1 for t in ts if t.get("cause") and t["outcome"] in ("CONFIRMED", "NOT_CONFIDENT"))
@@ -211,7 +212,7 @@ def summarize(out: dict) -> dict:
     return s
 
 
-# ------------------------------------------------------------------ M18 numbers audit (PREREGISTRATION 2026-10-16)
+# ------------------------------------------------------------------ numbers audit (PREREGISTRATION 2026-10-16)
 def _key_arm(arm: str) -> str:
     return arm.replace("+", "plus")   # claim tags allow [A-Za-z0-9_.-] only
 
@@ -317,7 +318,7 @@ def _kn(s: dict, p: str, pct: bool = True) -> str:
 
 def audit_markdown(out: dict, s: dict) -> list[str]:
     arms = with_llm_trials(out)["arms"]
-    L = ["", "## Per distinct scenario, with 95 % intervals (M18 audit)", "",
+    L = ["", "## Per distinct scenario, with 95 % intervals (numbers audit)", "",
          "Each scenario counts once (its identical trials are one case). Strict: a tie between changes is never a "
          "correct verdict (arms N and T break ties alphabetically in the trial field above, which credited T with S2 "
          "where both changes measure 0.0). Wrong blame: any blame of a change that is not the cause, on any of the 8 "
@@ -345,7 +346,7 @@ def audit_markdown(out: dict, s: dict) -> list[str]:
     L += oncall_markdown(s)
     L += learn_markdown(s)
     L += graphrag_markdown(s)
-    L += tenants_markdown(s)   # M20 Wave B
+    L += tenants_markdown(s)   # tenant density + concurrency
     L += algo10k_markdown(s)
     return L
 
@@ -553,7 +554,7 @@ def side_summaries(s: dict) -> dict:
     k.update(faultbench_otel_keys())
     k.update(oncall_keys())
     k.update(learn_keys())
-    k.update(tenants_keys())   # M20 Wave B
+    k.update(tenants_keys())   # tenant density + concurrency
     k.update(algo10k_keys())
     k.update(t2_keys())
     k.update(vector_recall_keys())
@@ -908,7 +909,7 @@ def oncall_markdown(s: dict) -> list[str]:
 
 
 def learn_keys(x: dict | None = None) -> dict:
-    """learn.* (PREREGISTRATION addendum 2026-10-17, M21): the learning night (evals/learning_night.py →
+    """learn.* (PREREGISTRATION addendum 2026-10-17): the learning night (evals/learning_night.py →
     evals/results/learning_night.json): each pre-registered step's pass flag; cold vs warm top option (Wilson 95 %);
     where the plan's top changed and where the contract suggestion first appeared; guideline override codes; MTTA
     before and after the responder was learned; what forgetting a person deleted; knowledge gaps; recency-aware recall."""
@@ -978,7 +979,7 @@ def _vcfg(cfg: str) -> str:
 
 
 def vector_recall_keys(x: dict | None = None) -> dict:
-    """vector.* (M20 #3): evals/vector_recall.py → evals/results/vector_recall.json: the HNSW index's recall@10 against
+    """vector.*: evals/vector_recall.py → evals/results/vector_recall.json: the HNSW index's recall@10 against
     an exact cosine scan, per set (seeded Incident / Postmortem / Runbook / IntentExemplar vectors of acme and globex, and
     a 2,040-incident history) and per configuration (efRuntime 10…200 at M 16 / efConstruction 200; M 32 /
     efConstruction 400), the minimum over sets, the default and the configuration chosen for schema.cypher."""
@@ -1031,7 +1032,7 @@ def learn_markdown(s: dict) -> list[str]:
     p = "learn.night"
     if s.get(f"{p}.steps") is None:
         return []
-    L = ["", "## Learning from the people who use it (M21, evals/learning_night.py)", "",
+    L = ["", "## Learning from the people who use it (evals/learning_night.py)", "",
          "The real API in-process, the keyless investigator, clean rooms, off the public demo (trusted runs); what is "
          "learned lives in a fresh copy of golden_acme per phase. Pre-registered steps passed: "
          f"{s[f'{p}.steps_passed']} of {s[f'{p}.steps']}.", "", "| step | pass |", "|---|---|"]
@@ -1353,7 +1354,7 @@ def live_markdown(x: dict) -> list[str]:
     return L
 
 
-# ------------------------------------------------------------------ learned edges (evals/learning_eval.py, M15 #4)
+# ------------------------------------------------------------------ learned edges (evals/learning_eval.py)
 def learning_markdown(x: dict) -> list[str]:
     if not x:
         return []
@@ -1616,6 +1617,23 @@ def perf_markdown(x: dict) -> list[str]:
     return L
 
 
+def mutant_labels() -> dict:
+    """Mutant id → the invariant's current description in scripts/mutation_check.py. A recorded run keeps the label
+    it ran with; the report prints today's wording, keyed by the same id (the killed/survived result is unchanged)."""
+    import importlib.util
+    from pathlib import Path
+
+    path = Path(__file__).resolve().parents[1] / "scripts" / "mutation_check.py"
+    try:
+        spec = importlib.util.spec_from_file_location("mutation_check", path)
+        mod = importlib.util.module_from_spec(spec)
+        sys.modules.setdefault("mutation_check", mod)   # dataclasses resolve their module by name
+        spec.loader.exec_module(mod)
+        return {m.id: m.invariant for m in mod.MUTANTS}
+    except Exception:  # noqa: BLE001 - a report must still render without the script
+        return {}
+
+
 def robustness_notes(rob: dict, lad: dict, perf: dict) -> list[str]:
     """'What didn't work' lines derived from the ladder, robustness and depth results of this run."""
     notes = []
@@ -1673,7 +1691,7 @@ def mismatch_markdown(m: dict) -> list[str]:
     return L
 
 
-# ------------------------------------------------------------------ futures (evals/futures_eval.py, M14 #1)
+# ------------------------------------------------------------------ futures (evals/futures_eval.py)
 FUTURES_KEYS = ("candidates", "definite", "agree", "false_assurance", "conservative", "unknown", "predicted_contains",
                 "predicted_not")
 
@@ -1717,7 +1735,7 @@ def futures_markdown(f: dict) -> list[str]:
     return L
 
 
-# ------------------------------------------------------------------ scale benchmark (evals/scale.py, M14 #5)
+# ------------------------------------------------------------------ scale benchmark (evals/scale.py)
 SCALE_TEMPLATES = ("Q-GATE-1", "Q-GATE-3", "Q-GATE-MULT", "Q-SUS-1", "Q-SUS-2", "Q-BLAST-1", "Q-BLAST-2", "Q-CUT-1",
                    "Q-CUT-2", "Q-NEG-1")
 SCALE_TOPK = {"Q-CHOKE-1", "Q-CHOKE-ALL", "Q-RANK-1", "Q-ORG-HARM"}   # ORDER BY score DESC LIMIT k: truncation is the point
@@ -1763,7 +1781,7 @@ def scale_summary(sc: dict) -> dict:
 
 
 def scale_tail_keys(p: str, v: dict) -> dict:
-    """M20: the gate path's tail per size (scale.<k>.tail.<tid>.engine_ms_p50/p95/p99/max, wall_ms_p50/p99) and bytes
+    """The gate path's tail per size (scale.<k>.tail.<tid>.engine_ms_p50/p95/p99/max, wall_ms_p50/p99) and bytes
     per node-or-edge, both from GRAPH.MEMORY USAGE (engine-rounded MB) and from the settled used_memory growth."""
     out: dict = {}
     for tid, x in (v.get("tail") or {}).items():
@@ -1790,7 +1808,7 @@ def scale_tail_markdown(sc: dict) -> list[str]:
     sizes = {k: v for k, v in (sc.get("sizes") or {}).items() if v.get("tail")}
     if not sizes:
         return []
-    L = ["", "### The gate path's tail at each size (M20; nearest-rank over the tail runs, engine-reported ms)", "",
+    L = ["", "### The gate path's tail at each size (nearest-rank over the tail runs, engine-reported ms)", "",
          "| size | services | bytes per node-or-edge (GRAPH.MEMORY USAGE / used_memory growth) | "
          + " | ".join(f"{t} p50 / p95 / p99" for t in SCALE_TAIL) + " |", "|---|---|---|" + "---|" * len(SCALE_TAIL)]
     for k, v in sizes.items():
@@ -1811,7 +1829,7 @@ def scale_tail_markdown(sc: dict) -> list[str]:
     return L
 
 
-# ------------------------------------------------------------------ M20 Wave B: tenant density + concurrency, algo10k
+# ------------------------------------------------------------------ tenant density + concurrency, algo10k
 def tenants_keys(x: dict | None = None) -> dict:
     """tenants.* (PREREGISTRATION addendum 2026-10-17 21:10 IST, amended about 21:30): tenant graphs on one engine (product
     tenants = copies of golden_acme, small tenants = its failure-flow layer), MB per tenant, copy ms, ACL isolation,
@@ -1867,7 +1885,7 @@ def tenants_keys(x: dict | None = None) -> dict:
 def tenants_markdown(s: dict) -> list[str]:
     if not s.get("tenants.n"):
         return []
-    L = ["", "## Tenant density, isolation and concurrent investigators (evals/tenants_bench.py, M20)", "",
+    L = ["", "## Tenant density, isolation and concurrent investigators (evals/tenants_bench.py)", "",
          f"One pinned engine (maxmemory {_c('tenants.maxmemory_mb', s.get('tenants.maxmemory_mb'))} MB, THREAD_COUNT "
          f"{_c('tenants.threads', s.get('tenants.threads'))}, MAX_QUEUED_QUERIES {_c('tenants.max_queued', s.get('tenants.max_queued'))}"
          f"), shared with the product's own graphs; clients on the same {_c('tenants.cpus', s.get('tenants.cpus'))}-core laptop. "
@@ -2003,7 +2021,7 @@ def algo10k_markdown(s: dict, x: dict | None = None) -> list[str]:
     counts: dict = {}
     for w in ws:
         counts[w["procedure"]] = counts.get(w["procedure"], 0) + 1
-    L = ["", "## All 10 algo.* procedures at 10k services, against NetworkX (evals/algo10k.py, M20)", "",
+    L = ["", "## All 10 algo.* procedures at 10k services, against NetworkX (evals/algo10k.py)", "",
          f"Graph: the {_c('algo10k.services', s.get('algo10k.services'))}-service scale world "
          f"({_c('algo10k.nodes', s.get('algo10k.nodes'))} nodes, {_c('algo10k.edges', s.get('algo10k.edges'))} edges). FalkorDB: "
          f"{_c('algo10k.runs', s.get('algo10k.runs'))} runs per workload through GRAPH.RO_QUERY on the product graph and on a "
@@ -2048,7 +2066,7 @@ def algo10k_markdown(s: dict, x: dict | None = None) -> list[str]:
 
 
 def current_scale(c: dict) -> dict:
-    """The run's recorded scale check, or a later `make scale` (evals/results/scale.json) when that is newer (M18: the
+    """The run's recorded scale check, or a later `make scale` (evals/results/scale.json) when that is newer (the
     10k rerun on the current gate supersedes the copy the run embedded)."""
     sc = c.get("scale") or {}
     newer = _side("scale.json")
@@ -2554,8 +2572,9 @@ def markdown(out: dict, s: dict, run_name: str) -> str:
               f"Each safety invariant was broken in a scratch copy of the package; {m['killed']}/{m['mutants']} mutants were "
               f"caught by a failing test ({m['survived']} survived, {m['errors']} errors).", "",
               "| mutant | invariant broken | result | caught by |", "|---|---|---|---|"]
-        L += [f"| {r['id']} | {r['invariant']} | {r['status']} | {', '.join(t.split('::')[-1] for t in r['tests'] or [])} |"
-              for r in m["rows"]]
+        label = mutant_labels()   # the current wording of each invariant, by mutant id (the result is the recorded run's)
+        L += [f"| {r['id']} | {label.get(r['id'], r['invariant'])} | {r['status']} | "
+              f"{', '.join(t.split('::')[-1] for t in r['tests'] or [])} |" for r in m["rows"]]
     if c.get("profile"):
         timed = {k: v for k, v in c["profile"].items() if v.get("engine_ms_p50") is not None}
         runs = max((v.get("runs") or 0) for v in timed.values()) if timed else 0

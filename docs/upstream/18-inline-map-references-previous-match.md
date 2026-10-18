@@ -1,6 +1,8 @@
 # A node's inline property map that references a variable from the previous MATCH: error with an index, empty without (6.0.2)
 
-Found 2026-10-13 while writing the learned-edge approval (M15 #4). Verified on the pinned 6.0.2 digest only.
+**Status:** known upstream as [FalkorDB#2923](https://github.com/FalkorDB/FalkorDB/issues/2923).
+
+Found 2026-10-13 while writing the learned-edge approval. Verified on the pinned 6.0.2 digest only.
 
 ```cypher
 CREATE (:Node {id:'a'}), (:P {id:'p1', src:'a'});

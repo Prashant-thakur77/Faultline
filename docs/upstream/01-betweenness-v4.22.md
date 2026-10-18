@@ -1,5 +1,7 @@
 # algo.betweenness ranks the wrong node on a 5-node path (v4.22.0)
 
+**Status:** not filed (repro and draft here).
+
 **Image:** falkordb/falkordb@sha256:4ac83f55062d364dcf151692635138b0bd2e12578019a56eb86ef53d067b116b (v4.22.0)
 
 ```

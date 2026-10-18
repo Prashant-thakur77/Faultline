@@ -1,6 +1,6 @@
 # Security and the public demo
 
-Faultline is a hackathon demo. This document says honestly what a visitor to the public live URL can and cannot do,
+This page covers the public demo: it says honestly what a visitor to the public live URL can and cannot do,
 and where each control lives. Report a problem by opening an issue (no secrets in issues, please).
 
 ## Deployment shape

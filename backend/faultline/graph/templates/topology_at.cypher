@@ -1,5 +1,5 @@
 // id: Q-TOPO-AT
-// purpose: what a component could break AT a past time vs now (M14 #7): its failure reach over PROPAGATES_TO (1..6 hops) using only the calls that existed then (valid_from <= $at), the reach now (algo.BFS), the components added since, and every call introduced after $at inside today's reach with the PR that introduced it
+// purpose: what a component could break AT a past time vs now: its failure reach over PROPAGATES_TO (1..6 hops) using only the calls that existed then (valid_from <= $at), the reach now (algo.BFS), the components added since, and every call introduced after $at inside today's reach with the PR that introduced it
 // returns: single-row
 // seen: then_reach, added, now_reach
 MATCH (s:Node {id: $id})

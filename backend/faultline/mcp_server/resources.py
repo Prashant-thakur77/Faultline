@@ -36,7 +36,7 @@ def schema_resource() -> str:
     b = context.current()
     ro = RO(b.tenant, b.graph)
     schema, results = introspect(ro)
-    cons = ro.run("Q-SCHEMA-5", {})   # the engine-enforced invariants (M20): UNIQUE / MANDATORY, with their status
+    cons = ro.run("Q-SCHEMA-5", {})   # the engine-enforced invariants: UNIQUE / MANDATORY, with their status
     results = [*results, cons]
     schema = {**schema, "constraints": cons.rows}
     return json.dumps({"tenant": b.tenant, **schema, "served_by": results[0].served_by,

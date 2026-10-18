@@ -1,5 +1,7 @@
 # WITH/UNWIND followed by two MATCH clauses (the first disconnected) drops the WITH's rows (6.0.2): silent wrong result
 
+**Status:** known upstream: [FalkorDB#3343](https://github.com/FalkorDB/FalkorDB/issues/3343) / #2972 (form 1); related to #3037 (form 2).
+
 Found by the scale benchmark (`evals/scale.py`) while moving `Q-SUS-1` onto the `Deploy.at` range index. Verified on the
 pinned 6.0.2 digest only (docs/FALKORDB_COMPAT.md).
 

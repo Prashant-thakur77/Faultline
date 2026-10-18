@@ -1,4 +1,4 @@
-"""Model-mismatch robustness (PREREGISTRATION amendment 2026-10-13, prejudge review).
+"""Model-mismatch robustness (PREREGISTRATION amendment 2026-10-13).
 
 Every other gate number is measured on worlds whose telemetry was generated over the same topology and capacities the
 gate reads. Here the graph is made WRONG about the world: the 100 held-out gate-bench worlds (seed 20261015) are

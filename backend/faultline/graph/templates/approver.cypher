@@ -1,5 +1,5 @@
 // id: Q-APPROVER-1
-// purpose: who may approve an action on an incident (M19 fix: it now reads ON_CALL): an ACTIVE person who is on call (an ON_CALL shift overlapping $since to $now) for, or a member of, a team that OWNS an impacted component ($ids: the failing component, its blast radius and the symptoms); returns the team and component pairs that make them eligible, which the approval states as its reason
+// purpose: who may approve an action on an incident: an ACTIVE person who is on call (an ON_CALL shift overlapping $since to $now) for, or a member of, a team that OWNS an impacted component ($ids: the failing component, its blast radius and the symptoms); returns the team and component pairs that make them eligible, which the approval states as its reason
 // returns: single-row
 // seen: id
 MATCH (p:Person {id:$person}) WHERE p.active

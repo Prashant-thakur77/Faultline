@@ -72,7 +72,7 @@ class Settings(BaseSettings):
     telegram_bot_token: str = ""            # Telegram bot: pages with an Ack button
     telegram_chat_id: str = ""
     telegram_webhook_secret: str = ""       # Telegram echoes it in X-Telegram-Bot-Api-Secret-Token on /api/telegram/webhook
-    telegram_allowed_ids: str = ""          # (M19 first cut, superseded by TELEGRAM_PEOPLE; kept so old .env files parse)
+    telegram_allowed_ids: str = ""          # (legacy, superseded by TELEGRAM_PEOPLE; kept so old .env files parse)
     telegram_people: str = ""               # "tg_user_id:p-030,…": the only Telegram users who may act, each mapped to a person
     telegram_approve_real: bool = False     # allow approving against REAL GitHub from Telegram (else the web + approver key)
     telegram_digest_hour: int = -1          # 0..23 UTC: send the shift report to the bot's chats once a day; -1 = off
@@ -94,7 +94,7 @@ class Settings(BaseSettings):
     warehouse_path: Path = REPO_ROOT / "data" / "warehouse" / "faultline.duckdb"
     metric_snapshot_path: Path = REPO_ROOT / "data" / "warehouse" / "metric_snapshot.json"
     transforms_dir: Path = REPO_ROOT / "pipeline" / "transforms"
-    # pristine, hash-pinned copies of the transforms (repair.restore_pristine; review round 5, M3)
+    # pristine, hash-pinned copies of the transforms (repair.restore_pristine)
     transforms_pristine_dir: Path = REPO_ROOT / "pipeline" / "transforms_pristine"
     sources_dir: Path = REPO_ROOT / "data" / "sources"
     baselines_dir: Path = REPO_ROOT / "pipeline" / "baselines"

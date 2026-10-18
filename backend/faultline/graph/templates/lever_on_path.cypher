@@ -1,5 +1,5 @@
 // id: Q-LEVER-PATH
-// purpose: does a containment lever matter for THIS incident: is the cut edge ($u -> $v) on a PROPAGATES_TO failure path from the origin to one of the incident symptoms, within the gate path bound of 8 hops? A min-cut edge protects the entry set; a flag on an edge no path to the symptoms crosses changes nothing the incident is about (prejudge 2026-10-13: S2 offered a service flag for a KPI data incident)
+// purpose: does a containment lever matter for THIS incident: is the cut edge ($u -> $v) on a PROPAGATES_TO failure path from the origin to one of the incident symptoms, within the gate path bound of 8 hops? A min-cut edge protects the entry set; a flag on an edge no path to the symptoms crosses changes nothing the incident is about (without this check, S2 was offered a service flag for a KPI data incident)
 // returns: single-row
 // seen: symptoms_reached
 MATCH (o:Node {id: $origin}), (u:Node {id: $u}), (v:Node {id: $v})

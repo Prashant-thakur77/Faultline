@@ -42,7 +42,7 @@ from .weights import weights
 log = logging.getLogger(__name__)
 
 QUANT_KINDS = ("metric", "profile", "baseline_comparison", "row_share", "error_rate")
-# G7 correlation (§6.4): the change channel vs the artefact channels (code; data for data incidents)
+# G7 correlation: the change channel vs the artefact channels (code; data for data incidents)
 CORR_ROLES = ("change", "code", "data")
 ARTEFACT_ROLES = ("code", "data")
 
@@ -238,7 +238,7 @@ class Gate:
             # joint G5 per independent alert group, every group judged against the SAME candidate set (the G2
             # survivors), never against what an earlier group left: a suspect is eliminated by flow only when it is
             # eliminated in EVERY group it has a path to, and all of those were measured (g5_cross_group). So the
-            # verdicts do not depend on the order of the groups (review round 4, m2)
+            # verdicts do not depend on the order of the groups
             cands = {v.change: v for v in verdicts.values() if v.status == "candidate"}
             # "the others can carry it" may only lean on suspects the origin test below will NOT refute: one
             # measured in band while another is anomalous is no carrier (review M13/M14: phase order)
@@ -511,7 +511,7 @@ class Gate:
             sources = sorted({r["source"] for r in ch if r["source"]})
             checks.append(Check("G7 agreement", len(sources) >= 2,
                                 f"independent channels on the chain: {sources}", "Q-GATE-7", g7p, downgrade_only=True))
-            # G7 structural correlation: change + code/data specialists name the same Deploy via CHANGED (§6.4)
+            # G7 structural correlation: change + code/data specialists name the same Deploy via CHANGED
             cp = {"run": self.run_id, "cause": cause_id, "chain": chain, "roles": list(CORR_ROLES)}
             corr = self.ro.run("Q-GATE-CORR", cp).rows
             art = (self.ro.run("Q-CAUSE-ART", {"cause": cause_id}).rows or [{"commits": 0, "facts": 0}])[0]
@@ -637,7 +637,7 @@ def g5_eliminations(candidates: dict[str, str | list[str]], bounds: dict[str, fl
 
 
 def g5_cross_group(reach: dict[str, set[str]], eliminated_in: dict[str, set[str]]) -> list[str]:
-    """Across independent alert groups (review round 4, m2): `reach` = change → the primary symptoms it has a causal
+    """Across independent alert groups: `reach` = change → the primary symptoms it has a causal
     path to; `eliminated_in` = MEASURED primary → the changes G5 eliminates there (each group judged against the same
     candidate set). A change is eliminated only when every primary it reaches was measured and eliminated it there:
     a suspect that explains one group is never dropped because it cannot carry another, and the result is the same

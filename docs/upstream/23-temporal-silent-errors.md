@@ -1,8 +1,9 @@
 # Temporal functions return silently wrong values (6.0.2): `{epochMillis}`, `{milliseconds}`, unknown map keys, Sunday's `dayOfWeek`
 
-Found in the M20 FalkorDB depth pass (2026-10-17) while building change-freeze windows (Faultline's Q-PRE-FREEZE).
-Verified on the pinned 6.0.2 digest (smoke row 28, docs/FALKORDB_COMPAT.md M20 section). Possibly the same family as
-FalkorDB#3295; search before filing. Draft only: not filed.
+**Status:** known upstream ([FalkorDB#3295](https://github.com/FalkorDB/FalkorDB/issues/3295) and [FalkorDB#2936](https://github.com/FalkorDB/FalkorDB/issues/2936)); not refiled.
+
+Found on 2026-10-17 while building change-freeze windows (Faultline's Q-PRE-FREEZE). Verified on the pinned 6.0.2
+digest (smoke row 28, the "Engine depth" section of docs/FALKORDB_COMPAT.md).
 
 ```cypher
 RETURN toString(localdatetime({epochMillis: 1792224000000}));   // got 1970-01-01T00:00:00 (expected 2026-10-18T…); also {epochSeconds: …}

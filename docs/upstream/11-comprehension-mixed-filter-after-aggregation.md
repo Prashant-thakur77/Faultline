@@ -1,6 +1,6 @@
 # [Bug] Pattern comprehension with a relationship AND a node predicate returns [] after an aggregating WITH (6.0.2)
 
-**Draft. Not posted yet.**
+**Status:** comment prepared for [FalkorDB#3004](https://github.com/FalkorDB/FalkorDB/issues/3004), not posted.
 
 **Engine:** `falkordb/falkordb:6.0.2` @ `sha256:107455e8…` (module 60002)
 

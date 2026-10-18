@@ -320,7 +320,7 @@ def causal_paths(from_id: str, to_id: str) -> dict[str, Any]:
     r = _ro().run("Q-GATE-1", {"cause": a.id, "symptom": b.id})
     via = " → ".join(r.rows[0]["chain"]) if r.rows else f"no path {a.id} → {b.id} (≤ {weights()['gate']['max_len']} hops)"
     learned = []
-    if r.rows:  # a hop that is a learned link (M15 #4) is named, with the incident whose verified fix taught it
+    if r.rows:  # a hop that is a learned link is named, with the incident whose verified fix taught it
         ch, lf = r.rows[0]["chain"], r.rows[0].get("learned_from") or []
         learned = [{"from": ch[i], "to": ch[i + 1], "incident": lf[i]} for i in range(min(len(lf), len(ch) - 1)) if lf[i]]
         if learned:
@@ -355,7 +355,7 @@ def pack_items(pool: list[dict], budget_tokens: int) -> list[dict]:
 @_guard
 def context_pack(text: str, targets: list[str] | None = None, at: int | None = None,
                  budget_tokens: int = 1000, window_min: int | None = None, rank: str = "anomaly") -> dict[str, Any]:
-    """Context engineering for any agent (M16.1, hybrid GraphRAG for operations): the smallest provenance-carrying
+    """Context engineering for any agent (hybrid GraphRAG for operations): the smallest provenance-carrying
     context an LLM needs about an alert or question. Entry points are the alerting nodes plus hybrid matches of the text
     (full-text and the vecf32 index); the graph then expands them along typed edges: changes in the window upstream of
     the alert (Q-SUS-1, SSpaths over DEPENDS_ON; ranked by the error-rate excess measured on the changed component, then
@@ -770,7 +770,7 @@ def alert_coverage(chain: list[str], since: int, until: int) -> dict[str, Any]:
                      about=ids, summary=f"{len(ids) - len(silent)}/{len(ids)} hops alerted; silent: {', '.join(silent) or 'none'}")
 
 
-# ------------------------------------------------------------------ company brain over time (M12)
+# ------------------------------------------------------------------ company brain over time
 class _AtArg(BaseModel):
     id: str = Id
     at: int = Field(..., ge=0, le=4_102_444_800_000)  # epoch ms, before 2100
@@ -836,7 +836,7 @@ def component_timeline(target_id: str, since: int = 0, until: int = 4_102_444_80
 
 @_guard
 def topology_at(target_id: str, at: int) -> dict[str, Any]:
-    """Versioned topology (M14 #7): what a component could break at time `at` (epoch ms) versus now, read in the
+    """Versioned topology: what a component could break at time `at` (epoch ms) versus now, read in the
     graph: its failure reach over only the calls that existed then (`valid_from` ≤ at), its reach now (algo.BFS),
     the components added since, and each call introduced after `at` inside today's reach with the PR that
     introduced it. A preflight or postmortem question: "would this change have reached checkout back then?"."""
@@ -1063,7 +1063,7 @@ def preflight_change(pr_id: str) -> dict[str, Any]:
     from ..agent.rules import reversals
 
     rev = reversals(_ro().run("Q-DEC-REV", {"change": a.id}).rows)
-    # change freezes (M20 #6): FalkorDB evaluates each policy's weekly window on the wall clock (Q-PRE-FREEZE); a freeze
+    # change freezes: FalkorDB evaluates each policy's weekly window on the wall clock (Q-PRE-FREEZE); a freeze
     # in force only tightens the verdict and is cited with its policy and the local time the engine evaluated
     frz = P.freezes(_ro(), s.changed)
     verdict = P.apply_freeze(s.verdict, frz.rows)
@@ -1114,7 +1114,7 @@ def decision_check(change_id: str) -> dict[str, Any]:
     r = _ro().run("Q-DEC-1", {"change": a.id})
     for row in r.rows:
         row["violated"] = violated(row["op"], row["actual"], row["expected"])  # None = cannot decide (surfaced)
-        apply_override(row)  # a reviewer's "intentional" override for this change (M15 #3)
+        apply_override(row)  # a reviewer's "intentional" override for this change
     rev = reversals(_ro().run("Q-DEC-REV", {"change": a.id}).rows)   # reinstates a reversed decision (annotation)
     return _envelope(r, tool="decision_check", via=f"({a.id})-[:ASSERTS]->(:ChangeFact)-[:ABOUT]->()<-[:CONSTRAINS]-(:Decision)",
                      kind="decision", about=[a.id] + [x["decision"] for x in r.rows] + [x["reversed"] for x in rev],
@@ -1438,7 +1438,7 @@ FUTURE_MAX_PROT = 20
 @_guard
 def futures(origin_id: str, onset: int, now: int, candidates: list[dict], symptom_ids: list[str],
             protect_ids: list[str], keep_connected_ids: list[str]) -> dict[str, Any]:
-    """Futures (M14 #1): the predicted outcome of each containment candidate BEFORE anyone approves one. A candidate
+    """Futures: the predicted outcome of each containment candidate BEFORE anyone approves one. A candidate
     that cuts edges gets its own GRAPH.COPY branch with them removed; one that cuts nothing reads the run graph
     (removing the origin's fault, or changing nothing, leaves the topology as it is). On each, Q-FUTURE-1 predicts the
     origin's residual at every symptom and protected node (measured excess × path transfer over what is left: the
@@ -1571,7 +1571,7 @@ def similar_incidents(incident_id: str, now: int) -> dict[str, Any]:
     hl = float(m["half_life_days"]) * 86_400_000
     r = _ro().run("Q-MEM-1", {"current": a.id, "now": int(now), "half_life_ms": hl,
                               "w_recency": float(m["recall_recency_w"])})
-    for x in r.rows:   # what an agent can act on (M21 recent-work recall): when it was last seen and what fixed it
+    for x in r.rows:   # what an agent can act on (recent-work recall): when it was last seen and what fixed it
         fixes = sorted(set(x.get("fixes") or []))
         x["line"] = (f"last seen {ago(x.get('age_ms'))}; "
                      + (f"fixed by {', '.join(fixes)}, verified APPLIED" if fixes else "no verified fix recorded")
@@ -1603,7 +1603,7 @@ def runbook_for(ids: list[str]) -> dict[str, Any]:
                      about=xs[:5], summary=f"{len(r.rows)} runbooks")
 
 
-# ------------------------------------------------------------------ learned remediation ordering + residue (M12, advisory)
+# ------------------------------------------------------------------ learned remediation ordering + residue (advisory)
 class _Remedy(BaseModel):
     incident_id: str = Id
     symptom_ids: list[str] | None = Field(None, max_length=20)
@@ -1656,7 +1656,7 @@ def residue_check(incident_id: str, cause_id: str) -> dict[str, Any]:
                             "k": len(explained), "n": n, "summary": summary})
 
 
-# ------------------------------------------------------------------ obligation clock (M12)
+# ------------------------------------------------------------------ obligation clock
 def breach_minutes(row: dict, w: dict | None = None) -> float | None:
     """Minutes until an SLO's error budget runs out at the current burn: remaining × window minutes / burn (numbers
     from code, weights.yaml `obligation`). 0 when the budget is already spent and still burning. None when there is no
@@ -1736,7 +1736,7 @@ def obligation_clock(target_id: str, now: int) -> dict[str, Any]:
                      extra={**verdict, "customers": cust.rows, "obligated": obligated, "now": a.at})
 
 
-# ------------------------------------------------------------------ schema introspection (M12)
+# ------------------------------------------------------------------ schema introspection
 @_guard
 def graph_schema() -> dict[str, Any]:
     """The live schema of this tenant's graph: node labels with counts, property keys per label (bounded sample,
@@ -1784,7 +1784,7 @@ def run_cypher_readonly(query: str, failed_template: str, reason: str) -> dict[s
                      extra={"failed_template": a.failed_template, "reason": a.reason})
 
 
-# ------------------------------------------------------------------ on-call (M19), read-only
+# ------------------------------------------------------------------ on-call, read-only
 class _OnCallNow(BaseModel):
     at: int | None = Field(None, ge=0, le=4_102_444_800_000)
 
@@ -1844,7 +1844,7 @@ def oncall_stats(days: float = 7.0) -> dict[str, Any]:
                             "handled_under_contract": int(row.get("under_contract") or 0)})
 
 
-# ------------------------------------------------------------------ learning (M21), read-only, from the on-call home graph
+# ------------------------------------------------------------------ learning, read-only, from the on-call home graph
 class _Learned(BaseModel):
     family_id: str = Id
     now: int | None = Field(None, ge=0, le=4_102_444_800_000)
@@ -1901,7 +1901,7 @@ class _LearnedTarget(BaseModel):
 
 @_guard
 def learned_responders(target_id: str, now: int | None = None) -> dict[str, Any]:
-    """Who actually responds when this component's incidents page (M21): active people with a RESPONDED edge to it,
+    """Who actually responds when this component's incidents page: active people with a RESPONDED edge to it,
     recomputed from their trusted acknowledgements, approvals and verified fixes with recency decay (Q-LEARN-RESP),
     each with its counts, mean ack delay and last response. ROUTE reads it: the top learned responder (learn.resp_min_n
     responses) is paged in the first wave, before the rota, who is still paged."""
@@ -1924,7 +1924,7 @@ class _Gaps(BaseModel):
 
 @_guard
 def knowledge_gaps(status: str = "open") -> dict[str, Any]:
-    """What the company brain could not answer (M21): questions trusted users asked that were refused or found nothing
+    """What the company brain could not answer: questions trusted users asked that were refused or found nothing
     documented, how often and when (Q-KGAP-1), with the teams owning what each was about: who should document it."""
     a = _Gaps(status=status)
     ro, g = _learn_ro()
@@ -1939,7 +1939,7 @@ def knowledge_gaps(status: str = "open") -> dict[str, Any]:
 
 @_guard
 def learned_state() -> dict[str, Any]:
-    """What Faultline has learned from the people using it (M21): how many trusted learning events of each kind, from
+    """What Faultline has learned from the people using it: how many trusted learning events of each kind, from
     how many people (Q-LEARN-COUNTS), and the most recent ones (Q-LEARN-EVENTS). Read-only; trusted actors only."""
     ro, g = _learn_ro()
     counts = ro.run("Q-LEARN-COUNTS", {})

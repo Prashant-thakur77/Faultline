@@ -5,7 +5,7 @@ Deterministic per tenant (seeded stream "topohist:<tenant>"). For a quarter of t
 caller adds the call) from the middle third of that client's PR history, and stamp:
   * the edge pair: `valid_from` = that PR's `merged_at`, `introduced_by` = its id;
   * the PR: `introduces_calls` += "<client> → <server>".
-Consistent with the incident history (prejudge 2026-10-13): a call that a past incident propagated over (both its
+Consistent with the incident history: a call that a past incident propagated over (both its
 ends were AFFECTED by that incident) existed before that incident, so it is only ever dated to a PR merged before the
 earliest such incident, and left undated (always there) when the caller has no such PR. Edges without `valid_from`
 existed throughout. Every scenario incident is later than the whole history, so reads "now" are unchanged; only as-of

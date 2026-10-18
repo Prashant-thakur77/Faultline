@@ -1,4 +1,4 @@
-"""All 10 FalkorDB `algo.*` procedures at 10,000 services, against an eval-only NetworkX comparator (M20 Wave B).
+"""All 10 FalkorDB `algo.*` procedures at 10,000 services, against an eval-only NetworkX comparator.
 
 Pre-registered in evals/PREREGISTRATION.md (addendum 2026-10-17, 21:10 IST). FalkorDB publishes algorithm speed
 (PageRank 3.5x, WCC 6x against Neo4j); this measures the 10 procedures Faultline uses, on its own 10k-service scale
@@ -666,7 +666,7 @@ def main() -> int:
     ap.add_argument("--runs", type=int, default=R)
     ap.add_argument("--keep", action="store_true", help="keep a golden graph seeded here (default: delete it)")
     ap.add_argument("--no-projection", action="store_true")
-    ap.add_argument("--reason", default="M20 Wave B pre-registered run (PREREGISTRATION addendum 2026-10-17 21:10 IST)")
+    ap.add_argument("--reason", default="pre-registered run (PREREGISTRATION addendum 2026-10-17 21:10 IST)")
     ap.add_argument("--out", default=str(OUT))
     ap.add_argument("--quiet", action="store_true")
     a = ap.parse_args()

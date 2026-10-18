@@ -1,6 +1,6 @@
 # A MATCH after a CALL {} subquery ignores a variable bound before the subquery (silently wrong rows)
 
-**Engine:** FalkorDB 6.0.2 (pinned digest `sha256:107455e8…`). **Found by:** the deep bench (`evals/deep_bench.py`), through a new gate template that returned no rows. **Status:** draft, not yet filed (the owner files upstream issues).
+**Engine:** FalkorDB 6.0.2 (pinned digest `sha256:107455e8…`). **Found by:** the deep bench (`evals/deep_bench.py`), through a new gate template that returned no rows. **Status:** comment prepared for [FalkorDB#2972](https://github.com/FalkorDB/FalkorDB/issues/2972), not posted.
 
 ## Minimal reproduction (any graph with a few `PROPAGATES_TO` edges into node `frontend`)
 ```cypher

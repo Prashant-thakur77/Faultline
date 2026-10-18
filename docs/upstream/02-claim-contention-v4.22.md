@@ -1,5 +1,7 @@
 # Conditional MERGE claim yields two owners under 16-way contention (v4.22.0)
 
+**Status:** not filed (repro and draft here).
+
 **Image:** v4.22.0 (digest above). 6.0.2 (sha256:107455e8…) passes 10/10 rounds.
 
 Sixteen threads per round, released together by a barrier, each run:

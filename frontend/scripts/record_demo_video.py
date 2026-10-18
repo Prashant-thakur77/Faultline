@@ -21,8 +21,7 @@ stat tile, the contract-notice page). A real take needs --real-repeat for that: 
 at GitHub main, so the recorder turns it back on (one commit to flags.json on main of the demo infra repo: the fault
 comes back) before B and C open; C's contract then merges a second real pull request. The recorder refuses to start
 with an active contract (it would fix the take's own incident without a human) and when the ack window is shorter than
-the beats need. oc_telegram shows media/telegram.html: the real screenshot frontend/public/media/telegram.png, or a
-"screenshot pending" card (a dry run warns; a real take refuses to start without the screenshot).
+the beats need.
 
 Pre-roll (trimmed): it checks the API, re-arms the tenant (with its confirm step), runs the hero scenario once to read
 and check every value the take depends on, and confirms WebGL works for the cube. Only then does the kept footage
@@ -67,7 +66,6 @@ from __future__ import annotations
 
 import argparse
 import base64
-import hashlib
 import html
 import json
 import math
@@ -101,7 +99,7 @@ GITHUB_SHOT = 4.0  # silent seconds on the merged PR at github.com after the app
 MIN_GAP = 0.25  # the shortest pause between two segments when a beat ran long
 
 EXPLAINER = ["x_tenant", "x_matrices", "x_blast", "x_path", "x_flow", "x_cut", "x_who", "x_readonly", "x_unplug"]  # /explainer scenes, in order
-ONCALL = ["oc_page", "oc_ack", "oc_contract"]  # v4: the page, the ack, a contract; add "oc_telegram" (and its narration) once media/telegram.png exists
+ONCALL = ["oc_page", "oc_ack", "oc_contract"]  # the page, the ack, a standing approval
 # The beats, in narration order (cut v4). The recorder refuses a narration whose segments differ.
 SEGMENT_IDS = ["problem", "whyhard", "idea", "cube", *EXPLAINER, "run", "g2", "g5", "proof", "contain", "act", *ONCALL,
                "brain", "learn", "engine", "numbers", "cost", "close"]   # "preflight" has a beat; out of the short cut
@@ -516,13 +514,12 @@ def check_api(api: str, tenant: str, real: bool) -> dict:
 
 def check_media(ui: str) -> None:
     """The static pages must be served by the running UI (Next serves public/ files present at build time)."""
-    for name in ["hook.html", "proof.html", "open.html", "end.html", "phone.html", "telegram.html",
+    for name in ["hook.html", "proof.html", "open.html", "end.html", "phone.html",
                  *[f"charts/{c}.svg" for c in CHARTS]]:
         http_get(f"{ui.rstrip('/')}/media/{name}")
     proof = http_get(f"{ui.rstrip('/')}/media/proof.html").decode("utf-8", "replace")
     if b"__step" not in http_get(f"{ui.rstrip('/')}/media/hook.html") or "__llm" not in proof or \
-            b"__phone" not in http_get(f"{ui.rstrip('/')}/media/phone.html") or \
-            b"telegram.png" not in http_get(f"{ui.rstrip('/')}/media/telegram.html"):
+            b"__phone" not in http_get(f"{ui.rstrip('/')}/media/phone.html"):
         raise fail("the UI serves older media pages than frontend/public/media; rebuild and restart it")
     for c in CHARTS:
         if not re.search(rf"^\s*{re.escape(c)}\s*:\s*\"", proof, re.M):
@@ -548,32 +545,6 @@ def http_try(url: str, timeout: float = 15.0) -> tuple[int, bytes]:
         return e.code, b""
     except (urllib.error.URLError, OSError) as e:
         raise fail(f"GET {url} failed: {e}") from None
-
-
-def check_telegram(ui: str, real: bool) -> dict:
-    """The oc_telegram still: frontend/public/media/telegram.png, served as it is on disk. Missing: a real take refuses
-    (the final cut never shows the pending card); a dry run warns and shows the pending card."""
-    disk = PUBLIC_MEDIA / "telegram.png"
-    code, body = http_try(f"{ui.rstrip('/')}/media/telegram.png")
-    if not disk.exists():
-        if code == 200:
-            raise fail("the UI serves a media/telegram.png that frontend/public/media no longer has: rebuild and restart it")
-        if real:
-            raise fail("the oc_telegram beat needs the real screenshot from the on-call's phone: save it as "
-                       "frontend/public/media/telegram.png, rebuild and restart the UI (a real take never shows the "
-                       "'screenshot pending' card)")
-        print("  warning: frontend/public/media/telegram.png is missing; oc_telegram shows the 'screenshot pending' card",
-              file=sys.stderr)
-        return {"state": "pending"}
-    data = disk.read_bytes()
-    if not data.startswith(b"\x89PNG\r\n\x1a\n"):
-        raise fail("frontend/public/media/telegram.png is not a PNG (telegram.html loads exactly that file)")
-    if code != 200:
-        raise fail(f"frontend/public/media/telegram.png exists but the UI answers HTTP {code} for it: rebuild and "
-                   "restart the UI (Next serves only public files present when it started)")
-    if body != data:
-        raise fail("the UI serves an older media/telegram.png than frontend/public/media has: rebuild and restart it")
-    return {"state": "shot", "sha256": hashlib.sha256(data).hexdigest()[:16], "bytes": len(data)}
 
 
 # ------------------------------------------------------------------ the API, for the scripted steps (B, C) and checks
@@ -1146,22 +1117,6 @@ def beat_oc_ack(t: Take) -> None:
                          "escalated_a_day_later": None if later is None else len(later)}
 
 
-def beat_oc_telegram(t: Take) -> None:
-    """The real Telegram still (media/telegram.html). A real take never reaches this with the pending card
-    (check_telegram); a dry run shows the card that says so."""
-    d, page = t.d, t.page
-    d.begin("oc_telegram")
-    d.go(f"{t.ui}/media/telegram.html")
-    expect(page.locator("body[data-state='shot'], body[data-state='pending']")).to_be_attached(timeout=10_000)
-    state = page.locator("body").get_attribute("data-state")
-    if state != "shot":
-        if t.key is not None:
-            raise fail("the Telegram screenshot did not load on media/telegram.html")
-        print("  warning: oc_telegram shows the 'screenshot pending' card (dry run)", file=sys.stderr)
-    t.facts.setdefault("telegram", {})["shown"] = state
-    d.end(0.2)
-
-
 def beat_oc_contract(t: Take) -> None:
     """A standing approval, then the same fault again with nobody woken. In the take's incident room: Grant a contract
     for repeats (step 1: the scope typed, the exact contract shown; step 2: granted). Off screen: incident C (the same
@@ -1482,8 +1437,6 @@ def record(a: argparse.Namespace, work: Path, segs: list[Seg], llm: dict, issue:
     facts: dict[str, Any] = {"real_github": a.real_github, "key_field_masked": False,
                              "oncall_api": {"public": oc.get("public"), "channels": oc.get("channels"),
                                             "handled_under_contract_7d": oc.get("handled_before")}}
-    if oc.get("telegram"):
-        facts["telegram"] = dict(oc["telegram"])
     with sync_playwright() as p:
         if a.gpu:   # the NVIDIA GPU through ANGLE/EGL (PRIME offload): the 3D renders at full frame rate
             args = ["--use-gl=angle", "--use-angle=gl-egl", "--ignore-gpu-blocklist", "--enable-gpu"]
@@ -1845,10 +1798,9 @@ def record(a: argparse.Namespace, work: Path, segs: list[Seg], llm: dict, issue:
         d.chip("url", None)
         d.chip("badge", None)
 
-        # ---------------- oc_*: on call. The page, at a phone's size; the ack; the Telegram still; a standing
-        # approval and the same fault fixed with nobody woken (beat_* above: each checks what the voice claims)
-        for sid, beat in (("oc_page", beat_oc_page), ("oc_ack", beat_oc_ack), ("oc_telegram", beat_oc_telegram),
-                          ("oc_contract", beat_oc_contract)):
+        # ---------------- oc_*: on call. The page, at a phone's size; the ack; a standing approval and the same fault
+        # fixed with nobody woken (beat_* above: each checks what the voice claims)
+        for sid, beat in (("oc_page", beat_oc_page), ("oc_ack", beat_oc_ack), ("oc_contract", beat_oc_contract)):
             if want(sid):
                 beat(t)
 
@@ -2065,8 +2017,6 @@ def main() -> int:
     check_api(a.api, a.tenant, a.real_github)
     oc = check_oncall_api(a.api, a.tenant, S)
     check_media(a.ui)
-    if "oc_telegram" in S:
-        oc["telegram"] = check_telegram(a.ui, a.real_github)
     http_get(a.live_url, timeout=20)
     issue = issue_info(a.issue)
     key = None

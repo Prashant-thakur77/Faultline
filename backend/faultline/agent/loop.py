@@ -285,7 +285,7 @@ class LLMInvestigator:
         for _ in range(self.max_turns):
             if run.finished:
                 break
-            # per-call whitelist (§6.2): recomputed from the stage the investigation is in for EVERY model call
+            # per-call whitelist: recomputed from the stage the investigation is in for EVERY model call
             offered = phases.llm_toolset(box.stage)
             tools = tool_schemas(box, offered)
             self.offered.append(list(offered))
@@ -307,7 +307,7 @@ class LLMInvestigator:
                 out = await box.call(u.name, dict(u.input or {}), only=offered, caller="model")
                 results.append({"type": "tool_result", "tool_use_id": u.id,
                                 "content": json.dumps(out, default=str)[:9000]})
-                # GATE is reached only when the gate accepts with confidence (§6.1); from then on the model is offered
+                # GATE is reached only when the gate accepts with confidence; from then on the model is offered
                 # only the gate's tools (no more evidence gathering for an accepted cause)
                 if u.name == "confirm_root_cause" and run.result is not None and run.result.passed and run.result.confident:
                     box.stage = Stage.GATE

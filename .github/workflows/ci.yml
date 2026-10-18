@@ -55,8 +55,8 @@ jobs:
       - name: Sync dependencies (locked)
         run: uv sync --frozen --python 3.11
 
-      # tests/test_engine.py opens the DuckDB warehouse read-only to prove the
-      # SQL tool is read-only, so the warehouse has to exist. Healthy mode keeps
+      # tests/test_warehouse_repair_safety.py opens the DuckDB warehouse read-only to
+      # prove the SQL tool is read-only, so the warehouse has to exist. Healthy mode keeps
       # the job independent of the seeded incident.
       - name: Build the healthy warehouse fixture
         run: |

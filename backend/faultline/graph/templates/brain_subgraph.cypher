@@ -1,5 +1,5 @@
 // id: Q-BRAIN-SUB
-// purpose: a brain answer drawn as a graph (M17): how the ids an answer cites connect, through paths of at most 2 hops in the domain graph (run bookkeeping such as ToolCall, Evidence, Run, Turn and Session is never a hop, or every cited id would connect through the question's own records)
+// purpose: a brain answer drawn as a graph: how the ids an answer cites connect, through paths of at most 2 hops in the domain graph (run bookkeeping such as ToolCall, Evidence, Run, Turn and Session is never a hop, or every cited id would connect through the question's own records)
 MATCH (a:Node) WHERE a.id IN $ids
 MATCH (b:Node) WHERE b.id IN $ids AND a.id < b.id
 MATCH p = (a)-[*1..2]-(b)

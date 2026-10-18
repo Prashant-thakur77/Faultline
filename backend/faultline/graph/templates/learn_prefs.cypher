@@ -1,5 +1,5 @@
 // id: Q-LEARN-PREF
-// purpose: learned preferences (M21) of one incident family, read by PLAN: each action kind the team approved or rejected on it (Preference, recomputed from trusted LearnEvents with recency decay), decayed again from computed_at to $now (exact: the decay is a product), the Beta-smoothed preference (a+1)/(a+r+o+2) where o are approvals of other kinds, the raw counts the why line quotes and the events it derives from
+// purpose: learned preferences of one incident family, read by PLAN: each action kind the team approved or rejected on it (Preference, recomputed from trusted LearnEvents with recency decay), decayed again from computed_at to $now (exact: the decay is a product), the Beta-smoothed preference (a+1)/(a+r+o+2) where o are approvals of other kinds, the raw counts the why line quotes and the events it derives from
 // home: oncall
 // seen: id, events
 MATCH (p:Preference)

@@ -1,5 +1,5 @@
 // id: Q-TOPO-EPOCHS
-// purpose: versioned topology (M14 #7): every distinct time a call was introduced (valid_from), oldest first; the as-of reads that need a whole-graph algorithm (algo.maxFlow cannot filter edges by time) build one GRAPH.COPY branch per epoch between these
+// purpose: versioned topology: every distinct time a call was introduced (valid_from), oldest first; the as-of reads that need a whole-graph algorithm (algo.maxFlow cannot filter edges by time) build one GRAPH.COPY branch per epoch between these
 // seen: at
 MATCH ()-[r:PROPAGATES_TO]->()
 WHERE r.valid_from IS NOT NULL

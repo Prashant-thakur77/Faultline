@@ -1,6 +1,8 @@
 # A CALL {} subquery after OPTIONAL MATCH filters on a node before binding it (6.0.2): silent empty result
 
-Found 2026-10-13 while moving `who_fixes`' inputs into Cypher (M14 #6). Verified on the pinned 6.0.2 digest only
+**Status:** related to [FalkorDB#3037](https://github.com/FalkorDB/FalkorDB/issues/3037); comment prepared, not posted.
+
+Found 2026-10-13 while moving `who_fixes`' inputs into Cypher. Verified on the pinned 6.0.2 digest only
 (docs/FALKORDB_COMPAT.md). No index needed.
 
 ```cypher

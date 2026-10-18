@@ -1,4 +1,4 @@
-"""Human titles for the MCP tools (M17): the question each tool answers, shown by MCP clients next to the tool name.
+"""Human titles for the MCP tools: the question each tool answers, shown by MCP clients next to the tool name.
 Names stay as they are (they are the stage whitelists, the hosted ACL and recorded transcripts); a test requires a
 title for every tool."""
 

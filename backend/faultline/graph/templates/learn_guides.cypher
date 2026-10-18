@@ -1,5 +1,5 @@
 // id: Q-LEARN-GUIDE
-// purpose: guidelines (M21) of one incident family in the given statuses: a trusted rejection reason proposed each one for the family and action kind; a human promotes it to active (the option then needs an explicit override) or dismisses it. With who proposed and decided it and the event it derives from
+// purpose: guidelines of one incident family in the given statuses: a trusted rejection reason proposed each one for the family and action kind; a human promotes it to active (the option then needs an explicit override) or dismisses it. With who proposed and decided it and the event it derives from
 // home: oncall
 // seen: id, event
 MATCH (gd:Guideline)

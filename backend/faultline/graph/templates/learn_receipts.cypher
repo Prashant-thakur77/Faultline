@@ -1,5 +1,5 @@
 // id: Q-LEARN-RECEIPTS
-// purpose: forget receipts of learned influence (M21) in audit_<t>: whose influence was forgotten, who approved it, the receipt token, what was deleted and recomputed, and the proof re-read after it (events left, preferences still citing one)
+// purpose: forget receipts of learned influence in audit_<t>: whose influence was forgotten, who approved it, the receipt token, what was deleted and recomputed, and the proof re-read after it (events left, preferences still citing one)
 // home: audit
 // seen: person
 MATCH (r:ForgetReceipt)

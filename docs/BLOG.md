@@ -1,6 +1,6 @@
 # Our on-call agent isn't allowed to blame a deploy until FalkorDB returns a path
 
-*Draft for dev.to / Hashnode. Not published yet. Every measured number below is checked against `evals/results/latest.json` by `make claims`.*
+*Every measured number below is checked against `evals/results/latest.json` by `make claims`.*
 
 ## Two deploys, one minute
 

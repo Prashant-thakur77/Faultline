@@ -76,7 +76,7 @@ claims:  ## every tagged number in README/docs equals evals/results/latest.json
 bench:  ## gate bench: 100 generated gate cases on clean rooms → "gate verdicts k/k" (evals/results/gate_bench.json)
 	$(GUARD) 3000 $(PY) evals/gate_bench.py --quiet --out evals/results/gate_bench.json
 
-oncall-night:  ## M19 scripted on-call night: page → escalate → ack → APPLIED → contract → same fault under contract + 5 negatives → evals/results/oncall_night.json
+oncall-night:  ## scripted on-call night: page → escalate → ack → APPLIED → contract → same fault under contract + 5 negatives → evals/results/oncall_night.json
 	$(GUARD) 2500 $(PY) evals/oncall_night.py
 
 graphrag-sdk-venv:  ## eval only: isolated venv for FalkorDB's GraphRAG-SDK under tmp/ (+ the 6.0.x full-text DDL patch, GLiNER model)
@@ -85,10 +85,10 @@ graphrag-sdk-venv:  ## eval only: isolated venv for FalkorDB's GraphRAG-SDK unde
 graphrag-sdk-dry:  ## eval only: brain vs GraphRAG-SDK corpus + cost estimate (no API call); the paid run is evals/graphrag_sdk_arm.py --run
 	$(PY) evals/graphrag_sdk_arm.py --dry-run
 
-learning-night:  ## M21 learning: choices cold vs warm, guidelines, who responds (MTTA), forget, gaps, recency recall → evals/results/learning_night.json
+learning-night:  ## learning night: choices cold vs warm, guidelines, who responds (MTTA), forget, gaps, recency recall → evals/results/learning_night.json
 	$(GUARD) 3000 $(PY) evals/learning_night.py
 
-t2-gonogo:  ## the T2 go/no-go checklist (cold vs warm, S13, S7, S10 incl. the live URL's read-only dry run, sessions) → evals/results/t2_gonogo.json
+t2-gonogo:  ## the memory and coordination checklist (track T2): cold vs warm, work claims under contention, cross-tenant isolation, forget with a receipt (incl. the live URL's read-only dry run), session history → evals/results/t2_gonogo.json
 	$(GUARD) 3000 $(PY) evals/t2_gonogo.py
 
 chaos:  ## kill -9 the API between execute and verify; the reconciler must settle the intent exactly once
@@ -102,13 +102,13 @@ scale:  ## scale benchmark: synthetic 1k/10k-service tenants by default (SIZES=�
 	$(GUARD) 3000 $(PY) evals/scale.py --sizes $${SIZES:-1k,10k} $${MERGE:+--merge} --reason "$${REASON:-make scale}"
 	@echo "scale: FalkorDB keeps the memory of the deleted scale graphs until restart; run 'make compact' before 'make eval'"
 
-tenants-bench:  ## M20: N tenant graphs on one engine (MB/tenant, copy ms, ACL isolation 0/K leaks, p50/p95/p99 at 1/8/32/64 investigators) → evals/results/tenants_bench.json
+tenants-bench:  ## N tenant graphs on one engine (MB/tenant, copy ms, ACL isolation 0/K leaks, p50/p95/p99 at 1/8/32/64 investigators) → evals/results/tenants_bench.json
 	$(GUARD) 3000 $(PY) evals/tenants_bench.py
 
-algo10k:  ## M20: all 10 algo.* at 10k services + an eval-only NetworkX comparator (same answers, time, memory) → evals/results/algo10k.json
+algo10k:  ## all 10 algo.* at 10k services + an eval-only NetworkX comparator (same answers, time, memory) → evals/results/algo10k.json
 	$(GUARD) 3000 env PYTHONPATH=backend $(UV) --group comparator python evals/algo10k.py
 
-concurrency:  ## S13: 16 workers x 100 rounds
+concurrency:  ## work claims under contention: 16 workers x 100 rounds
 	$(PY) evals/concurrency.py --out evals/results/concurrency.json
 
 doctor:

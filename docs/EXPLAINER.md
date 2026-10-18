@@ -1,6 +1,6 @@
-# Faultline explained in one page (for the human presenting it; grows each milestone)
+# Faultline explained in one page
 
-Rule R12: you must be able to explain the graph model, the queries, the architecture and the decisions. This page holds the answers. Each section is one question a judge might ask.
+The Graph Hacks rules ask participants to be able to explain the graph model, the queries, the architecture and the decisions. This page holds the answers. Each section is one question a judge might ask.
 
 ## "What is it, in one sentence?"
 An on-call agent that is not allowed to blame a change until FalkorDB returns a causal path, and that rejects look-alike causes with a max-flow bound. It then contains the incident with a min-cut, routes it to the right person, takes one human-approved action, verifies it through a second channel and writes the decision back so the next incident starts warm.

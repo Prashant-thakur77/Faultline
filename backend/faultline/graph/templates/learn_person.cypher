@@ -1,5 +1,5 @@
 // id: Q-LEARN-PERSON
-// purpose: forget dry run (M21): every learning event a person contributed (keyset-paged on (at, id) after $after_at, $after_id), with what each one feeds (family, gap) and the guidelines it proposed, so the receipt lists exactly what will be deleted and recomputed
+// purpose: forget dry run: every learning event a person contributed (keyset-paged on (at, id) after $after_at, $after_id), with what each one feeds (family, gap) and the guidelines it proposed, so the receipt lists exactly what will be deleted and recomputed
 // home: oncall
 // seen: id, guidelines
 MATCH (e:LearnEvent)

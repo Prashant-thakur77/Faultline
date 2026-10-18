@@ -85,7 +85,8 @@ def _ignored(p: Path) -> bool:
 
 
 def main(argv: list[str]) -> int:
-    files = [Path(a).resolve() for a in argv] or [p for p in [ROOT / "README.md", *sorted((ROOT / "docs").glob("*.md"))]
+    files = [Path(a).resolve() for a in argv] or [p for p in [ROOT / "README.md", ROOT / "llms.txt", ROOT / "CHANGELOG.md",
+                                                              *sorted((ROOT / "docs").glob("*.md"))]
                                                   if p.exists() and not _ignored(p)]
     bad = check(files) + untagged(files)
     n = sum(len(TAG.findall(f.read_text())) for f in files)

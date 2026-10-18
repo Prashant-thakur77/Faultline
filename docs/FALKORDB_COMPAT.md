@@ -153,6 +153,8 @@ Syntax: `CALL db.meta.stats() YIELD labels, relTypes, nodeCount, relCount, prope
 - **6.0.2**: under RO_QUERY: db.labels=['Empty', 'M', 'N']; db.relationshipTypes=['R', 'S']; db.propertyKeys=['cap', 'extra', 'id', 'w']; db.meta.stats labels={'N': 3, 'Empty': 0, 'M': 1} relTypes={'R': 2, 'S': 1} nodes=4 edges=3 (equals full scan: True; index-only label listed with 0); db.indexes labels=['Empty']; modes={'db.labels': 'READ', 'db.relationshipTypes': 'READ', 'db.propertyKeys': 'READ', 'db.meta.stats': 'READ', 'db.indexes': 'READ'}
 - **v4.22.0**: under RO_QUERY: db.labels=['Empty', 'M', 'N']; db.relationshipTypes=['R', 'S']; db.propertyKeys=['cap', 'extra', 'id', 'w']; db.meta.stats labels={'N': 3, 'Empty': 0, 'M': 1} relTypes={'R': 2, 'S': 1} nodes=4 edges=3 (equals full scan: True; index-only label listed with 0); db.indexes labels=['Empty']; modes={'db.labels': 'READ', 'db.relationshipTypes': 'READ', 'db.propertyKeys': 'READ', 'db.meta.stats': 'READ', 'db.indexes': 'READ'}
 
+
+
 ## Official MCP server under the read-only ACL user (verified 2026-10-13)
 `@falkordb/mcpserver@1.3.0` with `FALKORDB_STRICT_READONLY=true` under our `ro_<tenant>` line (no `GRAPH.LIST`):
 - **Startup needs `+info`.** Without it, the server hangs silently and never answers `initialize` (docs/upstream/14). `+info` is now in `deploy/users.acl.template`.
@@ -166,13 +168,13 @@ Test: `tests/mcpserver/test_official_mcpserver_acl.py`.
 
 ## UDFs and FalkorDB FLEX (verified 2026-10-13)
 - **`GRAPH.UDF LOAD/LIST/DELETE` works on 6.0.2,** and a UDF is callable inside `GRAPH.RO_QUERY`.
-- **Library:** FLEX 1.0.1 (`deploy/udf/flex-1.0.1.js`, sha256-pinned) is loaded by `scripts/configure_falkordb.py`.
+- **Library:** FLEX 1.0.1 (`deploy/udf/flex-1.0.1.js`, sha256-pinned) is loaded by `backend/faultline/graph/udf.py` (`make up` via `scripts/configure_falkordb.py`, seed, and API startup); `/api/status` reports it from `GRAPH.UDF LIST` and judge-check checks the loaded sha.
 - **Used in templates:**
-  - `flex.text.jaroWinkler` in Q-FIND-FUZZY: "pyment" → payment at 0.957;
+  - `flex.text.jaroWinkler` in Q-FIND-FUZZY: the misspelling "pyment" resolves to payment above the `brain.fuzzy_min` floor (asserted in the live test), behind a length-ratio and first-letter guard;
   - `flex.sim.jaccard` in Q-COUPLE-1, for coupling strength.
 - Test: `tests/live/test_flex_udf.py`.
 
-## M20: engine depth on 6.0.2 (verified 2026-10-17; smoke rows 25–30, live tests named below)
+## Engine depth on 6.0.2 (verified 2026-10-17; smoke rows 25–30, live tests named below)
 - **Constraints (`GRAPH.CONSTRAINT`).** `GRAPH.CONSTRAINT CREATE <graph> MANDATORY|UNIQUE NODE|RELATIONSHIP <label> PROPERTIES <n> <p…>`; status from `CALL db.constraints() YIELD type, label, properties, entitytype, status` (`YIELD *` is a syntax error), PENDING then OPERATIONAL. UNIQUE needs the exact-match range index first.
   - A MANDATORY property set by `MERGE … ON CREATE SET` or a later `SET` in the same query passes (checked at commit). A batch with one bad row rolls back whole. `GRAPH.COPY` carries every constraint and the copy enforces it.
   - Messages: `mandatory constraint violation: node with label Evidence missing property digest`, `… edge with relationship-type PROPAGATES_TO missing property cap`, `unique constraint violation on node of type Node`. A second `Constraint already exists` CREATE is an error (tolerated by `writes.ensure_constraints`).
@@ -184,7 +186,7 @@ Test: `tests/mcpserver/test_official_mcpserver_acl.py`.
 - **Aggregates.** `avg`, `stDevP`, `percentileCont(x, 0.95)` skip the nulls of `CASE WHEN … THEN x END`; over no rows `avg` is null and `stDevP` is 0. They can differ from Python's `fmean` / `pstdev` in the last bit, so the 4-place rounding of the gate band stays in Python. Test: `tests/live/test_band_in_engine.py`.
 - **Temporal (wall-clock rules).** Works: `localdatetime('1970-01-01T00:00:00') + duration({seconds: toInteger($ms / 1000) + offset_s})`, then `.dayOfWeek`, `.weekDay`, `.hour`, `.minute`.
   - **`.dayOfWeek` returns 0 for Sunday** (openCypher: 7); `.weekDay` returns 7. Q-PRE-FREEZE reads 0 as 7, so it is right under either convention.
-  - Silent wrong results (never use): `duration({milliseconds: 90000})` is `PT0S`; `localdatetime({epochMillis: …})` is `1970-01-01T00:00:00`. No time zones: policies carry a fixed UTC offset (no DST). Draft: `docs/upstream/23-temporal-silent-errors.md`.
+  - Silent wrong results (never use): `duration({milliseconds: 90000})` is `PT0S`; `localdatetime({epochMillis: …})` is `1970-01-01T00:00:00`. No time zones: policies carry a fixed UTC offset (no DST). Known upstream (FalkorDB#3295, #2936): `docs/upstream/23-temporal-silent-errors.md`.
 - **`dbms.functions()`**: `YIELD name, udf, aggregation` (`signature` / `description` do not exist). Built-in names are listed lower-cased and match case-insensitively; FLEX UDFs carry `udf = true`. Test: `tests/mcpserver/test_guard_functions.py`.
 - **`telemetry{<graph>}` stream**: one entry per query with `Received at`, `Query`, `Query parameters`, `Total duration`, `Wait duration`, `Execution duration`, `Report duration` (ms), `Utilized cache`, `Write`, `Timeout`; written just after the reply; deleted with the graph. Read with `XREVRANGE telemetry{<graph>} + - COUNT n` (engine user). Test: `tests/live/test_engine_insight.py`.
 - **`WAITAOF numlocal numreplicas timeout`** on the connection that wrote returns `[1, 0]` once the write is fsynced (appendfsync everysec: about one second); with `numreplicas 1` and no replica it times out and returns `[1, 0]` after the timeout. Test: `tests/live/test_durable_writeback.py`.

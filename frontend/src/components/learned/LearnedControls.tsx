@@ -88,8 +88,8 @@ export function GuidelinesCard({ s, tenant, now, acting, notice }: { s: LearnedS
         </Empty>
       ) : (
         <ul className="space-y-2" aria-label="Proposed and active guidelines">
-          {live.map((g) => (
-            <GuidelineItem key={g.id} g={g} tenant={tenant} now={now} acting={acting} />
+          {collapseProposed(live).map(({ g, more }) => (
+            <GuidelineItem key={g.id} g={g} more={more} tenant={tenant} now={now} acting={acting} />
           ))}
         </ul>
       )}
@@ -106,7 +106,31 @@ export function GuidelinesCard({ s, tenant, now, acting, notice }: { s: LearnedS
   );
 }
 
-function GuidelineItem({ g, tenant, now, acting }: { g: GuidelineRow; tenant: string; now: number; acting: Acting }) {
+/** Proposed guidelines with the same reason for the same family and fix kind are shown once, newest first, with how
+ * many more times that reason was given: repeated rejections propose one rule, not a wall of copies. Active guidelines
+ * are listed one by one. */
+export function collapseProposed(rows: GuidelineRow[]): { g: GuidelineRow; more: number }[] {
+  const seen = new Map<string, { g: GuidelineRow; more: number }>();
+  const out: { g: GuidelineRow; more: number }[] = [];
+  for (const g of [...rows].sort((a, b) => (b.at ?? 0) - (a.at ?? 0))) {
+    if (g.status !== "proposed") {
+      out.push({ g, more: 0 });
+      continue;
+    }
+    const k = `${(g.text ?? "").trim().toLowerCase()}|${g.family ?? ""}|${g.actionKind ?? ""}`;
+    const hit = seen.get(k);
+    if (hit) {
+      hit.more += 1;
+      continue;
+    }
+    const e = { g, more: 0 };
+    seen.set(k, e);
+    out.push(e);
+  }
+  return out;
+}
+
+function GuidelineItem({ g, more = 0, tenant, now, acting }: { g: GuidelineRow; more?: number; tenant: string; now: number; acting: Acting }) {
   const decide = (action: "promote" | "dismiss") => (by: string, key: string | undefined) => learnedApi.guideline(g.id, action, by, tenant, key);
   return (
     <li className="rounded-xl bg-white/[0.02] px-3.5 py-2.5 ring-1 ring-white/[0.06]">
@@ -118,6 +142,11 @@ function GuidelineItem({ g, tenant, now, acting }: { g: GuidelineRow; tenant: st
         </span>
       </div>
       <p className="mt-1.5 border-l-2 border-white/10 pl-2 text-sm break-words text-zinc-100">&ldquo;{g.text ?? "–"}&rdquo;</p>
+      {more ? (
+        <p className="mt-1 text-[11px] text-zinc-400">
+          The same reason was given {more} more time{more === 1 ? "" : "s"} for this family and fix kind.
+        </p>
+      ) : null}
       <p className="mt-1.5 text-[11px] break-words text-zinc-400">
         {g.source === "rejection" || !g.source ? "from the rejection by " : `from ${g.source} by `}
         <span className="text-zinc-200">{personText(g.by)}</span>

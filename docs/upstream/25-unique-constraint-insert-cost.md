@@ -1,8 +1,9 @@
 # Every insert under a UNIQUE constraint costs time proportional to the label's size (6.0.2): performance cliff
 
-Found building M20's engine-enforced invariants (2026-10-17): with a UNIQUE constraint on `:Node(id)` (a label every
-node carries) the 1k-service scale world's seed timed out. Verified on the pinned 6.0.2 digest on a throwaway graph. Draft
-only: not filed; search the tracker first.
+**Status:** known upstream as [FalkorDB#3330](https://github.com/FalkorDB/FalkorDB/issues/3330), fixed by #3334 after 6.0.2; not refiled.
+
+Found building the engine-enforced invariants (2026-10-17): with a UNIQUE constraint on `:Node(id)` (a label every
+node carries) the 1k-service scale world's seed timed out. Verified on the pinned 6.0.2 digest on a throwaway graph.
 
 ```cypher
 // graph u: CREATE INDEX FOR (n:N) ON (n.id), then
@@ -22,5 +23,5 @@ constraint refuses to be created without it). MANDATORY constraints cost nothing
 **Request.** Check uniqueness through the supporting index (one lookup per insert), or document the cost.
 
 **Impact for Faultline:** UNIQUE is used only on small labels (`Run.id`, `Intent.idem`); `Node.id` is MANDATORY, not
-UNIQUE. The constraint created by the first M20 build is retired and dropped automatically (`graph/constraints.py`
+UNIQUE. The constraint created by the first build of these invariants is retired and dropped automatically (`graph/constraints.py`
 RETIRED); `tests/live/test_scale_smoke.py` seeds the 1k world with the final set.

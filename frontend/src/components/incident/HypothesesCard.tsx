@@ -17,7 +17,7 @@ const STATUS_ORDER = { confirmed: 0, open: 1, unresolved: 2, eliminated: 3 } as 
 
 /**
  * Blast radius + suspects: the BLAST tool calls and the hypotheses (Q-HYP-1) with score bars and
- * origin, with a "naive vs Faultline" toggle (§9.1.1) that shows what naive recency would have
+ * origin, with a "naive vs Faultline" toggle that shows what naive recency would have
  * blamed next to the gate's verdict (live only: it reads the run's recorded suspects from the API).
  */
 export function HypothesesCard({

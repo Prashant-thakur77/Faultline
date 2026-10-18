@@ -48,7 +48,7 @@ REL_TYPES = frozenset({
     "CONSTRAINS", "SUPERSEDES", "CITES", "DECIDED", "PRODUCED", "ASSERTS", "VIOLATES", "FOR",
     "HAS_INTENT", "APPROVED", "EXECUTED", "CLAIMED_BY", "HANDED_OFF_TO", "HAS_TURN", "HAS_GATE_RUN",
     "HAS_STAGE", "HAS_TOOL_CALL", "SAW", "RECALLED", "PRODUCED_EVIDENCE", "HAS_HYPOTHESIS", "HAS_RUN", "HAS_ALERT", "BASELINE_OF", "WINDOW_OF", "KNOWS_ABOUT", "HAS_PLAN", "HAS_ACTION",
-    # specialist work items (§6.3/§6.13): Run → Task, Task → named suspect
+    # specialist work items: Run → Task, Task → named suspect
     "HAS_TASK", "NAMES",
     # the crew (M17): Task → the ToolCalls its agent MADE, Task → the next step's Task
     "MADE", "NEXT",

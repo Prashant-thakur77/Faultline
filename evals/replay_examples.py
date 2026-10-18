@@ -1,4 +1,4 @@
-"""Replay the gate verdicts of every committed examples/<run>/ (§12.2 "replay gate verdicts").
+"""Replay the gate verdicts of every committed examples/<run>/.
 
 For each recorded incident run, re-run its scenario on a fresh GRAPH.COPY clean room of the golden graph with the
 deterministic investigator, read the new run's GateRuns from the graph (Q-INC-GATES) and compare them with the

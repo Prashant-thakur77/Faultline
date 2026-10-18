@@ -1,6 +1,6 @@
 # [Bug] Filtered pattern comprehension returns [] after an aggregating WITH (6.0.2), beyond #11
 
-**Draft. Not posted yet.** Found while building the obligation clock (M12, 2026-10-13).
+**Status:** comment prepared for [FalkorDB#3004](https://github.com/FalkorDB/FalkorDB/issues/3004), not posted. Found while building the obligation clock (2026-10-13).
 
 **Engine:** `falkordb/falkordb:6.0.2` @ `sha256:107455e8…` (module 60002)
 
