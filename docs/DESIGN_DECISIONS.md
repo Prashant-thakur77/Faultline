@@ -38,6 +38,7 @@ A readable summary of the decisions that shape Faultline and why. The limits the
 | All similarity search runs in the FalkorDB vector index | Embeddings are computed locally and committed as model inputs. Vectors are written with `vecf32()`, and similarity is never computed in numpy. |
 | `scripts/lint_single_store.py` in CI | It rejects other stores, numpy similarity, JSON state, hand-written graph algorithms and string-built Cypher, and now raw write Cypher in `evals/`. |
 | Engine housekeeping outside the tenant RO wrapper is sanctioned | Readiness flags, constraint and index checks in `graph/copy.py` and `graph/writes.py` are bounded, fixed-text and never decision reads. |
+| What Python does after a query is arithmetic, not graph work | The graph facts come from FalkorDB: reach and hops (`algo.BFS`, `algo.SSpaths`), bottleneck capacities, owners, index hits. Code then applies the weights in `agent/weights.yaml`, because scores and numbers come from code, never from a model: `blast_radius` ranks the BFS reach by tier × 1/(1+hops) × traffic (`mcp_server/tools.py::impact`); `notify_set` sums that impact per owning team; `find_entities` keeps the best score per node when the full-text and the vector index both return it. No path, reachability, ranking by structure or ownership lookup is computed in Python. |
 
 ## 4. Safety envelope
 
