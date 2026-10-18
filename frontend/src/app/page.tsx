@@ -2,6 +2,7 @@ import { ScenarioLauncher } from "@/components/ScenarioLauncher";
 import { RecentIncidents } from "@/components/RecentIncidents";
 import { StaticLanding } from "@/components/site/StaticLanding";
 import { Hero } from "@/components/home/Hero";
+import { JudgePath } from "@/components/home/JudgePath";
 import { ApiTabs } from "@/components/home/ApiTabs";
 import { Features } from "@/components/home/Features";
 import { Marquee } from "@/components/home/Marquee";
@@ -20,6 +21,7 @@ export default function Home() {
   return (
     <div className="w-full">
       <Hero />
+      <JudgePath />
       <Marquee />
       <Features />
       <SectionRule />
