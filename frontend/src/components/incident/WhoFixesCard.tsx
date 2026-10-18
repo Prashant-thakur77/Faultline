@@ -170,8 +170,8 @@ function People({ people }: { people: WhoFixesRow[] }) {
               <span className={i === 0 ? "text-[15px] font-[560] text-zinc-50" : "text-sm font-medium text-zinc-100"}>{p.name ?? p.person}</span>
               <span className="font-mono text-[11px] text-[var(--fl-subtle)]">{p.person}</span>
               {i === 0 ? <StatusChip tone="info">top pick</StatusChip> : null}
-              <span className="ml-auto font-mono text-[11px] text-[var(--fl-subtle)]" title="score from the ranking query">
-                score {fmtValue(p.score)}
+              <span className="ml-auto font-mono text-[11px] text-[var(--fl-subtle)]" title="algo.HarmonicCentrality over who knows this component: recent commits, past resolutions, on-call and collaborators; higher ranks first">
+                centrality {Number(p.score).toFixed(1)}
               </span>
             </div>
             {p.teams.length ? (
