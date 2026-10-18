@@ -184,6 +184,16 @@ export function LearnedVerdict({ data, error, loading }: { data: LearnedState | 
               {head}
             </p>
             {sub ? <p className="mt-0.5 text-xs text-zinc-400">{sub}</p> : null}
+            {data?.trust.public && learnedSummary(data).empty ? (
+              <a
+                href="https://github.com/Prashant-thakur77/Faultline#learns-from-the-people-who-use-it-t2"
+                target="_blank"
+                rel="noreferrer"
+                className="mt-1 inline-block text-xs text-sky-300 underline underline-offset-2 outline-none focus-visible:ring-2 focus-visible:ring-sky-400"
+              >
+                See the recorded learning night<span className="sr-only"> (opens in a new tab)</span>
+              </a>
+            ) : null}
           </div>
         </div>
         {data ? (
