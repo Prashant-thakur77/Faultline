@@ -21,7 +21,7 @@
 
 ![The gate at work: a no-path rejection (G2), a max-flow rejection (G5), then the proof path](docs/media/hero.gif)
 
-<p align="center"><b><a href="https://13-203-185-119.sslip.io">Live demo</a> · <a href="https://github.com/Prashant-thakur77/Faultline/releases/latest/download/faultline-demo.mp4">Watch the video (4:54)</a> · <a href="docs/MCP.md#try-the-hosted-server-now-public-demo-key">Hosted MCP</a> · <a href="docs/PROOF.md">Every number, with intervals</a> · <a href="https://prashant-thakur77.github.io/Faultline/">Replay (no backend)</a> · <a href="https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.4.2">Release v1.4.2</a></b></p>
+<p align="center"><b><a href="https://13-203-185-119.sslip.io">Live demo</a> · <a href="https://youtu.be/6tyPre4fLxk">Watch the video (4:54)</a> · <a href="docs/MCP.md#try-the-hosted-server-now-public-demo-key">Hosted MCP</a> · <a href="docs/PROOF.md">Every number, with intervals</a> · <a href="https://prashant-thakur77.github.io/Faultline/">Replay (no backend)</a> · <a href="https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.4.2">Release v1.4.2</a></b></p>
 
 ## At a glance
 
@@ -38,7 +38,7 @@
 | **Stack** | FalkorDB 6.0.2 (pinned by digest) · Python 3.11 and FastAPI · Next.js 16, React Three Fiber · MCP over stdio and HTTP · Docker Compose on one AWS EC2 VM with Caddy. <!-- noclaim: versions --> |
 | **Built for** | Graph Hacks (WeMakeDevs × FalkorDB). Tracks: T1 Agents That Act on Connected Data ([how one incident flows](#how-one-incident-flows)) · T3 Company Brain ([memory and brain](#memory-company-brain-preflight-coordination)) · T2 Agent Memory & Coordination ([learning from the people who use it](#learns-from-the-people-who-use-it-t2)). |
 
-**[Video](https://github.com/Prashant-thakur77/Faultline/releases/latest/download/faultline-demo.mp4) (4:54, narrated, captioned)** chapters: 0:10 thesis · 0:25 how FalkorDB decides, in 3D · 1:34 the live incident · 2:02 a real PR, APPLIED · 2:33 on call · 3:16 the data incident: a repair proposed from the run's own measurements, verified by the warehouse · 3:40 company brain · 3:46 what it learned · 3:55 inside FalkorDB · 4:01 break it · 4:07 the numbers. Every number in it is read from the results file at record time; script: [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md). The write-up: [the blog post on Medium](https://medium.com/@prashant101007/our-on-call-agent-isnt-allowed-to-blame-a-deploy-until-falkordb-returns-a-path-b32d8bcf2fb7) (also [docs/BLOG.md](docs/BLOG.md)). <!-- noclaim: chapter times -->
+**[Video](https://github.com/Prashant-thakur77/Faultline/releases/latest/download/faultline-demo.mp4) (4:54, narrated, captioned; [on YouTube](https://youtu.be/6tyPre4fLxk))** chapters: 0:10 thesis · 0:25 how FalkorDB decides, in 3D · 1:34 the live incident · 2:02 a real PR, APPLIED · 2:33 on call · 3:16 the data incident: a repair proposed from the run's own measurements, verified by the warehouse · 3:40 company brain · 3:46 what it learned · 3:55 inside FalkorDB · 4:01 break it · 4:07 the numbers. Every number in it is read from the results file at record time; script: [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md). The write-up: [the blog post on Medium](https://medium.com/@prashant101007/our-on-call-agent-isnt-allowed-to-blame-a-deploy-until-falkordb-returns-a-path-b32d8bcf2fb7) (also [docs/BLOG.md](docs/BLOG.md)). <!-- noclaim: chapter times -->
 
 ---
 
@@ -286,7 +286,7 @@ git clone --depth 1 https://github.com/Prashant-thakur77/Faultline.git && cd Fau
 make setup && make judge-check     # several minutes; prints PASS
 ```
 
-Last run on a fresh `--depth 1` clone of `main` (2026-10-18, commit `88dbdbb`): **PASS**, 18 of 18 checks; the full summary is in [evals/results/judge_check_clean_clone.txt](evals/results/judge_check_clean_clone.txt). <!-- noclaim: a dated run log, not a results-file number -->
+Last run on a fresh `--depth 1` clone of `main` (2026-10-18, commit `3a6ec7e`): **PASS**, 18 of 18 checks; the full summary is in [evals/results/judge_check_clean_clone.txt](evals/results/judge_check_clean_clone.txt). <!-- noclaim: a dated run log, not a results-file number -->
 
 `judge-check` starts the pinned FalkorDB, runs the engine smoke suite, seeds both tenants, runs the unit and live tests (isolation and concurrency included), checks the pipeline invariants, runs the lints and the claims check, and builds the frontend. CI runs the same steps on the pinned engine ([`ci.yml`](.github/workflows/ci.yml)). A `.devcontainer/` is included for a Codespace.
 
