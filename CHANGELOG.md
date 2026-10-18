@@ -2,6 +2,13 @@
 
 All notable changes to Faultline. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### The company brain reads document text (track T3)
+- Document bodies (ADRs, runbooks, incident-channel chats, issues) are stored as `(:Chunk)` passages with `vecf32` embeddings and full-text, written at seed after everything else so no existing node id moves.
+- `search_knowledge` (MCP, Q-KNOW-1) fuses seven index lists by reciprocal rank inside FalkorDB in one query, credits a document's text to the decision or runbook it produced, and returns the passage that matched with what each source concerns and who decided it.
+- The brain falls back to it only when no question kind matches and both index families agree on the best source (pre-registered rule). Scored once on the blind sets: unchanged at <!-- claim:brain_blind.s2.hybrid_docs.correct -->24<!-- /claim -->/<!-- claim:brain_blind.s2.hybrid_docs.questions -->40<!-- /claim --> on set 2, with no unanswerable question answered.
+
 ## [1.2.0] - 2026-10-18
 
 ### FalkorDB does the ranking, with our own UDF library

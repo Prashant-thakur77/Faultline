@@ -35,7 +35,7 @@
 
 - One graph per tenant, read-only ACL users, `GRAPH.RO_QUERY` with a timeout and a row limit for every read; writes only through one module.
 - <!-- claim:repo.algorithms -->10<!-- /claim --> `algo.*` procedures, each changing a decision (BFS, SPpaths, SSpaths, maxFlow, pageRank, betweenness, WCC, labelPropagation, HarmonicCentrality, MSF).
-- <!-- claim:repo.templates -->232<!-- /claim --> parameterised Cypher templates (never Cypher built from input), <!-- claim:repo.mcp_tools -->59<!-- /claim --> MCP tools, <!-- claim:repo.constraints -->18<!-- /claim --> constraints, vectors (`vecf32`) and full-text indexes, `GRAPH.COPY` clean rooms, `WAITAOF` durability, the engine's telemetry stream.
+- <!-- claim:repo.templates -->233<!-- /claim --> parameterised Cypher templates (never Cypher built from input), <!-- claim:repo.mcp_tools -->60<!-- /claim --> MCP tools, <!-- claim:repo.constraints -->18<!-- /claim --> constraints, vectors (`vecf32`) and full-text indexes, `GRAPH.COPY` clean rooms, `WAITAOF` durability, the engine's telemetry stream.
 
 ## Docs
 

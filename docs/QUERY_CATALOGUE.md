@@ -4,7 +4,7 @@
 
 **PROFILE p50 / p95** = engine milliseconds from `GRAPH.PROFILE` (nearest-rank percentiles of 20 runs; `scripts/profile_templates.py`) for the templates the S1/S2 runs executed, with those runs' recorded params (measured by the eval harness, read from `evals/results/latest.json`). Blank = not executed in those runs; `scratch` = runs on a temporary projection.
 
-<!-- claim:repo.templates -->232<!-- /claim --> templates. `{algo:x}` is resolved to the procedure name recorded by `make smoke` (`graph/algo/resolved.json`).
+<!-- claim:repo.templates -->233<!-- /claim --> templates. `{algo:x}` is resolved to the procedure name recorded by `make smoke` (`graph/algo/resolved.json`).
 
 ## Gate and proof
 
@@ -291,6 +291,7 @@
 | `Q-KH-1` | knowledge health, runbooks: human runbooks in effect that are stale (not reviewed for $stale_days) or that predate the current owning team (written by the previous owner) | [kh_runbooks.cypher](../backend/faultline/graph/templates/kh_runbooks.cypher) |
 | `Q-KH-2` | knowledge health, handovers: components that changed owning team with no runbook reviewed since the handover; the previous team's people who worked on it are who to ask | [kh_handovers.cypher](../backend/faultline/graph/templates/kh_handovers.cypher) |
 | `Q-KH-3` | knowledge health, decisions: active decisions whose constrained components changed owner after the decision (the deciding team may be gone), and how often incident causes have violated them | [kh_decisions.cypher](../backend/faultline/graph/templates/kh_decisions.cypher) |
+| `Q-KNOW-1` | company-brain knowledge search (T3) in ONE query: what the organisation's documents say. Seven ranked lists, each from a FalkorDB index (vecf32 over Doc text chunks, credited to the decision or runbook the document produced, postmortem summaries and runbooks with cosine at least $floor; full-text over chunks, postmortems, runbooks and decision titles), fused by reciprocal rank inside the engine (each list adds 1/($k + rank) for its best hit of a source), then expanded one and two hops: what each source is about, produced, constrains or documents, and who decided it | [knowledge_search.cypher](../backend/faultline/graph/templates/knowledge_search.cypher) |
 | `Q-LEARN-COUNTS` | how many learning events of each kind the tenant holds, from how many people, and the newest (the learned-state panel header) | [learn_counts.cypher](../backend/faultline/graph/templates/learn_counts.cypher) |
 | `Q-LEARN-EV1` | one learning event by id (a verified fix is learned only when its approval was learned, i.e. trusted) | [learn_event_one.cypher](../backend/faultline/graph/templates/learn_event_one.cypher) |
 | `Q-LEARN-EVENTS` | the most recent learning events of the tenant (the learned-state panel): who did what, on which family and incident, and when | [learn_events.cypher](../backend/faultline/graph/templates/learn_events.cypher) |
