@@ -130,6 +130,8 @@ It learns from what trusted people do, and only in FalkorDB: the fix the on-call
 
 The demo is live, and we measured it from outside over HTTPS: the hero incident, run end to end <!-- claim:live.hero.n -->5<!-- /claim --> times, found the right cause <!-- claim:live.hero.cause_correct -->5<!-- /claim --> times and was verified APPLIED <!-- claim:live.hero.applied -->5<!-- /claim --> times, with a p50 of <!-- claim:live.hero.verdict_ms_p50 -->2383.8<!-- /claim --> ms from alert to verdict. With the real GitHub client switched on, the same flow opens, merges and verifies an actual pull request: the flag flips at `main` of a demo infrastructure repository, and the verdict is APPLIED only after `main` is re-read.
 
+The agent acts on data incidents too. When the executive revenue KPI jumps after a payment-provider cutover, the run measures the warehouse itself (one segment of the anomalous column, a power of ten off the healthy rows), asks the lineage graph which transform writes that table, and proposes the one-line repair. A human approves the exact diff; the warehouse is rebuilt on the incident's own data, the invariant suite runs, and the verdict is APPLIED only if everything passes: <!-- claim:example.s2.invariants -->32/32<!-- /claim --> invariants on the recorded run, write-back <!-- claim:example.s2.writeback -->7/7<!-- /claim -->.
+
 ## FalkorDB notes from the trenches
 
 We pinned 6.0.2 by digest after running our engine smoke suite on both candidate versions. A few things we learned the hard way, each reduced to a minimal reproduction and checked against FalkorDB's issue tracker before filing:
