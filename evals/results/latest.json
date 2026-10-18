@@ -370,7 +370,7 @@
   "s1b.chain": "D-pay-421 \u2192 payment \u2192 checkout",
   "s3b.D-ad-7.rejected_by": "G2",
   "s3b.chain": "D-pgcfg-4 \u2192 astronomy-db \u2192 product-catalog",
-  "repo.templates": 235,
+  "repo.templates": 236,
   "repo.algorithms": 10,
   "repo.mcp_tools": 60,
   "repo.mcp_tools_hosted": 53,

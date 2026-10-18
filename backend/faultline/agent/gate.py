@@ -487,11 +487,13 @@ class Gate:
                                 evidence_ids=[e for e in g5_ev if e]))
             # G6 competitors. Only the graph eliminates: an elimination asserted by an investigator (a model) instead
             # of by the sweep or the gate does not count, so whatever a model proposes cannot move G6
+            # A rival the gate already confirmed is a competitor too: a second cause never passes beside a first one
             open_ = sorted(h["cause"] for h in hyps if h["cause"] != cause_id and (
-                h["status"] == "open" or (h["status"] == "eliminated" and h.get("status_by") == "investigator")))
+                h["status"] in ("open", "confirmed")
+                or (h["status"] == "eliminated" and h.get("status_by") == "investigator")))
             unresolved = sorted(h["cause"] for h in hyps if h["cause"] != cause_id and h["status"] == "unresolved")
             checks.append(Check("G6 competitors", not open_,
-                                f"open competitors must be eliminated or unresolved: {open_}" if open_
+                                f"open (or already confirmed) competitors must be eliminated or unresolved: {open_}" if open_
                                 else "every competitor eliminated with evidence", "Q-HYP-1", {"inc": self.inc}))
             if unresolved:
                 checks.append(Check("G6 unresolved", False, f"unresolved competitors: {unresolved} → confident=false",

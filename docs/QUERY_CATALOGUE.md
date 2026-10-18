@@ -4,7 +4,7 @@
 
 **PROFILE p50 / p95** = engine milliseconds from `GRAPH.PROFILE` (nearest-rank percentiles of 20 runs; `scripts/profile_templates.py`) for the templates the S1/S2 runs executed, with those runs' recorded params (measured by the eval harness, read from `evals/results/latest.json`). Blank = not executed in those runs; `scratch` = runs on a temporary projection.
 
-<!-- claim:repo.templates -->235<!-- /claim --> templates. `{algo:x}` is resolved to the procedure name recorded by `make smoke` (`graph/algo/resolved.json`).
+<!-- claim:repo.templates -->236<!-- /claim --> templates. `{algo:x}` is resolved to the procedure name recorded by `make smoke` (`graph/algo/resolved.json`).
 
 ## Gate and proof
 
@@ -141,6 +141,7 @@
 | `Q-DEC-PEOPLE` | who decided: for each decision constraining a component, the people who DECIDED it, whether each is still active, and whether each is still on a team that OWNS what the decision constrains; plus the decision in force if it was superseded. Answers "who decided X, and are they still here?" | Cypher |  |  | [decision_people.cypher](../backend/faultline/graph/templates/decision_people.cypher) |
 | `Q-DEC-REV` | reversal guard: a change whose asserted fact is governed by a SUPERSEDED decision (the org decided this once and later reversed it), with the decision in force now (bounded SUPERSEDES walk to the active head) and what the head CITES (why it was reversed). Keys compare after the component segment, because the decision CONSTRAINS the very component the fact is ABOUT (preflight keys facts as <component id>.<key>, decisions may name the component by an alias). Whether the change actually reinstates the old rule is decided in code (agent/rules.py), as for Q-DEC-1. Annotation only: never a gate check, never a preflight score term. `because` lists the head's cited evidence, not the ADR records (doc-adr-*) themselves. | Cypher |  |  | [decision_reversal.cypher](../backend/faultline/graph/templates/decision_reversal.cypher) |
 | `Q-DOC-1` | a document and what it produced (forget UI and receipts) | Cypher |  |  | [doc_exists.cypher](../backend/faultline/graph/templates/doc_exists.cypher) |
+| `Q-DOC-URLS` | the documents of a graph and the files they point at (seed-time chunking of document text, ingest/chunks.py) | Cypher |  |  | [doc_urls.cypher](../backend/faultline/graph/templates/doc_urls.cypher) |
 | `Q-FORGET-1` | forget dry run (W-MEM-3 preview): nodes this Doc ALONE produced (deleted with it), their relationship counts and vectors | Cypher |  |  | [forget_preview.cypher](../backend/faultline/graph/templates/forget_preview.cypher) |
 | `Q-FORGET-2` | forget proof: re-query the vector index with a forgotten node's own vector; the node must not come back | vector index |  |  | [forget_vector_probe.cypher](../backend/faultline/graph/templates/forget_vector_probe.cypher) |
 | `Q-GAP-1` | missing guardrails (set difference): revenue-path services with no owning team or no current runbook | Cypher |  |  | [gap_guardrails.cypher](../backend/faultline/graph/templates/gap_guardrails.cypher) |

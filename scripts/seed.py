@@ -128,7 +128,7 @@ def seed(tenant: str, no_memory: bool = False, force: bool = False, only: list[s
     # document text as searchable chunks (T3, Q-KNOW-1): also applied after everything else, idempotent
     from faultline.ingest import chunks
 
-    info["chunks"] = chunks.apply(g)
+    info["chunks"] = chunks.apply(g, tenant)
     if not no_memory:
         info["copy"] = gcopy.rearm(db, tenant, reason="seed")
     info["counts"] = writes.counts(db.select_graph(tenant_graph(tenant) if not no_memory else golden))

@@ -78,11 +78,15 @@ def rows(docs: list[tuple[str, str]]) -> list[dict[str, Any]]:
     return out
 
 
-def apply(g) -> dict[str, int]:
-    """Chunk every Doc of graph `g` (the engine's own seed connection) and write the chunks (graph/writes)."""
+def apply(g, tenant: str) -> dict[str, int]:
+    """Chunk every Doc of graph `g` (read through the RO wrapper, Q-DOC-URLS) and write the chunks (graph/writes)."""
     from ..graph import writes
+    from ..graph.ro import RO
 
-    docs = [(r[0], r[1]) for r in g.ro_query("MATCH (d:Doc) WHERE d.url IS NOT NULL RETURN d.id, d.url ORDER BY d.id").result_set]
+    res = RO(tenant, g.name).run("Q-DOC-URLS", {})
+    if res.truncated:   # never chunk a silent subset of the documents
+        raise RuntimeError(f"{g.name} has more documents than Q-DOC-URLS returns; page the read before chunking")
+    docs = [(r["id"], r["url"]) for r in res.rows]
     rs = rows(docs)
     return {"docs": len(docs), "chunks": writes.upsert_chunks(g, rs, docs=[d for d, _ in docs])}
 

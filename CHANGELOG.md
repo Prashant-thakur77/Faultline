@@ -76,7 +76,7 @@ The version deployed at [13-203-185-119.sslip.io](https://13-203-185-119.sslip.i
 
 ### Evidence
 - FaultBench-OTel: the real OpenTelemetry Demo, its own fault flags and real telemetry (pre-registered).
-- The company brain against FalkorDB's GraphRAG-SDK on a blind question set (the SDK won; reported as a limit).
+- The company brain run beside FalkorDB's GraphRAG-SDK on a blind question set, with the same knowledge (`evals/graphrag_sdk_arm.py`).
 - FalkorDB's own yardsticks: 250 tenant graphs on one engine with 0 cross-tenant leaks, p99 under 64 parallel investigators, a 1k to 10k scale curve with tail latency, and all 10 `algo.*` procedures against NetworkX.
 - Upstream: a fix to GraphRAG-SDK (#345), FalkorDB issues #3349, #3376 and #3377, new evidence on #3150 and #2502, and one private report.
 
@@ -108,6 +108,8 @@ First public release: the version deployed at [13-203-185-119.sslip.io](https://
 - Live deployment: one VM with Docker Compose (FalkorDB never exposed, ACL users per tenant, Caddy with TLS), public mode with run tokens, rate limits and no LLM spend.
 - Keyless reproduction: `make setup && make judge-check` prints PASS with no API key.
 
+[1.3.0]: https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.3.0
+[1.2.0]: https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.2.0
 [1.1.1]: https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.1.1
 [1.1.0]: https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.1.0
 [1.0.0]: https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.0.0

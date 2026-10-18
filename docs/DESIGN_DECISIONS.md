@@ -90,7 +90,7 @@ Each feature is a template plus a tool, and each changes a decision or a reporte
 
 | Feature | Template · tool | Decision |
 |---|---|---|
-| Who to notify | `Q-NOTIFY-1` · `notify_set` | Distinct from who fixes it: owners of the blast radius plus who is on call now |
+| Who to notify | `Q-NOTIFY-2` · `notify_set` | Distinct from who fixes it: owners of the blast radius plus who is on call now |
 | Why alerts missed it | `Q-CHAIN-MON` · `alert_coverage` | Per hop of the proven chain, advisory and after the verdict |
 | Owner at the time, as-of beliefs, timeline | `Q-OWN-AT`, `Q-ASOF-1`, `Q-TIMELINE-1` | Read the `OWNED_AT`/`ON_CALL` windows and `SUPERSEDES` dates that were written but never read before |
 | Knowledge health, hidden coupling | `Q-KH-1/2/3`, `Q-COUPLE-1` | The graph points at its own stale knowledge and probably-missing edges. Never evidence for the gate. |
