@@ -81,6 +81,10 @@ export function StatTiles({
         <Tile icon={Users} label="People paged" value={s ? n(s.peoplePaged) : "–"} note={s?.pages != null ? `${n(s.pages)} pages sent` : "humans woken"} />
         <Tile icon={Moon} label="Handled while you slept" value={s ? n(s.handledUnderContract) : "–"} note="fixed under a contract, nobody paged" moon />
       </dl>
+      <p className="mt-2 text-[11px] leading-snug text-[var(--fl-subtle)]">
+        On this demo the pages come from scripted incidents and the acknowledgements from the demo&apos;s own runs, so the times
+        are seconds; the same query reads a real rota&apos;s pages unchanged.
+      </p>
     </section>
   );
 }
