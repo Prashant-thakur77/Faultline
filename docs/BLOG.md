@@ -134,7 +134,7 @@ It learns from what trusted people do, and only in FalkorDB: the fix the on-call
 
 ## It runs, on a real deployment and a real repository
 
-The demo is live, and we measured it from outside over HTTPS: the hero incident, run end to end <!-- claim:live.hero.n -->5<!-- /claim --> times, found the right cause <!-- claim:live.hero.cause_correct -->5<!-- /claim --> times and was verified APPLIED <!-- claim:live.hero.applied -->5<!-- /claim --> times, with a p50 of <!-- claim:live.hero.verdict_ms_p50 -->1747.4<!-- /claim --> ms from alert to verdict. With the real GitHub client switched on, the same flow opens, merges and verifies an actual pull request: the flag flips at `main` of a demo infrastructure repository, and the verdict is APPLIED only after `main` is re-read.
+The demo is live, and we measured it from outside over HTTPS: the hero incident, run end to end <!-- claim:live.hero.n -->5<!-- /claim --> times, found the right cause <!-- claim:live.hero.cause_correct -->5<!-- /claim --> times and was verified APPLIED <!-- claim:live.hero.applied -->5<!-- /claim --> times, with a p50 of <!-- claim:live.hero.verdict_ms_p50 -->1815.2<!-- /claim --> ms from alert to verdict. With the real GitHub client switched on, the same flow opens, merges and verifies an actual pull request: the flag flips at `main` of a demo infrastructure repository, and the verdict is APPLIED only after `main` is re-read.
 
 ## FalkorDB notes from the trenches
 
