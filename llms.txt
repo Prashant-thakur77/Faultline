@@ -14,7 +14,7 @@
 
 - Live demo (keyless, simulated GitHub): https://13-203-185-119.sslip.io
 - Hosted read-only MCP server, public demo key: docs/MCP.md (`https://13-203-185-119.sslip.io/mcp`)
-- Narrated video (4:25): docs/media/demo.mp4 and the GitHub release asset
+- Narrated video (4:54): docs/media/demo.mp4 and the GitHub release asset
 - Give any MCP client the graph tools: `npx -y @prashantthakur77/faultline-mcp` (npm; connects to the live demo, `--url`/`--key` for your own server)
 - Run the whole product with Docker only: `curl -fsSLO https://raw.githubusercontent.com/Prashant-thakur77/Faultline/main/deploy/quickstart.yml && docker compose -f quickstart.yml up`, then http://localhost:3000
 - Reproduce everything offline with no API key: `make setup && make judge-check` (prints PASS)
