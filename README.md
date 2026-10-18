@@ -128,6 +128,10 @@ Every result in one table. Each number is tagged and checked against [`evals/res
 <td valign="top"><img src="docs/screenshots/28-break-it.png" alt="Break it: change one edge or call in a copy of the graph and watch which decisions follow"><br><sub><b>Break it</b> (<a href="https://13-203-185-119.sslip.io/playground">/playground</a>). Change one thing in a <code>GRAPH.COPY</code> of the graph and watch the verdict move: the graph is load-bearing, live.</sub></td>
 </tr>
 <tr>
+<td valign="top"><img src="docs/screenshots/29-udf-libraries.png" alt="Inside FalkorDB: the two UDF libraries loaded in the engine, FLEX and our own faultline library, with their pinned sha, functions and the templates that call them"><br><sub><b>UDF libraries in the engine.</b> FLEX and our own <code>faultline</code> library, loaded with <code>GRAPH.UDF LOAD</code> and pinned by sha256; the blast radius, the notify list and note recall are ranked inside FalkorDB by them.</sub></td>
+<td valign="top"><img src="docs/screenshots/30-agent-notes.png" alt="Notes from other agents in the incident room: Faultline's verdict note about the proof path, recalled near payment"><br><sub><b>Notes from other agents.</b> The run's verdict, left for the next agent in <code>agentmem_acme</code> and recalled by graph distance and meaning in one query; a lead, never evidence.</sub></td>
+</tr>
+<tr>
 <td valign="top"><img src="docs/screenshots/18-provenance.png" alt="Why do you believe this: the verdict's provenance, from the agents' calls to the evidence that supports it"><br><sub><b>Why do you believe this?</b> Agent, tool call, evidence, verdict: every arrow is a stored edge, so the answer is itself a query.</sub></td>
 <td valign="top"><img src="docs/screenshots/20-brain-answer-graph.png" alt="A company-brain answer drawn as a graph: who decided, the decisions, and what they constrain"><br><sub><b>Company brain.</b> "Who decided the payment timeout?" answered from the graph, every name a node id a query returned.</sub></td>
 </tr>
