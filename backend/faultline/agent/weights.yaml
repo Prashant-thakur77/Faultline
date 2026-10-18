@@ -98,7 +98,7 @@ oncall:
   demo_ack_window_s: 60    # FAULTLINE_ONCALL_DEMO_WINDOWS (a live demo only): one minute per escalation step, so a visitor sees the escalation happen while they watch.
   tick_every_s: 20         # The escalation tick runs every 20 s: at most a third of the shortest demo window late, and three reads per run graph per minute.
   max_escalations: 6       # A page escalates at most 6 times (the on-call, then up to five people of the escalation order); past that it is marked exhausted for a human to pick up, never re-paged forever.
-  contract_offer_ttl_s: 900  # A contract offer (step 1) must be approved within 15 minutes, Beacon's approval window: a scope chosen and left open is not consent.
+  contract_offer_ttl_s: 900  # A contract offer (step 1) must be approved within 15 minutes: a scope chosen and left open is not consent.
   contract_max_uses: 10    # A standing approval covers at most 10 repeats: past that the fault is a pattern to fix, not to keep containing.
   contract_max_days: 30    # A standing approval lasts at most 30 days (about four weekly rota shifts), so it is re-granted by someone on call then instead of outliving everyone who agreed to it.
   telegram_rate_per_min: 20  # One chat may send the bot 20 updates a minute (a person tapping and typing on a phone stays far below it); past that it is told to slow down and nothing runs.

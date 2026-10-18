@@ -1,8 +1,8 @@
 """Telegram on-call bot, the outbound half: the Bot API client, HTML formatting within Telegram's limits, and the page
 card, read from the graph and edited IN PLACE as the incident moves (acked, escalated, approved, APPLIED, resolved,
-fixed under a standing contract). Adapted from the author's Beacon project (`telegram.py`: one bot, buttons on the
-page, never raises); everything a card says is read through the RO templates (Q-PAGE-ONE, Q-INC-1, Q-CAUSE-1,
-Q-INC-GATES, Q-HYP-1, Q-EV-TOOL, Q-ACT-1, Q-ACT-APPROVER), and the only write is the message mapping on the Page.
+fixed under a standing contract): one bot, buttons on the page, never raises. Everything a card says is read through
+the RO templates (Q-PAGE-ONE, Q-INC-1, Q-CAUSE-1, Q-INC-GATES, Q-HYP-1, Q-EV-TOOL, Q-ACT-1, Q-ACT-APPROVER), and the
+only write is the message mapping on the Page.
 
 The bot token (TELEGRAM_BOT_TOKEN, .env only) is read in exactly one place, `_http`, to build the request URL. It is
 never logged, returned or written anywhere: errors are reported by their type or by Telegram's own description (which

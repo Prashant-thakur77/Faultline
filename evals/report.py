@@ -772,6 +772,10 @@ def udf_equivalence_keys(x: dict | None = None) -> dict:
     for tool in ("blast", "notify", "find", "cut"):
         v = x.get(tool) or {}
         k[f"udf.eq.{tool}.k"], k[f"udf.eq.{tool}.n"] = v.get("k"), v.get("n")
+        # the calls whose previous-code answer was not empty: an empty answer equal to an empty answer proves little
+        k[f"udf.eq.{tool}.nonempty_k"], k[f"udf.eq.{tool}.nonempty"] = v.get("nonempty_k"), v.get("nonempty")
+    k["udf.eq.notify.with_oncall"] = (x.get("notify") or {}).get("with_oncall")
+    k["udf.eq.cut.refused"] = (x.get("cut") or {}).get("refused")
     return k
 
 

@@ -161,11 +161,18 @@ def main() -> int:
     from faultline.memory.embed import embed_one
 
     rnd = random.Random(20261018)
-    res = {k: {"k": 0, "n": 0, "first_diff": None} for k in ("blast", "notify", "find", "cut")}
+    # k/n over every call; `nonempty` = calls whose previous-code answer was not empty (an empty answer equal to an
+    # empty answer proves little), `refused` = cuts both sides refused (region too large or a mismatch)
+    res = {k: {"k": 0, "n": 0, "nonempty_k": 0, "nonempty": 0, "first_diff": None}
+           for k in ("blast", "notify", "find", "cut")}
+    res["notify"].update(with_oncall=0)
+    res["cut"].update(refused=0)
 
-    def tally(kind: str, same: bool, what: str) -> None:
+    def tally(kind: str, same: bool, what: str, nonempty: bool = True) -> None:
         res[kind]["n"] += 1
         res[kind]["k"] += int(same)
+        res[kind]["nonempty"] += int(nonempty)
+        res[kind]["nonempty_k"] += int(nonempty and same)
         if not same and res[kind]["first_diff"] is None:
             res[kind]["first_diff"] = what
 
@@ -173,23 +180,33 @@ def main() -> int:
     for tenant in TENANTS:
         ro = RO(tenant)
         ids = node_ids(tenant)
+        # a time inside the rota (the middle of the ON_CALL windows), so the on-call column is filled and compared
+        lo, hi = client.engine().select_graph(f"tenant_{tenant}").ro_query(
+            "MATCH ()-[o:ON_CALL]->() RETURN min(o.from), max(o.to)").result_set[0]
+        now = (int(lo) + int(hi)) // 2
         tok = context.bind(tenant, record=False)
         try:
             for nid in ids:
                 new = [(x["id"], x["hops"], x["impact"]) for x in T.blast_radius(id=nid)["rows"]]
-                tally("blast", new == old_blast(ro, nid), f"{tenant}/{nid}")
+                old = old_blast(ro, nid)
+                tally("blast", new == old, f"{tenant}/{nid}", bool(old))
                 pri = sorted(rnd.sample(ids, 3)) if rnd.random() < 0.3 else []
-                got = T.notify_set(target_id=nid, now=0, priority_ids=pri)["rows"]
+                got = T.notify_set(target_id=nid, now=now, priority_ids=pri)["rows"]
                 new = [(x["team"], x["impact"], x["nearest_hops"], sorted(x["owns_impacted"]), sorted(x["oncall"]),
                         sorted(x.get("priority", []))) for x in got]
-                tally("notify", new == old_notify(ro, tenant, nid, 0, pri), f"{tenant}/{nid}")
+                old = old_notify(ro, tenant, nid, now, pri)
+                tally("notify", new == old, f"{tenant}/{nid}", bool(old))
+                res["notify"]["with_oncall"] += int(any(o[4] for o in old))
             flow_nodes = {r[0] for r in client.engine().select_graph(f"tenant_{tenant}").ro_query(
                 "MATCH (n:Node)-[:PROPAGATES_TO]->() RETURN DISTINCT n.id").result_set}
             for nid in sorted(flow_nodes):
                 reach = [x["id"] for x in T.blast_radius(id=nid)["rows"] if x["id"] != nid]
                 if reach:
                     prot = sorted(set(reach[:2] + rnd.sample(reach, min(2, len(reach)))))
-                    tally("cut", new_cut(nid, prot) == old_cut(ro, nid, prot), f"{tenant}/{nid}/{prot}")
+                    new, old = new_cut(nid, prot), old_cut(ro, nid, prot)
+                    refused = isinstance(old, str)
+                    res["cut"]["refused"] += int(refused and new == old)
+                    tally("cut", new == old, f"{tenant}/{nid}/{prot}", not refused and bool(old[0]))
             for i, text in enumerate(corpus):
                 labels = LABEL_SETS[i % len(LABEL_SETS)]
                 got = T.find_entities(text=text, labels=labels)
@@ -197,13 +214,15 @@ def main() -> int:
                     continue
                 qv = embed_one(text) if (not labels or set(labels) & set(FIND_VEC)) else None
                 new = [(x["id"], x["label"], x["score"], x["via"], x.get("status")) for x in got["rows"]]
-                tally("find", new == old_find(ro, text, labels, qv), f"{tenant}/{text!r}/{labels}")
+                old = old_find(ro, text, labels, qv)
+                tally("find", new == old, f"{tenant}/{text!r}/{labels}", bool(old))
         finally:
             context.unbind(tok)
     out = {"at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "udf": loaded, "tenants": list(TENANTS),
            "texts": len(corpus), "seconds": round(time.time() - t0, 1), **res}
     Path(a.out).write_text(json.dumps(out, indent=2) + "\n")
-    print(json.dumps({k: f"{v['k']}/{v['n']}" for k, v in res.items()}))
+    print(json.dumps({k: f"{v['k']}/{v['n']} (non-empty {v['nonempty_k']}/{v['nonempty']})" for k, v in res.items()}),
+          f"notify with on-call {res['notify']['with_oncall']}; cut refused on both sides {res['cut']['refused']}")
     return 0 if all(v["k"] == v["n"] for v in res.values()) else 1
 
 

@@ -38,7 +38,7 @@ ORDER: list[Stage] = [
 TERMINALS = frozenset({Stage.RESOLVED, Stage.NO_INCIDENT, Stage.UNKNOWN_ESCALATED, Stage.FAILED})
 EXITS = frozenset({Stage.NO_INCIDENT, Stage.UNKNOWN_ESCALATED, Stage.FAILED})  # reachable from any non-terminal
 
-# Mapping from the existing system's stages, kept for the ported tests/UI.
+# Older stage names, mapped to the current ones (kept for tests and the UI).
 LEGACY = {
     "REPORTED": Stage.INTAKE, "CONTEXT_DISCOVERY": Stage.LOCALIZE, "LINEAGE_TRAVERSAL": Stage.BLAST,
     "HYPOTHESIS_GENERATION": Stage.HYPOTHESIZE, "EVIDENCE_COLLECTION": Stage.INVESTIGATE,

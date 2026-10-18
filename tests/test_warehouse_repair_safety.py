@@ -1,4 +1,4 @@
-"""Warehouse sandbox and repair-scope safety (ported from the existing system test_engine.py)."""
+"""Warehouse sandbox and repair-scope safety."""
 
 import pytest
 

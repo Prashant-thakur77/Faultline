@@ -1,5 +1,5 @@
 {
-  "at": "2026-10-18T07:36:58Z",
+  "at": "2026-10-18T08:09:52Z",
   "udf": {
     "flex": "e7e833ba87f8",
     "faultline": "55cd126a097d"
@@ -9,25 +9,35 @@
     "globex"
   ],
   "texts": 349,
-  "seconds": 35.4,
+  "seconds": 25.7,
   "blast": {
-    "k": 7915,
-    "n": 7915,
+    "k": 7926,
+    "n": 7926,
+    "nonempty_k": 198,
+    "nonempty": 198,
     "first_diff": null
   },
   "notify": {
-    "k": 7915,
-    "n": 7915,
-    "first_diff": null
+    "k": 7926,
+    "n": 7926,
+    "nonempty_k": 195,
+    "nonempty": 195,
+    "first_diff": null,
+    "with_oncall": 195
   },
   "find": {
     "k": 698,
     "n": 698,
+    "nonempty_k": 170,
+    "nonempty": 170,
     "first_diff": null
   },
   "cut": {
     "k": 198,
     "n": 198,
-    "first_diff": null
+    "nonempty_k": 197,
+    "nonempty": 197,
+    "first_diff": null,
+    "refused": 1
   }
 }

@@ -10,7 +10,6 @@ each); every decision reads a template (graph/templates/*.cypher) through the RO
 * the shift report and the stats: Q-SHIFT-REPORT and Q-ONCALL-STATS per graph (the tenant graph and the run graphs it
   indexes), merged here (lists concatenated, counts and sums added; nothing is computed outside Cypher but the sums).
 
-The page/ack/report/contract design is adapted from the author's Beacon project (channels, approvals, reports).
 """
 
 from __future__ import annotations

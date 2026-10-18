@@ -1,5 +1,5 @@
-"""Telegram on-call bot, the inbound half: one update → one answer. Adapted from the author's Beacon project
-(`telegram_bot.py`: an allowlist, buttons that never approve on their own, consent only by an exact typed phrase).
+"""Telegram on-call bot, the inbound half: one update → one answer: an allowlist, buttons that never approve on their
+own, consent only by an exact typed phrase.
 
 Safety, in the order a webhook call meets it:
 1. the API checked the webhook secret (constant time) before this module runs;

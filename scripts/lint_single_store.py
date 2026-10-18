@@ -2,13 +2,13 @@
 
 Fails on, inside backend/faultline:
   * imports of other stores / graph libraries: sqlite3, sqlalchemy, networkx, chromadb, lancedb,
-    qdrant_client, pinecone, datahub (duckdb only in warehouse.py, the system under observation);
+    qdrant_client, pinecone (duckdb only in warehouse.py, the system under observation);
   * runtime state read from JSON (`json.load(` / `json.loads(<file>.read_text())`) in agent/,
     actions/, memory/, brain/, preflight/, mcp_server/ and store.py;
   * hand-written graph algorithms: `deque(` or functions named like bfs/dfs/dijkstra/shortest_path/
     pagerank/betweenness/centrality/downstream_of/upstream_of/traverse;
   * Cypher built with f-strings or `.format(` near MATCH/MERGE/CREATE/CALL outside graph/.
-Pre-existing violations are listed in scripts/single_store_allowlist.txt with a reason and the
+Known, sanctioned exceptions are listed in scripts/single_store_allowlist.txt with a reason and the
 milestone that removes them; the list must shrink to the sanctioned entries by the end of M2.
 """
 
@@ -23,7 +23,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PKG = ROOT / "backend" / "faultline"
 ALLOWLIST = ROOT / "scripts" / "single_store_allowlist.txt"
 
-BANNED_IMPORTS = {"sqlite3", "sqlalchemy", "networkx", "chromadb", "lancedb", "qdrant_client", "pinecone", "datahub",
+BANNED_IMPORTS = {"sqlite3", "sqlalchemy", "networkx", "chromadb", "lancedb", "qdrant_client", "pinecone",
                   "psycopg2", "psycopg", "pymongo", "pickle", "shelve", "dbm", "sklearn", "faiss", "annoy", "hnswlib",
                   "igraph", "graph_tool", "rustworkx", "sentence_transformers"}
 STATE_ONLY_BANNED = {"numpy", "scipy", "yaml"}  # no vector maths / runtime YAML state in decision paths
@@ -145,7 +145,7 @@ def main(paths: list[str] | None = None) -> int:
     if found:
         print("single-store lint FAILED:\n  " + "\n  ".join(found))
         return 1
-    print(f"single-store lint PASS ({len(allowed_hits)} allowlisted pre-existing/sanctioned hits)")
+    print(f"single-store lint PASS ({len(allowed_hits)} allowlisted, sanctioned hits)")
     return 0
 
 

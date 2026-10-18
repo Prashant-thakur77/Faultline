@@ -11,8 +11,9 @@ sha256 above, and fails loudly on a mismatch. Templates call FLEX functions insi
 `require`, `eval` or `Function`). It is unmodified.
 
 `faultline` is our own library: the arithmetic that turns graph facts into a ranking (`faultline.tierWeight`,
-`faultline.impact`, `faultline.capImpact`, `faultline.round4`), so `blast_radius` (`Q-BLAST-3`), `notify_set`
-(`Q-NOTIFY-2`) and `find_entities` (`Q-FIND-HYBRID`) each return rows already scored and ordered by FalkorDB. It holds
+`faultline.impact`, `faultline.capImpact`, `faultline.noteScore`, `faultline.round4`). `blast_radius` (`Q-BLAST-3`),
+`notify_set` (`Q-NOTIFY-2`) and `recall_notes` (`Q-NOTE-RECALL`) return rows scored and ordered by FalkorDB with it;
+`find_entities` (`Q-FIND-HYBRID`) and `search_knowledge` (`Q-KNOW-1`) use `faultline.round4` for their scores. It holds
 pure functions over numbers (no graph access, network, `require`, `eval` or `Function`; `tests/graph/test_udf_status.py`
 checks), and the weights arrive as query parameters from `backend/faultline/agent/weights.yaml`. When the file changes,
 its sha256 in `backend/faultline/graph/udf.py` and in the table above must change with it, or loading fails loudly.

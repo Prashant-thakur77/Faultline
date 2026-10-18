@@ -1,5 +1,5 @@
 """M19 on-call units (no FalkorDB): urgency and ack windows from weights.yaml, signed page tokens, who is paged, the
-channel payloads (adapted from Beacon), contract parameter binding, alert parsing and the write guards."""
+channel payloads, contract parameter binding, alert parsing and the write guards."""
 
 from __future__ import annotations
 

@@ -1,4 +1,4 @@
-"""Where a page lands (M19). Adapted from the author's Beacon project (`channels.py`, `telegram.py`, `notifier.py`).
+"""Where a page lands (M19).
 
 * **in-app**: always. The (:Page) node in FalkorDB IS the in-app pager; nothing is sent anywhere for it.
 * **webhook**: a Slack-compatible incoming webhook (`FAULTLINE_WEBHOOK_URL`): a Block Kit message with the deep link.

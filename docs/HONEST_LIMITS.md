@@ -15,7 +15,7 @@ Every measured number on this page is tagged and checked against `evals/results/
 | Part | Status | Where it is said |
 |---|---|---|
 | FalkorDB, every query and algorithm, the agent loop, the gate | Real | README "What's real vs synthetic" |
-| The existing data pipeline (DuckDB warehouse + invariant suite) used to verify data repairs | Real (the pre-existing system, kept as the system under observation) | README "Existing system and what was built here" |
+| The data pipeline (DuckDB warehouse + invariant suite) used to verify data repairs | Real (the system under observation) | `pipeline/`, `backend/faultline/warehouse.py` |
 | Org, people, history, ADRs, runbooks, postmortems, chats, issues, SLOs, customers | Synthetic, seeded and deterministic (`ingest/org_gen.py`, `ingest/history.py`, `ingest/obligations.py`, `data/gen/docs/`, `ingest/globex/`) | README "What's real vs synthetic" |
 | Service topology | Shaped on the OpenTelemetry Demo (`data/topology/otel-demo.yaml`); globex is generated (`data/topology/globex.yaml`). Its history is synthetic: a quarter of the calls are dated to a past PR that introduced them (`ingest/topology_history.py`) | same |
 | Service telemetry | Simulated in every bench but one: `sim/telemetry.py` writes `MetricWindow` nodes from the topology and the scenario's effects. FaultBench-OTel uses the real OpenTelemetry Demo's measured span-metric error rates (`ingest/observed.py`) | same |
@@ -93,7 +93,7 @@ Every historical PR was scored by the production formula as of its merge time (`
 - **On-call.** Each external channel (webhook, Telegram, PagerDuty, SES) delivers to one shared destination and names the person paged; there is no per-person contact routing. Every team owning something in the blast radius is paged (5 people for the hero incident in the on-call night eval), which is noisier than an owner-only page. Alert intake reads only the telemetry already in the graph: no live metrics ingest is wired to it, so a real alert without telemetry escalates to a human instead of being diagnosed. Standing contracts cover `flip_flag` and `rollback_deploy` only, and their family is the changed component, not a learned incident family. The on-call night eval uses a scripted clock: its MTTA is a correctness check, not a response time. Pages of collected run graphs leave the stats with them. <!-- noclaim: configured constants -->
 
 - **Public demo paging.** An anonymous demo run pages in the in-app pager only and never uses a standing contract; external channels are for keyed alerts (`FAULTLINE_ALERTS_KEY`) and runs started with the approver key. Each external channel has an hourly cap and a per-recipient cooldown (`weights.yaml oncall`); pages over the budget stay in-app, marked `delivery_failed: budget`.
-- **Telegram bot.** No voice notes (Beacon's speech-to-text is not ported); one linked chat per person; one tenant per bot (`FAULTLINE_TENANT`). Tested with the Bot API mocked; the real bot depends on the operator's `.env` (token, webhook secret, people mapping) and `scripts/telegram_setup.py`.
+- **Telegram bot.** No voice notes; one linked chat per person; one tenant per bot (`FAULTLINE_TENANT`). Tested with the Bot API mocked; the real bot depends on the operator's `.env` (token, webhook secret, people mapping) and `scripts/telegram_setup.py`.
 
 - **Learning is measured on scripted operators.** The learning night's choices, rejections and acknowledgements are scripted, on one tenant (acme) and one incident family (payment); it checks the mechanism (what changes, when, and that forgetting reverts it), not that a real team's habits pick better fixes. A preference is per family (the component the confirmed cause changed) and action kind, not per symptom or parameter; a guideline is per family and action kind too.
 - **Learned state trusts whoever the trust rule trusts.** Anything a trusted actor does (a run off the public demo or started with the approver key, a keyed alert, the operator-mapped Telegram bot) is learned; a careless operator's habit is learned as faithfully as a good one (it only reorders within a predicted-future class, and a person's influence can be forgotten with a receipt).
@@ -153,8 +153,18 @@ From [FALKORDB_COMPAT.md](FALKORDB_COMPAT.md) and [docs/upstream/](upstream/):
 | owner-at-the-time and knowledge health feeding the preflight formula | Deferred: changing the pre-registered formula after its backtest was seen needs a new pre-registration first |
 | globex service scenarios | No service `MetricWindow` baselines on globex, and the simulator's templates cap at 100 rows against the larger flow graph; globex has no data-lineage domain. globex is used for isolation, families, owner-gone routing and the backtest. |
 | `HAS_ACTION`, `HAS_ALERT`, `HAS_HYPOTHESIS` | Declared but reserved: written as `RESOLVED_BY`/`ATTEMPTED`, `FIRED_ON` and `HYPOTHESIZES` instead |
-| Optional items: OpenLineage/dbt importer, GraphRAG-SDK extraction, function-level code graph, RCAEval, UDFs beyond FLEX | Not built into the product: out of scope; the graph work came first. FLEX is the one UDF library loaded. GraphRAG-SDK runs only as an eval-only comparator for the brain (`evals/graphrag_sdk_arm.py`, its own venv), not in the product |
+| Optional items: OpenLineage/dbt importer, GraphRAG-SDK extraction, function-level code graph, RCAEval | Not built into the product: out of scope; the graph work came first. Two UDF libraries are loaded: FLEX (vendored) and our own `faultline` (in-engine scoring). GraphRAG-SDK runs only as an eval-only comparator for the brain (`evals/graphrag_sdk_arm.py`, its own venv), not in the product |
 | Blog | Draft, not published |
+
+### Shared agent notes and knowledge search
+
+| Item | Status and reason |
+|---|---|
+| Entity search mixes two score scales | `find_entities` (Q-FIND-HYBRID) keeps, per entity, the higher of a full-text score and a cosine similarity. That is what the earlier Python merge did, and the engine reproduces it exactly; the two scales are not comparable, so a rank-based fusion (as `search_knowledge` uses) would be sounder. Not changed, because the brain's development and blind numbers were measured with this merge. |
+| The notes graph's topology is a copy | `agentmem_<tenant>` is a `GRAPH.COPY` of golden made once. A component added later is unknown there until the notes graph is rebuilt, so a note about it is refused (the refusal names it). |
+| Notes are shared per tenant | Every agent of a tenant reads every unexpired note of that tenant; there are no private notes per user yet. |
+| A note is not checked for truth | It is a lead. The quota and the ACL bound who writes and how much; nothing in a note reaches the gate. |
+| Knowledge search did not move the blind brain score | Pre-registered and scored once: unchanged. Its value is for agents and people reading the documents, not (yet) the blind benchmark. |
 
 ## 10. "What didn't work", per run
 

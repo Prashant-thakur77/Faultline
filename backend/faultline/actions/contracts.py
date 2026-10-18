@@ -1,4 +1,4 @@
-"""Standing approvals ("contracts"; the Sleep Contracts of the author's Beacon project, adapted to FalkorDB).
+"""Standing approvals ("contracts"), kept in FalkorDB.
 
 A contract lets Faultline run ONE production-changing action again, without waking anyone, when the same fault comes
 back: same family (the component the gate-confirmed cause changed), same action kind, same parameters (hash), a
@@ -53,7 +53,7 @@ def action_params(kind: str, args: dict) -> dict:
 
 
 def params_hash(kind: str, params: dict) -> str:
-    """Stable identity of (action, params), so a contract and a later plan can be compared (Beacon's params_hash)."""
+    """Stable identity of (action, params), so a contract and a later plan can be compared."""
     return hashlib.sha256(canonical_json({"action": kind, "params": params}).encode()).hexdigest()
 
 
