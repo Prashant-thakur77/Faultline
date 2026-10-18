@@ -102,7 +102,7 @@ EXPLAINER = ["x_tenant", "x_matrices", "x_blast", "x_path", "x_flow", "x_cut", "
 ONCALL = ["oc_page", "oc_ack", "oc_contract"]  # the page, the ack, a standing approval
 # The beats, in narration order (cut v4). The recorder refuses a narration whose segments differ.
 SEGMENT_IDS = ["problem", "whyhard", "idea", "cube", *EXPLAINER, "run", "g2", "g5", "proof", "contain", "act", *ONCALL,
-               "brain", "learn", "engine", "breakit", "numbers", "cost", "close"]   # "preflight" has a beat; out of the short cut
+               "data", "brain", "learn", "engine", "breakit", "numbers", "cost", "close"]   # "preflight" has a beat; out of the short cut
 # The proof beats' charts (media/proof.html#<name>), per segment, in the order shown; several in one segment share it
 # evenly, or "name@word" shows it when the voice reaches that word. "close" shows its charts before "Any agent".
 # Every name listed must be drawn into docs/media/charts/<name>.svg (scripts/gen_charts.py), copied byte for byte to
@@ -770,6 +770,7 @@ def read_room(page: Page, a: argparse.Namespace) -> tuple[SimpleNamespace, dict]
     suspects = sorted({re.match(r"Checks for (\S+)", x).group(1) for x in labels if x} - {"NO_INCIDENT"})
     L.root = page.locator("section[aria-labelledby='root-h']")
     links = L.root.get_by_role("list", name="Mechanism chain").get_by_role("button")
+    expect(links.first).to_be_visible(timeout=60_000)   # the report arrives a moment after the stage does
     try:   # the root-cause card can render a moment after the pause line (the check below says what is missing)
         expect(links.nth(1)).to_be_visible(timeout=20_000)
     except AssertionError:
@@ -1420,6 +1421,78 @@ def beat_preflight(d: Director, page: Page, ui: str) -> None:
     d.flash(pv)
 
 
+def beat_data(t: Take) -> None:
+    """The data incident (S2), live: the KPI jumps, the proof path crosses from the payment cutover into the lineage,
+    the run proposes the transform repair from its own measurements, a human approves the exact diff and the
+    warehouse rebuild verifies it APPLIED. What the voice states is checked on the page: six hops, the invariants
+    count from latest.json, APPLIED, the write-back."""
+    d, page, ui, a = t.d, t.page, t.ui, t.a
+    want_inv = int(json.loads(LATEST.read_text())["example.s2.invariants.passed"])
+    d.begin("data")
+    d.go(f"{ui}/?tenant={a.tenant}#run")
+    btn = page.get_by_role("button", name=re.compile(r"^Run scenario S2 with the baseline investigator$"))
+    d.glide(page.locator("#run"), "start", 600)
+    d.click(btn)
+    page.wait_for_url(re.compile(r"/incidents/inc-s2-"), timeout=90_000)
+    d.reapply()
+    t.facts["data_incident_url"] = page.url
+    expect(page.get_by_text("paused: awaiting approval")).to_be_visible(timeout=180_000)
+    root = page.locator("section[aria-labelledby='root-h']")
+    nodes = root.get_by_role("list", name="Mechanism chain").get_by_role("button")
+    expect(nodes.first).to_be_visible(timeout=60_000)   # the report arrives a moment after the stage does
+    d.at_word("proof path", lead=0.3)
+    d.show(root, "start")
+    hops = nodes.count() - 1
+    if hops != 6:
+        raise fail(f"the voice says six hops; the page shows {hops}: {nodes.all_inner_texts()!r}")
+    t.facts["data_chain"] = nodes.all_inner_texts()
+    d.flash(root.get_by_role("list", name="Mechanism chain"))
+    plan = page.locator("section[aria-labelledby='plan-h']")
+    d.at_word("proposes", lead=0.3)
+    d.show(plan, "start")
+    row = plan.get_by_role("list", name="Action options").get_by_role("listitem").filter(has_text="repair the transform").first
+    choose = row.get_by_role("button", name=re.compile(r"^(Choose|Re-choose)$")).first
+    d.click(choose)
+    exact = plan.get_by_role("region", name="Exact action")
+    expect(exact).to_be_visible(timeout=20_000)
+    diff = exact.locator("figure").first
+    expect(diff).to_be_visible(timeout=20_000)
+    d.show(diff, "center")
+    d.flash(diff)
+    if t.key is not None:
+        plan.get_by_text("Approver key (only when the server acts on real GitHub)").click()
+        field = plan.get_by_label(re.compile(r"^X-Faultline-Approver-Key"))
+        try:
+            expect(field).to_be_visible()
+            if field.get_attribute("type") != "password":
+                field.evaluate(MASK_JS)
+            field.press_sequentially(t.key, delay=20)
+        except Exception as e:  # noqa: BLE001 - never let an error message carry the key
+            raise fail(f"could not enter the approver key ({type(e).__name__}; value not shown)") from None
+    d.at_word("approves", lead=0.6)
+    d.show(diff, "center")   # the exact diff stays in view while the voice says a human approves it
+    d.click(plan.get_by_role("button", name="Approve this exact action"))
+    d.show(exact, "start")
+    big = plan.locator("[data-verdict]").first
+    expect(big).to_be_visible(timeout=300_000)   # the warehouse rebuild and the invariant suite
+    verdict = big.get_attribute("data-verdict")
+    status = plan.get_by_role("status").filter(has_text=re.compile(r"write-back verified \d+\/\d+"))
+    expect(status).to_be_visible(timeout=120_000)
+    text = plan.inner_text()
+    m = re.search(r"(\d+)/(\d+) invariants", text)
+    if verdict != "APPLIED" or not m or int(m.group(1)) != want_inv or m.group(1) != m.group(2):
+        raise fail(f"the voice says {want_inv} invariants pass and applied; the page says {verdict}, {m.group(0) if m else 'no invariants'}")
+    t.facts["data_verdict"] = verdict
+    t.facts["data_invariants"] = m.group(0)
+    d.at_word("Applied", lead=0.2)
+    d.show(big, "center")
+    d.flash(big)
+    d.at_word("written back", lead=0.2)
+    d.show(status, "center")
+    d.flash(status)
+    d.end(0.1)
+
+
 def beat_brain(d: Director, page: Page, ui: str, question: str) -> str:
     """(Earlier cuts; runs only when the narration has a "brain" segment.) Who decided, and are they still here: the
     answer must pass its citation guard."""
@@ -1504,7 +1577,7 @@ def record(a: argparse.Namespace, work: Path, segs: list[Seg], llm: dict, issue:
             raise fail(f"re-arm did not happen: {bad.first.inner_text()}")
         facts["rearm"] = ok.first.inner_text()
         page.keyboard.press("Escape")
-        run_btn = page.get_by_role("button", name=re.compile(rf"^Run scenario {a.scenario} with the baseline investigator$"))
+        run_btn = page.get_by_role("button", name=re.compile(rf"^Run scenario {a.scenario}( \(the hero incident\))? with the baseline investigator$"))
         t_run = time.monotonic()
         run_btn.click()
         page.wait_for_url(re.compile(rf"/incidents/inc-{a.scenario.lower()}-"), timeout=90_000)
@@ -1834,6 +1907,9 @@ def record(a: argparse.Namespace, work: Path, segs: list[Seg], llm: dict, issue:
         # ---------------- preflight: the same graph blocks the risky PR (earlier cuts; only with its segment)
         if want("preflight"):
             beat_preflight(d, page, ui)
+        # ---------------- data: the other kind of incident, with the repair the run proposed from its own measurements
+        if want("data"):
+            beat_data(t)
         # ---------------- brain: who decided, and are they still here (earlier cuts; only with its segment)
         if want("brain"):
             facts["brain"] = beat_brain(d, page, ui, a.brain_question)

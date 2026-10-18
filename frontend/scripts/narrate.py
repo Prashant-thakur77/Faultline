@@ -61,8 +61,8 @@ SEGMENTS: list[tuple[str, float, str]] = [
      "Switch FalkorDB off, and Faultline confirms nothing. FalkorDB is the brain."),
     # --- 3. the product, live
     ("run", 0.5,
-     "Now, live. The incident opens, and a crew of agents gets to work: recall, scope, suspects. Every step lands in "
-     "the graph."),
+     "Now, live. The incident opens, and a crew of agents gets to work, calling the graph's tools over M.C.P.: recall, "
+     "scope, suspects. Every step lands in the graph."),
     ("g2", 0.3,
      "The gate rejects the recommendation deploy: the exact Cypher, and its zero rows."),
     ("g5", 0.3,
@@ -89,6 +89,11 @@ SEGMENTS: list[tuple[str, float, str]] = [
      "back, the gate still proves the cause, and a second real pull request merges and verifies. Handled while you "
      "slept. Zero people woken. That second incident came in through the API, like a real alert. The contract is now "
      "spent, so the next repeat pages a person again, and the on-call gets only a quiet notice, never a wake-up."),
+    ("data", 0.4,
+     "Another kind of incident: the executive revenue KPI jumps. The proof path runs six hops, from a payment cutover "
+     "through the data lineage to the KPI. Faultline measures the data itself: one segment, a power of ten off, and "
+     "proposes the one-line repair. A human approves the exact diff. The warehouse is rebuilt, "
+     "{example.s2.invariants.passed} invariants pass. Applied, and written back."),
     ("brain", 0.4,
      "It's the team's memory, too. Who decided the payment timeout? Every name in the answer comes from a query."),
     ("learn", 0.4,
