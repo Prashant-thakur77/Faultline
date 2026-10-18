@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
 import {
   Ban,
@@ -30,6 +30,7 @@ import {
 import {
   api,
   ApiError,
+  ensureRunToken,
   errorText,
   FOREIGN_RUN_TEXT,
   isForeignRun,
@@ -217,6 +218,19 @@ export function PlanApprovalCard({
       .sort((a, b) => a.at - b.at)
       .at(-1) ?? null;
 
+  // whether this browser started the run (it holds the run token): on the public demo only that visitor may choose
+  // and approve, so a judge who opened someone else's incident is told before clicking, not by a 403
+  const [ownRun, setOwnRun] = useState<boolean | null>(null);
+  useEffect(() => {
+    let live = true;
+    void ensureRunToken(incidentId).then((t) => {
+      if (live) setOwnRun(!!t);
+    });
+    return () => {
+      live = false;
+    };
+  }, [incidentId]);
+
   const choose = async (id: string) => {
     setBusyId(id);
     setChooseErr(null);
@@ -325,6 +339,13 @@ export function PlanApprovalCard({
           </p>
         ) : null}
         <StepHeading n={1} title="Choose an option" done={!!exact} />
+        {ownRun === false && !exact ? (
+          <p className="rounded-md border border-sky-500/30 bg-sky-500/[0.06] px-2.5 py-1.5 text-xs text-sky-100">
+            On the public demo only the visitor who started a run can choose and approve its fix, and this browser did
+            not start this one. Start your own with &ldquo;Run the hero incident&rdquo; or &ldquo;Run the data
+            incident&rdquo; on the home page.
+          </p>
+        ) : null}
         <RemedyNote remedy={remedy} onOpen={onOpenRemedy} />
         <LearnedPlanNote learned={plan.learned} query={learnedQuery} />
         <OptionList
