@@ -63,7 +63,7 @@ export function CodeCard({ title, meta, code, lang = "cypher", bare = false }: {
       {/* focusable: a long line scrolls sideways, and keyboard users must be able to scroll it too */}
       <pre tabIndex={0} aria-label={`${title} code`} className="overflow-x-auto px-4 py-3.5 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-sky-400 font-mono text-[12.5px] leading-relaxed text-zinc-200"><code>
         {code.split("\n").map((l, i) => (
-          <span key={i} className="block whitespace-pre">
+          <span key={i} className="block whitespace-pre-wrap break-all">
             {lang === "shell" ? <>{/^\s/.test(l) ? null : <span className="select-none text-zinc-500">$ </span>}{l}</>
               : lang === "json" ? jsonLine(l) : highlight(l)}
           </span>
