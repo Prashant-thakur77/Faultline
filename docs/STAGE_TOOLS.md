@@ -14,7 +14,7 @@
 | CONTRADICTION | `decision_check`, `trace_decision` |
 | CONTAIN | `containment_cut`, `whatif`, `futures`, `connectivity_check`, `blast_radius` |
 | ROUTE | `who_fixes`, `owners_of`, `bus_factor`, `escalation_tree`, `notify_set`, `owner_at`, `obligation_clock`, `learned_responders` |
-| PLAN | `propose_plan`, `remedy_stats`, `learned_preferences`, `change_details`, `repair_targets`, `unit_shift_check`, `read_transform` |
+| PLAN | `propose_plan`, `remedy_stats`, `learned_preferences`, `change_details`, `repair_targets`, `unit_shift_check`, `read_transform`, `propose_repair` |
 | AWAITING_APPROVAL | — |
 | EXECUTE | `execute_action` |
 | VERIFY | `verify_action` |

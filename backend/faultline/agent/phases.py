@@ -39,7 +39,7 @@ PHASE_TOOLS: dict[Stage, list[str]] = {
     # unit_shift_check whether one segment is a power of ten off, read_transform the SQL to patch; the proposal only
     # enables the data_repair option, the exact diff still needs two-step approval
     Stage.PLAN: ["propose_plan", "remedy_stats", "learned_preferences", "change_details", "repair_targets",
-                 "unit_shift_check", "read_transform"],
+                 "unit_shift_check", "read_transform", "propose_repair"],
     Stage.AWAITING_APPROVAL: [],
     Stage.EXECUTE: ["execute_action"],
     Stage.VERIFY: ["verify_action"],

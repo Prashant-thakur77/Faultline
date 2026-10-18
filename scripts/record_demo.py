@@ -234,11 +234,18 @@ def main() -> int:
         # "already off at main (drift)"
         if "s2" in which:
             gh.reset_sim()
+            # a public example carries no learned state from this machine's on-call home (preferences, guidelines,
+            # contract suggestions): the recording runs without one, as the eval arms do
+            from faultline.actions import oncall
+
+            home = oncall.home_graph
+            oncall.home_graph = lambda tenant: None
             try:
                 print(record(c, "S2", "s2-data-incident", "data_repair"))
             finally:  # the approved repair stays applied on disk, as it would in production: put the fixture back
                 from faultline import repair, scenario
 
+                oncall.home_graph = home
                 repair.restore_pristine()
                 scenario.set_pipeline_mode("incident")
         if "s4" in which:

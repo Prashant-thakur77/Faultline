@@ -1,6 +1,6 @@
 [
   {
-    "id": "gr-inc-s2-99a4f2f6-b984be4a",
+    "id": "gr-inc-s2-dac899e2-96efa082",
     "cause": "D-cutover-1",
     "passed": true,
     "confident": false,
@@ -40,10 +40,10 @@
     ],
     "attempt": 0,
     "origin": "sweep",
-    "at": 1792279125588
+    "at": 1792325378015
   },
   {
-    "id": "gr-inc-s2-99a4f2f6-e2b89f58",
+    "id": "gr-inc-s2-dac899e2-ae4aa42e",
     "cause": "D-fx-pause-7",
     "passed": false,
     "confident": false,
@@ -83,10 +83,10 @@
     ],
     "attempt": 0,
     "origin": "sweep",
-    "at": 1792279125593
+    "at": 1792325378018
   },
   {
-    "id": "gr-inc-s2-99a4f2f6-61d42206",
+    "id": "gr-inc-s2-dac899e2-ad4c8bde",
     "cause": "D-cutover-1",
     "passed": true,
     "confident": true,
@@ -106,7 +106,7 @@
           "ids": [
             "D-cutover-1"
           ],
-          "run": "run-s2-99a4f2f6"
+          "run": "run-s2-dac899e2"
         },
         "passed": true,
         "template": "Q-GATE-G1"
@@ -164,7 +164,7 @@
             "ev_201daec0f6",
             "ev_41900686e1"
           ],
-          "run": "run-s2-99a4f2f6"
+          "run": "run-s2-dac899e2"
         },
         "passed": true,
         "template": "Q-GATE-4"
@@ -194,7 +194,7 @@
             "ev_201daec0f6",
             "ev_41900686e1"
           ],
-          "run": "run-s2-99a4f2f6"
+          "run": "run-s2-dac899e2"
         },
         "passed": true,
         "template": "Q-GATE-4"
@@ -246,14 +246,14 @@
         "evidence_ids": [],
         "name": "G6 competitors",
         "params": {
-          "inc": "inc-s2-99a4f2f6"
+          "inc": "inc-s2-dac899e2"
         },
         "passed": true,
         "template": "Q-HYP-1"
       },
       {
         "attach_only": false,
-        "detail": "independent channels on the chain: ['falkordb', 'warehouse']",
+        "detail": "independent channels on the chain: falkordb, warehouse",
         "downgrade_only": true,
         "evidence_ids": [],
         "name": "G7 agreement",
@@ -274,7 +274,7 @@
             "ev_41900686e1",
             "ev_f7f81dcffd"
           ],
-          "run": "run-s2-99a4f2f6"
+          "run": "run-s2-dac899e2"
         },
         "passed": true,
         "template": "Q-GATE-7"
@@ -301,7 +301,7 @@
             "code",
             "data"
           ],
-          "run": "run-s2-99a4f2f6"
+          "run": "run-s2-dac899e2"
         },
         "passed": true,
         "template": "Q-GATE-CORR"
@@ -321,6 +321,6 @@
     ],
     "attempt": 1,
     "origin": "confirm",
-    "at": 1792279125626
+    "at": 1792325378063
   }
 ]

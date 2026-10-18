@@ -1,5 +1,5 @@
 {
-  "graph": "eval_acme_api_v2_s2_4150_99a4f2f6",
+  "graph": "eval_acme_api_v2_s2_9682_dac899e2",
   "blast": {
     "kpi.exec_revenue": {
       "rows": [
@@ -13,8 +13,8 @@
           "impact": 0.4625
         }
       ],
-      "template": "Q-BLAST-1",
-      "via": "algo.BFS((kpi.exec_revenue), 8, 'PROPAGATES_TO')"
+      "template": "Q-BLAST-3",
+      "via": "algo.BFS((kpi.exec_revenue), 8, 'PROPAGATES_TO') + algo.SSpaths, ranked by faultline.impact"
     }
   }
 }

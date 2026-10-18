@@ -11,7 +11,7 @@
 name: faultline-quickstart
 
 x-api: &api
-  image: ghcr.io/prashant-thakur77/faultline-api:${FAULTLINE_VERSION:-1.4.0}
+  image: ghcr.io/prashant-thakur77/faultline-api:${FAULTLINE_VERSION:-1.4.1}
   build: {context: .., dockerfile: deploy/Dockerfile.api}
   environment:
     FALKORDB_HOST: falkordb
@@ -51,7 +51,7 @@ services:
     restart: unless-stopped
 
   ui:
-    image: ghcr.io/prashant-thakur77/faultline-ui:${FAULTLINE_VERSION:-1.4.0}
+    image: ghcr.io/prashant-thakur77/faultline-ui:${FAULTLINE_VERSION:-1.4.1}
     build:
       context: ..
       dockerfile: deploy/Dockerfile.ui

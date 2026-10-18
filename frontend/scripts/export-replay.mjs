@@ -92,8 +92,22 @@ for (const name of RUNS) {
   const snapshot = { api: API, at: new Date().toISOString(), templates: false, graph: null };
   if (!noLive) {
     const templates = {};
+    // a recording can cite a template the catalogue has since renamed: keep the text the previous export snapshotted
+    // (the query the run actually ran), and say so; only a template nobody has is left out, loudly
+    const prevPath = path.join(dst, "templates.json");
+    const previous = (await exists(prevPath)) ? JSON.parse(await readFile(prevPath, "utf8")) : {};
     for (const id of templateIds(events, gateRuns, toolCalls, report, plan)) {
-      templates[id] = await getJson(`${API}/api/templates/${encodeURIComponent(id)}`);
+      try {
+        templates[id] = await getJson(`${API}/api/templates/${encodeURIComponent(id)}`);
+      } catch (e) {
+        if (!/HTTP 404/.test(e.message)) throw e;
+        if (previous[id]) {
+          templates[id] = previous[id];
+          console.warn(`replay/${name}: ${id} is no longer in the catalogue; kept the text snapshotted when it was recorded`);
+        } else {
+          console.warn(`replay/${name}: ${id} is no longer in the catalogue and no earlier snapshot has it; left out`);
+        }
+      }
     }
     await writeFile(path.join(dst, "templates.json"), JSON.stringify(templates, null, 2) + "\n");
     files.push("templates.json");

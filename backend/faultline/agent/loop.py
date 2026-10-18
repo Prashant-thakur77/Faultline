@@ -411,7 +411,8 @@ def protect_entries(prot, target: str) -> tuple[list[str], str | None]:
 
 async def propose_measured_repair(box: ToolBox, run: RunState, res: GateResult, shift: "crew.Shift | None" = None) -> dict | None:
     """T1: a keyless run proposes the data repair its own measurements support, for a gate-confirmed data cutover.
-    Every read is a tool call with its Cypher receipt in the run: change_details says the cause is a data cutover;
+    Every read is a recorded tool call (Cypher for the graph reads, the SQL and the baseline range for the warehouse
+    read): change_details says the cause is a data cutover;
     repair_targets (Q-REPAIR-TARGETS) joins the row-share measurements this run recorded anomalous to the Transform
     the lineage graph says WRITES each table, nearest the cause first along the proof path; unit_shift_check asks
     the warehouse whether that column's anomaly is one segment's unit shift (recorded as Evidence); read_transform
@@ -452,7 +453,7 @@ async def propose_measured_repair(box: ToolBox, run: RunState, res: GateResult, 
         why = unit_shift.explain(hit, m["table"], column, src["file"],
                                  [m["evidence"], targets["evidence_id"], chk["evidence_id"], src["evidence_id"]],
                                  dated="TIMESTAMP '" in new)
-        out = run.propose_repair(file=src["file"], new_content=new, reasoning=why)
+        out = await box.call("propose_repair", {"file": src["file"], "new_content": new, "reasoning": why})
         if out.get("error"):
             log.warning("run %s: measured repair refused: %s", run.run_id, out["error"])
             continue
@@ -562,8 +563,10 @@ async def post_gate(box: ToolBox, run: RunState, res: GateResult | None, onset_m
     if run.repair_proposal and any(o["kind"] == "data_repair" for o in options):
         rp = act.propose_data_repair(c, file=run.repair_proposal["file"], new_content=run.repair_proposal["new_content"],
                                      reasoning=run.repair_proposal["reasoning"])
-        options = [{**o, "enabled": True, "args": rp, "reason": f"proposed patch to {rp['file']}: {rp['reasoning'][:200]}"}
+        options = [{**o, "enabled": True, "args": rp, "reason": f"proposed patch to {rp['file']}: {act._subject(rp['reasoning'], 200)}"}
                    if o["id"] == rp["id"] else o for o in options]
+        # the plan's order with the repair enabled: the same rule as build_options (history, futures), ranks re-recorded
+        options = act.rerank(c, options, remedy, learned=learned if learned is not None and "error" not in learned else None)
     if shift:
         shift.note(f"{len(options)} option(s), {sum(1 for o in options if o.get('enabled'))} enabled; awaiting two-step approval")
         shift.end()

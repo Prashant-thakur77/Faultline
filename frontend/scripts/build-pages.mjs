@@ -42,6 +42,15 @@ for (const run of RUNS) {
   for (const f of REQUIRED) {
     if (!(await exists(path.join(replayRoot, run, f)))) fail(`public/replay/${run}/${f} is missing (run npm run replay:export)`);
   }
+  // freshness: the bundle must be the export of the committed example (same recorded incident), never an older take
+  const examplePath = path.join(frontend, "..", "examples", run, "manifest.json");
+  if (await exists(examplePath)) {
+    const recorded = JSON.parse(await readFile(path.join(replayRoot, run, "manifest.json"), "utf8")).recorded ?? {};
+    const example = JSON.parse(await readFile(examplePath, "utf8"));
+    if (recorded.incident !== example.incident || recorded.final_stage !== example.final_stage) {
+      fail(`public/replay/${run} is stale: bundle has ${recorded.incident ?? "?"} (${recorded.final_stage ?? "?"}), examples/${run} has ${example.incident} (${example.final_stage}); run npm run replay:export`);
+    }
+  }
 }
 
 // 2. Staging project dir (idempotent: links and configs are refreshed in place).

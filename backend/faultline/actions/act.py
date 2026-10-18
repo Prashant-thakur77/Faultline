@@ -719,9 +719,23 @@ def propose_data_repair(c: Ctx, *, file: str, new_content: str, reasoning: str) 
     args = {"file": file, "before": before, "after": after, "diff": patch.diff, "reasoning": reasoning[:500],
             "fixture": warehouse.fixture_state()}
     writes.record_option(c.g(), inc=c.inc, aid=rows[0]["id"], kind="data_repair", option=rows[0]["option"], enabled=True,
-                         reason=f"proposed patch to {file}: {reasoning[:200]}", target=rows[0]["target"], preview=args,
+                         reason=f"proposed patch to {file}: {_subject(reasoning, 200)}", target=rows[0]["target"], preview=args,
                          keep_future=True)
     return {"id": rows[0]["id"], **args}
+
+
+def rerank(c: Ctx, options: list[dict], remedy: dict | None = None, learned: dict | None = None) -> list[dict]:
+    """The plan's order once an option was enabled after the plan was built (a data repair proposed from
+    measurements): the same rule build_options applies, enabled production changes first by predicted-future class
+    and fix history (order_by_history), tracking (open_issue) after them, the disabled ones last; the ranks are
+    re-recorded on the same option ids (the plan hash binds an option's exact arguments, not its position)."""
+    opts = sorted(options, key=lambda o: (not o.get("enabled"), o["kind"] == "open_issue", future_class(o)))
+    opts = order_by_history(opts, remedy, learned=learned)
+    for i, o in enumerate(opts, 1):
+        writes.record_option(c.g(), inc=c.inc, aid=o["id"], kind=o["kind"], option=o["option"], enabled=bool(o.get("enabled")),
+                             reason=o.get("reason") or "", target=o.get("target") or c.inc, preview=o.get("args") or {},
+                             keep_future=True, rank=i)
+    return opts
 
 
 def restore_fixture(spec: dict) -> dict:

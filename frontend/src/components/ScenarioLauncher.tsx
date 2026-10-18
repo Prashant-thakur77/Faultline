@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Bot, Cpu, Play, Star } from "lucide-react";
 import { api, ApiError, errorText } from "@/lib/api";
 import { slugWords } from "@/lib/format";
-import { HERO_SCENARIO, RUN_HERO_EVENT } from "@/lib/heroRun";
+import { HERO_SCENARIO, RUN_HERO_EVENT, RUN_SCENARIO_EVENT } from "@/lib/heroRun";
 import { tenantStore } from "@/lib/tenant";
 import Link from "next/link";
 import type { LlmMode, RunScenarioIncident, Scenario } from "@/lib/types";
@@ -112,7 +112,18 @@ export function ScenarioLauncher() {
       if (cur.scenarios.some((s) => s.id === HERO_SCENARIO)) void cur.launch(HERO_SCENARIO);
     };
     window.addEventListener(RUN_HERO_EVENT, onHero);
-    return () => window.removeEventListener(RUN_HERO_EVENT, onHero);
+    // any seeded scenario by id (the home page's "Run the data incident"), same launcher, same guards
+    const onScenario = (e: Event) => {
+      const id = (e as CustomEvent<{ id?: string }>).detail?.id;
+      const cur = latest.current;
+      if (!id || cur.busy) return;
+      if (cur.scenarios?.some((s) => s.id === id)) void cur.launch(id);
+    };
+    window.addEventListener(RUN_SCENARIO_EVENT, onScenario);
+    return () => {
+      window.removeEventListener(RUN_HERO_EVENT, onHero);
+      window.removeEventListener(RUN_SCENARIO_EVENT, onScenario);
+    };
   }, []);
 
   return (

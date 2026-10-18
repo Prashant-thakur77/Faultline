@@ -2038,7 +2038,7 @@
   "live.preflight.ms": 336.1,
   "live.mcp_unauthenticated": 401,
   "example.s2.final_stage": "RESOLVED",
-  "example.s2.tool_calls": 57,
+  "example.s2.tool_calls": 55,
   "example.s2.gate_runs": 3,
   "example.s2.action_kind": "data_repair",
   "example.s2.verdict": "APPLIED",

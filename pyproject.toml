@@ -1,6 +1,6 @@
 [project]
 name = "faultline"
-version = "1.4.0"
+version = "1.4.1"
 description = "Faultline: an on-call agent that will not blame a change until FalkorDB returns the path"
 license = { text = "Apache-2.0" }
 requires-python = ">=3.11"

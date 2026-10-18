@@ -1,6 +1,6 @@
 [
   {
-    "id": "hyp-inc-s2-2defc7b1-D-cutover-1",
+    "id": "hyp-inc-s2-dac899e2-D-cutover-1",
     "cause": "D-cutover-1",
     "status": "confirmed",
     "score": 0.1537,
@@ -17,7 +17,7 @@
     "refutes": []
   },
   {
-    "id": "hyp-inc-s2-2defc7b1-D-fx-pause-7",
+    "id": "hyp-inc-s2-dac899e2-D-fx-pause-7",
     "cause": "D-fx-pause-7",
     "status": "eliminated",
     "score": 0.1449,
@@ -26,8 +26,8 @@
     "status_by": "sweep",
     "supports": [],
     "refutes": [
-      "ev_41900686e1",
       "ev_eae6fb8db2",
+      "ev_41900686e1",
       "ev_99167a4ab6"
     ]
   }

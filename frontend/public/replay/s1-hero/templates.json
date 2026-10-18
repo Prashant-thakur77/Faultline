@@ -73,7 +73,7 @@
   },
   "Q-CUT-1": {
     "id": "Q-CUT-1",
-    "purpose": "containment: max-flow from the failing component to the protected set over cut_cost (edges + edgeFlows; cut computed in code)",
+    "purpose": "containment: max-flow from the failing component to the protected set over cut_cost (edges + edgeFlows; the reference input for graph/algo/maxflow.py, the oracle of Q-CUT-3)",
     "cypher": "MATCH (f:Node {id:$failing})\nMATCH (p:Node) WHERE p.id IN $protect\nWITH f, collect(p) AS prot\nWHERE size(prot) > 0\nCALL algo.maxFlow({sourceNodes: [f], targetNodes: prot, relationshipTypes: ['PROPAGATES_TO'], capacityProperty: 'cut_cost'}) YIELD edges, edgeFlows, maxFlow\nRETURN [e IN edges | [startNode(e).id, endNode(e).id]] AS flow_edges, edgeFlows AS flows, maxFlow AS max_flow\nLIMIT 1",
     "file": "cut_flow.cypher",
     "limit": 1,
@@ -191,7 +191,7 @@
   "Q-HYP-1": {
     "id": "Q-HYP-1",
     "purpose": "hypotheses of an incident with the evidence that supports/refutes them (gate G6, UI)",
-    "cypher": "MATCH (i:Incident {id:$inc})-[:HYPOTHESIZES]->(h:Hypothesis)-[:BLAMES]->(c:Node)\nOPTIONAL MATCH (e:Evidence)-[:SUPPORTS]->(h)\nOPTIONAL MATCH (e2:Evidence)-[:REFUTES]->(h)\nRETURN h.id AS id, c.id AS cause, h.status AS status, h.score AS score, h.reason AS reason, h.origin AS origin,\n       collect(DISTINCT e.id) AS supports, collect(DISTINCT e2.id) AS refutes\nORDER BY id\nLIMIT 50",
+    "cypher": "MATCH (i:Incident {id:$inc})-[:HYPOTHESIZES]->(h:Hypothesis)-[:BLAMES]->(c:Node)\nOPTIONAL MATCH (e:Evidence)-[:SUPPORTS]->(h)\nOPTIONAL MATCH (e2:Evidence)-[:REFUTES]->(h)\nRETURN h.id AS id, c.id AS cause, h.status AS status, h.score AS score, h.reason AS reason, h.origin AS origin,\n       coalesce(h.status_by, h.origin) AS status_by,\n       collect(DISTINCT e.id) AS supports, collect(DISTINCT e2.id) AS refutes\nORDER BY id\nLIMIT 50",
     "file": "hypotheses.cypher",
     "limit": 50,
     "internal": false,

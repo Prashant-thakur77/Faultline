@@ -9,7 +9,7 @@ import { useEvalSummary } from "@/hooks/useEvalSummary";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useIntroDone } from "@/lib/intro";
 import { Contours } from "@/components/motion/Contours";
-import { requestHeroRun } from "@/lib/heroRun";
+import { DATA_SCENARIO, requestHeroRun, requestScenarioRun } from "@/lib/heroRun";
 import { BASE_PATH, STATIC_SITE } from "@/lib/site";
 
 const SLIDE = [0.65, 0.05, 0, 1] as const;
@@ -82,6 +82,12 @@ export function Hero() {
               // scrolls to the launcher (#run) and starts the hero scenario there, so its progress and any error show
               <a href="#run" data-magnetic onClick={requestHeroRun} className={cta + " bg-zinc-50 text-zinc-950 hover:bg-white"}>
                 Run the hero incident <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
+              </a>
+            )}
+            {STATIC_SITE ? null : (
+              // the cross-domain data incident: the agent proposes the transform repair and the warehouse verifies it
+              <a href="#run" onClick={() => requestScenarioRun(DATA_SCENARIO)} className={cta + " text-zinc-200 hover:bg-white/[0.06]"}>
+                Run the data incident
               </a>
             )}
             {STATIC_SITE ? null : (

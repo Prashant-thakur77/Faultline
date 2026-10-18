@@ -1,9 +1,9 @@
 {
-  "Q-BLAST-1": {
-    "id": "Q-BLAST-1",
-    "purpose": "blast radius: everything a failure at $id can reach (algo.BFS over PROPAGATES_TO)",
-    "cypher": "MATCH (s:Node {id:$id})\nCALL algo.BFS(s, 8, 'PROPAGATES_TO') YIELD nodes\nUNWIND nodes AS n\nRETURN n.id AS id, [x IN labels(n) WHERE x <> 'Node'][0] AS label, n.tier AS tier, n.revenue_path AS revenue\nORDER BY id\nLIMIT 100",
-    "file": "blast_radius.cypher",
+  "Q-BLAST-3": {
+    "id": "Q-BLAST-3",
+    "purpose": "blast radius ranked inside the engine: algo.BFS reach, algo.SSpaths hop distance and bottleneck cap, scored by the faultline.impact UDF (tier weight × 1/(1+hops) × ln(1+traffic+1); $tw = weights.yaml impact.tier_weight)",
+    "cypher": "MATCH (s:Node {id:$id})\nCALL {\n  WITH s\n  CALL algo.SSpaths({sourceNode: s, relTypes: ['PROPAGATES_TO'], weightProp: 'w', relDirection: 'outgoing', maxLen: 8, pathCount: 1000}) YIELD path\n  WITH last(nodes(path)) AS n, length(path) AS h, reduce(c = 1.0, r IN relationships(path) | CASE WHEN r.cap < c THEN r.cap ELSE c END) AS bottleneck\n  WITH n, min(h) AS hops, max(bottleneck) AS max_cap\n  RETURN collect({id: n.id, hops: hops, max_cap: max_cap}) AS reach_hops\n}\nCALL algo.BFS(s, 8, 'PROPAGATES_TO') YIELD nodes\nUNWIND nodes AS n\nWITH n, [x IN reach_hops WHERE x.id = n.id][0] AS h\nWITH n, h.hops AS hops, h.max_cap AS max_cap\nRETURN n.id AS id, [x IN labels(n) WHERE x <> 'Node'][0] AS label, n.tier AS tier, n.revenue_path AS revenue,\n       hops, max_cap, faultline.round4(faultline.impact($tw, n.tier, hops, coalesce(max_cap, 0.0) * 100)) AS impact\nORDER BY impact DESC, id\nLIMIT 100",
+    "file": "blast_radius_ranked.cypher",
     "limit": 100,
     "internal": false,
     "home": "tenant"
@@ -53,15 +53,6 @@
     "internal": false,
     "home": "tenant"
   },
-  "Q-CONTRACT-MATCH": {
-    "id": "Q-CONTRACT-MATCH",
-    "purpose": "the standing approval that covers exactly this plan: an active Contract with the same family (the gate-confirmed origin component), action kind and params hash, uses below max_uses, not expired at $now, granted by a person who is still active; the oldest grant first",
-    "cypher": "MATCH (c:Contract)-[:GRANTED_BY]->(p:Person)\nWHERE c.status = 'active' AND c.family = $family AND c.action_kind = $kind AND c.params_hash = $params_hash\n  AND c.uses < c.max_uses AND c.expires_at > $now AND p.active\nRETURN c.id AS id, c.family AS family, c.action_kind AS action_kind, c.params_hash AS params_hash, c.uses AS uses,\n       c.max_uses AS max_uses, c.expires_at AS expires_at, c.granted_at AS granted_at, c.quote AS quote,\n       p.id AS granted_by, p.name AS granted_by_name, coalesce(c.real_ok, false) AS real_ok\nORDER BY granted_at, id\nLIMIT 1",
-    "file": "contract_match.cypher",
-    "limit": 1,
-    "internal": false,
-    "home": "oncall"
-  },
   "Q-CTX-1": {
     "id": "Q-CTX-1",
     "purpose": "context of any target: owner team, current on-call, runbooks, active decisions",
@@ -71,11 +62,11 @@
     "internal": false,
     "home": "tenant"
   },
-  "Q-CUT-1": {
-    "id": "Q-CUT-1",
-    "purpose": "containment: max-flow from the failing component to the protected set over cut_cost (edges + edgeFlows; cut computed in code)",
-    "cypher": "MATCH (f:Node {id:$failing})\nMATCH (p:Node) WHERE p.id IN $protect\nWITH f, collect(p) AS prot\nWHERE size(prot) > 0\nCALL algo.maxFlow({sourceNodes: [f], targetNodes: prot, relationshipTypes: ['PROPAGATES_TO'], capacityProperty: 'cut_cost'}) YIELD edges, edgeFlows, maxFlow\nRETURN [e IN edges | [startNode(e).id, endNode(e).id]] AS flow_edges, edgeFlows AS flows, maxFlow AS max_flow\nLIMIT 1",
-    "file": "cut_flow.cypher",
+  "Q-CUT-3": {
+    "id": "Q-CUT-3",
+    "purpose": "containment in ONE read-only query: algo.maxFlow from $failing to the protected set over cut_cost, then the min-cut inside the engine. Residual reachability from $failing runs over every PROPAGATES_TO edge of the region algo.SSpaths reaches (forward while cut_cost − flow > 1e-9, backward while flow > 1e-9), iterated to a fixpoint as a list reduction; the cut is the edges leaving that source side. A region of $max_edges candidate edges or more skips the fixpoint (the code refuses it). The code only checks that the cut capacity equals maxFlow and that no protected node is on the source side.",
+    "cypher": "MATCH (f:Node {id:$failing})\nMATCH (p:Node) WHERE p.id IN $protect\nWITH f, collect(p.id) AS prot\nWHERE size(prot) > 0\nCALL {\n  WITH f\n  CALL algo.SSpaths({sourceNode: f, relTypes: ['PROPAGATES_TO'], weightProp: 'w', relDirection: 'outgoing', maxLen: 8, pathCount: 1000}) YIELD path\n  WITH f, collect(DISTINCT last(nodes(path))) + [f] AS region\n  UNWIND region AS a\n  MATCH (a)-[r:PROPAGATES_TO]->(b)\n  WHERE b IN region\n  WITH a, r, b ORDER BY a.id, b.id\n  RETURN collect({rid: id(r), u: a.id, v: b.id, cost: coalesce(r.cut_cost, 0), domain: r.domain}) AS cand\n}\nMATCH (t:Node) WHERE t.id IN prot\nWITH f, prot, cand, collect(t) AS targets\nCALL algo.maxFlow({sourceNodes: [f], targetNodes: targets, relationshipTypes: ['PROPAGATES_TO'], capacityProperty: 'cut_cost'}) YIELD edges, edgeFlows, maxFlow\nWITH f, prot, cand, maxFlow,\n     [i IN range(0, size(edges) - 1) | {rid: id(edges[i]), u: startNode(edges[i]).id, v: endNode(edges[i]).id, flow: edgeFlows[i]}] AS fe\nWITH f, prot, cand, maxFlow, fe,\n     [c IN CASE WHEN size(cand) < $max_edges THEN cand ELSE [] END |\n      {u: c.u, v: c.v, cost: c.cost, domain: c.domain,\n       flow: coalesce(head([x IN fe WHERE x.rid = c.rid | x.flow]), 0)}] AS arcs\nWITH f, prot, cand, maxFlow, fe, arcs,\n     [a IN arcs WHERE a.cost - a.flow > 1e-9 | [a.u, a.v]] + [a IN arcs WHERE a.flow > 1e-9 | [a.v, a.u]] AS residual\nWITH f, prot, cand, maxFlow, fe, arcs,\n     reduce(s = [f.id], i IN range(0, size(arcs)) | s + reduce(add = [], x IN residual |\n            CASE WHEN x[0] IN s AND NOT x[1] IN s AND NOT x[1] IN add THEN add + [x[1]] ELSE add END)) AS reach\nWITH f, prot, cand, maxFlow, fe, arcs, CASE WHEN maxFlow <= 1e-9 THEN [f.id] ELSE reach END AS side\nWITH prot, cand, maxFlow, fe, side,\n     [a IN arcs WHERE maxFlow > 1e-9 AND a.u IN side AND NOT a.v IN side AND a.cost > 1e-9 |\n      {u: a.u, v: a.v, cut_cost: a.cost, domain: a.domain}] AS cut\nRETURN cut, reduce(total = 0, c IN cut | total + c.cut_cost) AS cut_total, maxFlow AS max_flow, side AS source_side,\n       [x IN prot WHERE x IN side] AS protected_on_source_side, size(cand) AS candidates,\n       [e IN fe | [e.u, e.v]] AS flow_edges\nLIMIT 1",
+    "file": "cut_in_engine.cypher",
     "limit": 1,
     "internal": false,
     "home": "tenant"
@@ -191,47 +182,11 @@
   "Q-HYP-1": {
     "id": "Q-HYP-1",
     "purpose": "hypotheses of an incident with the evidence that supports/refutes them (gate G6, UI)",
-    "cypher": "MATCH (i:Incident {id:$inc})-[:HYPOTHESIZES]->(h:Hypothesis)-[:BLAMES]->(c:Node)\nOPTIONAL MATCH (e:Evidence)-[:SUPPORTS]->(h)\nOPTIONAL MATCH (e2:Evidence)-[:REFUTES]->(h)\nRETURN h.id AS id, c.id AS cause, h.status AS status, h.score AS score, h.reason AS reason, h.origin AS origin,\n       collect(DISTINCT e.id) AS supports, collect(DISTINCT e2.id) AS refutes\nORDER BY id\nLIMIT 50",
+    "cypher": "MATCH (i:Incident {id:$inc})-[:HYPOTHESIZES]->(h:Hypothesis)-[:BLAMES]->(c:Node)\nOPTIONAL MATCH (e:Evidence)-[:SUPPORTS]->(h)\nOPTIONAL MATCH (e2:Evidence)-[:REFUTES]->(h)\nRETURN h.id AS id, c.id AS cause, h.status AS status, h.score AS score, h.reason AS reason, h.origin AS origin,\n       coalesce(h.status_by, h.origin) AS status_by,\n       collect(DISTINCT e.id) AS supports, collect(DISTINCT e2.id) AS refutes\nORDER BY id\nLIMIT 50",
     "file": "hypotheses.cypher",
     "limit": 50,
     "internal": false,
     "home": "tenant"
-  },
-  "Q-LEARN-GUIDE": {
-    "id": "Q-LEARN-GUIDE",
-    "purpose": "guidelines of one incident family in the given statuses: a trusted rejection reason proposed each one for the family and action kind; a human promotes it to active (the option then needs an explicit override) or dismisses it. With who proposed and decided it and the event it derives from",
-    "cypher": "MATCH (gd:Guideline)\nWHERE gd.family = $family AND gd.status IN $statuses\nRETURN gd.id AS id, gd.text AS text, gd.family AS family, gd.action_kind AS action_kind, gd.status AS status,\n       gd.source AS source, gd.by AS by, gd.by_name AS by_name, gd.at AS at, gd.incident AS incident, gd.graph AS graph,\n       gd.option AS option, gd.source_event AS event, gd.decided_by AS decided_by, gd.decided_by_name AS decided_by_name,\n       gd.decided_at AS decided_at\nORDER BY at DESC, id\nLIMIT 50",
-    "file": "learn_guides.cypher",
-    "limit": 50,
-    "internal": false,
-    "home": "oncall"
-  },
-  "Q-LEARN-PREF": {
-    "id": "Q-LEARN-PREF",
-    "purpose": "learned preferences of one incident family, read by PLAN: each action kind the team approved or rejected on it (Preference, recomputed from trusted LearnEvents with recency decay), decayed again from computed_at to $now (exact: the decay is a product), the Beta-smoothed preference (a+1)/(a+r+o+2) where o are approvals of other kinds, the raw counts the why line quotes and the events it derives from",
-    "cypher": "MATCH (p:Preference)\nWHERE p.family = $family\nWITH p, exp(-0.6931471805599453 * toFloat($now - p.computed_at) / $half_life_ms) AS k\nRETURN p.id AS id, p.family AS family, p.action_kind AS action_kind, p.approvals * k AS approvals,\n       p.rejections * k AS rejections, p.others * k AS others,\n       (p.approvals * k + 1.0) / (p.approvals * k + p.rejections * k + p.others * k + 2.0) AS pref,\n       p.n_approve AS n_approve, p.n_reject AS n_reject, p.n_family_approve AS n_family_approve, p.n_family AS n_family,\n       p.last_at AS last_at, p.last_event_at AS last_event_at, p.computed_at AS computed_at, p.events AS events\nORDER BY pref DESC, action_kind\nLIMIT 20",
-    "file": "learn_prefs.cypher",
-    "limit": 20,
-    "internal": false,
-    "home": "oncall"
-  },
-  "Q-LEARN-RESP": {
-    "id": "Q-LEARN-RESP",
-    "purpose": "learned responders of one component: active people with a RESPONDED edge to it (recomputed from their trusted acks, approvals and verified fixes with recency decay), the score decayed again from computed_at to $now, the counts, the mean ack delay, the last response and the events it rests on",
-    "cypher": "MATCH (p:Person)-[r:RESPONDED]->(c:Node {id: $target})\nWHERE p.active\nWITH p, r, exp(-0.6931471805599453 * toFloat($now - r.computed_at) / $half_life_ms) AS k\nRETURN p.id AS person, p.name AS name, r.score * k AS score, r.n AS n, r.acks AS acks, r.approvals AS approvals,\n       r.fixes AS fixes, r.mtta_ms AS mtta_ms, r.last_at AS last_at, r.incidents AS incidents, r.events AS events\nORDER BY score DESC, person\nLIMIT 20",
-    "file": "learn_responders.cypher",
-    "limit": 20,
-    "internal": false,
-    "home": "oncall"
-  },
-  "Q-LEARN-SUGGEST": {
-    "id": "Q-LEARN-SUGGEST",
-    "purpose": "contract suggestions: for one family, every exact fix (action kind + params hash) a trusted person approved that was then verified APPLIED, on how many distinct incidents, when last and by whom; only those reaching $k (weights.yaml learn.contract_suggest_k). The plan then offers the two-step standing-contract grant; it never grants",
-    "cypher": "MATCH (e:LearnEvent)\nWHERE e.kind = 'verified' AND e.family = $family AND e.params_hash IS NOT NULL\nWITH [e.action_kind, e.params_hash] AS fix, count(DISTINCT e.incident) AS n, collect(e.id) AS evs,\n     collect(DISTINCT e.incident) AS incs, max(e.at) AS last_at, collect(DISTINCT e.person) AS people\nWHERE n >= $k\nWITH fix, n, evs[0..20] AS events, incs[0..20] AS incidents, last_at, people\nRETURN fix[0] AS action_kind, fix[1] AS params_hash, n, events, incidents, last_at, people\nORDER BY n DESC, action_kind, params_hash\nLIMIT 20",
-    "file": "learn_suggest.cypher",
-    "limit": 20,
-    "internal": false,
-    "home": "oncall"
   },
   "Q-LIN-1": {
     "id": "Q-LIN-1",
@@ -278,11 +233,29 @@
     "internal": false,
     "home": "tenant"
   },
-  "Q-NOTIFY-1": {
-    "id": "Q-NOTIFY-1",
-    "purpose": "who to NOTIFY (not who fixes): teams owning anything in the blast radius, the impacted nodes they own, and who is on call for them now",
-    "cypher": "MATCH (t:Team)-[:OWNS]->(n:Node)\nWHERE n.id IN $ids\nWITH t, collect(DISTINCT n.id) AS owns_impacted\nRETURN t.id AS team, t.name AS name, owns_impacted,\n       [x IN [(p:Person)-[oc:ON_CALL]->(t) WHERE oc.from <= $now AND $now < oc.to | p] WHERE x.active | x.id] AS oncall\nORDER BY size(owns_impacted) DESC, team\nLIMIT 20",
-    "file": "notify_set.cypher",
+  "Q-MEM-6": {
+    "id": "Q-MEM-6",
+    "purpose": "incident families: algo.labelPropagation over incidents, their symptoms and the components their causes changed (read-only, on the tenant graph); the family holding $inc first",
+    "cypher": "CALL algo.labelPropagation({nodeLabels: ['Incident', 'Symptom', 'Deploy', 'Service', 'Datastore', 'Transform', 'Table'], relationshipTypes: ['HAS_SYMPTOM', 'CAUSED', 'CHANGED'], maxIterations: 20}) YIELD node, communityId\nWITH communityId, collect(CASE WHEN 'Incident' IN labels(node) THEN node.id END) AS incidents\nWHERE size(incidents) >= 2\nRETURN communityId, incidents, size(incidents) AS size, $inc IN incidents AS mine\nORDER BY mine DESC, size DESC, communityId\nLIMIT 50",
+    "file": "families.cypher",
+    "limit": 50,
+    "internal": false,
+    "home": "tenant"
+  },
+  "Q-NOTE-RECALL": {
+    "id": "Q-NOTE-RECALL",
+    "purpose": "shared agent notes (T2), recalled in ONE query on agentmem_<tenant> by meaning (vecf32 index over the note text, cosine ≥ $floor) and by graph distance (notes about $focus or a component within $hops PROPAGATES_TO hops either way), unexpired on the engine clock, shared or the $viewer's own private notes, ranked inside the engine by faultline.noteScore ($w = weights.yaml notes), with each note's components and its replies; no `seen` column: a note is a lead, never evidence for the gate (G1)",
+    "cypher": "CALL {\n  UNWIND CASE WHEN $focus = '' THEN [] ELSE [1] END AS one\n  MATCH p = (f:Node {id: $focus})-[:PROPAGATES_TO*0..3]-(x:Node)\n  WHERE length(p) <= $hops\n  WITH x, min(length(p)) AS h\n  MATCH (n:Note)-[:ABOUT]->(x)\n  RETURN n, h AS hops, null AS sim\n  UNION ALL\n  UNWIND CASE WHEN $q IS NULL THEN [] ELSE [1] END AS one\n  CALL db.idx.vector.queryNodes('Note', 'embedding', 20, vecf32($q)) YIELD node, score\n  WITH node, 1.0 - score AS sim WHERE sim >= $floor\n  RETURN node AS n, null AS hops, sim\n}\nWITH n, min(hops) AS hops, max(sim) AS sim\nWHERE n.expires_at > timestamp() AND (coalesce(n.visibility, 'shared') = 'shared' OR n.agent = $viewer)\nWITH n, hops, sim, faultline.noteScore($w, sim, hops, (timestamp() - n.created_at) / 60000.0) AS score\nRETURN n.id AS id, n.agent AS agent, n.name AS name, n.kind AS kind, n.text AS text, n.created_at AS created_at,\n       n.expires_at AS expires_at, [(n)-[:ABOUT]->(c) | c.id] AS about, hops, faultline.round4(sim) AS similarity,\n       [x IN [(r:Note)-[rt:REPLY_TO]->(n) | {id: r.id, agent: r.agent, stance: rt.stance, text: r.text,\n                                              shared: coalesce(r.visibility, 'shared') = 'shared'}]\n        WHERE x.shared OR x.agent = $viewer | {id: x.id, agent: x.agent, stance: x.stance, text: x.text}] AS replies,\n       coalesce(n.visibility, 'shared') AS visibility,\n       faultline.round4(score) AS score\nORDER BY score DESC, id\nLIMIT 20",
+    "file": "note_recall.cypher",
+    "limit": 20,
+    "internal": false,
+    "home": "agentmem"
+  },
+  "Q-NOTIFY-2": {
+    "id": "Q-NOTIFY-2",
+    "purpose": "who to NOTIFY (not who fixes), ranked inside the engine: algo.SSpaths blast radius of $id (hops, bottleneck cap), the teams owning each impacted node, their summed faultline.capImpact (tier weight × cap / (1+hops); $tw = weights.yaml impact.tier_weight), the nearest hop, the $priority nodes they own and who is on call for them at $now",
+    "cypher": "MATCH (s:Node {id:$id})\nCALL algo.SSpaths({sourceNode: s, relTypes: ['PROPAGATES_TO'], weightProp: 'w', relDirection: 'outgoing', maxLen: 8, pathCount: 1000}) YIELD path\nWITH last(nodes(path)) AS n, length(path) AS h, reduce(c = 1.0, r IN relationships(path) | CASE WHEN r.cap < c THEN r.cap ELSE c END) AS bottleneck\nWITH n, min(h) AS hops, max(bottleneck) AS max_cap\nWHERE n.id <> $id\nMATCH (t:Team)-[:OWNS]->(n)\nWITH DISTINCT t, n, hops, max_cap\nWITH t, collect(n.id) AS owns_impacted, sum(faultline.capImpact($tw, n.tier, max_cap, hops)) AS impact, min(hops) AS nearest_hops\nWITH t, owns_impacted, faultline.round4(impact) AS impact, nearest_hops, [x IN owns_impacted WHERE x IN $priority] AS priority\nRETURN t.id AS team, t.name AS name, owns_impacted,\n       [x IN [(p:Person)-[oc:ON_CALL]->(t) WHERE oc.from <= $now AND $now < oc.to | p] WHERE x.active | x.id] AS oncall,\n       impact, nearest_hops, priority\nORDER BY CASE WHEN size(priority) > 0 THEN 0 ELSE 1 END, impact DESC, team\nLIMIT 20",
+    "file": "notify_set_ranked.cypher",
     "limit": 20,
     "internal": false,
     "home": "tenant"
@@ -392,6 +365,15 @@
     "cypher": "MATCH (p:Incident)\nWHERE p.id <> $inc AND (p.id IN $incidents OR size([(p)-[:HAS_SYMPTOM]->(y:Symptom) WHERE y.id IN $symptoms | y.id]) > 0)\nMATCH (p)-[r:RESOLVED_BY|ATTEMPTED]->(a:Action)\nWHERE (type(r) = 'RESOLVED_BY' AND a.verdict = 'APPLIED') OR a.verdict = 'NOT_APPLIED'\nWITH p, a, CASE WHEN type(r) = 'RESOLVED_BY' AND a.verdict = 'APPLIED' THEN 1 ELSE 0 END AS ok\nUNWIND (CASE WHEN a.kind = 'flip_flag' THEN ['*', a.target_id] ELSE ['*'] END) AS target\nWITH a.kind AS kind, target, toInteger(sum(ok)) AS successes, toInteger(sum(1 - ok)) AS failures, collect(DISTINCT p.id) AS incidents\nRETURN kind, target, successes, failures, successes + failures AS n,\n       (toFloat(successes) + 1.0) / (toFloat(successes + failures) + 2.0) AS rate,\n       size(incidents) AS incident_count, incidents[0..20] AS incidents\nORDER BY rate DESC, n DESC, kind, target\nLIMIT 50",
     "file": "remedy_stats.cypher",
     "limit": 50,
+    "internal": false,
+    "home": "tenant"
+  },
+  "Q-REPAIR-TARGETS": {
+    "id": "Q-REPAIR-TARGETS",
+    "purpose": "where a measured data repair can be applied: the row-share measurements this run recorded anomalous (Evidence.anomalous, decided in code when recorded), each ABOUT exactly one table and one column, joined to the Transform whose SQL WRITES that table (a source table nobody builds is left out), ordered nearest the confirmed cause first along the proof path ($chain, the gate's G2 chain)",
+    "cypher": "MATCH (run:Run {id: $run})-[:HAS_TOOL_CALL]->(:ToolCall)-[:PRODUCED_EVIDENCE]->(e:Evidence {kind: 'row_share'})-[:ABOUT]->(n:Node)\nWHERE e.anomalous = true\nWITH e, [x IN collect(DISTINCT n.id) WHERE size(split(x, '.')) = 2] AS tables,\n     [x IN collect(DISTINCT n.id) WHERE size(split(x, '.')) = 3] AS columns\nWHERE size(tables) = 1 AND size(columns) = 1\nWITH e, head(tables) AS table, head(columns) AS column\nMATCH (t:Transform)-[:WRITES]->(x:Table {id: table})\nWITH e, table, column, t, [i IN range(0, size($chain) - 1) WHERE $chain[i] = table | i] AS at\nRETURN e.id AS evidence, table, column, e.params AS params, e.value AS share, t.id AS transform,\n       [(t)-[:READS]->(r:Table) | r.id] AS reads, CASE WHEN size(at) = 0 THEN size($chain) ELSE at[0] END AS chain_index\nORDER BY chain_index, share DESC, evidence\nLIMIT 20",
+    "file": "repair_targets.cypher",
+    "limit": 20,
     "internal": false,
     "home": "tenant"
   },

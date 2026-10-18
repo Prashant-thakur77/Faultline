@@ -1,6 +1,6 @@
 // id: Q-REPAIR-TARGETS
 // purpose: where a measured data repair can be applied: the row-share measurements this run recorded anomalous (Evidence.anomalous, decided in code when recorded), each ABOUT exactly one table and one column, joined to the Transform whose SQL WRITES that table (a source table nobody builds is left out), ordered nearest the confirmed cause first along the proof path ($chain, the gate's G2 chain)
-// seen: evidence, table, transform
+// seen: evidence, table, column, transform
 MATCH (run:Run {id: $run})-[:HAS_TOOL_CALL]->(:ToolCall)-[:PRODUCED_EVIDENCE]->(e:Evidence {kind: 'row_share'})-[:ABOUT]->(n:Node)
 WHERE e.anomalous = true
 WITH e, [x IN collect(DISTINCT n.id) WHERE size(split(x, '.')) = 2] AS tables,

@@ -119,3 +119,22 @@ def test_commit_subjects_cut_at_a_word():
     long = "unit shift measured on staging.stg_orders.amount: the 327 rows with payment_processor = 'cloudpay_v2' are"
     s = _subject(long)
     assert len(s) <= 61 and s.endswith("…") and not s[:-1].endswith(" ") and s[:-1] in long and long[len(s) - 1] == " "
+
+
+def test_rerank_puts_the_enabled_repair_before_disabled_options_and_keeps_ids(monkeypatch):
+    from faultline.actions import act
+    from faultline.graph import writes
+
+    recorded = []
+    monkeypatch.setattr(writes, "record_option", lambda g, **kw: recorded.append(kw))
+    c = act.Ctx("acme", "tenant_acme", "inc-x", "run-x")
+    monkeypatch.setattr(act.Ctx, "g", lambda self: None)
+    opts = [{"id": "act-inc-x-1", "kind": "flip_flag", "option": "cut a", "enabled": False, "reason": "no", "target": "a", "args": {}},
+            {"id": "act-inc-x-2", "kind": "flip_flag", "option": "cut b", "enabled": False, "reason": "no", "target": "b", "args": {}},
+            {"id": "act-inc-x-3", "kind": "open_issue", "option": "issue", "enabled": True, "reason": "track", "target": "c", "args": {"x": 1}},
+            {"id": "act-inc-x-4", "kind": "data_repair", "option": "repair", "enabled": True, "reason": "proposed", "target": "c",
+             "args": {"file": "f"}, "future": {"predicted": "contains"}}]
+    out = act.rerank(c, opts, remedy=None)
+    assert [o["id"] for o in out] == ["act-inc-x-4", "act-inc-x-3", "act-inc-x-1", "act-inc-x-2"]
+    assert [(r["aid"], r["rank"], r["keep_future"]) for r in recorded] == [("act-inc-x-4", 1, True), ("act-inc-x-3", 2, True),
+                                                                            ("act-inc-x-1", 3, True), ("act-inc-x-2", 4, True)]

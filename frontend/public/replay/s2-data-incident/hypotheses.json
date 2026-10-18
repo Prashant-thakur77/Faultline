@@ -1,11 +1,12 @@
 [
   {
-    "id": "hyp-inc-s2-99a4f2f6-D-cutover-1",
+    "id": "hyp-inc-s2-dac899e2-D-cutover-1",
     "cause": "D-cutover-1",
     "status": "confirmed",
     "score": 0.1537,
     "reason": "gate passed",
     "origin": "code",
+    "status_by": "gate",
     "supports": [
       "ev_7cf2442039",
       "ev_201daec0f6",
@@ -16,12 +17,13 @@
     "refutes": []
   },
   {
-    "id": "hyp-inc-s2-99a4f2f6-D-fx-pause-7",
+    "id": "hyp-inc-s2-dac899e2-D-fx-pause-7",
     "cause": "D-fx-pause-7",
     "status": "eliminated",
     "score": 0.1449,
     "reason": "G5: max flow 0.0692 < needed 0.8000 (observed 1.0000 \u00d7 0.8); another suspect alone can carry 1.0000",
     "origin": "code",
+    "status_by": "sweep",
     "supports": [],
     "refutes": [
       "ev_eae6fb8db2",

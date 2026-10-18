@@ -1,6 +1,6 @@
-run run-s2-2defc7b1 · incident inc-s2-2defc7b1 · scenario S2 · final stage RESOLVED
+run run-s2-dac899e2 · incident inc-s2-dac899e2 · scenario S2 · final stage RESOLVED
 
-action act-inc-s2-2defc7b1-4 · data_repair · repair the transform affected by D-cutover-1 · approval ap-act-inc-s2-2defc7b1-4-797a6c39
+action act-inc-s2-dac899e2-4 · data_repair · repair the transform affected by D-cutover-1 · approval ap-act-inc-s2-dac899e2-4-6512e3db
   external ref: local:pipeline/transforms/stg_orders.sql
   verdict: APPLIED — pipeline/transforms/stg_orders.sql carries the patch; on the incident's own data (mode incident, sources b8f24c5669d3) the rebuild passed 32/32 invariants and the KPI anomaly ratio is 0.933 (inside 0.8–1.3)
   channel file: ok

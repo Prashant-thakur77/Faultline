@@ -2,6 +2,15 @@
 
 All notable changes to Faultline. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [1.4.1] - 2026-10-18
+
+### The data incident, as a judge meets it
+- The measured repair is ranked where the plan's own rule puts it (enabled production changes first, by predicted future and fix history; tracking after; disabled last), so it is the first option, not the fourth under two disabled ones; the plan's reason and the commit subject cut at a word, never mid-number.
+- The proposal itself goes through the toolbox (`propose_repair` in the PLAN whitelist), so the run's log holds it beside the four reads it cites; `Q-REPAIR-TARGETS` marks the column it returns as seen.
+- The static replay of the data incident is the recorded one that ends RESOLVED (it had kept an earlier take); the Pages build now refuses a replay bundle that does not match its committed example, and the export keeps the text of a template a recording cites that the catalogue has since renamed.
+- A public example is recorded without this machine's on-call home, so it carries no learned preferences or guidelines of ours.
+- "Run the data incident" sits beside the hero button on the home page.
+
 ## [1.4.0] - 2026-10-18
 
 ### The agent acts on the data incident too (track T1)
@@ -130,6 +139,7 @@ First public release: the version deployed at [13-203-185-119.sslip.io](https://
 - Live deployment: one VM with Docker Compose (FalkorDB never exposed, ACL users per tenant, Caddy with TLS), public mode with run tokens, rate limits and no LLM spend.
 - Keyless reproduction: `make setup && make judge-check` prints PASS with no API key.
 
+[1.4.1]: https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.4.1
 [1.4.0]: https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.4.0
 [1.3.1]: https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.3.1
 [1.3.0]: https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.3.0
