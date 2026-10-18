@@ -2,6 +2,14 @@
 
 All notable changes to Faultline. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [1.4.2] - 2026-10-18
+
+### Honest to the last tool call
+- `impact_bound` answers `unknown`, with the reason, when a suspect or the symptom is not a node of the tenant's graph (Q-NODE-EXISTS), instead of a zero flow that reads as "cannot carry the impact"; the gate sees G5 as not evaluable.
+- The hosted MCP server lists only tools that can answer there: `repair_targets`, which reads the measurements of the run it is called in, stays with the agent (<!-- claim:repo.mcp_tools_hosted -->54<!-- /claim --> of <!-- claim:repo.mcp_tools -->62<!-- /claim --> hosted). Its documented examples run as written, and a "Reading a result" note explains the envelope.
+- README: "Track 1 in five clicks" and "Track 3 in five clicks"; the showcase queries match the stored templates; the verification limits and the approver check stated exactly; the data-incident receipt names no branch or pull request.
+- UI: accessible names only on focusable graph nodes; the explore page's in-text link is underlined.
+
 ## [1.4.1] - 2026-10-18
 
 ### The data incident, as a judge meets it
@@ -139,6 +147,7 @@ First public release: the version deployed at [13-203-185-119.sslip.io](https://
 - Live deployment: one VM with Docker Compose (FalkorDB never exposed, ACL users per tenant, Caddy with TLS), public mode with run tokens, rate limits and no LLM spend.
 - Keyless reproduction: `make setup && make judge-check` prints PASS with no API key.
 
+[1.4.2]: https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.4.2
 [1.4.1]: https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.4.1
 [1.4.0]: https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.4.0
 [1.3.1]: https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.3.1
