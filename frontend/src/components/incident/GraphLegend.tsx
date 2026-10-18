@@ -9,12 +9,15 @@ export function GraphLegend({
   hasCut = false,
   topBetweenness = null,
   rippleText = null,
+  note = null,
 }: {
   mode?: GraphMode;
   hasCut?: boolean;
   topBetweenness?: { id: string; score: number } | null;
   /** Overrides the ripple-mode wording (preflight: changed / impacted). */
   rippleText?: { cause: [string, string]; blast: [string, string] } | null;
+  /** One line on what keeps a name when the view is zoomed out (the rest: hover, focus or zoom in). */
+  note?: string | null;
 }) {
   const key = (
     <ul className="flex flex-wrap items-center gap-x-4 gap-y-1.5" aria-label="Key">
@@ -61,6 +64,8 @@ export function GraphLegend({
     </ul>
   );
   return (
+    <>
+    {note ? <p className="text-xs text-zinc-400">{note}</p> : null}
     <Disclosure size="xs" defaultOpen={false} summary="Full legend" actions={<span className="text-xs text-zinc-400">{key}</span>}>
     <div className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-zinc-300" aria-label="Graph legend">
       <ul className="flex flex-wrap gap-x-4 gap-y-1.5" aria-label="Edge kinds">
@@ -162,5 +167,6 @@ export function GraphLegend({
       </ul>
     </div>
     </Disclosure>
+    </>
   );
 }

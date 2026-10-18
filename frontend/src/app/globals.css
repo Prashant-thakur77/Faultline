@@ -170,6 +170,26 @@
   border-radius: 0.5rem;
 }
 
+/* Failure-flow graph, zoomed out (GraphView compact rendering, lib/graphLabels.ts): a node without a
+   standing caption shows it on hover, keyboard focus or selection, un-dimmed and above its neighbours.
+   Unlayered, so it out-ranks Tailwind's utilities (`opacity-30`) and React Flow's inline z-index. */
+.fl-graph .fl-caption-hover {
+  display: none;
+}
+.fl-graph .react-flow__node:hover .fl-caption-hover,
+.fl-graph .react-flow__node:focus-visible .fl-caption-hover,
+.fl-graph .react-flow__node.selected .fl-caption-hover {
+  display: block;
+}
+.fl-graph .react-flow__node:hover,
+.fl-graph .react-flow__node:focus-visible {
+  z-index: 1001 !important;
+}
+.fl-graph .react-flow__node:hover [data-dimmed],
+.fl-graph .react-flow__node:focus-visible [data-dimmed] {
+  opacity: 1;
+}
+
 .react-flow__controls-button {
   background: oklch(0.21 0.006 285.885);
   border-color: oklch(0.37 0.013 285.805);

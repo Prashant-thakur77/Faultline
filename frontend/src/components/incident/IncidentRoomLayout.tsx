@@ -474,6 +474,9 @@ export function IncidentRoomLayout({ source }: { source: RoomSource }) {
                   mode={effectiveMode}
                   hasCut={cut.length > 0}
                   topBetweenness={topB}
+                  note={`Zoomed out, names stay on ${
+                    effectiveMode === "ripple" ? "the cause, the symptoms" : "the proof path, the symptoms, the rejected suspects"
+                  }${cut.length ? " and the min-cut ends" : ""}; hover, focus or zoom in for any other box, or read the text alternatives below.`}
                   rippleText={
                     abstain
                       ? {

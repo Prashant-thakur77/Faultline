@@ -12,13 +12,16 @@ import {
   OctagonX,
   Play,
   ShieldCheck,
+  Siren,
   UserRound,
+  Waves,
   type LucideIcon,
 } from "lucide-react";
 import { api, ApiError, errorText } from "@/lib/api";
 import { useTenant } from "@/lib/tenant";
 import { fmtMs, fmtTime, fmtValue, plural, shortDigest } from "@/lib/format";
 import { buildGraphModel } from "@/lib/graphModel";
+import { preflightEmphasis } from "@/lib/graphLabels";
 import type { GraphResponse, PreflightRequest, PreflightResponse, PreflightVerdict, RecordedPreflight } from "@/lib/types";
 import { useCypherPanel } from "@/components/cypher/CypherPanelContext";
 import { GraphLegend } from "@/components/incident/GraphLegend";
@@ -641,14 +644,26 @@ function PreflightGraph({
 }) {
   const tenant = useTenant();
   const model = useMemo(() => (graph ? buildGraphModel(graph, { proof: null, rejected: [] }, [], new Map()) : null), [graph]);
+  const labelOf = useMemo(() => new Map((graph?.nodes ?? []).map((n) => [n.id, n.label] as const)), [graph]);
+  // The highest-impact nodes the change reaches (revenue tier 1 and KPIs, from the assessment) keep a
+  // readable name on the graph when it is zoomed out (a phone fits the whole reach at about 0.2×).
+  const emphasis = useMemo(() => (r ? preflightEmphasis(r.assessment, (id) => labelOf.get(id)) : []), [r, labelOf]);
   const ripple = useMemo((): RippleData | null => {
     const changed = r ? r.assessment.changed : focus ? [focus] : [];
     if (!changed.length) return null;
     const blast = new Map<string, number | null>();
     for (const n of r?.assessment.impacted ?? []) if (!changed.includes(n)) blast.set(n, null);
-    return { cause: new Set(changed), blast, causeLabel: r ? "CHANGED" : "FOCUS", blastLabel: "IMPACTED" };
-  }, [r, focus]);
+    return { cause: new Set(changed), blast, causeLabel: r ? "CHANGED" : "FOCUS", blastLabel: "IMPACTED", emphasis: new Set(emphasis) };
+  }, [r, focus, emphasis]);
   const panel = useCypherPanel();
+  const openNode = (id: string) =>
+    panel.open({
+      template: "Q-CTX-1",
+      title: `context of ${id}`,
+      origin: "preflight graph",
+      ctx: { node: id, onset: nowMs() },
+      tenant: tenant,
+    });
   return (
     <section aria-labelledby="pf-graph-h" className="fl-card rounded-2xl overflow-hidden">
       <div className="flex flex-wrap items-center gap-2 border-b border-zinc-800 px-3 py-2">
@@ -659,7 +674,7 @@ function PreflightGraph({
           {graph ? `${graph.graph} · changed red, impacted yellow, rest dimmed` : ""}
         </span>
       </div>
-      <div className="h-[420px]">
+      <div className="h-[420px] lg:h-[480px]">
         {graphErr ? (
           <p role="alert" className="m-3 rounded-md border border-red-500/50 bg-red-500/10 p-3 text-sm text-red-100">
             Graph view unavailable: {graphErr}
@@ -672,18 +687,11 @@ function PreflightGraph({
             layoutKey={`${graph?.graph}:${r?.run_id ?? focus ?? ""}`}
             mode={ripple ? "ripple" : "path"}
             ripple={ripple}
-            onOpenNode={(id) =>
-              panel.open({
-                template: "Q-CTX-1",
-                title: `context of ${id}`,
-                origin: "preflight graph",
-                ctx: { node: id, onset: nowMs() },
-                tenant: tenant,
-              })
-            }
+            onOpenNode={openNode}
           />
         )}
       </div>
+      {r && model ? <ReachList r={r} emphasis={emphasis} labelOf={labelOf} onOpen={openNode} /> : null}
       <div className="border-t border-zinc-800 px-3 py-2">
         <GraphLegend
           mode={ripple ? "ripple" : "path"}
@@ -695,9 +703,86 @@ function PreflightGraph({
                 }
               : null
           }
+          note={
+            ripple
+              ? `Zoomed out, names stay on the ${r ? "changed component" : "focus node"}${emphasis.length ? " and the highest-impact nodes it reaches (revenue tier 1, KPIs)" : ""}; hover, focus or zoom in for any other box.`
+              : "Where a box is too small for its name, hover it or zoom in; pick a pull request to mark what it changes and reaches."
+          }
         />
       </div>
     </section>
+  );
+}
+
+/**
+ * Phones: the reach graph fits at about 0.2×, so most nodes are unlabelled boxes. This lists every node the
+ * change reaches by name (changed first, then the highest-impact ones, then the rest), each opening the same
+ * Q-CTX-1 panel as the graph node. Wider screens read the names on the graph (and the assessment lists them).
+ */
+function ReachList({
+  r,
+  emphasis,
+  labelOf,
+  onOpen,
+}: {
+  r: PreflightResponse;
+  emphasis: string[];
+  labelOf: Map<string, string>;
+  onOpen: (id: string) => void;
+}) {
+  const changed = r.assessment.changed;
+  const tier1 = new Set(r.assessment.revenue_tier1);
+  const top = new Set(emphasis);
+  const impacted = [
+    ...emphasis.filter((id) => r.assessment.impacted.includes(id)),
+    ...r.assessment.impacted.filter((id) => !top.has(id) && !changed.includes(id)),
+  ];
+  const id = useId();
+  const item = "inline-flex min-h-8 items-center gap-1 rounded-md px-2 py-1 font-mono text-xs outline-none ring-1 focus-visible:ring-2 focus-visible:ring-sky-400";
+  return (
+    <div role="group" aria-labelledby={`${id}-h`} className="space-y-1.5 border-t border-zinc-800 px-3 py-2 text-xs sm:hidden">
+      <h3 id={`${id}-h`} className="font-semibold text-zinc-300">
+        On the graph, by name
+      </h3>
+      <div className="flex flex-wrap items-center gap-1.5">
+        <span id={`${id}-c`} className="text-zinc-400">
+          Changed:
+        </span>
+        <ul aria-labelledby={`${id}-c`} className="flex flex-wrap gap-1.5">
+          {changed.map((n) => (
+            <li key={n}>
+              <button type="button" onClick={() => onOpen(n)} className={cn(item, "bg-red-950 text-red-100 ring-red-400/70")}>
+                <Siren aria-hidden className="size-3.5 text-red-300" />
+                {n}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+      {impacted.length ? (
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span id={`${id}-i`} className="text-zinc-400">
+            Impacted ({impacted.length}):
+          </span>
+          <ul aria-labelledby={`${id}-i`} className="flex flex-wrap gap-1.5">
+            {impacted.map((n) => (
+              <li key={n}>
+                <button
+                  type="button"
+                  onClick={() => onOpen(n)}
+                  className={cn(item, top.has(n) ? "bg-amber-900/60 text-amber-50 ring-amber-300/70" : "bg-zinc-900 text-zinc-200 ring-zinc-700")}
+                >
+                  <Waves aria-hidden className="size-3.5 text-amber-200" />
+                  {n}
+                  {tier1.has(n) ? <span className="font-sans text-[11px] text-amber-200">· tier 1</span> : null}
+                  {labelOf.get(n) === "KPI" ? <span className="font-sans text-[11px] text-amber-200">· KPI</span> : null}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+    </div>
   );
 }
 
