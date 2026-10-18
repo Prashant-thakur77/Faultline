@@ -4,7 +4,7 @@
 
 **PROFILE p50 / p95** = engine milliseconds from `GRAPH.PROFILE` (nearest-rank percentiles of 20 runs; `scripts/profile_templates.py`) for the templates the S1/S2 runs executed, with those runs' recorded params (measured by the eval harness, read from `evals/results/latest.json`). Blank = not executed in those runs; `scratch` = runs on a temporary projection.
 
-<!-- claim:repo.templates -->241<!-- /claim --> templates. `{algo:x}` is resolved to the procedure name recorded by `make smoke` (`graph/algo/resolved.json`).
+<!-- claim:repo.templates -->242<!-- /claim --> templates. `{algo:x}` is resolved to the procedure name recorded by `make smoke` (`graph/algo/resolved.json`).
 
 ## Gate and proof
 
@@ -314,6 +314,7 @@
 | `Q-LEARN-SUGGESTS` | every exact fix (family, action kind, params hash) approved by a trusted person and verified APPLIED, with its count of distinct incidents (the learned-state panel lists those at or above $k as contract suggestions) | [learn_suggest_all.cypher](../backend/faultline/graph/templates/learn_suggest_all.cypher) |
 | `Q-LEARN-TRUST` | learning trust: whether an incident is trusted (page_external, set at run start: off the public demo, a keyed run or a keyed alert); an anonymous public-demo run is not, and nothing its holder does is learned | [learn_trust.cypher](../backend/faultline/graph/templates/learn_trust.cypher) |
 | `Q-LLM-SPEND` | live-LLM spend in the last hour on the global ledger (LlmSpend rows: settled cost, or the reserved estimate while a run or question is in flight); the demo turns replay-only past the budget | [llm_spend.cypher](../backend/faultline/graph/templates/llm_spend.cypher) |
+| `Q-NODE-EXISTS` | which of the given ids are nodes of this tenant's graph; a bound over a suspect that is not in the graph is unknown, never "insufficient" (the graph has nothing to say about it) | [node_exists.cypher](../backend/faultline/graph/templates/node_exists.cypher) |
 | `Q-NOTE-LAST` | the newest shared note an author wrote (a later step of the same agent run replies to it, so an investigation and its verified fix form one thread) | [note_last.cypher](../backend/faultline/graph/templates/note_last.cypher) |
 | `Q-NOTE-RECALL` | shared agent notes (T2), recalled in ONE query on agentmem_<tenant> by meaning (vecf32 index over the note text, cosine ≥ $floor) and by graph distance (notes about $focus or a component within $hops PROPAGATES_TO hops either way), unexpired on the engine clock, shared or the $viewer's own private notes, ranked inside the engine by faultline.noteScore ($w = weights.yaml notes), with each note's components and its replies; no `seen` column: a note is a lead, never evidence for the gate (G1) | [note_recall.cypher](../backend/faultline/graph/templates/note_recall.cypher) |
 | `Q-NOTE-REFUSED` | why W-NOTE-1 wrote nothing, read-only on agentmem_<tenant>: which `about` ids are not nodes of the graph, whether the reply target exists, and how many notes the author wrote in the last 24 h (engine clock) against its quota | [note_refused.cypher](../backend/faultline/graph/templates/note_refused.cypher) |

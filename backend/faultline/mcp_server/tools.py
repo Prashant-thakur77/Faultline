@@ -605,8 +605,9 @@ def impact_bound(suspect_ids: list[str], symptom_id: str, observed_share: float)
     """Max-flow sufficiency bound (gate G5): the largest share of the symptom the suspect set can explain
     (algo.maxFlow over PROPAGATES_TO.cap). Verdict computed in code with flow_slack from weights.yaml.
     More than IMPACT_MAX_IDS suspects is refused (never silently cut). The bound is unknown (flow_share None, verdict
-    "unknown": never "insufficient") when the path multiplicity it needs is incomplete: Q-GATE-MULT truncated, or a
-    source's path count at the SPpaths cap while the capped bound is still below 1."""
+    "unknown": never "insufficient") when the path multiplicity it needs is incomplete (Q-GATE-MULT truncated, or a
+    source's path count at the SPpaths cap while the capped bound is still below 1), and when a suspect or the symptom
+    is not a node of this tenant's graph at all (Q-NODE-EXISTS): the graph has nothing to say about it."""
     if len(suspect_ids) > IMPACT_MAX_IDS:
         return {"error": f"invalid arguments: at most {IMPACT_MAX_IDS} suspect ids per bound (got {len(suspect_ids)}); "
                          "split the set"}
@@ -626,6 +627,13 @@ def impact_bound(suspect_ids: list[str], symptom_id: str, observed_share: float)
         m = ro.run("Q-GATE-MULT", {"sources": ids, "symptom": sym})
         ks = {x["source"]: int(x["paths"]) for x in m.rows}
         parts = [r, m]
+        if not r.rows:   # no flow row at all: no source node, or no symptom node. Not in the graph is not "cannot carry"
+            ex = ro.run("Q-NODE-EXISTS", {"ids": sorted(set(ids) | {sym})})
+            parts.append(ex)
+            have = {x["id"] for x in ex.rows}
+            missing = sorted(x for x in ids + [sym] if x not in have)
+            if missing:
+                unknown = f"not in this tenant's graph: {', '.join(missing)} (a scenario change lives only in its run's clean room)"
         if raw <= 0:
             flow = 0.0
         elif len(ids) == 1:  # a request can meet the fault once per path: the sound bound is k × maxFlow
