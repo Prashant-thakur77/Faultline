@@ -1,4 +1,4 @@
-make setup && make judge-check on a fresh shallow clone (git clone --depth 1) of main at commit 75097cc, 2026-10-18,
+make setup && make judge-check on a fresh shallow clone (git clone --depth 1) of main at commit 88dbdbb, 2026-10-18,
 no API key, no GitHub token. The judge-check summary as printed:
 
 JUDGE CHECK

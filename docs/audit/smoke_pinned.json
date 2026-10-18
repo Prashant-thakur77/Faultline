@@ -1,5 +1,5 @@
 {
-  "ran_at": "2026-10-18T17:42:54+0530",
+  "ran_at": "2026-10-18T19:32:23+0530",
   "results": [
     {
       "id": "1a",
@@ -174,7 +174,7 @@
       "item": "ACL read-only tenant user (RO allowed; QUERY and other tenant denied)",
       "critical": true,
       "ok": true,
-      "notes": "RO on own tenant \u2192 1; GRAPH.QUERY denied (NoPermissionError: User ro_smokefe2d has no permissions to ); other tenant denied (NoPermissionError: No permissions to access a key); GRAPH.LIST denied (NoPermissionError: User ro_smokefe2d has no permi)",
+      "notes": "RO on own tenant \u2192 1; GRAPH.QUERY denied (NoPermissionError: User ro_smoke25b9 has no permissions to ); other tenant denied (NoPermissionError: No permissions to access a key); GRAPH.LIST denied (NoPermissionError: User ro_smoke25b9 has no permi)",
       "syntax": "ACL SETUSER ro_<t> on >pw resetkeys -@all +GRAPH.RO_QUERY +GRAPH.EXPLAIN +PING +HELLO ~tenant_<t> ~scratch_<t>_*  (connect with falkordb.Graph(redis.Redis(...)); FalkorDB() needs INFO)"
     },
     {
@@ -182,7 +182,7 @@
       "item": "Concurrency: 16 claimers \u00d7 10 rounds \u2192 1 owner; RO reads during writes",
       "critical": true,
       "ok": true,
-      "notes": "10/10 rounds with exactly 1 owner; RO read p50=0.25 ms p95=0.85 ms over 120 reads",
+      "notes": "10/10 rounds with exactly 1 owner; RO read p50=0.25 ms p95=0.94 ms over 116 reads",
       "syntax": "W-CLAIM-1 conditional claim"
     },
     {
@@ -230,7 +230,7 @@
       "item": "engine catalogues: dbms.functions, telemetry{graph} stream, QUERY_MEM_CAPACITY",
       "critical": false,
       "ok": true,
-      "notes": "dbms.functions: 156 names, 46 UDFs (YIELD name, udf, aggregation); telemetry{graph} is a stream (entry visible after 0.00 s) with fields ['Execution duration', 'Query', 'Query parameters', 'Received at', 'Report duration', 'Timeout', 'Total duration', 'Utilized cache', 'Wait duration', 'Write']; QUERY_MEM_CAPACITY now 268435456 (set by configure_falkordb.py)",
+      "notes": "dbms.functions: 156 names, 46 UDFs (YIELD name, udf, aggregation); telemetry{graph} is a stream (entry visible after 0.05 s) with fields ['Execution duration', 'Query', 'Query parameters', 'Received at', 'Report duration', 'Timeout', 'Total duration', 'Utilized cache', 'Wait duration', 'Write']; QUERY_MEM_CAPACITY now 268435456 (set by configure_falkordb.py)",
       "syntax": "CALL dbms.functions() YIELD name, udf; XREVRANGE telemetry{<graph>} + - COUNT n; GRAPH.CONFIG SET QUERY_MEM_CAPACITY <bytes> (error: Query's mem consumption exceeded capacity)"
     },
     {
@@ -238,7 +238,7 @@
       "item": "WAITAOF after a write (durable before verified)",
       "critical": false,
       "ok": true,
-      "notes": "WAITAOF 1 0 3000 after a write on the same connection \u2192 [1, 0] in 363 ms (appendfsync everysec waits for the next fsync)",
+      "notes": "WAITAOF 1 0 3000 after a write on the same connection \u2192 [1, 0] in 325 ms (appendfsync everysec waits for the next fsync)",
       "syntax": "same connection: GRAPH.QUERY \u2026 then WAITAOF numlocal numreplicas timeout_ms \u2192 [local, replicas]"
     }
   ]
