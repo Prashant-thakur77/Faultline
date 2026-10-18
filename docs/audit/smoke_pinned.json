@@ -1,5 +1,5 @@
 {
-  "ran_at": "2026-10-18T01:00:50+0530",
+  "ran_at": "2026-10-18T08:47:20+0530",
   "results": [
     {
       "id": "1a",
@@ -174,7 +174,7 @@
       "item": "ACL read-only tenant user (RO allowed; QUERY and other tenant denied)",
       "critical": true,
       "ok": true,
-      "notes": "RO on own tenant \u2192 1; GRAPH.QUERY denied (NoPermissionError: User ro_smoke16c8 has no permissions to ); other tenant denied (NoPermissionError: No permissions to access a key); GRAPH.LIST denied (NoPermissionError: User ro_smoke16c8 has no permi)",
+      "notes": "RO on own tenant \u2192 1; GRAPH.QUERY denied (NoPermissionError: User ro_smoke67fe has no permissions to ); other tenant denied (NoPermissionError: No permissions to access a key); GRAPH.LIST denied (NoPermissionError: User ro_smoke67fe has no permi)",
       "syntax": "ACL SETUSER ro_<t> on >pw resetkeys -@all +GRAPH.RO_QUERY +GRAPH.EXPLAIN +PING +HELLO ~tenant_<t> ~scratch_<t>_*  (connect with falkordb.Graph(redis.Redis(...)); FalkorDB() needs INFO)"
     },
     {
@@ -182,7 +182,7 @@
       "item": "Concurrency: 16 claimers \u00d7 10 rounds \u2192 1 owner; RO reads during writes",
       "critical": true,
       "ok": true,
-      "notes": "10/10 rounds with exactly 1 owner; RO read p50=0.25 ms p95=0.81 ms over 125 reads",
+      "notes": "10/10 rounds with exactly 1 owner; RO read p50=0.52 ms p95=2.14 ms over 116 reads",
       "syntax": "W-CLAIM-1 conditional claim"
     },
     {
@@ -238,7 +238,7 @@
       "item": "M20 WAITAOF after a write (durable before verified)",
       "critical": false,
       "ok": true,
-      "notes": "WAITAOF 1 0 3000 after a write on the same connection \u2192 [1, 0] in 1018 ms (appendfsync everysec waits for the next fsync)",
+      "notes": "WAITAOF 1 0 3000 after a write on the same connection \u2192 [1, 0] in 989 ms (appendfsync everysec waits for the next fsync)",
       "syntax": "same connection: GRAPH.QUERY \u2026 then WAITAOF numlocal numreplicas timeout_ms \u2192 [local, replicas]"
     }
   ]
