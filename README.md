@@ -132,6 +132,9 @@ Every result in one table. Each number is tagged and checked against [`evals/res
 <td valign="top"><img src="docs/screenshots/30-agent-notes.png" alt="Notes from other agents in the incident room: Faultline's verdict note about the proof path, recalled near payment"><br><sub><b>Notes from other agents.</b> The run's verdict, left for the next agent in <code>agentmem_acme</code> and recalled by graph distance and meaning in one query; a lead, never evidence.</sub></td>
 </tr>
 <tr>
+<td valign="top"><img src="docs/screenshots/31-data-repair.png" alt="The data repair as the server will apply it: kind data_repair, the fix branch, the transform file, the plan hash, a unified diff with one removed line and one added CASE WHEN line scoped to the measured payment processor, the commit message and the rollback"><br><sub><b>The data repair, exactly as it will run</b> (the data incident, <code>/incidents/…</code>, step 1 of the approval). Proposed by the keyless run from its own measurements: the one-line CASE scoped to the segment the warehouse measured a power of ten off, in the transform the lineage graph says writes the anomalous table. The plan hash binds this exact diff; after approval the warehouse rebuild, the invariant suite and the KPI decide, and a wrong patch is reverted.</sub></td>
+</tr>
+<tr>
 <td valign="top"><img src="docs/screenshots/18-provenance.png" alt="Why do you believe this: the verdict's provenance, from the agents' calls to the evidence that supports it"><br><sub><b>Why do you believe this?</b> Agent, tool call, evidence, verdict: every arrow is a stored edge, so the answer is itself a query.</sub></td>
 <td valign="top"><img src="docs/screenshots/20-brain-answer-graph.png" alt="A company-brain answer drawn as a graph: who decided, the decisions, and what they constrain"><br><sub><b>Company brain.</b> "Who decided the payment timeout?" answered from the graph, every name a node id a query returned.</sub></td>
 </tr>
