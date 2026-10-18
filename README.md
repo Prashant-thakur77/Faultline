@@ -387,7 +387,7 @@ Recorded through the real API (`scripts/record_demo.py`) with the deterministic 
 | Decision contradiction (G8) | ADR-012 (timeout ≤ 2000 ms), ADR-013 (≥ 2 retries) | n/a |
 | Containment | min-cut `payment → checkout` → flag `paymentGate` off (checkout defers the charge), or roll the deploy back (listed first: it worked more often on past incidents with this symptom) | min-cut found, but its only flag cuts a service edge no failure path to the KPI crosses, so it is shown disabled with that reason (`Q-LEVER-PATH`); the **data repair is proposed from the run's own measurements**: one segment of the anomalous column (the new payment processor's rows) is a power of ten off the healthy rows, so the transform the graph says writes that table gets that column scoped by a CASE for those rows only (`repair_targets` over `Q-REPAIR-TARGETS`, `unit_shift_check`, `agent/unit_shift.py`; every read a recorded tool call: Cypher for the graph reads, the SQL and the baseline range for the warehouse read); no model, no scenario text |
 | Who fixes it | ranked people with reasons (recent commits, past resolutions, on-call) | same |
-| Action → verdict | PR to the infra repo (**simulated GitHub** here; the same path against real GitHub: [PR #1](https://github.com/Prashant-thakur77/faultline-demo-infra/pull/1)) → **APPLIED**: main re-read + telemetry back in band, no collateral | the exact one-line diff approved in two steps → the patch on disk, the warehouse rebuilt on the incident's own data → **<!-- claim:example.s2.verdict -->APPLIED<!-- /claim -->**: <!-- claim:example.s2.invariants -->32/32<!-- /claim --> invariants, KPI anomaly ratio <!-- claim:example.s2.kpi_ratio -->0.933<!-- /claim --> (back inside the healthy band); a wrong patch is reverted (`examples/s5-bad-fix`) |
+| Action → verdict | PR to the infra repo (**simulated GitHub** here; the same path against real GitHub: [PR #1](https://github.com/Prashant-thakur77/faultline-demo-infra/pull/1)) → **APPLIED**: main re-read + telemetry back in band, no collateral | the exact one-line diff approved in two steps → the patch on disk, the warehouse rebuilt on the incident's own data → **<!-- claim:example.s2.verdict -->APPLIED<!-- /claim -->**: <!-- claim:example.s2.invariants -->32/32<!-- /claim --> invariants, KPI anomaly ratio <!-- claim:example.s2.kpi_ratio -->0.933<!-- /claim --> (back inside the healthy band); a patch that fails the invariant suite or leaves the KPI outside the band is reverted (`examples/s5-bad-fix`): the rebuild checks the repair against the invariants and the band, not against a source of truth, which is why a human approves the diff first |
 | Write-back | verified <!-- claim:s1.writeback -->7/7<!-- /claim --> through a separate read-only connection, then LEARN | verified <!-- claim:example.s2.writeback -->7/7<!-- /claim --> the same way; final stage <!-- claim:example.s2.final_stage -->RESOLVED<!-- /claim --> ([examples/s2-data-incident](examples/s2-data-incident)) |
 
 Where naive recency and vector similarity put the real cause on every scenario, and why the look-alikes lost, is generated per run in [docs/NAIVE_VS_FAULTLINE.md](docs/NAIVE_VS_FAULTLINE.md).
@@ -402,7 +402,8 @@ Gate G2 is the load-bearing query. If it returns no rows, Faultline cannot claim
 MATCH (c:Node {id:$cause}), (s:Node {id:$symptom})
 CALL algo.SPpaths({sourceNode: c, targetNode: s, relTypes: ['CHANGED','GATES','PROPAGATES_TO'],
                    weightProp: 'w', relDirection: 'outgoing', maxLen: 8, pathCount: 3}) YIELD path, pathWeight
-RETURN [n IN nodes(path) | n.id] AS chain, [r IN relationships(path) | type(r)] AS rels, pathWeight AS weight, length(path) AS hops
+RETURN [n IN nodes(path) | n.id] AS chain, [r IN relationships(path) | type(r)] AS rels, pathWeight AS weight, length(path) AS hops,
+       [r IN relationships(path) | coalesce(r.from_incident, '')] AS learned_from
 ORDER BY weight, hops LIMIT 3
 ```
 
@@ -430,7 +431,7 @@ The model may propose; Gate v2 decides with eight checks, two of them split into
 | G4 quantitative: an anomalous measurement on a node of the chain | Q-GATE-4 | rejected |
 | G4 origin: the anomaly shows at the changed component itself or in its own data output (unless the change is on the alerting component) | Q-GATE-4 | not confident |
 | G4 upstream (sweep): a suspect whose component is anomalous only by what an anomalous component upstream (changed or not) can carry there (measured excess × path transfer) is not the origin | Q-GATE-UPSTREAM | eliminated (an unchanged upstream origin → abstain) |
-| G5 sufficiency: joint `algo.maxFlow` × the number of failure paths can carry the observed impact | Q-GATE-3, Q-GATE-MULT, Q-GATE-OBS | rejected (only jointly sufficient → not confident) |
+| G5 sufficiency: joint `algo.maxFlow` × the number of failure paths can carry the observed impact. When Q-GATE-MULT truncates, or a source's path count hits the SPpaths cap while the bound is still below 1, `impact_bound` answers `unknown` and the gate records G5 as not evaluable, never as insufficient | Q-GATE-3, Q-GATE-MULT, Q-GATE-OBS | rejected (only jointly sufficient → not confident) |
 | G6 competitors: every rival eliminated with evidence | Q-HYP-1 | unresolved rivals → not confident |
 | G7 agreement: independent evidence channels agree on the chain | Q-GATE-7 | not confident |
 | G7 correlation: the change specialist and the code or data specialist name the same deploy, which CHANGED a node of the chain | Q-GATE-CORR | not confident (not evaluable when no code/data channel could inspect a change) |
@@ -737,6 +738,8 @@ Vector search finds the entry points; FalkorDB walks from them to the changes up
 
 **MCP.** `make mcp` serves every product read as a typed, tenant-bound tool over stdio, plus the schema, query and weights resources and the investigate, preflight and ask-brain prompts. `make mcp-http` serves the same tools over Streamable HTTP with a bearer key bound to one tenant; it is deployed at `https://13-203-185-119.sslip.io/mcp` (read-only, rate-limited). From any stdio MCP client, `npx -y @prashantthakur77/faultline-mcp` connects to it with the public demo key ([npm package](https://www.npmjs.com/package/@prashantthakur77/faultline-mcp); `--url` and `--key` for your own server). Tools that build scratch or branch graphs stay internal, and the MCP service gets no engine credential. The official FalkorDB MCP server is also configured, strict read-only, in [`.mcp.json`](.mcp.json). Details: [docs/MCP.md](docs/MCP.md).
 
+**Tool selection is enforced, not suggested.** The agent is offered only the tools of its stage (`agent/phases.py`, `PHASE_TOOLS`); every call, from the model or from code, passes `ToolBox.call` (`agent/loop.py`), which refuses anything outside that list with `{"error": "tool 'X' not allowed in stage Y"}` and records the refusal as a `ToolCall {refused: true}` in the run. Hosted MCP clients are not staged: every read-only tool is offered, and read-only is enforced on the server. The refusal path is one of the mutants `scripts/mutation_check.py` must catch.
+
 ## Memory, company brain, preflight, coordination
 
 - **Memory** recalls precedents by vector, then confirms them structurally; it reorders and never decides (gate verdicts identical cold vs warm: <!-- claim:memory.gate_verdicts_identical -->True<!-- /claim -->).
@@ -990,6 +993,9 @@ Containment in one read-only query: `algo.maxFlow` over `cut_cost`, then the min
 
 ```cypher
 // id: Q-CUT-3
+// purpose: containment in ONE read-only query: algo.maxFlow from $failing to the protected set over cut_cost, then the min-cut inside the engine. Residual reachability from $failing runs over every PROPAGATES_TO edge of the region algo.SSpaths reaches (forward while cut_cost − flow > 1e-9, backward while flow > 1e-9), iterated to a fixpoint as a list reduction; the cut is the edges leaving that source side. A region of $max_edges candidate edges or more skips the fixpoint (the code refuses it). The code only checks that the cut capacity equals maxFlow and that no protected node is on the source side.
+// returns: single-row
+// seen: flow_edges
 MATCH (f:Node {id:$failing})
 MATCH (p:Node) WHERE p.id IN $protect
 WITH f, collect(p.id) AS prot
@@ -1010,8 +1016,9 @@ CALL {algo:maxflow}({sourceNodes: [f], targetNodes: targets, relationshipTypes: 
 WITH f, prot, cand, maxFlow,
      [i IN range(0, size(edges) - 1) | {rid: id(edges[i]), u: startNode(edges[i]).id, v: endNode(edges[i]).id, flow: edgeFlows[i]}] AS fe
 WITH f, prot, cand, maxFlow, fe,
-     [c IN cand | {u: c.u, v: c.v, cost: c.cost, domain: c.domain,
-                   flow: coalesce(head([x IN fe WHERE x.rid = c.rid | x.flow]), 0)}] AS arcs
+     [c IN CASE WHEN size(cand) < $max_edges THEN cand ELSE [] END |
+      {u: c.u, v: c.v, cost: c.cost, domain: c.domain,
+       flow: coalesce(head([x IN fe WHERE x.rid = c.rid | x.flow]), 0)}] AS arcs
 WITH f, prot, cand, maxFlow, fe, arcs,
      [a IN arcs WHERE a.cost - a.flow > 1e-9 | [a.u, a.v]] + [a IN arcs WHERE a.flow > 1e-9 | [a.v, a.u]] AS residual
 WITH f, prot, cand, maxFlow, fe, arcs,
@@ -1048,8 +1055,8 @@ The full table (agent cannot … | enforced by | file::function | test) is in [d
 
 - **Reads.** `GRAPH.RO_QUERY` only, with a per-query `TIMEOUT` (clamped to `TIMEOUT_MAX`) and a literal `LIMIT` sent as n+1 so truncation is detected. They run as a per-tenant ACL user (`ro_<tenant>`) when ACL passwords are configured, as the production compose does; local keyless runs use the default user. The model never holds a write connection.
 - **Templates first.** Text2cypher is the last resort and passes three layers: a guard on the masked text, a `GRAPH.EXPLAIN` plan check, and `RO_QUERY` as the read-only user with a short timeout.
-- **Two-step approval.** Choosing an option ≠ approving it. Approval must quote the plan hash of the exact rendered action (file diff, commit message, PR body with reviewers, rollback), and it moves the incident to EXECUTE in the same query. Execute re-checks the intent owner, the plan hash and drift at GitHub main, and refuses no-op changes.
-- **Three-valued verification.** Channel 1 re-reads GitHub main (simulated GitHub in keyless mode). Channel 2 reads the world's telemetry after the change for every symptom, plus collateral on what was protected. In this demo, telemetry comes from the simulator, which reads the same graph: the two channels are separate checks, not independent physical sensors. `UNKNOWN` goes to a human and never writes success. A failed fix goes back to approval with that option disabled.
+- **Two-step approval.** Choosing an option ≠ approving it. Approval must quote the plan hash of the exact rendered action (file diff, commit message, PR body with reviewers, rollback), and it moves the incident to EXECUTE in the same query. The approver is a name checked against the graph (`Q-APPROVER-1`: active, and on call for or on a team owning an impacted component), bound to the run's token on the public site, and an approver key when GitHub is real; it is not an authenticated identity. Execute re-checks the intent owner, the plan hash and drift at GitHub main, and refuses no-op changes.
+- **Three-valued verification.** Channel 1 re-reads GitHub main (simulated GitHub in keyless mode). Channel 2 reads the world's telemetry after the change for every symptom, plus collateral on what was protected. For a data repair both channels run on the same host: the transform on disk, then the warehouse rebuilt on the incident's own data with its invariant suite and the KPI. A NOT_APPLIED verdict returns the incident to approval and disables that option; a merged flag flip or rollback stays at main until the next approved action undoes it, and a failed data repair is reverted and the warehouse rebuilt. In this demo, telemetry comes from the simulator, which reads the same graph: the two channels are separate checks, not independent physical sensors. `UNKNOWN` goes to a human and never writes success. A failed fix goes back to approval with that option disabled.
 - **Cross-system honesty.** intent → execute → reconcile with an idempotency key; no claim of cross-system transactions. A reconciler settles PENDING intents after crashes or timeouts, at API start and every minute, taking over the intent lease of a process whose heartbeat stopped. With real GitHub, approval requires an approver key.
 - **Tenancy.** One graph per tenant; clean rooms via `GRAPH.COPY`. The hosted MCP binds a bearer key to one tenant and hosts no tool that writes.
 

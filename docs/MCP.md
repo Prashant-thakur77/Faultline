@@ -11,7 +11,7 @@ The checked-in `.mcp.json` registers two servers for Claude Code in this repo:
 make up && make seed      # pinned FalkorDB + the acme tenant
 claude                    # in the repo root; approve the project MCP servers when asked
 ```
-Then ask, for example: *"Use causal_paths from payment to checkout, then impact_bound for D-pay-417."*
+Then ask, for example: *"Use causal_paths from payment to checkout, then impact_bound with suspect_ids ["payment"], symptom_id "checkout" and observed_share 0.4."* `impact_bound` needs all three arguments: `observed_share` is the share of the symptom you observed (0 to 1), the number the max-flow bound is compared with. Scenario changes such as `D-pay-417` exist only inside a run's clean room (`make eval`, the live site's runs), not in the seeded tenant graph: use component ids (`payment`, `checkout`, `recommendation`) or call `find_entities` first. <!-- noclaim: example argument -->
 
 ## Try the hosted server now (public demo key)
 
@@ -33,7 +33,9 @@ The live deployment serves the hosted tools at `https://13-203-185-119.sslip.io/
 claude mcp add --transport http faultline-live https://13-203-185-119.sslip.io/mcp \
   --header "Authorization: Bearer fl_demo_f5be019593a8c0424d247a5d"
 ```
-Then ask, for example: *"Use causal_paths from payment to checkout, then from recommendation to checkout."* The first returns the path; the second returns no path, so nothing can be blamed through it.
+Then ask, for example: *"Use causal_paths from payment to checkout, then from recommendation to checkout."* The first returns the path; the second returns no path, so nothing can be blamed through it. Then *"impact_bound with suspect_ids ["payment"], symptom_id "checkout", observed_share 0.4"* for the max-flow bound. Use component ids here: a scenario's change ids (`D-pay-417`) live only inside a run's clean room. <!-- noclaim: example argument -->
+
+**Reading a result.** A successful call is one envelope: `template` (ids from `faultline://queries`, `+`-joined when several templates ran), `cypher` (verbatim from `backend/faultline/graph/templates/<file>.cypher`, `{algo:…}` resolved to the name this engine reports), `params` (keyed by template id when several ran), `rows`, `ms`, `digest` (sha256 over the rows; every empty result shares one digest), `served_by` (engine, graph and the read-only ACL user), `truncated` and `evidence_id` (the id the same call would record inside an agent run; the hosted server holds no write credential, so nothing is stored). A tool that cannot run returns `{"error": "…"}` with no envelope, and a missing or mistyped argument comes back as a validation error. `repair_targets` reads the measurements of the current run, so it answers inside an agent run (stdio, the API) and returns that error on the hosted server.
 
 Authentication is the bearer header only; there is no OAuth flow, so a client that tries OAuth discovery (some hosted connectors do) must be given the header instead.
 

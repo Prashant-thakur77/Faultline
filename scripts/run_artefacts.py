@@ -136,7 +136,11 @@ def pr_markdown(d: Path) -> str | None:
                 f"- **link:** {o.get('external_ref')}",
                 f"- **verdict:** {o.get('verdict')} — {o.get('explanation')}",
                 f"- **approval:** {o.get('approval_id')} (plan hash `{(o.get('plan_hash') or '')[:16]}…`)",
-                f"- **idempotency key:** `{s.get('idem')}`" + (f" → branch `{s['branch']}`" if s.get("branch") else ""), ""]
+                f"- **idempotency key:** `{s.get('idem')}`"
+                + (f" → branch `{s['branch']}`" if s.get("branch") and o["kind"] != "data_repair" else ""), ""]
+        if o["kind"] == "data_repair":   # a local patch to the transform, verified by rebuilding the warehouse: no pull request
+            out += ["_A data repair is a patch to the transform on disk, verified by the warehouse rebuild, the invariant suite "
+                    "and the KPI; it opens no pull request and no branch._", ""]
         if s.get("commit"):
             out += ["**Commit message**", "", "```", s["commit"], "```", ""]
         if s.get("before") is not None and s.get("after") is not None:
@@ -149,7 +153,7 @@ def pr_markdown(d: Path) -> str | None:
             out += ["**PR / issue body**", "", "```", (s.get("pr_body") or s.get("body")).rstrip("\n"), "```", ""]
         if s.get("rollback"):
             out += [f"**Rollback:** {s['rollback']}", ""]
-    if (man.get("github") or "").startswith("simulated"):
+    if (man.get("github") or "").startswith("simulated") and any(o["kind"] != "data_repair" for o in acts):
         out += ["_Keyless recording: the PR lives in the simulated GitHub of this run's clean room (labelled \"(simulated)\")._", ""]
     return "\n".join(out)
 
