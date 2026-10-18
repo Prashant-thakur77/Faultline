@@ -150,7 +150,12 @@ function HypothesisRow({
               style={{ width: `${pct}%` }}
             />
           </span>
-          <span className="font-mono text-[11px] text-zinc-400">score {h.score === null ? "\u2013" : score.toFixed(2)}</span>
+          <span
+            className="font-mono text-[11px] text-zinc-400"
+            title="investigation order only: path closeness, time to onset, anomaly, algo.pageRank and memory prior, weighted in weights.yaml. The verdict comes from the gate, never from this score."
+          >
+            score {h.score === null ? "\u2013" : score.toFixed(2)}
+          </span>
         </span>
       </div>
       {h.reason ? <p className="mt-1 text-xs leading-relaxed break-words text-zinc-400">{h.reason}</p> : null}
