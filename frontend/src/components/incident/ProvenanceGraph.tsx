@@ -188,6 +188,10 @@ function Graph({
   });
 
   return (
+    <>
+    <p className="mb-1.5 text-[11px] text-[var(--fl-subtle)] sm:hidden">
+      Scroll right for the evidence and the verdict, or open the table below.
+    </p>
     <div
       className="overflow-x-auto overscroll-x-contain rounded-xl border border-[var(--fl-line)] bg-black/20"
       role="group"
@@ -303,6 +307,7 @@ function Graph({
         </div>
       </div>
     </div>
+    </>
   );
 }
 
