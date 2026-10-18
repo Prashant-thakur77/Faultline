@@ -1,23 +1,23 @@
-make setup && make judge-check on a fresh shallow clone (git clone --depth 1) of main at commit 2da0084, 2026-10-18,
+make setup && make judge-check on a fresh shallow clone (git clone --depth 1) of main at commit 004a6e8, 2026-10-18,
 no API key, no GitHub token. The judge-check summary as printed:
 
 JUDGE CHECK
   FalkorDB                       PASS  6.0.2 sha256:107455e862a8
   smoke (critical items)         PASS  23/23
-  seed                           PASS  acme: 1950 nodes, 5948 edges; globex: 5903 nodes, 21187 edges
-  UDF flex (GRAPH.UDF LIST)      PASS  flex loaded at sha e7e833ba87f8 (pinned e7e833ba87f8)
-  unit tests                     PASS  656/656
-  live graph tests               PASS  529/531 (2 skipped)
-  ACL isolation (S7, ro users)   PASS  35/35
+  seed                           PASS  acme: 1974 nodes, 5972 edges; globex: 5922 nodes, 21206 edges
+  UDFs flex + faultline (LIST)   PASS  flex loaded at sha e7e833ba87f8 (pinned e7e833ba87f8); faultline loaded at sha 55cd126a097d (pinned 55cd126a097d)
+  unit tests                     PASS  665/666 (1 skipped)
+  live graph tests               PASS  555/557 (2 skipped)
+  ACL isolation (S7, ro+mem users) PASS  38/38
   replay gate verdicts           PASS  13/13 (5 runs)
   write-back re-read             PASS  5/5 runs consistent; write-back verified 7/7
   gate bench (20 of 100)         PASS  20/20 (G2 4/4, G5 4/4, origin 4/4, abstain 4/4, control 4/4); 20/20 reproduce run_0033.json
-  engine slow log                PASS  slowest template Q-PRE-HIST 121 ms (budget 500 ms); tenant_acme 2 MB, golden_acme 2 MB, audit_acme 1 MB, tenant_globex 6 MB, golden_globex 6 MB, audit_globex 0 MB, eval_acme_cli_v2_s1_<run> 3 MB (S1 clean room, read before deletion), 38 other clean rooms checked
+  engine slow log                PASS  slowest template Q-PRE-HIST 63 ms (budget 500 ms); tenant_acme 2 MB, golden_acme 2 MB, audit_acme 1 MB, tenant_globex 6 MB, golden_globex 6 MB, audit_globex 0 MB, eval_acme_cli_v2_s1_84_46f19f54 3 MB (S1 clean room, read before deletion), 39 other clean rooms checked
   pipeline invariants            PASS  32/32
-  single-store lint              PASS  PASS (9 allowlisted pre-existing/sanctioned hits)
-  no-leaks lint                  PASS  PASS (174 scenario literals checked across 338 text files of every type)
-  claims check                   PASS  PASS (2079 tagged claims in 26 files match evals/results/latest.json)
-  secret scan                    PASS  PASS (1274 files scanned)
+  single-store lint              PASS  PASS (9 allowlisted, sanctioned hits)
+  no-leaks lint                  PASS  PASS (174 scenario literals checked across 350 text files of every type)
+  claims check                   PASS  PASS (1920 tagged claims in 26 files match evals/results/latest.json)
+  secret scan                    PASS  PASS (1310 files scanned)
   .env untracked                 PASS  not tracked, ignored by .gitignore
   frontend build                 PASS  clean
   (no API key, no GitHub token, no remote touched)
