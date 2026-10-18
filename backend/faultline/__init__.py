@@ -1,3 +1,3 @@
 """Faultline: an on-call agent on a FalkorDB operational context graph. No path, no claim."""
 
-__version__ = "1.2.0"
+__version__ = "1.3.0"

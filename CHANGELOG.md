@@ -2,7 +2,17 @@
 
 All notable changes to Faultline. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [1.3.0] - 2026-10-18
+
+### A model driving it stays honest (pre-registered, paid)
+- With `claude-opus-5-5` driving the investigation and FalkorDB plus the gate deciding: right cause <!-- claim:llm_product.decisive.all.right_cause -->40<!-- /claim -->/<!-- claim:llm_product.decisive.all.cases -->40<!-- /claim --> and <!-- claim:llm_product.decisive.all.wrong_confident -->0<!-- /claim --> confident wrong blames on the decisive bench, where the same model alone blamed an innocent change <!-- claim:llm_deep.decisive.all.wrong_confident -->7<!-- /claim --> times (`evals/llm_product_bench.py`).
+- That run found a way a model could move the gate on two-causes-in-a-chain worlds (marking the rival "eliminated" with an unrelated evidence id). Fixed the same hour: only the graph eliminates a competitor (no path, G2, or not enough flow, G5); a regression test replays what the model did; the re-run of those worlds with the same model: <!-- claim:llm_product.deep_fix.all.wrong_confident -->0<!-- /claim --> confident wrong blames in <!-- claim:llm_product.deep_fix.all.cases -->8<!-- /claim -->.
+
+### The site, checked by a user-style pass
+- The hero scenario starts from the home page's button, every page has its own title, nothing scrolls sideways on a phone, graph labels stay readable at any zoom, the approval card says when GitHub is simulated, and the investigator picker explains the Claude option instead of calling it unavailable.
+- The hosted MCP's `recall_notes` works without the engine credential; errors never carry the engine's host; the home page lists only runs that can still be opened; an anonymous run's in-app page no longer reads "delivery failed"; plain plurals and lists in the text people read; "Who owns X?" names the owning team and who is on call first.
+- The For agents section on the home page is runnable as shown: the npm bridge, this site's own REST endpoint (whose answer now carries its Cypher, parameters and digest), and the whole proof-path query.
+
 
 ### The company brain reads document text (track T3)
 - Document bodies (ADRs, runbooks, incident-channel chats, issues) are stored as `(:Chunk)` passages with `vecf32` embeddings and full-text, written at seed after everything else so no existing node id moves.
