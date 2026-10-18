@@ -16,11 +16,13 @@ export type Tone = "pass" | "fail" | "warn" | "na" | "info" | "running";
 
 // ------------------------------------------------------------------ checks
 
-export type CheckState = "pass" | "fail" | "downgrade" | "na";
+export type CheckState = "pass" | "fail" | "downgrade" | "noted" | "na";
 
+/** "noted": an attach-only check (G8) found something for the plan; it never changes the verdict. */
 export function checkState(c: GateCheck): CheckState {
   if (c.passed === null || c.passed === undefined) return "na";
   if (c.passed) return "pass";
+  if (c.attach_only) return "noted";
   return c.downgrade_only ? "downgrade" : "fail";
 }
 
@@ -28,6 +30,7 @@ export const CHECK_STATE_TEXT: Record<CheckState, string> = {
   pass: "pass",
   fail: "fail",
   downgrade: "downgrade",
+  noted: "noted",
   na: "not evaluable",
 };
 
@@ -35,6 +38,7 @@ export const CHECK_STATE_TONE: Record<CheckState, Tone> = {
   pass: "pass",
   fail: "fail",
   downgrade: "warn",
+  noted: "info",
   na: "na",
 };
 

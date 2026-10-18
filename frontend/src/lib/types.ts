@@ -219,6 +219,8 @@ export interface GateCheck {
   params: Record<string, unknown> | null;
   evidence_ids: string[];
   downgrade_only: boolean;
+  /** G8: attached for the plan and the report; never rejects and never downgrades the verdict. */
+  attach_only?: boolean;
 }
 
 export type GateOrigin = "sweep" | "confirm" | "no_incident";

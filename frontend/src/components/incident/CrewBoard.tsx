@@ -10,6 +10,7 @@ import {
   CircleX,
   ShieldCheck,
   ShieldX,
+  Info,
   TriangleAlert,
   type LucideIcon,
 } from "lucide-react";
@@ -55,12 +56,14 @@ const CHECK_ICON: Record<CheckState, LucideIcon> = {
   pass: CircleCheck,
   fail: CircleX,
   downgrade: TriangleAlert,
+  noted: Info,
   na: CircleMinus,
 };
 const CHECK_TONE_TEXT: Record<CheckState, string> = {
   pass: "text-emerald-300",
   fail: "text-red-300",
   downgrade: "text-amber-300",
+  noted: "text-sky-300",
   na: "text-zinc-300",
 };
 
@@ -564,7 +567,7 @@ function GateRunLine({ line, onOpenCheck }: { line: GateLine; onOpenCheck: (run:
           key={`${c.name}:${i}`}
           run={run}
           check={c}
-          lead={checkState(c) === "na" ? "not evaluable" : "downgrade"}
+          lead={checkState(c) === "na" ? "not evaluable" : checkState(c) === "noted" ? "noted" : "downgrade"}
           onOpen={onOpenCheck}
         />
       ))}

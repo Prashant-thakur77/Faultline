@@ -28,5 +28,6 @@ describe("gate checks", () => {
     expect(CHECK_STATE_TEXT.na).toBe("not evaluable");
     expect(checkState(c("G7 correlation", false, true))).toBe("downgrade");
     expect(checkState(c("G2 path", false))).toBe("fail");
+    expect(checkState({ ...c("G8 contradiction", false, true), attach_only: true })).toBe("noted");
   });
 });

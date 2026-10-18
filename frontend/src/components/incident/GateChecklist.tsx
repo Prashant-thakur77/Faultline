@@ -1,6 +1,6 @@
 "use client";
 
-import { Ban, CircleCheck, CircleMinus, CircleX, ShieldCheck, ShieldX, TriangleAlert, type LucideIcon } from "lucide-react";
+import { Ban, CircleCheck, CircleMinus, CircleX, Info, ShieldCheck, ShieldX, TriangleAlert, type LucideIcon } from "lucide-react";
 import {
   CHECK_STATE_TEXT,
   CHECK_STATE_TONE,
@@ -22,9 +22,10 @@ const STATE_ICON: Record<CheckState, LucideIcon> = {
   pass: CircleCheck,
   fail: CircleX,
   downgrade: TriangleAlert,
+  noted: Info,
   na: CircleMinus,
 };
-const STATE_GLYPH: Record<CheckState, string> = { pass: "✓", fail: "✗", downgrade: "!", na: "–" };
+const STATE_GLYPH: Record<CheckState, string> = { pass: "✓", fail: "✗", downgrade: "!", noted: "i", na: "–" };
 
 /** One plain-English line per gate code, shown as the checklist's legend. */
 const GATE_LEGEND: [string, string][] = [
@@ -222,12 +223,16 @@ function CheckRow({
           <span aria-hidden>{STATE_GLYPH[s]}</span>
           <span className="sr-only">{check.name}: </span>
           {CHECK_STATE_TEXT[s]}
-          <span className="sr-only">{check.downgrade_only ? " (downgrade-only check)" : ""}. </span>
+          <span className="sr-only">
+            {check.attach_only ? " (attached to the plan; never changes the verdict)" : check.downgrade_only ? " (downgrade-only check)" : ""}.{" "}
+          </span>
         </span>
         <span className="min-w-0 flex-1">
           <span className="flex flex-wrap items-center gap-1.5">
             <span aria-hidden className="text-xs font-medium text-zinc-100">{check.name}</span>
-            {check.downgrade_only ? (
+            {check.attach_only ? (
+              <span aria-hidden className="text-[10px] text-[var(--fl-subtle)]">attached to the plan; never changes the verdict</span>
+            ) : check.downgrade_only ? (
               <span aria-hidden className="text-[10px] text-[var(--fl-subtle)]">downgrade-only</span>
             ) : null}
             {check.template ? (
