@@ -166,6 +166,11 @@ export function ContainmentCard({
               </tr>
             </tfoot>
           </table>
+          <p className="mt-1 text-[11px] leading-snug text-[var(--fl-subtle)]">
+            Cut cost: for a service call, its share of the entry traffic × the caller&apos;s tier weight (weights.yaml). The
+            min-cut is the cheapest set of edges that separates the failing component from what is protected; its total
+            equals the max flow.
+          </p>
 
           <Disclosure
             summary={
