@@ -398,6 +398,12 @@ function Verdict({ r, req }: { r: PreflightResponse; req: PreflightRequest | nul
   const live = terms.filter(([, t]) => t.weighted !== 0);
   const zero = terms.filter(([, t]) => t.weighted === 0);
   const what = PREFLIGHT_TEMPLATES.find((t) => t.id === r.evidence.template)?.what ?? "the preflight's recorded evidence";
+  // on a phone the verdict renders below the examples: bring it into view when a new one arrives
+  useEffect(() => {
+    if (typeof window === "undefined" || window.innerWidth >= 1024) return;
+    const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    document.getElementById("pf-verdict-h")?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+  }, [r.pr, r.ms]);
   return (
     <Section
       id="pf-verdict"
