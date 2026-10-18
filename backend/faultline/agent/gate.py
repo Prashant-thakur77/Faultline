@@ -485,8 +485,10 @@ class Gate:
             checks.append(Check("G5 sufficiency", None if (g5_unknown and g5_ok) else g5_ok, "; ".join(g5_parts), "Q-GATE-3",
                                 {"sources": targets, "symptom": primaries[0] if primaries else None},
                                 evidence_ids=[e for e in g5_ev if e]))
-            # G6 competitors
-            open_ = sorted(h["cause"] for h in hyps if h["cause"] != cause_id and h["status"] == "open")
+            # G6 competitors. Only the graph eliminates: an elimination asserted by an investigator (a model) instead
+            # of by the sweep or the gate does not count, so whatever a model proposes cannot move G6
+            open_ = sorted(h["cause"] for h in hyps if h["cause"] != cause_id and (
+                h["status"] == "open" or (h["status"] == "eliminated" and h.get("origin") == "investigator")))
             unresolved = sorted(h["cause"] for h in hyps if h["cause"] != cause_id and h["status"] == "unresolved")
             checks.append(Check("G6 competitors", not open_,
                                 f"open competitors must be eliminated or unresolved: {open_}" if open_

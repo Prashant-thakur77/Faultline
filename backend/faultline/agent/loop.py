@@ -186,15 +186,18 @@ class RunState:
         return {"ok": True, "hypothesis_id": f"hyp-{self.inc}-{cause_id}"}
 
     def update_hypothesis(self, cause_id: str, status: str, evidence_ids: list[str], reason: str = "") -> dict:
-        """Eliminate (or mark unresolved) a hypothesis; elimination requires evidence produced in this run."""
-        if status not in ("eliminated", "unresolved"):
-            return {"error": "status must be eliminated or unresolved (confirmation happens only via the gate)"}
-        known = RO(self.tenant, self.graph).run("Q-GATE-G1", {"run": self.run_id, "ids": [], "evidence": evidence_ids}).rows[0]["evidence"]
-        if status == "eliminated" and not known:
-            return {"error": "eliminating a hypothesis requires evidence ids produced by this run"}
+        """Mark a hypothesis unresolved (which can only lower the gate's confidence). Eliminating a competitor is not
+        the investigator's to do: the deterministic competitor sweep and the gate eliminate a change only when
+        FalkorDB shows it has no causal path (G2) or cannot carry the impact (G5). A model that could eliminate a
+        rival with any evidence id would move G6, so the model proposes and the graph decides."""
+        if status == "eliminated":
+            return {"error": "eliminating a competitor is the gate's: it happens only when FalkorDB shows no causal path "
+                             "(G2) or not enough flow (G5). Record what you measured; mark it 'unresolved' if you "
+                             "believe it cannot be ruled out; confirm_root_cause lets the gate decide."}
+        if status != "unresolved":
+            return {"error": "status must be unresolved (confirmation and elimination happen only via the gate)"}
         writes.upsert_hypothesis(self.g(), inc=self.inc, hid=f"hyp-{self.inc}-{cause_id}", cause=cause_id,
-                                 status=status, reason=reason, refutes=known if status == "eliminated" else [],
-                                 origin="investigator")
+                                 status=status, reason=reason, refutes=[], origin="investigator")
         return {"ok": True}
 
     def confirm_root_cause(self, cause_id: str, evidence_ids: list[str]) -> dict:

@@ -12,7 +12,8 @@ Rules (non-negotiable):
 symptom (no path, no claim), (b) an anomalous measurement on that path, and (c) a measured impact share at the \
 symptom that the change can carry (max-flow sufficiency). Use anomalous_row_share / compare_to_baseline / \
 get_metric_history / profile_column for data symptoms.
-4. Register competing explanations with record_hypothesis; eliminate them only with evidence (update_hypothesis).
+4. Register competing explanations with record_hypothesis. You cannot eliminate one: the gate does, only when the \
+graph shows no causal path or not enough flow. Mark one 'unresolved' (update_hypothesis) if it cannot be ruled out.
 5. Confirm only via confirm_root_cause(cause_id, evidence_ids). If the gate rejects, read which check failed and \
 investigate that. Do not argue with the gate.
 6. If measurements are normal and nothing anomalous is reachable from any change, declare_no_incident with the \
