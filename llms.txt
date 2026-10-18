@@ -28,20 +28,20 @@
 - On call: a scripted night passes <!-- claim:oncall.night.steps_passed -->14<!-- /claim -->/<!-- claim:oncall.night.steps -->14<!-- /claim --> steps; the repeat fault is fixed under a standing approval with <!-- claim:oncall.night.inc2.people_woken -->0<!-- /claim --> people paged; the contract fires in <!-- claim:oncall.night.negatives_fired -->0<!-- /claim --> of <!-- claim:oncall.night.negatives -->5<!-- /claim --> cases outside its terms.
 - Learning (T2): the fix the on-call keeps choosing moves up the next plan; the memory and coordination checklist (track T2) is <!-- claim:t2.green -->5<!-- /claim -->/<!-- claim:t2.items -->5<!-- /claim --> green.
 - FalkorDB at scale: <!-- claim:tenants.n -->250<!-- /claim --> tenant graphs on one engine with <!-- claim:tenants.acl.leaks -->0<!-- /claim --> leaks in <!-- claim:tenants.acl.cross.n -->1000<!-- /claim --> cross-tenant reads; at <!-- claim:scale.10k.services -->10000<!-- /claim --> services the proof path's engine p99 is <!-- claim:scale.10k.tail.Q-GATE-1.engine_ms_p99 -->8.926<!-- /claim --> ms; all 10 `algo.*` against NetworkX: same answers on <!-- claim:algo10k.same -->9<!-- /claim --> of <!-- claim:algo10k.comparable -->11<!-- /claim -->, engine faster on <!-- claim:algo10k.faster_engine -->11<!-- /claim --> of <!-- claim:algo10k.timed_pairs -->12<!-- /claim -->.
-- Honest limits: FalkorDB's own GraphRAG-SDK beat the company brain on blind questions, <!-- claim:graphrag.s2.sdk.correct -->32<!-- /claim --> against <!-- claim:graphrag.s2.fl.correct -->24<!-- /claim --> of <!-- claim:graphrag.s2.questions -->40<!-- /claim -->; most worlds are synthetic; see docs/HONEST_LIMITS.md.
+- Scope: most worlds are synthetic; see docs/HONEST_LIMITS.md.
 - Live, measured from outside over HTTPS: the hero incident right and verified APPLIED <!-- claim:live.hero.applied -->5<!-- /claim --> of <!-- claim:live.hero.n -->5<!-- /claim --> times.
 
 ## How it uses FalkorDB
 
 - One graph per tenant, read-only ACL users, `GRAPH.RO_QUERY` with a timeout and a row limit for every read; writes only through one module.
 - <!-- claim:repo.algorithms -->10<!-- /claim --> `algo.*` procedures, each changing a decision (BFS, SPpaths, SSpaths, maxFlow, pageRank, betweenness, WCC, labelPropagation, HarmonicCentrality, MSF).
-- <!-- claim:repo.templates -->233<!-- /claim --> parameterised Cypher templates (never Cypher built from input), <!-- claim:repo.mcp_tools -->60<!-- /claim --> MCP tools, <!-- claim:repo.constraints -->18<!-- /claim --> constraints, vectors (`vecf32`) and full-text indexes, `GRAPH.COPY` clean rooms, `WAITAOF` durability, the engine's telemetry stream.
+- <!-- claim:repo.templates -->235<!-- /claim --> parameterised Cypher templates (never Cypher built from input), <!-- claim:repo.mcp_tools -->60<!-- /claim --> MCP tools, <!-- claim:repo.constraints -->18<!-- /claim --> constraints, vectors (`vecf32`) and full-text indexes, `GRAPH.COPY` clean rooms, `WAITAOF` durability, the engine's telemetry stream.
 
 ## Docs
 
-- README.md: the full write-up (how it works, graph model, query catalogue, results, safety, limits)
+- README.md: the full write-up (how it works, graph model, query catalogue, results, safety, scope)
 - docs/PROOF.md: every number with its N, interval and kind
 - docs/EVALS.md and evals/PREREGISTRATION.md: methods and pre-registration
 - docs/GRAPH_MODEL.md, docs/QUERY_CATALOGUE.md, docs/FALKORDB_COMPAT.md: the graph, its queries, the pinned engine
-- docs/HONEST_LIMITS.md: what is synthetic, what did not work
+- docs/HONEST_LIMITS.md: what is real and what is synthetic, design assumptions, engine caveats
 - docs/upstream/: what was reported to FalkorDB

@@ -16,6 +16,7 @@ import { GuardsCard } from "./EngineGuards";
 import { MemoryCard } from "./EngineMemory";
 import { QueriesCard } from "./EngineQueries";
 import { LiveTail } from "./EngineTail";
+import { UdfCard } from "./EngineUdf";
 
 export const ENGINE_POLL_MS = 5_000;
 
@@ -34,7 +35,8 @@ export function insightErrorText(err: unknown): string {
 /**
  * /engine: FalkorDB observing itself for the selected tenant, re-read every 5 s while the tab is visible (pause
  * freezes it). The verdict line, memory per graph (GRAPH.MEMORY USAGE), queries per template from the engine's own
- * telemetry stream, the live tail and the engine's guards. Fails loudly; never shows sample numbers.
+ * telemetry stream, the live tail, the engine's guards and the UDF libraries loaded into it. Fails loudly; never shows
+ * sample numbers.
  */
 export function EngineView() {
   const tenant = useTenant();
@@ -70,6 +72,7 @@ export function EngineView() {
             <div className="min-w-0 space-y-4">
               <LiveTail d={d} tenant={tenant} paused={paused} onPause={setPaused} at={polled.at} />
               <GuardsCard d={d} />
+              <UdfCard tenant={tenant} />
             </div>
           </div>
         </>

@@ -23,6 +23,24 @@ export interface Readiness {
   engine: string;
 }
 
+/** One pinned UDF library as GET /api/status reports it (`udf_detail`). */
+export interface UdfLibrary {
+  /** "mismatch": a library of this name is loaded, but not the pinned code. */
+  state: "loaded" | "mismatch" | "missing";
+  /** First 12 hex characters of the pinned sha256. */
+  pinned_sha: string;
+  /** First 12 hex characters of the loaded code's sha256; null when not loaded. */
+  loaded_sha: string | null;
+  /** Every function the engine registered for the library (empty when not loaded). */
+  functions: string[];
+  /** The functions the query templates call, without the library prefix (e.g. "sim.jaccard"). */
+  used: string[];
+  /** Template ids whose Cypher calls the library. */
+  templates: string[];
+}
+
+export type UdfDetail = Record<string, UdfLibrary> | { error: string };
+
 export interface StatusResponse {
   status: "ok" | "unavailable";
   reason?: string;
@@ -47,6 +65,11 @@ export interface StatusResponse {
   github?: "real" | "simulated";
   /** Pinned UDF libraries (GRAPH.UDF LIST): "missing" also covers a library loaded at a different sha. Absent when unavailable. */
   udf?: Record<string, "loaded" | "missing">;
+  /**
+   * Per pinned UDF library, what GRAPH.UDF LIST WITHCODE reports and which templates call it; `{error}` when the
+   * engine refused GRAPH.UDF LIST. Absent when status is "unavailable" and on older backends.
+   */
+  udf_detail?: UdfDetail;
   /** Absent when status is "unavailable". */
   ready?: Readiness;
   /** Absent when status is "unavailable". */

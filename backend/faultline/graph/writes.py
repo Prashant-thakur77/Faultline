@@ -1566,7 +1566,7 @@ W_TURN_REDACT = (
 
 def redact_turns(g: Graph, *, ids: list[str], note: str) -> int:
     """After a forget: redact every session turn that cited a forgotten id (one query). A turn that quotes the
-    forgotten text without citing an id cannot be found this way and survives (docs/HONEST_LIMITS.md)."""
+    forgotten text without citing an id cannot be found this way and survives."""
     if not ids:
         return 0
     r = g.query(W_TURN_REDACT, {"ids": sorted(set(ids)), "note": note[:300]}, timeout=WRITE_TIMEOUT_MS).result_set

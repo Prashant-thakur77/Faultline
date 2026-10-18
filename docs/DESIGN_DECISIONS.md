@@ -97,4 +97,4 @@ Each feature is a template plus a tool, and each changes a decision or a reporte
 | Learned remediation ordering, residue check | `Q-REM-1`, `Q-RESIDUE-1` | Reorder options; report anomalies the confirmed cause does not explain |
 | Graph schema for the model | `Q-SCHEMA-1..4` · `graph_schema` | Grounds text2cypher; a drift check against the declared model |
 
-Dropped or deferred, with reasons: `OVERRIDDEN_BY` (G8 never blocks, so it would be decoration); preflight formula changes (need a new pre-registration). See [HONEST_LIMITS.md, section 9](HONEST_LIMITS.md#9-deferred-dropped-or-not-built).
+Dropped or deferred, with reasons: `OVERRIDDEN_BY` (G8 never blocks, so it would be decoration); preflight formula changes (need a new pre-registration).

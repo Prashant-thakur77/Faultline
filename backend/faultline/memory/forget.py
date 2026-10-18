@@ -10,7 +10,7 @@ Review round 4, m3:
 * the delete re-checks, inside its own query, that every listed node is still produced by this doc alone (another doc
   may have produced one since the dry run): if not, nothing is deleted (TOCTOU);
 * session turns that CITED a forgotten id (Turn.refs) are redacted in the same graph; a turn that quotes the forgotten
-  text without citing an id cannot be found that way and survives (docs/HONEST_LIMITS.md).
+  text without citing an id cannot be found that way and survives.
 """
 
 from __future__ import annotations

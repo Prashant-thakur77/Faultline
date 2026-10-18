@@ -7,7 +7,18 @@ All notable changes to Faultline. The format follows [Keep a Changelog](https://
 ### The company brain reads document text (track T3)
 - Document bodies (ADRs, runbooks, incident-channel chats, issues) are stored as `(:Chunk)` passages with `vecf32` embeddings and full-text, written at seed after everything else so no existing node id moves.
 - `search_knowledge` (MCP, Q-KNOW-1) fuses seven index lists by reciprocal rank inside FalkorDB in one query, credits a document's text to the decision or runbook it produced, and returns the passage that matched with what each source concerns and who decided it.
-- The brain falls back to it only when no question kind matches and both index families agree on the best source (pre-registered rule). Scored once on the blind sets: unchanged at <!-- claim:brain_blind.s2.hybrid_docs.correct -->24<!-- /claim -->/<!-- claim:brain_blind.s2.hybrid_docs.questions -->40<!-- /claim --> on set 2, with no unanswerable question answered.
+- The brain falls back to document search only when no question kind matches and both index families agree on the best source.
+
+### Shared agent notes, used by the agent itself (track T2)
+- Investigations started from the API read the notes other agents left near the failing component (leads, never gate input) and leave their verdict or hand-off as a note; the note for a verified fix replies to that verdict with stance `confirms`. Eval arms keep notes off; a live test asserts the gate's outcome, cause and proof chain are the same with notes on and off.
+- Private notes: `remember(private=true)` is recalled only by its author, in the same query that returns the shared notes.
+- The containment min-cut refuses an oversized region before computing it.
+
+### Preflight reads code
+- A changed top-level constant with a literal value in Python, JS/TS, Go, Java/Kotlin or a properties/env/ini/toml file becomes a ChangeFact without a model, named by the rule keys decisions set on that component (`Q-DEC-KEYS`), so a code edit meets the same decision check as a config edit.
+
+### The engine page shows the UDF libraries
+- `/engine` lists FLEX and our own `faultline` library: state, pinned sha, the functions our queries call and the templates that call them (from `/api/status`, read from `GRAPH.UDF LIST` and the template catalogue).
 
 ## [1.2.0] - 2026-10-18
 

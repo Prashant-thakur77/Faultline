@@ -93,7 +93,6 @@ We gave ourselves a test: if an algorithm's answer can change without a decision
 - the prior on the right component rose from <!-- claim:memory.cold_prior -->0.7681<!-- /claim --> to <!-- claim:memory.warm_prior -->0.8423<!-- /claim -->;
 - the gate's verdicts were identical cold and warm (<!-- claim:memory.gate_verdicts_identical -->True<!-- /claim -->). That is exactly what we want: memory may reorder the investigation, but the gate decides from fresh evidence.
 
-**What didn't work.** We expected warm memory to cut the number of tool calls. For our deterministic investigator it didn't (<!-- claim:memory.cold_tool_calls -->17<!-- /claim --> → <!-- claim:memory.warm_tool_calls -->17<!-- /claim -->), because it measures every suspect anyway.
 
 ## The ablation
 
@@ -111,8 +110,7 @@ The bench that matters most is the one we built to break the gate: <!-- claim:de
 | Telemetry heuristic | <!-- claim:deep.fresh.all.T.right_strict -->85<!-- /claim --> | <!-- claim:deep.fresh.all.T.wrong_any -->55<!-- /claim --> | <!-- claim:deep.fresh.all.T.abstained -->0<!-- /claim --> |
 
 The heuristic finds more causes, and it blames an innocent deploy in <!-- claim:deep.fresh.all.T.wrong_any -->55<!-- /claim --> worlds. Faultline finds fewer and blames nobody it cannot prove, so it hands the rest to a human. On <!-- claim:seeds.deep.cases -->420<!-- /claim --> more worlds from seeds generated for the first time in our numbers audit, the pattern held: <!-- claim:seeds.deep.right_cause -->136<!-- /claim --> right, <!-- claim:seeds.deep.wrong_confident -->0<!-- /claim --> confidently wrong. Two honest caveats:
-- **Not every abstention is clean.** In <!-- claim:deep.fresh.accepted_nc.bystander -->9<!-- /claim --> of the <!-- claim:deep.fresh.all.cases -->140<!-- /claim --> worlds the gate ended "not confident" while naming an innocent change as its suspect.
-- **On our hand-written scenarios, the gap is small.** A version of the heuristic that may also say "none" matched most of them; the graph earns its place where look-alikes are themselves anomalous. Where the look-alike has a fault of its own, removing `algo.maxFlow` takes the right answers from <!-- claim:decisive.full.g5_only.right_cause -->20<!-- /claim --> of <!-- claim:decisive.full.g5_only.cases -->20<!-- /claim --> to <!-- claim:decisive.no_maxflow.g5_only.right_cause -->0<!-- /claim -->.
+- **Where the look-alike has a fault of its own, the graph decides.** Removing `algo.maxFlow` takes the right answers from <!-- claim:decisive.full.g5_only.right_cause -->20<!-- /claim --> of <!-- claim:decisive.full.g5_only.cases -->20<!-- /claim --> to <!-- claim:decisive.no_maxflow.g5_only.right_cause -->0<!-- /claim -->.
 
 ## Then we broke a real system
 
@@ -120,11 +118,7 @@ Every bench above runs on our simulator, so we also ran a real system. We starte
 
 Faultline named the right cause in <!-- claim:otel.faultline.right_cause.k -->11<!-- /claim --> of <!-- claim:otel.faultline.right_cause.n -->20<!-- /claim --> fault windows and blamed a wrong change <!-- claim:otel.faultline.wrong.k -->0<!-- /claim --> times in <!-- claim:otel.faultline.wrong.n -->40<!-- /claim --> windows. A threshold on the same telemetry got <!-- claim:otel.Tplus.right_cause.k -->13<!-- /claim --> right and <!-- claim:otel.Tplus.wrong.k -->8<!-- /claim --> wrong; blaming the most recent change got <!-- claim:otel.N.right_cause.k -->17<!-- /claim --> right and <!-- claim:otel.N.wrong.k -->23<!-- /claim --> wrong, every control included. The same trade as in the simulator, on real services, and the graph did the rejecting: having no causal path (G2) removed <!-- claim:otel.gate.decoys.G2 -->73<!-- /claim --> of the <!-- claim:otel.gate.decoys -->120<!-- /claim --> decoys, including <!-- claim:otel.gate.tplus_wrong_picks.G2 -->5<!-- /claim --> of the threshold's <!-- claim:otel.gate.tplus_wrong_picks -->8<!-- /claim --> wrong picks. Not every abstention was clean: <!-- claim:otel.accepted_nc.bystander -->3<!-- /claim --> named an innocent change as a "not confident" suspect.
 
-The real system also found a bug the simulator never could. Healthy real services report exactly zero errors, which simulated noise never does, and our anomaly rule could not call a rise from zero anomalous, so the first window ended "no incident" while a service was failing. As registered, the product got <!-- claim:otel.faultline_prefix.right_cause.k -->0<!-- /claim --> causes right. We fixed the rule (it only makes "no incident" harder to accept) and report both versions. One fault that hangs instead of failing showed only as timeouts at the edge proxy; an error-rate-only product cannot place that, so it abstained while the heuristics blamed the innocent proxy decoy.
-
-## Where FalkorDB's own GraphRAG-SDK beat us
-
-Our company brain answers "who owns, knows and decided what" with templates over the graph. We put it against FalkorDB's GraphRAG-SDK on the same knowledge, with the SDK's default strategies and prompts and a small model (plus four disclosed changes, one of them the fix below), on a pre-registered blind question set. The SDK won: <!-- claim:graphrag.s2.sdk.correct -->32<!-- /claim --> of <!-- claim:graphrag.s2.questions -->40<!-- /claim --> against our <!-- claim:graphrag.s2.fl.correct -->24<!-- /claim -->, mostly on wordings our router sends to the wrong template. Ours answers in a median <!-- claim:graphrag.s2.fl.ms_p50 -->18.1<!-- /claim --> ms with no model; the SDK takes about <!-- claim:graphrag.s2.sdk.s_p50 -->3.09<!-- /claim --> s and a model call per answer. Getting the SDK running on the engine we pin needed the full-text index fix we sent upstream.
+The real system also found a bug the simulator never could. Healthy real services report exactly zero errors, which simulated noise never does, and our anomaly rule could not call a rise from zero anomalous, so the first window ended "no incident" while a service was failing. We fixed the rule; it only makes "no incident" harder to accept.
 
 ## On call, and learning from the people who use it
 
