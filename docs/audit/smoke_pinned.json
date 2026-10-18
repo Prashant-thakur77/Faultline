@@ -1,5 +1,5 @@
 {
-  "ran_at": "2026-10-18T08:47:20+0530",
+  "ran_at": "2026-10-18T13:07:21+0530",
   "results": [
     {
       "id": "1a",
@@ -110,7 +110,7 @@
       "item": "Per-query TIMEOUT on RO_QUERY cuts off a slow query",
       "critical": true,
       "ok": true,
-      "notes": "slow query cut off=True after 201 ms (ResponseError: Query timed out); timeout > TIMEOUT_MAX \u2192 ResponseError: The query TIMEOUT parameter value cannot exceed the TIMEOUT_MAX config",
+      "notes": "slow query cut off=True after 200 ms (ResponseError: Query timed out); timeout > TIMEOUT_MAX \u2192 ResponseError: The query TIMEOUT parameter value cannot exceed the TIMEOUT_MAX config",
       "syntax": "ro_query(q, params, timeout=ms) / GRAPH.RO_QUERY g q TIMEOUT ms"
     },
     {
@@ -174,7 +174,7 @@
       "item": "ACL read-only tenant user (RO allowed; QUERY and other tenant denied)",
       "critical": true,
       "ok": true,
-      "notes": "RO on own tenant \u2192 1; GRAPH.QUERY denied (NoPermissionError: User ro_smoke67fe has no permissions to ); other tenant denied (NoPermissionError: No permissions to access a key); GRAPH.LIST denied (NoPermissionError: User ro_smoke67fe has no permi)",
+      "notes": "RO on own tenant \u2192 1; GRAPH.QUERY denied (NoPermissionError: User ro_smokefe9e has no permissions to ); other tenant denied (NoPermissionError: No permissions to access a key); GRAPH.LIST denied (NoPermissionError: User ro_smokefe9e has no permi)",
       "syntax": "ACL SETUSER ro_<t> on >pw resetkeys -@all +GRAPH.RO_QUERY +GRAPH.EXPLAIN +PING +HELLO ~tenant_<t> ~scratch_<t>_*  (connect with falkordb.Graph(redis.Redis(...)); FalkorDB() needs INFO)"
     },
     {
@@ -182,7 +182,7 @@
       "item": "Concurrency: 16 claimers \u00d7 10 rounds \u2192 1 owner; RO reads during writes",
       "critical": true,
       "ok": true,
-      "notes": "10/10 rounds with exactly 1 owner; RO read p50=0.52 ms p95=2.14 ms over 116 reads",
+      "notes": "10/10 rounds with exactly 1 owner; RO read p50=0.28 ms p95=1.66 ms over 151 reads",
       "syntax": "W-CLAIM-1 conditional claim"
     },
     {
@@ -195,7 +195,7 @@
     },
     {
       "id": "25",
-      "item": "M20 MANDATORY/UNIQUE constraints on nodes and edges (+ GRAPH.COPY carries them)",
+      "item": "MANDATORY/UNIQUE constraints on nodes and edges (+ GRAPH.COPY carries them)",
       "critical": true,
       "ok": true,
       "notes": "3 constraints ['OPERATIONAL', 'OPERATIONAL', 'OPERATIONAL']; refused 4/4 (unique constraint violation on node of type Node; mandatory constraint violation: node with label Evidence missing prope; mandatory constraint violation: edge with relationship-type PROPAGATES; mandatory constraint violation: node with label Evidence missing prope); one bad row rolls the batch back: True; MERGE \u2026 ON CREATE SET passes; GRAPH.COPY carries 3 and enforces them: True",
@@ -203,7 +203,7 @@
     },
     {
       "id": "26",
-      "item": "M20 vector index HNSW options (M, efConstruction, efRuntime) + DROP + async build",
+      "item": "vector index HNSW options (M, efConstruction, efRuntime) + DROP + async build",
       "critical": true,
       "ok": true,
       "notes": "options read back {'dimension': 4, 'similarityFunction': 'cosine', 'M': 32, 'efConstruction': 400, 'efRuntime': 100}; build status seen ['OPERATIONAL', '[Indexing] 0/200: UNDER CONSTRUCTION']; DROP VECTOR INDEX removes it: True. Query-time map form ({label, \u2026, efRuntime}) is refused (positional args only).",
@@ -211,7 +211,7 @@
     },
     {
       "id": "27",
-      "item": "M20 avg / stDevP / percentileCont (the gate band in the engine)",
+      "item": "avg / stDevP / percentileCont (the gate band in the engine)",
       "critical": true,
       "ok": true,
       "notes": "nonzero n=4 avg=0.011975 stDevP=0.00165435032565657 (Python 0.0016543503256565707) p95=0.01417; aggregates skip CASE nulls; over no rows avg=None stDevP=0.0",
@@ -219,7 +219,7 @@
     },
     {
       "id": "28",
-      "item": "M20 temporal accessors for wall-clock rules (epoch ms \u2192 local time)",
+      "item": "temporal accessors for wall-clock rules (epoch ms \u2192 local time)",
       "critical": true,
       "ok": true,
       "notes": "Fri 17:05 IST \u2192 ['2026-10-16T17:05:00', 5, 5, 17, 5]; Sunday \u2192 dayOfWeek 0, weekDay 7 (openCypher: 7); duration({milliseconds: 90000}) \u2192 PT0S; localdatetime({epochMillis}) \u2192 1970-01-01T00:00:00 (both silent, U8)",
@@ -227,18 +227,18 @@
     },
     {
       "id": "29",
-      "item": "M20 engine catalogues: dbms.functions, telemetry{graph} stream, QUERY_MEM_CAPACITY",
+      "item": "engine catalogues: dbms.functions, telemetry{graph} stream, QUERY_MEM_CAPACITY",
       "critical": false,
       "ok": true,
-      "notes": "dbms.functions: 151 names, 41 UDFs (YIELD name, udf, aggregation); telemetry{graph} is a stream (entry visible after 0.05 s) with fields ['Execution duration', 'Query', 'Query parameters', 'Received at', 'Report duration', 'Timeout', 'Total duration', 'Utilized cache', 'Wait duration', 'Write']; QUERY_MEM_CAPACITY now 268435456 (set by configure_falkordb.py)",
+      "notes": "dbms.functions: 156 names, 46 UDFs (YIELD name, udf, aggregation); telemetry{graph} is a stream (entry visible after 0.05 s) with fields ['Execution duration', 'Query', 'Query parameters', 'Received at', 'Report duration', 'Timeout', 'Total duration', 'Utilized cache', 'Wait duration', 'Write']; QUERY_MEM_CAPACITY now 268435456 (set by configure_falkordb.py)",
       "syntax": "CALL dbms.functions() YIELD name, udf; XREVRANGE telemetry{<graph>} + - COUNT n; GRAPH.CONFIG SET QUERY_MEM_CAPACITY <bytes> (error: Query's mem consumption exceeded capacity)"
     },
     {
       "id": "30",
-      "item": "M20 WAITAOF after a write (durable before verified)",
+      "item": "WAITAOF after a write (durable before verified)",
       "critical": false,
       "ok": true,
-      "notes": "WAITAOF 1 0 3000 after a write on the same connection \u2192 [1, 0] in 989 ms (appendfsync everysec waits for the next fsync)",
+      "notes": "WAITAOF 1 0 3000 after a write on the same connection \u2192 [1, 0] in 946 ms (appendfsync everysec waits for the next fsync)",
       "syntax": "same connection: GRAPH.QUERY \u2026 then WAITAOF numlocal numreplicas timeout_ms \u2192 [local, replicas]"
     }
   ]

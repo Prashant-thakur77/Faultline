@@ -2,6 +2,20 @@
 
 All notable changes to Faultline. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### FalkorDB does the ranking, with our own UDF library
+- `deploy/udf/faultline-1.0.0.js`, loaded with `GRAPH.UDF LOAD` and pinned by sha256 like FLEX: the blast radius (`faultline.impact`), the notify list (`faultline.capImpact`, summed per team) and agent-note recall (`faultline.noteScore`) are scored and ordered inside FalkorDB, each in one read-only query. `faultline.round4` is Python's `round(x, 4)`, exact halves included, so engine and code agree on every number.
+- Entity search is one query: the full-text and vector branches are merged by the engine in a `CALL { … UNION ALL … }` subquery (the template lint now allows `UNION` only inside a subquery, under the template's own final `LIMIT`).
+- `evals/udf_equivalence.py` runs the previous Python code beside the engine on every node of both tenants: blast radius identical <!-- claim:udf.eq.blast.k -->7915<!-- /claim -->/<!-- claim:udf.eq.blast.n -->7915<!-- /claim -->, notify list <!-- claim:udf.eq.notify.k -->7915<!-- /claim -->/<!-- claim:udf.eq.notify.n -->7915<!-- /claim -->, search <!-- claim:udf.eq.find.k -->698<!-- /claim -->/<!-- claim:udf.eq.find.n -->698<!-- /claim --> (<!-- claim:udf.eq.texts -->349<!-- /claim --> texts × two tenants × five label filters in rotation). The live tests keep the check.
+
+### Shared agent notes (track T2)
+- `remember` and `recall_notes`: agents leave each other leads about components in `agentmem_<tenant>`, a `GRAPH.COPY` of the topology plus the notes, written only by a new `mem_<tenant>` ACL user whose one key is that graph. One atomic query checks the components, the reply target and a daily quota on the engine clock; one read-only query recalls notes by meaning and by hops from a component. Notes are never evidence. After a verified fix the API leaves a verdict note for the next agent. The public demo stays read-only.
+- Three new engine constraints on notes (UNIQUE id; MANDATORY author, kind, text, time, expiry; MANDATORY reply stance).
+
+### Docs
+- A glossary of the README's own terms; the T3 track-fit row leads with the blind result.
+
 ## [1.1.1] - 2026-10-18
 
 ### Use it
@@ -10,7 +24,7 @@ All notable changes to Faultline. The format follows [Keep a Changelog](https://
 
 ### Fixed
 - Stored evidence and tool-call payloads are always valid JSON: they were cut at a fixed length, which could end inside a string and break every later read of that run's plan.
-- The hosted MCP endpoint runs the current build (its image was not rebuilt by the deploy script); it serves <!-- claim:repo.mcp_tools_hosted -->51<!-- /claim --> tools.
+- The hosted MCP endpoint runs the current build (its image was not rebuilt by the deploy script); it served 51 tools at this release. <!-- noclaim: the count at 1.1.1, not the current one -->
 - The gate's G4 upstream checks record the exact parameters they ran with, so a replay re-runs them.
 
 ### Video

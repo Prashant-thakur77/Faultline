@@ -286,7 +286,7 @@ The graph answers "as of" questions from edge properties. There is no second sto
 | Edge or property | Meaning | Read by |
 |---|---|---|
 | `(:Team)-[:OWNED_AT {from, to}]->(component)` | Every ownership period. `to` is null for the current owner; `OWNS` mirrors the current owner. | `Q-OWN-AT` (`owner_at.cypher`), `Q-ASOF-1` (`beliefs_at.cypher`), `Q-KH-2`, `Q-PRE-2-ASOF` |
-| `(:Person)-[:ON_CALL {from, to}]->(:Team)` | The weekly rota, contiguous per team | `Q-ASOF-1`, `Q-NOTIFY-1`, `Q-CTX-1` |
+| `(:Person)-[:ON_CALL {from, to}]->(:Team)` | The weekly rota, contiguous per team | `Q-ASOF-1`, `Q-NOTIFY-2`, `Q-CTX-1` |
 | `(:Person)-[:MEMBER_OF {from, to}]->(:Team)` | Team membership over time; "active" at a past instant | `Q-ORG-BUS-ASOF` (`bus_factor_asof.cypher`) |
 | `(:Decision)-[:SUPERSEDES {at}]->(:Decision)` + `Decision.decided_at` | Decision chains. The head is the decision nothing supersedes; "in force at t" means decided by t and not yet superseded at t. | `Q-DEC-2` (`decision_head.cypher`), `Q-ASOF-1`, `Q-DEC-1` |
 | `Runbook.valid_from`, `Runbook.valid_to`, `Runbook.reviewed_at` | When a runbook took effect, was retired and was last reviewed | `Q-ASOF-1`, `Q-KH-1` |
@@ -311,7 +311,7 @@ All in [`schema.cypher`](../backend/faultline/graph/schema.cypher), except the c
   <!-- claim:vector.recall_at_10.tuned -->1.0<!-- /claim --> on every measured set (the default index:
   <!-- claim:vector.recall_at_10.default -->0.9767<!-- /claim -->). `writes.apply_schema` rebuilds an index whose options
   differ and waits until it is OPERATIONAL (an index built over existing nodes is asynchronous on 6.0.2).
-- **Engine-enforced constraints**: <!-- claim:repo.constraints -->15<!-- /claim --> `GRAPH.CONSTRAINT`s, declared in
+- **Engine-enforced constraints**: <!-- claim:repo.constraints -->18<!-- /claim --> `GRAPH.CONSTRAINT`s, declared in
   [`graph/constraints.py`](../backend/faultline/graph/constraints.py) and created by `writes.ensure_constraints` (called by
   `apply_schema`, so seed, every copy, the on-call home graph and the scale worlds get them; `GRAPH.COPY` carries them):
   - UNIQUE `Run.id`, `Intent.idem` (one run per id; one intent per idempotency key, which makes execute idempotent
@@ -340,7 +340,7 @@ The full mapping (relationship type → every template that reads it) is the "re
 | `PROPAGATES_TO` / `DEPENDS_ON` | G2, G5, G4 upstream, blast radius, min-cut, what-if, negative proof, residue | `Q-GATE-1`, `Q-GATE-3`, `Q-GATE-UPSTREAM`, `Q-BLAST-1`, `Q-CUT-1`, `Q-CUT-2`, `Q-WHATIF-1`, `Q-NEG-1`, `Q-RESIDUE-1` |
 | `CHANGED`, `GATES` | suspects in the window, path sources, levers | `Q-SUS-1`, `Q-SUS-2`, `Q-CHANGE-1`, `Q-GATE-1` |
 | `CALLS` | chokepoints (betweenness), the simulator's topology | `Q-CHOKE-1`, `Q-SIM-1` |
-| `OWNS`, `OWNED_AT`, `MEMBER_OF`, `ON_CALL`, `COMMITTED`, `AUTHORED`, `TOUCHES`, `PART_OF`, `RESOLVED`, `COLLABORATES`, `REPORTS_TO` | who fixes it (scratch projection for HarmonicCentrality), bus factor, escalation (MSF), notify set, owner at the time | `Q-ORG-1`, `Q-ORG-BUS`, `Q-ORG-MSF`, `Q-NOTIFY-1`, `Q-OWN-AT` |
+| `OWNS`, `OWNED_AT`, `MEMBER_OF`, `ON_CALL`, `COMMITTED`, `AUTHORED`, `TOUCHES`, `PART_OF`, `RESOLVED`, `COLLABORATES`, `REPORTS_TO` | who fixes it (scratch projection for HarmonicCentrality), bus factor, escalation (MSF), notify set, owner at the time | `Q-ORG-1`, `Q-ORG-BUS`, `Q-ORG-MSF`, `Q-NOTIFY-2`, `Q-OWN-AT` |
 | `CONSTRAINS`, `SUPERSEDES`, `CITES`, `PRODUCED` | G8 contradictions, decision heads and sources, forget dry run | `Q-DEC-1`, `Q-DEC-2`, `Q-DEC-3`, `Q-FORGET-1` |
 | `HAS_SYMPTOM`, `CAUSED`, `RESOLVED_BY`, `ATTEMPTED`, `DOCUMENTS`, `DERIVED_FROM`, `RUNBOOK_FOR` | recall, family prior, derived runbooks, learned remediation order | `Q-MEM-1`, `Q-MEM-3`, `Q-MEM-6`, `Q-MEM-8`, `Q-REM-1` |
 | `HAS_TOOL_CALL`, `SAW`, `PRODUCED_EVIDENCE`, `ABOUT` | G1 grounding, G4, G7, origin test, brain citation guard | `Q-GATE-G1`, `Q-GATE-4`, `Q-GATE-7`, `Q-GATE-ORIGIN`, `Q-CITE-1` |

@@ -1,0 +1,33 @@
+{
+  "at": "2026-10-18T07:36:58Z",
+  "udf": {
+    "flex": "e7e833ba87f8",
+    "faultline": "55cd126a097d"
+  },
+  "tenants": [
+    "acme",
+    "globex"
+  ],
+  "texts": 349,
+  "seconds": 35.4,
+  "blast": {
+    "k": 7915,
+    "n": 7915,
+    "first_diff": null
+  },
+  "notify": {
+    "k": 7915,
+    "n": 7915,
+    "first_diff": null
+  },
+  "find": {
+    "k": 698,
+    "n": 698,
+    "first_diff": null
+  },
+  "cut": {
+    "k": 198,
+    "n": 198,
+    "first_diff": null
+  }
+}

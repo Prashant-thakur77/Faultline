@@ -31,7 +31,7 @@
 | **The rule** | **No path, no claim.** A change is blamed only when `algo.SPpaths` returns a causal path from it to the symptom and `algo.maxFlow` shows it can carry the observed impact. Otherwise the agent abstains and hands the incident to a human. |
 | **What it does** | Blast radius (`algo.BFS`) → causal proof (`algo.SPpaths`, `algo.maxFlow`) → smallest containment (the max-flow min-cut, each option tried on its own `GRAPH.COPY`) → who should fix it (`algo.HarmonicCentrality`, escalation by `algo.MSF`) → pages the on-call → one human-approved action (a real pull request) → verifies it through a second channel (APPLIED, NOT_APPLIED or UNKNOWN) → writes the decision back. |
 | **Same graph, more jobs** | A pre-deploy gate that blocks risky PRs; a company brain ("who owns, knows and decided what", with cited node ids); standing approvals for repeat faults; learning from the people who use it; read-only MCP tools any agent can call. |
-| **FalkorDB depth** | The only database. <!-- claim:repo.algorithms -->10<!-- /claim --> `algo.*` procedures, each changing a decision; <!-- claim:repo.templates -->226<!-- /claim --> parameterised Cypher templates; one graph and one read-only ACL user per tenant; `GRAPH.COPY` clean rooms and what-if branches; vectors and full-text; <!-- claim:repo.constraints -->15<!-- /claim --> constraints; `WAITAOF` durability; the engine's own telemetry on a `/engine` page. |
+| **FalkorDB depth** | The only database. <!-- claim:repo.algorithms -->10<!-- /claim --> `algo.*` procedures, each changing a decision; <!-- claim:repo.templates -->232<!-- /claim --> parameterised Cypher templates; one graph and one read-only ACL user per tenant; `GRAPH.COPY` clean rooms and what-if branches; vectors and full-text; FLEX and our own UDF library ranking inside the engine; <!-- claim:repo.constraints -->18<!-- /claim --> constraints; `WAITAOF` durability; the engine's own telemetry on a `/engine` page. |
 | **Proven** | <!-- claim:seedsall.deep.wrong_confident -->0<!-- /claim --> confident wrong blames in <!-- claim:seedsall.deep.cases -->1540<!-- /claim --> adversarial worlds (a telemetry heuristic: <!-- claim:seedsall.deep.T.wrong_any -->620<!-- /claim -->; a strong LLM alone: <!-- claim:llm_deep.deep.all.wrong_confident -->37<!-- /claim --> of <!-- claim:deep.fresh.all.cases -->140<!-- /claim -->); on the real OpenTelemetry Demo, <!-- claim:otel.faultline.wrong.k -->0<!-- /claim --> wrong blames in <!-- claim:otel.faultline.wrong.n -->40<!-- /claim --> windows; without `algo.maxFlow` the right cause drops from <!-- claim:decisive.full.g5_only.right_cause -->20<!-- /claim -->/<!-- claim:decisive.full.g5_only.cases -->20<!-- /claim --> to <!-- claim:decisive.no_maxflow.g5_only.right_cause -->0<!-- /claim -->. The cost is recall, stated next to every number ([Proof at a glance](#proof-at-a-glance)). |
 | **Understand it in five minutes** | the [3D explainer](https://13-203-185-119.sslip.io/explainer) (nine scenes, each one FalkorDB call from the hero incident), [how one incident flows](#how-one-incident-flows), [the evidence gate](#the-evidence-gate) with its load-bearing query `Q-GATE-1`, the [architecture](#architecture) and the [query catalogue](#query-catalogue). |
 | **Run it** | Live: [13-203-185-119.sslip.io](https://13-203-185-119.sslip.io) (keyless; press Re-arm to reset). Your agent: `npx -y @prashantthakur77/faultline-mcp` (any MCP client). Your machine, Docker only: `docker compose -f quickstart.yml up` ([Use it](#use-it)). Every number: `make setup && make judge-check` prints PASS with no API key. |
@@ -158,17 +158,17 @@ Each track's own bullets, and where Faultline answers them: the feature, the cod
 | Track bullet | In Faultline | Code | Evidence |
 |---|---|---|---|
 | **T1** multi-hop reasoning | causes 1 to 4 hops upstream proven by `algo.SPpaths`; blast radius by `algo.BFS` | `agent/gate.py`, `templates/gate_path.cypher` | deep bench: <!-- claim:seedsall.deep.wrong_confident -->0<!-- /claim --> confident wrong blames in <!-- claim:seedsall.deep.cases -->1540<!-- /claim --> worlds |
-| **T1** graph queries and algorithms as agent tools | <!-- claim:repo.algorithms -->10<!-- /claim --> `algo.*` procedures and <!-- claim:repo.templates -->226<!-- /claim --> templates behind typed tools; every result carries its Cypher | `mcp_server/tools.py`, `graph/algo/registry.py` | without `algo.maxFlow`: <!-- claim:decisive.full.g5_only.right_cause -->20<!-- /claim -->/<!-- claim:decisive.full.g5_only.cases -->20<!-- /claim --> → <!-- claim:decisive.no_maxflow.g5_only.right_cause -->0<!-- /claim --> right |
-| **T1** tool selection through MCP | <!-- claim:repo.mcp_tools -->57<!-- /claim --> MCP tools (stdio), <!-- claim:repo.mcp_tools_hosted -->51<!-- /claim --> hosted over HTTP; an npm bridge for any client | `mcp_server/`, `packages/faultline-mcp` | [docs/MCP.md](docs/MCP.md) |
+| **T1** graph queries and algorithms as agent tools | <!-- claim:repo.algorithms -->10<!-- /claim --> `algo.*` procedures and <!-- claim:repo.templates -->232<!-- /claim --> templates behind typed tools; every result carries its Cypher | `mcp_server/tools.py`, `graph/algo/registry.py` | without `algo.maxFlow`: <!-- claim:decisive.full.g5_only.right_cause -->20<!-- /claim -->/<!-- claim:decisive.full.g5_only.cases -->20<!-- /claim --> → <!-- claim:decisive.no_maxflow.g5_only.right_cause -->0<!-- /claim --> right |
+| **T1** tool selection through MCP | <!-- claim:repo.mcp_tools -->59<!-- /claim --> MCP tools (stdio), <!-- claim:repo.mcp_tools_hosted -->52<!-- /claim --> hosted over HTTP; an npm bridge for any client | `mcp_server/`, `packages/faultline-mcp` | [docs/MCP.md](docs/MCP.md) |
 | **T1** actions based on what the graph shows | the min-cut containment, tried on a `GRAPH.COPY`; one approved action, verified APPLIED / NOT_APPLIED / UNKNOWN | `actions/act.py`, `templates/cut_flow.cypher` | live: verified APPLIED <!-- claim:live.hero.applied -->5<!-- /claim -->/<!-- claim:live.hero.n -->5<!-- /claim -->; real pull requests on faultline-demo-infra |
 | **T1** explainable results | the proof path, "why do you believe this" provenance, the Cypher behind every element | `agent/report.py`, `templates/run_provenance.cypher` | [See it](#see-it) |
 | **T2** episodic / semantic / procedural memory | past incidents recalled by vector + graph (episodic), decisions and runbooks (semantic), runbooks derived from verified fixes (procedural) | `memory/`, `templates/recall.cypher` | warm repeat recalls its precedent: <!-- claim:memory.warm_top_precedent_is_s1 -->True<!-- /claim -->; a learned link fixes the next incident <!-- claim:learning.i2_learned_correct -->24<!-- /claim -->/<!-- claim:learning.cases -->24<!-- /claim --> |
 | **T2** persistent conversation history | brain sessions and turns stored as `Session`/`Turn` nodes, read back on a separate read-only connection | `brain/ask.py`, `mcp_server/tools.py::session_history` | <!-- claim:t2.session.sessions -->2<!-- /claim --> sessions, <!-- claim:t2.session.turns -->4<!-- /claim --> turns read back |
-| **T2** shared state and hand-offs | the crew's tasks, claims and hand-offs are graph records; on-call hand-offs and shift reports | `agent/crew.py`, `actions/oncall.py` | [Crew board](#screens) |
+| **T2** shared state and hand-offs | the crew's tasks, claims and hand-offs are graph records; on-call hand-offs and shift reports; shared agent notes any agent writes (`remember`) and recalls by meaning and graph distance (`recall_notes`), in their own graph behind their own ACL user | `agent/crew.py`, `actions/oncall.py`, `memory/notes.py`, `templates/note_recall.cypher` | [Crew board](#screens) |
 | **T2** high-concurrency reads and writes | atomic conditional claims; one approval wins among many | `graph/writes.py` (`W-CLAIM-1`) | <!-- claim:s13.rounds_one_owner -->100<!-- /claim -->/<!-- claim:s13.rounds -->100<!-- /claim --> rounds with one owner, <!-- claim:s13.lost_updates -->0<!-- /claim --> lost updates; <!-- claim:contention.responders -->24<!-- /claim --> approvals → <!-- claim:contention.same.accepted -->1<!-- /claim --> accepted |
 | **T2** separate memory per user and tenant | one graph and one read-only ACL user per tenant; learning only from trusted people, forget with a receipt | `graph/tenant.py`, `memory/learning.py` | <!-- claim:tenants.n -->250<!-- /claim --> tenants, <!-- claim:tenants.acl.leaks -->0<!-- /claim --> leaks in <!-- claim:tenants.acl.cross.n -->1000<!-- /claim --> cross-tenant reads; forget leaves <!-- claim:learn.forget.events_left -->0<!-- /claim --> events |
 | **T3** docs, tickets and chats in one graph | ADRs, runbooks, postmortems, chats and issues ingested beside the topology and the people | `ingest/`, `data/gen/docs/` | [Graph model](#graph-model) |
-| **T3** who owns and who knows what | ownership over time, who worked on a component, bus factor | `templates/owner_at.cypher`, `templates/who_knows.cypher` | brain <!-- claim:brain.correct -->33<!-- /claim -->/<!-- claim:brain.questions -->33<!-- /claim --> on our questions |
+| **T3** who owns and who knows what | ownership over time, who worked on a component, bus factor | `templates/owner_at.cypher`, `templates/who_knows.cypher` | on blind questions (written by an agent that never saw the router): brain <!-- claim:graphrag.s2.fl.correct -->24<!-- /claim -->/<!-- claim:graphrag.s2.questions -->40<!-- /claim -->, FalkorDB's GraphRAG-SDK <!-- claim:graphrag.s2.sdk.correct -->32<!-- /claim -->/<!-- claim:graphrag.s2.questions -->40<!-- /claim -->, with <!-- claim:graphrag.s2.fl.answers_with_fabricated_ids -->0<!-- /claim --> answers citing an id it never read; <!-- claim:brain.correct -->33<!-- /claim -->/<!-- claim:brain.questions -->33<!-- /claim --> on our own development set |
 | **T3** tracing decisions to their source | `trace_decision`, `decisions_about`, supersession chains | `templates/decision_*.cypher` | preflight blocks a PR that contradicts recorded decisions |
 | **T3** keeping knowledge current | knowledge health, knowledge gaps from unanswered questions, forget with a receipt | `mcp_server/tools.py::knowledge_health`, `memory/forget.py` | [What it learned](#see-it) |
 | **T3** answers with clear sources | every name in an answer is a node id a query returned; unanswerable questions say so | `brain/ask.py` | <!-- claim:brain.unanswerable_honest -->6<!-- /claim -->/<!-- claim:brain.unanswerable -->6<!-- /claim --> unanswerable questions answered honestly; blind set <!-- claim:brain_blind.s2.hybrid.correct -->24<!-- /claim -->/40 |
@@ -197,6 +197,7 @@ Measured on the pinned engine (FalkorDB 6.0.2), in the terms FalkorDB uses for i
 - [What the judges asked for](#what-the-judges-asked-for)
 - [Track fit](#track-fit)
 - [Why FalkorDB, in numbers](#why-falkordb-in-numbers)
+- [Glossary](#glossary)
 - [Reproduce it](#reproduce-it)
 - [Why existing approaches fall short](#why-existing-approaches-fall-short)
 - [How one incident flows](#how-one-incident-flows)
@@ -220,6 +221,31 @@ Measured on the pinned engine (FalkorDB 6.0.2), in the terms FalkorDB uses for i
 - [What didn't work](#what-didnt-work)
 - [Existing system and what was built here](#existing-system-and-what-was-built-here)
 - [AI disclosure](#ai-disclosure)
+
+## Glossary
+
+The words this README uses that are ours, not FalkorDB's.
+
+| Term | Meaning |
+|---|---|
+| **Gate (G1 to G8)** | eight checks, all read-only FalkorDB queries, that a suspect must pass before it is blamed: seen, path, timing, origin, capacity, rivals, agreement, no contradicting decision ([the evidence gate](#the-evidence-gate)) |
+| **No path, no claim** | a change is blamed only if `algo.SPpaths` returns a causal path from it to the failing component |
+| **Capacity check (G5)** | `algo.maxFlow` over the `PROPAGATES_TO.cap` edges must be able to carry the impact that was observed, or the suspect is ruled out |
+| **cap / row share** | the capacity on an edge: on service edges, how much of the caller depends on it; on data-lineage edges, the share of rows that flows end to end, measured in the warehouse |
+| **Blast radius** | everything a failure can reach (`algo.BFS`), ranked by impact inside the engine |
+| **Min-cut / containment** | the smallest set of edges whose removal stops the failure reaching what matters, read from the same max-flow result and tried first on a `GRAPH.COPY` |
+| **Abstain / not confident** | the agent names no cause and hands over to a human; "not confident" may still name a suspect, which is never acted on |
+| **Decoy** | an innocent change shipped in the same window as the real one, there to tempt a guess |
+| **Bystander** | an innocent changed component that a run left as a "not confident" suspect when an unchanged component above it broke |
+| **Clean room** | a fresh `GRAPH.COPY` of a golden graph that one eval run uses and deletes; `golden_<tenant>` is the read-only original |
+| **What-if branch** | a `GRAPH.COPY` where a containment option is applied, to check it before anyone touches the real system |
+| **APPLIED / NOT_APPLIED / UNKNOWN** | the verdict of the second-channel check after an action; UNKNOWN goes to a human and never counts as success |
+| **Write-back** | the decision, its evidence and the precedent written back into the graph in one query (`W_WB_1`), then re-read on a separate read-only connection |
+| **Warm** | a later incident recalls a past one by meaning and graph neighbourhood and shows its precedent; memory informs, the gate still decides |
+| **Arms (N, V, T, A2, A3, A3-noG5, A4)** | the baselines and ablations in the evals: naive recency, vector only, telemetry only, graph without memory, the product, the product without the capacity check, FalkorDB turned off |
+| **T+** | thresholded telemetry: blame the change on the most anomalous component; the strongest non-graph baseline |
+| **Scenarios S1 to S13** | the scripted incidents; S1 is the hero, S4D and S4S are controls with no incident, S12 must abstain |
+| **Ladder** | the same bench run with the graph checks weakened or removed step by step, to show which FalkorDB call each right answer depends on |
 
 ## Reproduce it
 
@@ -262,7 +288,7 @@ The first returns `[payment, checkout]`. With `targetNode` `kpi.exec_revenue` th
 | You are checking… | Look here |
 |---|---|
 | Is FalkorDB load-bearing, or decoration? | [the evidence gate](#the-evidence-gate) · [every algorithm perturbed, the decision flips](#the-graph-is-load-bearing) · the Break it page · arm A4 (FalkorDB off: confirms nothing) |
-| How deep is the FalkorDB use? | [feature map](#falkordb-feature-map): <!-- claim:repo.algorithms -->10<!-- /claim --> `algo.*` procedures, `GRAPH.COPY` branches, vectors, full-text, FLEX UDFs, per-tenant ACL users, versioned topology · [query catalogue](docs/QUERY_CATALOGUE.md) |
+| How deep is the FalkorDB use? | [feature map](#falkordb-feature-map): <!-- claim:repo.algorithms -->10<!-- /claim --> `algo.*` procedures, `GRAPH.COPY` branches, vectors, full-text, FLEX and our own UDFs, per-tenant ACL users, versioned topology · [query catalogue](docs/QUERY_CATALOGUE.md) |
 | Does the agent act, safely? | two-step approval bound to a plan hash, three-valued verification, kill -9 chaos, write-back re-read: [Safety](#safety) · [`examples/s1-hero/`](examples/s1-hero/) |
 | Does it learn? | a verified fix teaches the graph a missing link, and the next incident is proved: [Results](#results) · [docs/EVALS.md](docs/EVALS.md) |
 | Are the numbers honest? | pre-registration, new never-generated seeds, 95 % intervals with N, structural zeros labelled, a wrong-graph eval, telemetry baselines that win on some worlds, mutants: [Results](#results) · [What didn't work](#what-didnt-work) · [docs/HONEST_LIMITS.md](docs/HONEST_LIMITS.md) |
@@ -318,7 +344,7 @@ The hero scenario S1: checkout and frontend error rates jump. Three changes land
 | 5 | Path | `D-rec-12` has no path to checkout: rejected | `algo.SPpaths` (`Q-GATE-1`) | `gate_path.cypher` |
 | 6 | Flow | `D-email-88` has a path, but its max flow <!-- claim:s1.D-email-88.max_flow -->0.02<!-- /claim --> is below the <!-- claim:s1.D-email-88.needed -->0.2433<!-- /claim --> needed: rejected | joint `algo.maxFlow` × path multiplicity (`Q-GATE-3`, `Q-GATE-MULT`) | `gate_flow.cypher`, `gate_multiplicity.cypher` |
 | 7 | Proof | `D-pay-417` passes G1–G7; G8 attaches the ADR-012 and ADR-013 it contradicts; one `GateRun` per verdict | eight read-only checks | `agent/gate.py`, `decision_contradiction.cypher` |
-| 8 | Cut | Is a cut needed, what is the smallest one, and what happens under each option | `algo.WCC`; `algo.maxFlow` with `edgeFlows` → min-cut in code; one `GRAPH.COPY` branch per candidate (`Q-FUTURE-1`) | `connectivity.cypher`, `cut_flow.cypher`, `graph/algo/maxflow.py`, `futures.cypher` |
+| 8 | Cut | Is a cut needed, what is the smallest one, and what happens under each option | `algo.WCC`; `algo.maxFlow` with `edgeFlows` → min-cut in the same query; one `GRAPH.COPY` branch per candidate (`Q-FUTURE-1`) | `connectivity.cypher`, `cut_flow.cypher`, `graph/algo/maxflow.py`, `futures.cypher` |
 | 9 | Route | Who fixes it, who is looped in, who to notify | `algo.HarmonicCentrality`, `algo.MSF` on scratch projections | `harmonic.cypher`, `msf.cypher`, `mcp_server/tools.py` |
 | 10 | Approve | Choosing an option renders the exact action and its plan hash; approval must quote the hash and moves the incident to EXECUTE in the same query | single-query writes `W_CHOOSE`, `W_APPROVE` | `actions/act.py`, `graph/writes.py` |
 | 11 | Act and verify | A PR flips the `paymentGate` flag; GitHub main is re-read and telemetry is checked for every symptom → APPLIED | intent → execute → reconcile, idempotency key under a unique constraint | `actions/act.py`, `actions/github.py`, `actions/reconcile.py` |
@@ -548,7 +574,7 @@ Every feature below is called from the listed file. Template paths are under `ba
 | Feature | Used for | File |
 |---|---|---|
 | `algo.SPpaths` / `algo.SSpaths` | G2 proof path, path multiplicity / upstream scope, suspects, no-incident negative proof | `gate_path.cypher`, `gate_multiplicity.cypher`, `upstream_scope.cypher`, `upstream_suspects.cypher`, `neg_proof.cypher` |
-| `algo.maxFlow` (+ `edgeFlows`) | G5 sufficiency; containment min-cut computed from the flows; preflight | `gate_flow.cypher`, `cut_flow.cypher`, `preflight_flow.cypher`, `graph/algo/maxflow.py` |
+| `algo.maxFlow` (+ `edgeFlows`) | G5 sufficiency; containment min-cut, computed in the same query from the flows (residual reachability as a list fixpoint in Cypher); preflight | `gate_flow.cypher`, `cut_in_engine.cypher`, `preflight_flow.cypher` |
 | `algo.BFS`, `algo.WCC` | blast radius, protected set, preflight impact, alert-storm grouping, what-if on a branch | `blast_radius.cypher`, `protect_set.cypher`, `preflight_impact.cypher`, `storm_wcc.cypher`, `connectivity.cypher`, `whatif_*.cypher` |
 | `algo.betweenness`, `algo.pageRank` | chokepoints, preflight risk, node size; investigation order | `chokepoints.cypher`, `betweenness_all.cypher`, `rank_causes.cypher` |
 | `algo.HarmonicCentrality`, `algo.MSF` | who fixes it, escalation tree (scratch projections; the projection's pairs, reasons and tie weights are Cypher too) | `harmonic.cypher`, `msf.cypher`, `who_knows.cypher`, `who_reasons.cypher`, `collab_weights.cypher` |
@@ -558,10 +584,11 @@ Every feature below is called from the listed file. Template paths are under `ba
 | `GRAPH.COPY` | golden → tenant and eval clean rooms, what-if branches, one futures branch per containment candidate, the Break it twin, as-of branches for the backtest, Re-arm | `graph/copy.py`, `futures.cypher`, `playground.py` |
 | `GRAPH.RO_QUERY` + `TIMEOUT` + ACL users | every read | `graph/ro.py`, `deploy/users.acl.template` |
 | `GRAPH.EXPLAIN` / `GRAPH.PROFILE` | text2cypher plan check / the UI Cypher panel | `graph/guard.py`, `graph/ro.py` |
-| `GRAPH.CONSTRAINT` MANDATORY / UNIQUE on nodes and edges | <!-- claim:repo.constraints -->15<!-- /claim --> engine-enforced invariants on every golden, tenant, on-call and clean-room graph (`GRAPH.COPY` carries them): evidence provenance, a page's deadline, an approval's plan hash, `PROPAGATES_TO.cap`, every node's id, unique run and intent ids. FalkorDB refuses the violating write | [`graph/constraints.py`](backend/faultline/graph/constraints.py), `graph/writes.py`, `tests/live/test_constraints.py` |
+| `GRAPH.CONSTRAINT` MANDATORY / UNIQUE on nodes and edges | <!-- claim:repo.constraints -->18<!-- /claim --> engine-enforced invariants on every golden, tenant, on-call and clean-room graph (`GRAPH.COPY` carries them): evidence provenance, a page's deadline, an approval's plan hash, `PROPAGATES_TO.cap`, every node's id, unique run and intent ids. FalkorDB refuses the violating write | [`graph/constraints.py`](backend/faultline/graph/constraints.py), `graph/writes.py`, `tests/live/test_constraints.py` |
 | UDFs (`GRAPH.UDF LOAD`, FalkorDB FLEX, pinned by sha) | fuzzy entity resolution (`flex.text.jaroWinkler`), co-failure coupling strength (`flex.sim.jaccard`) | `find_fuzzy.cypher`, `hidden_coupling.cypher`, `graph/udf.py` |
-| Many graphs on one instance | `tenant_*`, `golden_*`, `golden_*_nomem` (memory-off arm), `audit_*` (append-only receipts), `eval_*`, `scratch_*`, `whatif_*` | `graph/tenant.py` |
-| Redis ACL users per tenant | `ro_<tenant>` may only `GRAPH.RO_QUERY`/`EXPLAIN` its own keys (S7 checks NOPERM) | `deploy/users.acl.template`, `tests/isolation/` |
+| Our own UDF library (`faultline.*`, `GRAPH.UDF LOAD`, pinned by sha) | ranking inside the engine: the blast radius is scored by `faultline.impact` (tier weight × 1/(1+hops) × traffic), the notify list sums `faultline.capImpact` per owning team, shared agent notes are ranked by `faultline.noteScore`, and entity search merges its full-text and vector branches in one `CALL { … UNION ALL … }` query. Each tool is one read-only query whose rows come back already ordered. Against the previous Python code on every node of both tenants: blast radius identical <!-- claim:udf.eq.blast.k -->7915<!-- /claim -->/<!-- claim:udf.eq.blast.n -->7915<!-- /claim -->, notify list <!-- claim:udf.eq.notify.k -->7915<!-- /claim -->/<!-- claim:udf.eq.notify.n -->7915<!-- /claim -->, search <!-- claim:udf.eq.find.k -->698<!-- /claim -->/<!-- claim:udf.eq.find.n -->698<!-- /claim --> (`evals/udf_equivalence.py`); `faultline.round4` is Python's `round(x, 4)`, exact halves included | `deploy/udf/faultline-1.0.0.js`, `blast_radius_ranked.cypher`, `notify_set_ranked.cypher`, `find_hybrid.cypher`, `note_recall.cypher`, `evals/udf_equivalence.py` |
+| Many graphs on one instance | `tenant_*`, `golden_*`, `golden_*_nomem` (memory-off arm), `audit_*` (append-only receipts), `oncall_*`, `agentmem_*` (shared agent notes), `eval_*`, `scratch_*`, `whatif_*` | `graph/tenant.py` |
+| Redis ACL users per tenant | `ro_<tenant>` may only `GRAPH.RO_QUERY`/`EXPLAIN` its own keys (S7 checks NOPERM); `mem_<tenant>` may write one key, `agentmem_<tenant>`, and nothing else (shared agent notes) | `deploy/users.acl.template`, `tests/isolation/` |
 | `GRAPH.CONFIG` runtime limits | `TIMEOUT_MAX`, `TIMEOUT_DEFAULT`, `RESULTSET_SIZE`, `MAX_QUEUED_QUERIES` and the per-query memory cap `QUERY_MEM_CAPACITY` (256 MB: a runaway query, from any client including the official MCP server, is stopped by the engine and the engine stays up) applied and verified at seed | `scripts/configure_falkordb.py`, `deploy/docker-compose.yml`, `tests/live/test_mem_cap.py` |
 | `avg` / `stDevP` / `percentileCont` aggregates | the gate's anomaly band, computed in the engine (same verdicts as before: the gate bench reproduces its recorded run) | `baseline_band.cypher`, `metric_window_band.cypher`, `agent/datatools.py`, `tests/live/test_band_in_engine.py` |
 | Temporal values (`localdatetime`, `duration`, `.dayOfWeek`, `.hour`) | change-freeze windows in the pre-deploy gate: FalkorDB turns the merge time into the policy's local wall clock and holds a PR inside "no payment changes Friday 16:00 to Monday 09:00" | `preflight_freeze.cypher`, `data/gen/policies/acme.yaml`, `preflight/score.py` |
@@ -678,7 +705,7 @@ Headline results (method for each line: [docs/EVALS.md](docs/EVALS.md)):
 | Pre-deploy gate on the same graph | a PR is scored from BFS impact, betweenness, past incidents, contradicted decisions, bus factor and missing guardrails | S6 → <!-- claim:s6.verdict -->block<!-- /claim --> (risk <!-- claim:s6.risk -->0.8<!-- /claim -->); [`deploy/github-action/`](deploy/github-action/faultline-preflight.yml) |
 | Company brain on the same graph | as-of answers about owners, decisions and on-call; every cited id must have been returned by that question's own queries | <!-- claim:brain.correct -->33<!-- /claim -->/<!-- claim:brain.questions -->33<!-- /claim --> on our wording, <!-- claim:brain_para.correct -->30<!-- /claim -->/<!-- claim:brain_para.questions -->33<!-- /claim --> reworded (the development set, not blind); <!-- claim:brain_blind.s2.hybrid.correct -->24<!-- /claim -->/<!-- claim:brain_blind.s2.hybrid.questions -->40<!-- /claim --> on a blind set; `Q-CITE-1` |
 | Per-tenant isolation | one graph and one ACL user per tenant; the hosted MCP binds a key to one tenant | S7 isolation checks: <!-- claim:s7.passed -->34<!-- /claim --> passed, <!-- claim:s7.failed -->0<!-- /claim --> failed |
-| MCP for any agent | the agent's own read-only tools, each returning the Cypher, params, timing and a row digest | <!-- claim:repo.mcp_tools -->57<!-- /claim --> tools, <!-- claim:repo.mcp_tools_hosted -->51<!-- /claim --> of them exposed over Streamable HTTP; [docs/MCP.md](docs/MCP.md) |
+| MCP for any agent | the agent's own read-only tools, each returning the Cypher, params, timing and a row digest | <!-- claim:repo.mcp_tools -->59<!-- /claim --> tools, <!-- claim:repo.mcp_tools_hosted -->52<!-- /claim --> of them exposed over Streamable HTTP; [docs/MCP.md](docs/MCP.md) |
 
 ## Context for any agent
 
@@ -697,9 +724,10 @@ Vector search finds the entry points; FalkorDB walks from them to the changes up
 ## Memory, company brain, preflight, coordination
 
 - **Memory** recalls precedents by vector, then confirms them structurally; it reorders and never decides (gate verdicts identical cold vs warm: <!-- claim:memory.gate_verdicts_identical -->True<!-- /claim -->).
-- **Company brain** answers who owns, knows and decided, and what was true *as of* a date or incident, citing only node ids its own queries returned (<!-- claim:brain.correct -->33<!-- /claim -->/<!-- claim:brain.questions -->33<!-- /claim --> on our question set; <!-- claim:brain_para.correct -->30<!-- /claim -->/<!-- claim:brain_para.questions -->33<!-- /claim --> when each question is reworded, on the development set its router was built on). On a blind set it loses to FalkorDB's own GraphRAG-SDK (its default strategies and prompts on claude-haiku-4-5, four disclosed changes: a local embedder, the full-text DDL fix sent upstream as #345, one shared extractor, longer retries; its own FalkorDB graph over the same knowledge): <!-- claim:graphrag.s2.sdk.correct -->32<!-- /claim -->/<!-- claim:graphrag.s2.questions -->40<!-- /claim --> against the brain's <!-- claim:graphrag.s2.fl.correct -->24<!-- /claim -->/40 (paired p <!-- claim:graphrag.s2.paired.mcnemar_p -->0.12<!-- /claim -->), at US$<!-- claim:graphrag.s2.sdk.usd_per_question -->0.009<!-- /claim --> and <!-- claim:graphrag.s2.sdk.s_p50 -->3.1<!-- /claim --> s per answer ([evals](docs/EVALS.md#company-brain-vs-falkordbs-graphrag-sdk-pre-registered-2026-10-17)).
+- **Company brain** answers who owns, knows and decided, and what was true *as of* a date or incident, citing only node ids its own queries returned (<!-- claim:brain.correct -->33<!-- /claim -->/<!-- claim:brain.questions -->33<!-- /claim --> on our question set; <!-- claim:brain_para.correct -->30<!-- /claim -->/<!-- claim:brain_para.questions -->33<!-- /claim --> when each question is reworded, on the development set its router was built on). On a blind set it loses to FalkorDB's own GraphRAG-SDK (its default strategies and prompts on claude-haiku-4-5, four disclosed changes: a local embedder, the full-text DDL fix sent upstream as #345, one shared extractor, longer retries; its own FalkorDB graph over the same knowledge): <!-- claim:graphrag.s2.sdk.correct -->32<!-- /claim -->/<!-- claim:graphrag.s2.questions -->40<!-- /claim --> against the brain's <!-- claim:graphrag.s2.fl.correct -->24<!-- /claim -->/40 (paired p <!-- claim:graphrag.s2.paired.mcnemar_p -->0.12<!-- /claim -->), at US$<!-- claim:graphrag.s2.sdk.usd_per_question -->0.009<!-- /claim --> and <!-- claim:graphrag.s2.sdk.s_p50 -->3.09<!-- /claim --> s per answer ([evals](docs/EVALS.md#company-brain-vs-falkordbs-graphrag-sdk-pre-registered-2026-10-17)).
 - **Preflight** blocks a risky PR from the same graph (S6 → <!-- claim:s6.verdict -->block<!-- /claim -->).
 - **Coordination** uses atomic claims in one query (<!-- claim:s13.lost_updates -->0<!-- /claim --> lost updates under contention).
+- **Shared agent notes** let agents leave leads for each other in FalkorDB: `remember` writes one note in one atomic query (components exist, reply target exists, daily quota on the engine clock) to `agentmem_<tenant>`, a `GRAPH.COPY` of the topology that only the `mem_<tenant>` ACL user may write; `recall_notes` finds notes by meaning (`vecf32` index) and by hops from a component in one read-only query, ranked inside the engine. A note is a lead, never evidence.
 
 <details><summary>Show memory, the company brain, preflight and coordination in detail</summary>
 
@@ -725,6 +753,30 @@ The same answer drawn as a graph (who decided, the decisions, what they constrai
 - **Measured on S1b**, a repeat payment regression in the same graph after S1 was resolved: the warm run's top precedent is S1 (<!-- claim:memory.warm_top_precedent_is_s1 -->True<!-- /claim -->), the derived runbook comes first (<!-- claim:memory.derived_runbook_first -->True<!-- /claim -->), the family prior rises from <!-- claim:memory.cold_prior -->0.7681<!-- /claim --> to <!-- claim:memory.warm_prior -->0.8423<!-- /claim -->, and gate verdicts stay identical (<!-- claim:memory.gate_verdicts_identical -->True<!-- /claim -->).
 - **Forget with a receipt (S10).** A dry run lists exactly what one document alone produced. Execution then requires a token bound to that exact set, and a `ForgetReceipt` is written to `audit_<tenant>`. Proof follows: the forgotten vectors no longer come back from the index, and re-asking the question no longer cites the forgotten decision.
 
+**Shared agent notes (T2: memory and coordination across agents).** Faultline's own runs and any MCP client share one
+memory in FalkorDB, with the engine, not our code, keeping it apart from the graph the gate reads.
+- **Where.** `agentmem_<tenant>` is made once as a `GRAPH.COPY` of the tenant's golden topology, so a note can point at
+  real components: `(:Author)-[:WROTE]->(:Note)-[:ABOUT]->(component)`, and `(:Note)-[:REPLY_TO {stance}]->(:Note)` when an
+  agent confirms, refutes or adds to another's note. The note text carries a `vecf32` embedding (HNSW index) and a full-text
+  index; `Note.id` is UNIQUE and author, kind, text, time and expiry are MANDATORY (engine constraints).
+- **Who may write.** Only the `mem_<tenant>` ACL user, whose one key is `agentmem_<tenant>`: FalkorDB answers NOPERM to
+  that user on the tenant graph, the golden graph, another tenant's notes, `GRAPH.DELETE`, `GRAPH.COPY`, `GRAPH.CONFIG` and
+  `GRAPH.LIST` (`tests/isolation/test_mem_acl.py`, run with real ACL users in `make judge-check`). The read-only user
+  may read the notes and cannot write them.
+- **Write (`remember`, W-NOTE-1).** One query checks that every `about` id is a component, that the reply target exists
+  and that the author is under its daily quota on the engine clock, then writes the note, its edges and its embedding.
+  Sixteen concurrent writers against a quota of five leave exactly five notes (`tests/live/test_notes_live.py`). A
+  refused write says why, read back from the graph (Q-NOTE-REFUSED).
+- **Recall (`recall_notes`, Q-NOTE-RECALL).** One read-only query unions two routes inside `CALL { … UNION ALL … }`:
+  notes whose text is near the question (`db.idx.vector.queryNodes`) and notes about the component asked about or a
+  component within two `PROPAGATES_TO` hops of it. The engine ranks them with our UDF `faultline.noteScore`
+  (similarity, nearness, freshness; weights in `weights.yaml`), drops expired notes and returns each note's components
+  and replies. A vector store alone cannot rank "about a neighbour of checkout"; here it is one query.
+- **Never evidence.** The template has no `seen` column, so nothing in a note can satisfy G1, and the gate never reads
+  `agentmem_<tenant>`. After a verified fix the API leaves a `verdict` note (cause, fix, second-channel verdict) for the
+  next agent. The public demo's MCP server stays read-only (`recall_notes` only); a self-hosted server opts in to
+  `remember` with `FAULTLINE_MCP_NOTES=true`, and the stdio server always has it.
+
 **Company brain (T3).** Tier-1 seeds (id, full-text) → tier-2 templates → tier-3 guarded text2cypher (last resort, LLM mode). Every `[id]` in an answer must have been *seen* by a tool call of that question's own run, and a read-only query decides (`Q-CITE-1`). On-camera questions:
 - "Who has worked on payment?"
 - "What did we decide about payment timeouts, and is it still current?" (SUPERSEDES head)
@@ -746,7 +798,7 @@ Session turns persist in `(:Session)-[:HAS_TURN]->(:Turn)`, so a follow-up in a 
 
 **Inside the incident.** After the gate decides, the run also reports four things, each a template:
 - **Why the alerts missed it.** For every hop of the proven chain: did an alert fire, and when (Q-CHAIN-MON)?
-- **Who to notify** (Q-NOTIFY-1). These are the teams owning anything in the blast radius, plus who is on call for them now, which is different from who fixes it.
+- **Who to notify** (Q-NOTIFY-2). These are the teams owning anything in the blast radius, plus who is on call for them now, which is different from who fixes it. One query ranks them inside the engine by summed impact (`faultline.capImpact`).
 - **Who owned the changed component when the change shipped** (Q-OWN-AT).
 - **What the confirmed cause does not explain.** Anomalies measured this run that are not downstream of it (Q-RESIDUE-1, advisory). On the hero S1, the small recommendation error spike from the same-minute decoy deploy is reported as "another fault may be active", not hidden.
 
@@ -893,7 +945,7 @@ All captured from the running product against the real backend (`frontend/script
 
 ## Query catalogue
 
-<!-- claim:repo.templates -->226<!-- /claim --> parameterised templates, one `.cypher` file per query id, linted for `LIMIT`, `ORDER BY`, bounded paths, a `CALL` allowlist and no writes. Cypher is never built from inputs. The full list with purposes and PROFILE timings: [docs/QUERY_CATALOGUE.md](docs/QUERY_CATALOGUE.md). Three of them, as stored:
+<!-- claim:repo.templates -->232<!-- /claim --> parameterised templates, one `.cypher` file per query id, linted for `LIMIT`, `ORDER BY`, bounded paths, a `CALL` allowlist and no writes. Cypher is never built from inputs. The full list with purposes and PROFILE timings: [docs/QUERY_CATALOGUE.md](docs/QUERY_CATALOGUE.md). Three of them, as stored:
 
 <details><summary>Show the query catalogue</summary>
 
@@ -911,16 +963,44 @@ RETURN maxFlow AS max_flow, size(srcs) AS sources
 LIMIT 1
 ```
 
-Containment, max flow over `cut_cost` with edge flows; the min-cut is computed from them in [`graph/algo/maxflow.py`](backend/faultline/graph/algo/maxflow.py) ([`cut_flow.cypher`](backend/faultline/graph/templates/cut_flow.cypher)):
+Containment in one read-only query: `algo.maxFlow` over `cut_cost`, then the min-cut inside FalkorDB. The residual graph's reachability from the failing component is a fixpoint over a list of residual arcs (a `reduce` inside a `reduce`), and the cut is the edges that leave it. The code only checks that the cut's capacity equals the max-flow and that no protected node is left on the source side; [`graph/algo/maxflow.py`](backend/faultline/graph/algo/maxflow.py) is the test oracle (identical on <!-- claim:udf.eq.cut.k -->198<!-- /claim -->/<!-- claim:udf.eq.cut.n -->198<!-- /claim --> components, `evals/udf_equivalence.py`) ([`cut_in_engine.cypher`](backend/faultline/graph/templates/cut_in_engine.cypher)):
 
 ```cypher
-// id: Q-CUT-1
+// id: Q-CUT-3
 MATCH (f:Node {id:$failing})
 MATCH (p:Node) WHERE p.id IN $protect
-WITH f, collect(p) AS prot
+WITH f, collect(p.id) AS prot
 WHERE size(prot) > 0
-CALL {algo:maxflow}({sourceNodes: [f], targetNodes: prot, relationshipTypes: ['PROPAGATES_TO'], capacityProperty: 'cut_cost'}) YIELD edges, edgeFlows, maxFlow
-RETURN [e IN edges | [startNode(e).id, endNode(e).id]] AS flow_edges, edgeFlows AS flows, maxFlow AS max_flow
+CALL {
+  WITH f
+  CALL {algo:sspaths}({sourceNode: f, relTypes: ['PROPAGATES_TO'], weightProp: 'w', relDirection: 'outgoing', maxLen: 8, pathCount: 1000}) YIELD path
+  WITH f, collect(DISTINCT last(nodes(path))) + [f] AS region
+  UNWIND region AS a
+  MATCH (a)-[r:PROPAGATES_TO]->(b)
+  WHERE b IN region
+  WITH a, r, b ORDER BY a.id, b.id
+  RETURN collect({rid: id(r), u: a.id, v: b.id, cost: coalesce(r.cut_cost, 0), domain: r.domain}) AS cand
+}
+MATCH (t:Node) WHERE t.id IN prot
+WITH f, prot, cand, collect(t) AS targets
+CALL {algo:maxflow}({sourceNodes: [f], targetNodes: targets, relationshipTypes: ['PROPAGATES_TO'], capacityProperty: 'cut_cost'}) YIELD edges, edgeFlows, maxFlow
+WITH f, prot, cand, maxFlow,
+     [i IN range(0, size(edges) - 1) | {rid: id(edges[i]), u: startNode(edges[i]).id, v: endNode(edges[i]).id, flow: edgeFlows[i]}] AS fe
+WITH f, prot, cand, maxFlow, fe,
+     [c IN cand | {u: c.u, v: c.v, cost: c.cost, domain: c.domain,
+                   flow: coalesce(head([x IN fe WHERE x.rid = c.rid | x.flow]), 0)}] AS arcs
+WITH f, prot, cand, maxFlow, fe, arcs,
+     [a IN arcs WHERE a.cost - a.flow > 1e-9 | [a.u, a.v]] + [a IN arcs WHERE a.flow > 1e-9 | [a.v, a.u]] AS residual
+WITH f, prot, cand, maxFlow, fe, arcs,
+     reduce(s = [f.id], i IN range(0, size(arcs)) | s + reduce(add = [], x IN residual |
+            CASE WHEN x[0] IN s AND NOT x[1] IN s AND NOT x[1] IN add THEN add + [x[1]] ELSE add END)) AS reach
+WITH f, prot, cand, maxFlow, fe, arcs, CASE WHEN maxFlow <= 1e-9 THEN [f.id] ELSE reach END AS side
+WITH prot, cand, maxFlow, fe, side,
+     [a IN arcs WHERE maxFlow > 1e-9 AND a.u IN side AND NOT a.v IN side AND a.cost > 1e-9 |
+      {u: a.u, v: a.v, cut_cost: a.cost, domain: a.domain}] AS cut
+RETURN cut, reduce(total = 0, c IN cut | total + c.cut_cost) AS cut_total, maxFlow AS max_flow, side AS source_side,
+       [x IN prot WHERE x IN side] AS protected_on_source_side, size(cand) AS candidates,
+       [e IN fe | [e.u, e.v]] AS flow_edges
 LIMIT 1
 ```
 

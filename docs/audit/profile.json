@@ -1,186 +1,314 @@
 {
   "engine": "6.0.2",
   "digest": "sha256:107455e862a824e45e8e9f5a7fbfdf5e00a08b14e13eae2577c72fd9e3f59ba6",
-  "runs_per_template": 5,
+  "runs_per_template": 20,
   "templates": {
-    "Q-BLAST-1": {
+    "Q-BLAST-3": {
       "scenario": "S1",
-      "runs": 5,
+      "runs": 20,
       "rows": 5,
-      "engine_ms_p50": 0.094,
-      "wall_ms_p50": 0.273
+      "engine_ms_p50": 0.194,
+      "engine_ms_p95": 1.139,
+      "wall_ms_p50": 0.704,
+      "wall_ms_p95": 0.802
     },
     "Q-CHAIN-MON": {
       "scenario": "S1",
-      "runs": 5,
+      "runs": 20,
       "rows": 3,
-      "engine_ms_p50": 0.097,
-      "wall_ms_p50": 0.306
+      "engine_ms_p50": 0.111,
+      "engine_ms_p95": 0.188,
+      "wall_ms_p50": 0.472,
+      "wall_ms_p95": 0.673
     },
     "Q-CHANGE-2": {
       "scenario": "S1",
-      "runs": 5,
+      "runs": 20,
       "rows": 1,
-      "engine_ms_p50": 0.077,
-      "wall_ms_p50": 0.225
+      "engine_ms_p50": 0.115,
+      "engine_ms_p95": 0.151,
+      "wall_ms_p50": 0.427,
+      "wall_ms_p95": 0.547
     },
     "Q-CHOKE-1": {
       "scenario": "S1",
-      "runs": 5,
+      "runs": 20,
       "rows": 10,
-      "engine_ms_p50": 0.112,
-      "wall_ms_p50": 0.205
+      "engine_ms_p50": 0.171,
+      "engine_ms_p95": 0.2,
+      "wall_ms_p50": 0.433,
+      "wall_ms_p95": 0.528
     },
     "Q-CODE-1": {
       "scenario": "S1",
-      "runs": 5,
+      "runs": 20,
       "rows": 1,
-      "engine_ms_p50": 1.118,
-      "wall_ms_p50": 1.439
+      "engine_ms_p50": 1.553,
+      "engine_ms_p95": 1.775,
+      "wall_ms_p50": 2.151,
+      "wall_ms_p95": 2.387
     },
     "Q-CONN-2": {
       "scenario": "S1",
-      "runs": 5,
+      "runs": 20,
       "rows": 1,
-      "engine_ms_p50": 0.075,
-      "wall_ms_p50": 0.187
+      "engine_ms_p50": 0.118,
+      "engine_ms_p95": 0.154,
+      "wall_ms_p50": 0.386,
+      "wall_ms_p95": 0.571
     },
     "Q-CTX-1": {
       "scenario": "S1",
-      "runs": 5,
+      "runs": 20,
       "rows": 1,
-      "engine_ms_p50": 0.059,
-      "wall_ms_p50": 0.262
+      "engine_ms_p50": 0.087,
+      "engine_ms_p95": 0.098,
+      "wall_ms_p50": 0.403,
+      "wall_ms_p95": 0.525
     },
     "Q-CUT-1": {
       "scenario": "S1",
-      "runs": 5,
+      "runs": 20,
       "rows": 1,
-      "engine_ms_p50": 0.688,
-      "wall_ms_p50": 1.06
+      "engine_ms_p50": 1.081,
+      "engine_ms_p95": 1.196,
+      "wall_ms_p50": 1.352,
+      "wall_ms_p95": 1.627
     },
     "Q-DEC-1": {
       "scenario": "S1",
-      "runs": 5,
+      "runs": 20,
       "rows": 2,
-      "engine_ms_p50": 0.112,
-      "wall_ms_p50": 0.424
+      "engine_ms_p50": 0.138,
+      "engine_ms_p95": 0.163,
+      "wall_ms_p50": 0.547,
+      "wall_ms_p95": 0.732
+    },
+    "Q-FUTURE-1": {
+      "scenario": "S1",
+      "runs": 20,
+      "rows": 4,
+      "engine_ms_p50": 0.374,
+      "engine_ms_p95": 0.398,
+      "wall_ms_p50": 0.999,
+      "wall_ms_p95": 1.202
     },
     "Q-GATE-1": {
       "scenario": "S1",
-      "runs": 5,
+      "runs": 20,
       "rows": 1,
-      "engine_ms_p50": 0.085,
-      "wall_ms_p50": 0.402
+      "engine_ms_p50": 0.064,
+      "engine_ms_p95": 0.07,
+      "wall_ms_p50": 0.392,
+      "wall_ms_p95": 0.685
     },
     "Q-GATE-2": {
       "scenario": "S1",
-      "runs": 5,
+      "runs": 20,
       "rows": 1,
-      "engine_ms_p50": 0.247,
-      "wall_ms_p50": 0.54
+      "engine_ms_p50": 0.187,
+      "engine_ms_p95": 0.208,
+      "wall_ms_p50": 0.491,
+      "wall_ms_p95": 0.754
     },
     "Q-GATE-3": {
       "scenario": "S1",
-      "runs": 5,
+      "runs": 20,
       "rows": 1,
-      "engine_ms_p50": 0.483,
-      "wall_ms_p50": 0.83
+      "engine_ms_p50": 0.367,
+      "engine_ms_p95": 0.405,
+      "wall_ms_p50": 0.646,
+      "wall_ms_p95": 0.916
     },
     "Q-GATE-4": {
       "scenario": "S1",
-      "runs": 5,
+      "runs": 20,
       "rows": 2,
-      "engine_ms_p50": 0.156,
-      "wall_ms_p50": 0.521
+      "engine_ms_p50": 0.118,
+      "engine_ms_p95": 0.138,
+      "wall_ms_p50": 0.496,
+      "wall_ms_p95": 0.662
     },
     "Q-GATE-7": {
       "scenario": "S1",
-      "runs": 5,
+      "runs": 20,
       "rows": 2,
-      "engine_ms_p50": 0.148,
-      "wall_ms_p50": 0.466
+      "engine_ms_p50": 0.091,
+      "engine_ms_p95": 0.134,
+      "wall_ms_p50": 0.449,
+      "wall_ms_p95": 0.612
     },
     "Q-GATE-CORR": {
       "scenario": "S1",
-      "runs": 5,
+      "runs": 20,
       "rows": 3,
-      "engine_ms_p50": 0.369,
-      "wall_ms_p50": 0.749
+      "engine_ms_p50": 0.221,
+      "engine_ms_p95": 0.382,
+      "wall_ms_p50": 0.674,
+      "wall_ms_p95": 0.866
     },
     "Q-GATE-G1": {
       "scenario": "S1",
-      "runs": 5,
+      "runs": 20,
       "rows": 1,
-      "engine_ms_p50": 0.377,
-      "wall_ms_p50": 0.704
+      "engine_ms_p50": 0.317,
+      "engine_ms_p95": 0.344,
+      "wall_ms_p50": 0.669,
+      "wall_ms_p95": 0.915
+    },
+    "Q-GATE-MULT": {
+      "scenario": "S1",
+      "runs": 20,
+      "rows": 1,
+      "engine_ms_p50": 0.052,
+      "engine_ms_p95": 0.072,
+      "wall_ms_p50": 0.359,
+      "wall_ms_p95": 0.552
+    },
+    "Q-GATE-UPSTREAM": {
+      "scenario": "S1",
+      "runs": 20,
+      "rows": 0,
+      "engine_ms_p50": 0.036,
+      "engine_ms_p95": 0.057,
+      "wall_ms_p50": 0.74,
+      "wall_ms_p95": 0.902
+    },
+    "Q-GATE-UPSTREAM-UB": {
+      "scenario": "S1",
+      "runs": 20,
+      "rows": 0,
+      "engine_ms_p50": 0.024,
+      "engine_ms_p95": 0.041,
+      "wall_ms_p50": 0.505,
+      "wall_ms_p95": 0.935
     },
     "Q-HYP-1": {
       "scenario": "S1",
-      "runs": 5,
+      "runs": 20,
       "rows": 3,
-      "engine_ms_p50": 0.204,
-      "wall_ms_p50": 0.565
+      "engine_ms_p50": 0.159,
+      "engine_ms_p95": 0.337,
+      "wall_ms_p50": 0.668,
+      "wall_ms_p95": 1.178
     },
     "Q-LIN-1": {
       "scenario": "S1",
-      "runs": 5,
+      "runs": 20,
       "rows": 12,
-      "engine_ms_p50": 0.115,
-      "wall_ms_p50": 0.397
+      "engine_ms_p50": 0.063,
+      "engine_ms_p95": 0.091,
+      "wall_ms_p50": 0.302,
+      "wall_ms_p95": 0.494
     },
     "Q-MEM-1": {
       "scenario": "S1",
-      "runs": 5,
+      "runs": 20,
       "rows": 5,
-      "engine_ms_p50": 2.083,
-      "wall_ms_p50": 2.688
+      "engine_ms_p50": 1.19,
+      "engine_ms_p95": 2.232,
+      "wall_ms_p50": 1.987,
+      "wall_ms_p95": 2.897
     },
     "Q-MEM-3": {
       "scenario": "S1",
-      "runs": 5,
+      "runs": 20,
       "rows": 3,
-      "engine_ms_p50": 0.187,
-      "wall_ms_p50": 0.946
+      "engine_ms_p50": 0.085,
+      "engine_ms_p95": 0.137,
+      "wall_ms_p50": 0.393,
+      "wall_ms_p95": 0.661
     },
-    "Q-NOTIFY-1": {
+    "Q-NOTIFY-2": {
       "scenario": "S1",
-      "runs": 5,
+      "runs": 20,
       "rows": 4,
-      "engine_ms_p50": 0.272,
-      "wall_ms_p50": 0.891
+      "engine_ms_p50": 0.184,
+      "engine_ms_p95": 0.255,
+      "wall_ms_p50": 0.462,
+      "wall_ms_p95": 0.67
     },
-    "Q-OBL-SLO+Q-OBL-CUST": {
+    "Q-OBL-CUST": {
       "scenario": "S1",
-      "runs": 0,
-      "rows": null,
-      "engine_ms_p50": null,
-      "wall_ms_p50": null,
-      "error": "UnknownTemplate: 'Q-OBL-SLO+Q-OBL-CUST'"
+      "runs": 20,
+      "rows": 5,
+      "engine_ms_p50": 0.199,
+      "engine_ms_p95": 0.296,
+      "wall_ms_p50": 0.628,
+      "wall_ms_p95": 0.785
+    },
+    "Q-OBL-SLO": {
+      "scenario": "S1",
+      "runs": 20,
+      "rows": 4,
+      "engine_ms_p50": 0.293,
+      "engine_ms_p95": 0.459,
+      "wall_ms_p50": 0.705,
+      "wall_ms_p95": 0.916
     },
     "Q-ORG-BUS": {
       "scenario": "S1",
-      "runs": 5,
+      "runs": 20,
       "rows": 1,
-      "engine_ms_p50": 0.104,
-      "wall_ms_p50": 0.37
+      "engine_ms_p50": 0.049,
+      "engine_ms_p95": 0.07,
+      "wall_ms_p50": 0.235,
+      "wall_ms_p95": 0.449
+    },
+    "Q-ORG-COLLAB-W": {
+      "scenario": "S1",
+      "runs": 20,
+      "rows": 8,
+      "engine_ms_p50": 0.219,
+      "engine_ms_p95": 0.27,
+      "wall_ms_p50": 0.489,
+      "wall_ms_p95": 0.676
     },
     "Q-ORG-HARM": {
       "scenario": "S1",
       "runs": 0,
       "note": "runs on a temporary scratch projection; not timed here"
     },
+    "Q-ORG-KNOWS": {
+      "scenario": "S1",
+      "runs": 20,
+      "rows": 63,
+      "engine_ms_p50": 0.429,
+      "engine_ms_p95": 0.619,
+      "wall_ms_p50": 1.478,
+      "wall_ms_p95": 1.587
+    },
+    "Q-ORG-MGR": {
+      "scenario": "S1",
+      "runs": 20,
+      "rows": 9,
+      "engine_ms_p50": 0.036,
+      "engine_ms_p95": 0.054,
+      "wall_ms_p50": 0.276,
+      "wall_ms_p95": 0.519
+    },
     "Q-ORG-MSF": {
       "scenario": "S1",
       "runs": 0,
       "note": "runs on a temporary scratch projection; not timed here"
     },
+    "Q-ORG-WHO": {
+      "scenario": "S1",
+      "runs": 20,
+      "rows": 6,
+      "engine_ms_p50": 0.359,
+      "engine_ms_p95": 0.562,
+      "wall_ms_p50": 1.016,
+      "wall_ms_p95": 1.269
+    },
     "Q-OWN-AT": {
       "scenario": "S1",
-      "runs": 5,
+      "runs": 20,
       "rows": 1,
-      "engine_ms_p50": 0.05,
-      "wall_ms_p50": 0.274
+      "engine_ms_p50": 0.025,
+      "engine_ms_p95": 0.041,
+      "wall_ms_p50": 0.175,
+      "wall_ms_p95": 0.31
     },
     "Q-RANK-1": {
       "scenario": "S1",
@@ -189,38 +317,57 @@
     },
     "Q-REM-1": {
       "scenario": "S1",
-      "runs": 5,
+      "runs": 20,
       "rows": 3,
-      "engine_ms_p50": 1.046,
-      "wall_ms_p50": 1.307
+      "engine_ms_p50": 0.661,
+      "engine_ms_p95": 1.166,
+      "wall_ms_p50": 0.908,
+      "wall_ms_p95": 1.417
     },
     "Q-RESIDUE-1": {
       "scenario": "S1",
-      "runs": 5,
+      "runs": 20,
       "rows": 4,
-      "engine_ms_p50": 0.276,
-      "wall_ms_p50": 0.551
+      "engine_ms_p50": 0.263,
+      "engine_ms_p95": 0.404,
+      "wall_ms_p50": 0.6,
+      "wall_ms_p95": 0.736
     },
     "Q-SUS-1": {
       "scenario": "S1",
-      "runs": 5,
+      "runs": 20,
       "rows": 2,
-      "engine_ms_p50": 1.555,
-      "wall_ms_p50": 2.212
+      "engine_ms_p50": 0.142,
+      "engine_ms_p95": 0.186,
+      "wall_ms_p50": 0.384,
+      "wall_ms_p95": 0.633
     },
     "Q-SUS-2": {
       "scenario": "S1",
-      "runs": 5,
+      "runs": 20,
       "rows": 3,
-      "engine_ms_p50": 0.059,
-      "wall_ms_p50": 0.252
+      "engine_ms_p50": 0.07,
+      "engine_ms_p95": 0.1,
+      "wall_ms_p50": 0.323,
+      "wall_ms_p95": 0.498
     },
     "Q-WHATIF-1": {
       "scenario": "S1",
-      "runs": 5,
+      "runs": 20,
       "rows": 1,
-      "engine_ms_p50": 0.133,
-      "wall_ms_p50": 0.347
+      "engine_ms_p50": 0.122,
+      "engine_ms_p95": 0.211,
+      "wall_ms_p50": 0.309,
+      "wall_ms_p95": 0.405
+    },
+    "Q-WHATIF-2": {
+      "scenario": "S1",
+      "runs": 20,
+      "rows": 8,
+      "engine_ms_p50": 0.095,
+      "engine_ms_p95": 0.126,
+      "wall_ms_p50": 0.269,
+      "wall_ms_p95": 0.429
     }
   }
 }

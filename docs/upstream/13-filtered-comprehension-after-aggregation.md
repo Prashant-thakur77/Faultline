@@ -34,5 +34,5 @@ comprehension's relationship variable. #11 (mixed relationship + node predicates
 ## Workaround (what Faultline does)
 - The template lint (`backend/faultline/graph/templates/__init__.py`) rejects every other shape.
 - Node filters go in an outer list comprehension (`[x IN [(…) WHERE r.prop … | p] WHERE x.active | x.id]`).
-- The obligation flag for the notify list is not joined into Q-NOTIFY-1; it comes from the obligation clock's
-  own templates (Q-OBL-SLO / Q-OBL-CUST).
+- The obligation flag for the notify list is not joined in a comprehension; it comes from the obligation clock's
+  own templates (Q-OBL-SLO / Q-OBL-CUST) and enters the notify query (Q-NOTIFY-2) as the `$priority` id list.

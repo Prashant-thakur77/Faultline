@@ -54,7 +54,7 @@ claude mcp add --transport http faultline http://127.0.0.1:8401/mcp --header "Au
   - Hosted tools carry `readOnlyHint: true`. Internal scratch-graph tools are marked `readOnlyHint: false` and are not hosted.
 - **Provenance on every result:** the exact Cypher, params, timing, a sha256 row digest and `served_by` (engine version, graph, ACL user).
 
-## Tools (read-only)
+## Tools (read-only, except `remember`)
 | group | tools |
 |---|---|
 | seeds and context | `find_entities`, `service_context`, `upstream_scope`, `column_lineage` |
@@ -72,6 +72,7 @@ claude mcp add --transport http faultline http://127.0.0.1:8401/mcp --header "Au
 | pre-deploy gate | `preflight_change` (BFS + betweenness + Q-DEC-1 + ownership → allow / require_review / block) |
 | learning | `learned_preferences(family_id, now?)` (the team's recency-decayed preference per action kind, the guidelines and the contract suggestions of one incident family; Q-LEARN-PREF + Q-LEARN-GUIDE + Q-LEARN-SUGGEST + Q-CONTRACT-MATCH), `learned_responders(target_id, now?)` (who actually answers this component's pages; Q-LEARN-RESP), `knowledge_gaps(status)` (questions the brain could not answer and who should document them; Q-KGAP-1), `learned_state()` (learning events by kind and the most recent ones; Q-LEARN-COUNTS + Q-LEARN-EVENTS). All read the tenant's on-call home graph, read-only; PLAN calls `learned_preferences` and ROUTE `learned_responders` |
 | on-call | `oncall_now(at?)` (who is on call per team, Q-ONCALL-NOW), `pages(status, incident_id?)` (the pager of the bound graph: who was paged about what, ack deadlines, who acknowledged, the escalation chain; Q-PAGES), `oncall_stats(days)` (pages, people paged, MTTA, MTTR and incidents handled under a standing contract, computed in Cypher; Q-ONCALL-STATS) |
+| shared agent notes (T2) | `recall_notes(text?, focus_id?)`: what other agents noted, by meaning (vecf32) and by hops from a component, unexpired, ranked in the engine by `faultline.noteScore`, with replies (Q-NOTE-RECALL on `agentmem_<tenant>`; leads only, never evidence). `remember(text, about, kind, agent_name?, reply_to?, stance?)` writes one note in one atomic query (components exist, reply target exists, daily quota on the engine clock) through the `mem_<tenant>` ACL user, whose only key is `agentmem_<tenant>`. `remember` is the one MCP tool that writes: stdio always has it, the public demo never does, and a self-hosted HTTP server offers it with `FAULTLINE_MCP_NOTES=true` |
 | schema | `graph_schema`: the live labels (counts, property keys, indexes) and relationship types (counts, from → to label pairs) of your tenant's graph |
 | last resort | `run_cypher_readonly`: guarded text2cypher (below) |
 

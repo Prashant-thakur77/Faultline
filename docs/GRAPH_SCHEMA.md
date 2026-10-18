@@ -8,7 +8,7 @@ Engine: FalkorDB 6.0.2. Every node carries the base label `Node` (cross-label id
 
 | graph | nodes | edges | labels with nodes | relationship types with edges | endpoint pairs complete | property keys complete |
 |---|---|---|---|---|---|---|
-| `golden_acme` | 1949 | 5946 | 29 | 43 | yes | yes |
+| `golden_acme` | 1950 | 5948 | 30 | 44 | yes | yes |
 | `golden_globex` | 5903 | 21187 | 23 | 32 | yes | yes |
 
 ## Node labels
@@ -38,6 +38,7 @@ Counts per graph. `key?` = optional (missing on some sampled nodes). Labels with
 | `MetricWindow` | 90 | 0 | `id`, `day`, `kind`, `metric`, `order_count`, `target_id`, `tenant`, `value` | id (range), target_id (range) |
 | `PR` | 305 | 968 | `id`, `author_id`, `merged_at`, `repo_id`, `state`, `tenant`, `title`, `introduces_calls?` | id (range) |
 | `Person` | 40 | 180 | `id`, `active`, `name`, `role`, `tenant`, `valid_to?` | id (range) |
+| `Policy` | 1 | 0 | `id`, `decided_at`, `decided_by`, `effect`, `from_day`, `from_hour`, `kind`, `status`, `tenant`, `title`, `to_day`, `to_hour`, `url`, `utc_offset_min`, `why` | id (range) |
 | `Postmortem` | 40 | 150 | `id`, `embedding`, `embedding_model`, `incident_id`, `summary`, `tenant`, `url` | embedding (vector), id (range), summary (full-text) |
 | `Repo` | 8 | 12 | `id`, `name`, `team_id`, `tenant`, `url` | id (range) |
 | `Runbook` | 11 | 14 | `id`, `body`, `salience`, `source`, `tenant`, `title`, `valid_from`, `created_at?`, `embedding?`, `embedding_model?`, `reviewed_at?`, `steps?`, `support_count?`, `updated_at?`, `url?` | embedding (vector), id (range), title (full-text) |
@@ -48,7 +49,7 @@ Counts per graph. `key?` = optional (missing on some sampled nodes). Labels with
 | `Team` | 8 | 12 | `id`, `key`, `name`, `tenant` | id (range) |
 | `Transform` | 5 | 0 | `id`, `kind`, `name`, `path`, `tenant` | id (range) |
 
-Declared, no nodes in these graphs (written at runtime, or not yet used): `Agent`, `Alert`, `Anomaly`, `Approval`, `ChangeFact`, `EdgeProposal`, `Evidence`, `ForgetReceipt`, `GateRun`, `Hypothesis`, `Intent`, `Job`, `LlmSpend`, `Override`, `PlaygroundRun`, `Rearm`, `Remediation`, `Run`, `RunIndex`, `Session`, `StageEvent`, `Task`, `ToolCall`, `Turn`.
+Declared, no nodes in these graphs (written at runtime, or not yet used): `Agent`, `Alert`, `Anomaly`, `Approval`, `BotChat`, `BotProposal`, `BotUpdate`, `ChangeFact`, `Contract`, `ContractUse`, `DeliveryBudget`, `EdgeProposal`, `Evidence`, `ForgetReceipt`, `GateRun`, `Guideline`, `Handoff`, `Hypothesis`, `Intent`, `Job`, `KnowledgeGap`, `LearnEvent`, `LlmSpend`, `Override`, `Page`, `PageGraph`, `PlaygroundRun`, `Preference`, `Rearm`, `Remediation`, `Run`, `RunIndex`, `Session`, `StageEvent`, `Task`, `ToolCall`, `Turn`.
 
 ## Relationship types
 
@@ -56,48 +57,56 @@ Lifecycle: `seed` = written by the ingest producers; `runtime` = written only by
 
 | type | lifecycle | acme | globex | endpoint pairs (from → to) | read by templates |
 |---|---|---|---|---|---|
-| `ABOUT` | seed | 7 | 0 | Doc → Datastore, Doc → Incident, Doc → Service | `Q-CODE-1`, `Q-DEC-1`, `Q-DEC-ONE`, `Q-DEC-REV`, `Q-EV-1`, `Q-GATE-4`, `Q-GATE-7`, `Q-GATE-OBS`, `Q-GATE-ORIGIN`, `Q-PRE-FACTS`, `Q-RESIDUE-1` |
+| `ABOUT` | seed | 7 | 0 | Doc → Datastore, Doc → Incident, Doc → Service | `Q-CODE-1`, `Q-DEC-1`, `Q-DEC-ONE`, `Q-DEC-REV`, `Q-EV-1`, `Q-GATE-4`, `Q-GATE-7`, `Q-GATE-OBS`, `Q-GATE-ORIGIN`, `Q-KGAP-1`, `Q-PRE-FACTS`, `Q-RESIDUE-1` |
+| `ACKED` | runtime | 0 | 0 |  | `Q-PAGE-ONE`, `Q-PAGES`, `Q-SHIFT-REPORT` |
 | `AFFECTED` | seed | 145 | 564 | Incident → Datastore, Incident → KPI, Incident → Service, Incident → Transform | `Q-BRAIN-WHO`, `Q-COUPLE-1`, `Q-ORG-1`, `Q-ORG-KNOWS`, `Q-ORG-WHO`, `Q-TIMELINE-1` |
-| `APPROVED` | runtime | 0 | 0 |  | `Q-WB-1` |
+| `APPROVED` | runtime | 0 | 0 |  | `Q-ONCALL-STATS`, `Q-SHIFT-REPORT`, `Q-WB-1` |
 | `ASSERTS` | runtime | 0 | 0 |  | `Q-CAUSE-ART`, `Q-CHANGE-2`, `Q-CODE-1`, `Q-DEC-1`, `Q-DEC-ONE`, `Q-DEC-REV`, `Q-PRE-FACTS` |
 | `ATTEMPTED` | seed | 1 | 1 | Incident → Action | `Q-MEM-4`, `Q-MEM-5`, `Q-REM-1` |
 | `AUTHORED` | seed | 950 | 2869 | Person → Commit, Person → PR | `Q-CODE-1`, `Q-ORG-1`, `Q-ORG-BUS-ASOF`, `Q-ORG-KNOWS`, `Q-ORG-WHO` |
 | `BASELINE_OF` | seed | 1 | 0 | Baseline → Column | `Q-BASE-2`, `Q-BASE-3` |
 | `BLAMES` | runtime | 0 | 0 |  | `Q-HYP-1`, `Q-PROV-1`, `Q-STORM-ORIGINS`, `Q-VERIFY-ALLOW` |
-| `CALLS` | seed | 30 | 552 | Datastore → Service, Service → Datastore, Service → ExternalDependency, Service → Service | `Q-CHOKE-1`, `Q-CHOKE-ALL`, `Q-COUPLE-1`, `Q-SIM-1` |
+| `CALLS` | seed | 30 | 552 | Datastore → Service, Service → Datastore, Service → ExternalDependency, Service → Service | `Q-CHOKE-1`, `Q-CHOKE-ALL`, `Q-COUPLE-1`, `Q-SIM-1`, `Q-SIM-2` |
 | `CAUSED` | seed | 40 | 150 | Deploy → Incident | `Q-CTX-INC`, `Q-MEM-1`, `Q-MEM-2`, `Q-MEM-4`, `Q-MEM-6`, `Q-MEM-6P`, `Q-MEM-8`, `Q-PRE-2`, `Q-PRE-2-ASOF`, `Q-PRE-HIST`, `Q-WB-1` |
 | `CHANGED` | seed | 360 | 1046 | Deploy → Datastore, Deploy → Service, Deploy → Transform | `Q-CHANGE-1`, `Q-CHANGE-2`, `Q-CODE-1`, `Q-CTX-INC`, `Q-GATE-1`, `Q-GATE-2`, `Q-GATE-CORR`, `Q-INFER-1`, `Q-LEARN-GAP`, `Q-MEM-1`, `Q-MEM-2`, `Q-MEM-4`, `Q-MEM-6`, `Q-MEM-6P`, `Q-MEM-8`, `Q-NEG-1`, `Q-NEG-2`, `Q-PRE-2`, `Q-PRE-2-ASOF`, `Q-RESIDUE-1`, `Q-STORM-ORIGINS`, `Q-SUS-1`, `Q-SUS-2`, `Q-TIMELINE-1`, `Q-VERIFY-ALLOW` |
 | `CITES` | seed | 9 | 8 | Decision → Doc | `Q-CREW-1`, `Q-DEC-3`, `Q-DEC-REV`, `Q-WB-1` |
 | `CLAIMED_BY` | runtime | 0 | 0 |  | `Q-TASK-1` |
 | `COLLABORATES` | seed | 206 | 1416 | Person → Person | `Q-ORG-COLLAB-W`, `Q-ORG-KNOWS`, `Q-ORG-MSF` |
-| `COMMITTED` | seed | 142 | 1095 | Person → Service, Person → Transform | `Q-APPROVER-1`, `Q-BRAIN-WHO`, `Q-KH-2`, `Q-ORG-2`, `Q-ORG-BUS`, `Q-OWN-PEOPLE` |
+| `COMMITTED` | seed | 142 | 1095 | Person → Service, Person → Transform | `Q-BRAIN-WHO`, `Q-KH-2`, `Q-ORG-2`, `Q-ORG-BUS`, `Q-OWN-PEOPLE` |
 | `COMPUTED_FROM` | seed | 1 | 0 | KPI → Table | **none (write-only)** |
 | `CONSTRAINS` | seed | 7 | 11 | Decision → Datastore, Decision → Service | `Q-ASOF-1`, `Q-CTX-1`, `Q-CTX-DEC`, `Q-DEC-1`, `Q-DEC-ABOUT`, `Q-DEC-LIST`, `Q-DEC-ONE`, `Q-DEC-ORPHAN`, `Q-DEC-PEOPLE`, `Q-DEC-REV`, `Q-KH-3`, `Q-TIMELINE-1` |
 | `CONSUMES` | seed | 7 | 9 | Customer → KPI, Customer → Service | `Q-OBL-CUST` |
 | `CONTAINS` | seed | 1381 | 4602 | Deploy → Commit, PR → Commit, Repo → File | `Q-CAUSE-ART`, `Q-CODE-1`, `Q-PRE-HIST` |
-| `DECIDED` | seed | 8 | 0 | Person → Decision | `Q-DEC-ORPHAN`, `Q-DEC-PEOPLE` |
+| `COVERS` | runtime | 0 | 0 |  | `Q-CONTRACTS` |
+| `DECIDED` | seed | 9 | 0 | Person → Decision, Person → Policy | `Q-DEC-ORPHAN`, `Q-DEC-PEOPLE` |
 | `DEGRADES` | runtime | 0 | 0 |  | `Q-ALERT-1`, `Q-INC-ALERTS` |
 | `DEPENDS_ON` | seed | 43 | 308 | Dashboard → KPI, Datastore → Service, KPI → Table, Service → Datastore, Service → ExternalDependency, Service → Service, Table → Service, Table → Table, Table → Transform | `Q-COUPLE-1`, `Q-GATE-2`, `Q-INFER-1`, `Q-LIN-1`, `Q-RANK-1`, `Q-RANK-SRC`, `Q-SUS-1` |
-| `DERIVED_FROM` | seed | 19 | 66 | Runbook → Postmortem | `Q-MEM-3`, `Q-MEM-RB` |
+| `DERIVED_FROM` | seed | 19 | 66 | Runbook → Postmortem | `Q-LEARN-PERSON`, `Q-MEM-3`, `Q-MEM-RB` |
 | `DERIVES_FROM` | seed | 29 | 0 | Column → Column | `Q-COL-1` |
+| `DID` | runtime | 0 | 0 |  | none |
 | `DOCUMENTS` | seed | 40 | 150 | Postmortem → Incident | `Q-MEM-1`, `Q-WB-1` |
 | `EMITS` | seed | 1 | 0 | Service → Table | **none (write-only)** |
+| `ESCALATED_TO` | runtime | 0 | 0 |  | `Q-PAGE-CHAIN`, `Q-PAGE-ONE`, `Q-PAGES` |
+| `ESCALATES_TO` | runtime | 0 | 0 |  | `Q-PAGE-NEXT` |
 | `EXECUTED` | runtime | 0 | 0 |  | `Q-WB-1` |
 | `EXPOSES` | seed | 7 | 9 | Service → Endpoint | **none (write-only)** |
 | `FIRED_ON` | runtime | 0 | 0 |  | `Q-ALERT-1`, `Q-CHAIN-MON`, `Q-INC-ALERTS`, `Q-TIMELINE-1` |
-| `FOR` | seed | 14 | 130 | SLO → Service | `Q-OBL-SLO`, `Q-SIM-SLO` |
+| `FOR` | seed | 14 | 130 | SLO → Service | `Q-OBL-SLO`, `Q-PAGE-CHAIN`, `Q-PAGE-ONE`, `Q-PAGE-OVERDUE`, `Q-PAGE-TG`, `Q-PAGES`, `Q-SIM-SLO` |
 | `FOR_CHANGE` | runtime | 0 | 0 |  | none |
+| `FREEZES` | seed | 1 | 0 | Policy → Service | `Q-PRE-FREEZE` |
+| `FROM` | runtime | 0 | 0 |  | none |
 | `GATES` | seed | 13 | 9 | FeatureFlag → Datastore, FeatureFlag → Endpoint, FeatureFlag → Service | `Q-CHANGE-1`, `Q-GATE-1`, `Q-NEG-1`, `Q-NEG-2`, `Q-RESIDUE-1`, `Q-STORM-ORIGINS`, `Q-VERIFY-ALLOW` |
+| `GRANTED_BY` | runtime | 0 | 0 |  | `Q-CONTRACT-MATCH`, `Q-CONTRACTS` |
 | `HANDED_OFF_TO` | runtime | 0 | 0 |  | none |
 | `HAS_ACTION` | reserved | 0 | 0 |  | none |
 | `HAS_ALERT` | reserved | 0 | 0 |  | none |
 | `HAS_GATE_RUN` | runtime | 0 | 0 |  | `Q-INC-GATES` |
 | `HAS_HYPOTHESIS` | reserved | 0 | 0 |  | none |
-| `HAS_INTENT` | runtime | 0 | 0 |  | `Q-INTENT-1` |
-| `HAS_PLAN` | runtime | 0 | 0 |  | `Q-ACT-1`, `Q-ACT-INTENT`, `Q-CONTEND-1`, `Q-INTENT-1` |
+| `HAS_INTENT` | runtime | 0 | 0 |  | `Q-INTENT-1`, `Q-ONCALL-STATS`, `Q-SHIFT-REPORT` |
+| `HAS_PLAN` | runtime | 0 | 0 |  | `Q-ACT-1`, `Q-ACT-APPROVER`, `Q-ACT-INTENT`, `Q-CONTEND-1`, `Q-INTENT-1`, `Q-SHIFT-REPORT` |
 | `HAS_PROPOSAL` | runtime | 0 | 0 |  | `Q-EDGE-PROPOSALS` |
-| `HAS_RUN` | runtime | 0 | 0 |  | `Q-EV-INC-TOOL`, `Q-RESIDUE-1` |
-| `HAS_STAGE` | runtime | 0 | 0 |  | `Q-RUN-1` |
+| `HAS_RUN` | runtime | 0 | 0 |  | `Q-EV-INC-TOOL`, `Q-ONCALL-STATS`, `Q-RESIDUE-1` |
+| `HAS_STAGE` | runtime | 0 | 0 |  | `Q-ONCALL-STATS`, `Q-RUN-1` |
 | `HAS_SYMPTOM` | seed | 40 | 150 | Incident → Symptom | `Q-INC-1`, `Q-INC-SYM`, `Q-MEM-1`, `Q-MEM-6`, `Q-MEM-6P`, `Q-REM-1` |
 | `HAS_TASK` | runtime | 0 | 0 |  | `Q-CONTEND-1`, `Q-CREW-1`, `Q-CREW-LAST`, `Q-GATE-CORR` |
 | `HAS_TOOL_CALL` | runtime | 0 | 0 |  | `Q-CITE-1`, `Q-EV-INC-TOOL`, `Q-EV-PAYLOAD`, `Q-EV-TOOL`, `Q-GATE-4`, `Q-GATE-7`, `Q-GATE-G1`, `Q-GATE-OBS`, `Q-GATE-ORIGIN`, `Q-PRE-LAST`, `Q-RESIDUE-1`, `Q-RUN-2`, `Q-RUN-TRUNC` |
@@ -105,31 +114,35 @@ Lifecycle: `seed` = written by the ingest producers; `runtime` = written only by
 | `HYPOTHESIZES` | runtime | 0 | 0 |  | `Q-CAUSE-1`, `Q-HYP-1`, `Q-PROV-1`, `Q-STORM-ORIGINS`, `Q-VERIFY-ALLOW` |
 | `KNOWS_ABOUT` | scratch | 0 | 0 |  | `Q-ORG-HARM` |
 | `MADE` | runtime | 0 | 0 |  | `Q-CREW-1`, `Q-PROV-1` |
-| `MEMBER_OF` | seed | 37 | 176 | Person → Team | `Q-APPROVER-1`, `Q-BRAIN-WHO`, `Q-DEC-PEOPLE`, `Q-KH-2`, `Q-ORG-BUS-ASOF`, `Q-ORG-KNOWS`, `Q-ORG-PEOPLE`, `Q-ORG-TEAM`, `Q-ORG-WHO`, `Q-OWN-MAP`, `Q-OWN-PEOPLE`, `Q-PRE-2` |
+| `MEMBER_OF` | seed | 37 | 176 | Person → Team | `Q-APPROVER-1`, `Q-BRAIN-WHO`, `Q-DEC-PEOPLE`, `Q-HANDOFF-FROM`, `Q-KH-2`, `Q-ORG-BUS-ASOF`, `Q-ORG-KNOWS`, `Q-ORG-PEOPLE`, `Q-ORG-TEAM`, `Q-ORG-WHO`, `Q-OWN-MAP`, `Q-OWN-PEOPLE`, `Q-PRE-2` |
 | `NAMES` | runtime | 0 | 0 |  | `Q-CREW-1`, `Q-GATE-CORR` |
 | `NEXT` | runtime | 0 | 0 |  | `Q-CREW-1` |
 | `OF` | seed | 40 | 0 | Column → Table | `Q-BASE-3` |
-| `ON_CALL` | seed | 176 | 264 | Person → Team | `Q-ASOF-1`, `Q-CTX-1`, `Q-NOTIFY-1`, `Q-ORG-1`, `Q-ORG-KNOWS`, `Q-ORG-WHO` |
+| `ON_CALL` | seed | 176 | 264 | Person → Team | `Q-APPROVER-1`, `Q-ASOF-1`, `Q-CTX-1`, `Q-HANDOFF-FROM`, `Q-NOTIFY-2`, `Q-ONCALL-NOW`, `Q-ORG-1`, `Q-ORG-KNOWS`, `Q-ORG-WHO` |
 | `OVERRIDES` | runtime | 0 | 0 |  | `Q-DEC-1`, `Q-DEC-ONE` |
 | `OWNED_AT` | seed | 32 | 208 | Team → Datastore, Team → KPI, Team → Service, Team → Transform | `Q-ASOF-1`, `Q-KH-1`, `Q-KH-2`, `Q-KH-3`, `Q-OWN-AT`, `Q-PRE-2-ASOF`, `Q-TIMELINE-1` |
-| `OWNS` | seed | 30 | 204 | Team → Datastore, Team → KPI, Team → Service, Team → Transform | `Q-APPROVER-1`, `Q-CTX-1`, `Q-DEC-PEOPLE`, `Q-GAP-1`, `Q-NOTIFY-1`, `Q-ORG-1`, `Q-ORG-KNOWS`, `Q-ORG-TEAM`, `Q-ORG-WHO`, `Q-OWN-MAP`, `Q-PRE-2` |
+| `OWNS` | seed | 30 | 204 | Team → Datastore, Team → KPI, Team → Service, Team → Transform | `Q-APPROVER-1`, `Q-CTX-1`, `Q-DEC-PEOPLE`, `Q-GAP-1`, `Q-KGAP-1`, `Q-NOTIFY-2`, `Q-ORG-1`, `Q-ORG-KNOWS`, `Q-ORG-TEAM`, `Q-ORG-WHO`, `Q-OWN-MAP`, `Q-PRE-2` |
+| `PAGES` | runtime | 0 | 0 |  | `Q-ONCALL-STATS`, `Q-PAGE-CHAIN`, `Q-PAGE-NEXT`, `Q-PAGE-ONE`, `Q-PAGE-OPEN`, `Q-PAGE-OVERDUE`, `Q-PAGES`, `Q-SHIFT-REPORT` |
 | `PART_OF` | seed | 91 | 800 | File → Service, File → Transform | `Q-CODE-1`, `Q-ORG-1`, `Q-ORG-BUS-ASOF`, `Q-ORG-KNOWS`, `Q-ORG-TEAM`, `Q-ORG-WHO`, `Q-PRE-1`, `Q-PRE-1-ASOF`, `Q-PRE-2`, `Q-PRE-2-ASOF`, `Q-PRE-3`, `Q-PRE-FLOW` |
 | `PRECEDENT_FOR` | runtime | 0 | 0 |  | none |
 | `PRODUCED` | seed | 10 | 14 | Doc → Decision, Doc → Runbook | `Q-DOC-1`, `Q-FORGET-1` |
 | `PRODUCED_EVIDENCE` | runtime | 0 | 0 |  | `Q-EV-INC-TOOL`, `Q-EV-PAYLOAD`, `Q-EV-TOOL`, `Q-GATE-4`, `Q-GATE-7`, `Q-GATE-G1`, `Q-GATE-OBS`, `Q-GATE-ORIGIN`, `Q-PRE-LAST`, `Q-PROV-1`, `Q-RESIDUE-1`, `Q-RUN-2` |
-| `PROPAGATES_TO` | seed | 43 | 308 | Datastore → Service, ExternalDependency → Service, KPI → Dashboard, Service → Datastore, Service → Service, Service → Table, Table → KPI, Table → Table, Transform → Table | `Q-BLAST-1`, `Q-BLAST-2`, `Q-CONN-1`, `Q-CONN-2`, `Q-COUPLE-1`, `Q-CUT-1`, `Q-CUT-2`, `Q-FUTURE-1`, `Q-GATE-1`, `Q-GATE-3`, `Q-GATE-MULT`, `Q-GATE-UPSTREAM`, `Q-GATE-UPSTREAM-UB`, `Q-LEARN-GAP`, `Q-LEVER-PATH`, `Q-NEG-1`, `Q-NEG-2`, `Q-OBL-CUST`, `Q-OBL-SLO`, `Q-PRE-1`, `Q-PRE-1-ASOF`, `Q-PRE-FLOW`, `Q-PRIMARY-1`, `Q-PROTECT-1`, `Q-RESIDUE-1`, `Q-SIM-1`, `Q-STORM-ATTACH`, `Q-STORM-EDGES`, `Q-STORM-WCC`, `Q-TOPO-AT`, `Q-TOPO-EPOCHS`, `Q-VERIFY-ALLOW`, `Q-VIEW-1`, `Q-VIEW-2`, `Q-WHATIF-1`, `Q-WHATIF-2` |
+| `PROPAGATES_TO` | seed | 43 | 308 | Datastore → Service, ExternalDependency → Service, KPI → Dashboard, Service → Datastore, Service → Service, Service → Table, Table → KPI, Table → Table, Transform → Table | `Q-BLAST-1`, `Q-BLAST-2`, `Q-BLAST-3`, `Q-CONN-1`, `Q-CONN-2`, `Q-COUPLE-1`, `Q-CUT-1`, `Q-CUT-2`, `Q-FUTURE-1`, `Q-GATE-1`, `Q-GATE-3`, `Q-GATE-MULT`, `Q-GATE-UPSTREAM`, `Q-GATE-UPSTREAM-UB`, `Q-LEARN-GAP`, `Q-LEVER-PATH`, `Q-NEG-1`, `Q-NEG-2`, `Q-NOTIFY-2`, `Q-OBL-CUST`, `Q-OBL-SLO`, `Q-PRE-1`, `Q-PRE-1-ASOF`, `Q-PRE-FLOW`, `Q-PRIMARY-1`, `Q-PROTECT-1`, `Q-RESIDUE-1`, `Q-SIM-1`, `Q-SIM-2`, `Q-STORM-ATTACH`, `Q-STORM-EDGES`, `Q-STORM-WCC`, `Q-TOPO-AT`, `Q-TOPO-EPOCHS`, `Q-VERIFY-ALLOW`, `Q-VIEW-1`, `Q-VIEW-2`, `Q-WHATIF-1`, `Q-WHATIF-2` |
 | `READS` | seed | 6 | 0 | Transform → Table | `Q-COUPLE-1` |
 | `RECALLED` | runtime | 0 | 0 |  | `Q-MEM-2`, `Q-MEM-4`, `Q-MEM-5`, `Q-MEM-8` |
 | `REFUTES` | runtime | 0 | 0 |  | `Q-HYP-1` |
 | `REPORTS_TO` | seed | 39 | 179 | Person → Person | `Q-ORG-COLLAB-W`, `Q-ORG-MGR` |
-| `RESOLVED` | seed | 40 | 150 | Person → Incident | `Q-BRAIN-WHO`, `Q-CTX-INC`, `Q-ORG-1`, `Q-ORG-KNOWS`, `Q-ORG-WHO` |
+| `RESOLVED` | seed | 40 | 150 | Person → Incident | `Q-BRAIN-WHO`, `Q-CTX-INC`, `Q-ONCALL-STATS`, `Q-ORG-1`, `Q-ORG-KNOWS`, `Q-ORG-WHO` |
 | `RESOLVED_BY` | seed | 40 | 150 | Incident → Action | `Q-CTX-INC`, `Q-MEM-1`, `Q-MEM-4`, `Q-MEM-5`, `Q-MEM-7`, `Q-REM-1`, `Q-WB-1` |
+| `RESPONDED` | runtime | 0 | 0 |  | `Q-LEARN-RESP`, `Q-LEARN-RESPS` |
 | `RUNBOOK_FOR` | seed | 16 | 22 | Runbook → Service, Runbook → Symptom | `Q-ASOF-1`, `Q-CTX-1`, `Q-GAP-1`, `Q-KH-1`, `Q-KH-2`, `Q-MEM-3`, `Q-MEM-RB`, `Q-PRE-2`, `Q-PRE-2-ASOF`, `Q-TIMELINE-1` |
 | `SAW` | runtime | 0 | 0 |  | `Q-CITE-1`, `Q-GATE-G1`, `Q-PROV-1` |
 | `SHOWS` | seed | 1 | 0 | Dashboard → KPI | **none (write-only)** |
 | `SUPERSEDES` | seed | 1 | 2 | Decision → Decision | `Q-ASOF-1`, `Q-CTX-DEC`, `Q-DEC-1`, `Q-DEC-2`, `Q-DEC-ABOUT`, `Q-DEC-CHAIN`, `Q-DEC-LIST`, `Q-DEC-ONE`, `Q-DEC-PEOPLE`, `Q-DEC-REV` |
 | `SUPPORTS` | runtime | 0 | 0 |  | `Q-HYP-1`, `Q-PROV-1` |
+| `TO` | runtime | 0 | 0 |  | `Q-SHIFT-REPORT` |
 | `TOUCHES` | seed | 1748 | 5565 | Commit → File, PR → File | `Q-CODE-1`, `Q-ORG-1`, `Q-ORG-BUS-ASOF`, `Q-ORG-KNOWS`, `Q-ORG-WHO`, `Q-PRE-1`, `Q-PRE-1-ASOF`, `Q-PRE-2`, `Q-PRE-2-ASOF`, `Q-PRE-FLOW` |
+| `USED_IN` | runtime | 0 | 0 |  | `Q-CONTRACTS`, `Q-SHIFT-REPORT` |
 | `VIOLATES` | runtime | 0 | 0 |  | `Q-KH-3` |
 | `WINDOW_OF` | seed | 90 | 0 | MetricWindow → Table | `Q-CHAIN-MON`, `Q-OBL-SLO` |
 | `WRITES` | seed | 5 | 0 | Transform → Table | `Q-COUPLE-1` |
@@ -150,14 +163,20 @@ Present in a graph but read by no template (no relationship pattern, algo config
 | `Anomaly` | `id` | range |
 | `Approval` | `id` | range |
 | `Baseline` | `id` | range |
+| `BotChat` | `id` | range |
+| `BotProposal` | `id` | range |
+| `BotUpdate` | `id` | range |
 | `ChangeFact` | `id` | range |
 | `Column` | `id` | range |
 | `Commit` | `id` | range |
+| `Contract` | `id` | range |
+| `ContractUse` | `id` | range |
 | `Customer` | `id` | range |
 | `Dashboard` | `id` | range |
 | `Datastore` | `id` | range |
 | `Decision` | `id` | range |
 | `Decision` | `title` | fulltext |
+| `DeliveryBudget` | `id` | range |
 | `Deploy` | `at` | range |
 | `Deploy` | `id` | range |
 | `Doc` | `id` | range |
@@ -168,6 +187,8 @@ Present in a graph but read by no template (no relationship pattern, algo config
 | `FeatureFlag` | `id` | range |
 | `File` | `id` | range |
 | `GateRun` | `id` | range |
+| `Guideline` | `id` | range |
+| `Handoff` | `id` | range |
 | `Hypothesis` | `id` | range |
 | `Incident` | `embedding` | vector |
 | `Incident` | `id` | range |
@@ -177,13 +198,22 @@ Present in a graph but read by no template (no relationship pattern, algo config
 | `IntentExemplar` | `text` | fulltext |
 | `Job` | `id` | range |
 | `KPI` | `id` | range |
+| `KnowledgeGap` | `id` | range |
+| `LearnEvent` | `family` | range |
+| `LearnEvent` | `id` | range |
+| `LearnEvent` | `person` | range |
 | `MetricWindow` | `id` | range |
 | `MetricWindow` | `target_id` | range |
 | `PR` | `id` | range |
+| `Page` | `id` | range |
+| `PageGraph` | `id` | range |
 | `Person` | `id` | range |
+| `Policy` | `id` | range |
 | `Postmortem` | `embedding` | vector |
 | `Postmortem` | `id` | range |
 | `Postmortem` | `summary` | fulltext |
+| `Preference` | `family` | range |
+| `Preference` | `id` | range |
 | `Repo` | `id` | range |
 | `Run` | `id` | range |
 | `Runbook` | `embedding` | vector |
