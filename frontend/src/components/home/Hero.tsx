@@ -59,9 +59,15 @@ export function Hero() {
       <div className="mx-auto grid max-w-[1240px] items-center gap-4 px-5 pt-14 sm:px-8 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,1fr)] lg:pt-16">
         <div>
           <motion.div {...rise(0)}>
-            <a href="#api" className="fl-ring fl-press inline-flex rounded-full p-px outline-none focus-visible:ring-2 focus-visible:ring-sky-400">
+            {/* the newest thing the agent does: on the static site, the recorded run; live, the run itself */}
+            <a
+              href={STATIC_SITE ? "/replay/s2-data-incident" : "#run"}
+              onClick={STATIC_SITE ? undefined : () => requestScenarioRun(DATA_SCENARIO)}
+              className="fl-ring fl-press inline-flex rounded-full p-px outline-none focus-visible:ring-2 focus-visible:ring-sky-400"
+            >
               <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0b0b0c] px-3.5 py-1 text-[13px] text-zinc-200">
-                New: graph-ranked context packs for your agent <ChevronRight className="size-3.5 text-zinc-400" aria-hidden />
+                New: it repairs the data incident from its own measurements, verified by a rebuild{" "}
+                <ChevronRight className="size-3.5 text-zinc-400" aria-hidden />
               </span>
             </a>
           </motion.div>
