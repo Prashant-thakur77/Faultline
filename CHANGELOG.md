@@ -2,6 +2,18 @@
 
 All notable changes to Faultline. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased] - 2026-10-18 (deployed to the live site)
+
+### The incident room, as a judge reads it
+- G8 reads "noted: attached to the plan; never changes the verdict" instead of a warning-toned "downgrade" beside a confident verdict; the timeline says how many of a gate run's checks passed ("10 of 11").
+- The plan says up front when this browser did not start the run (on the public demo only the visitor who started it may choose and approve), instead of answering a click with a 403.
+- Every number says what it is: the suspects' score orders the investigation and never the verdict; who-fixes shows its HarmonicCentrality; the containment card defines a cut cost; the on-call stats say the demo's times come from scripted runs.
+- Long Cypher lines wrap in the Cypher panel and in the home page's code cards.
+
+### Elsewhere
+- The preflight page offers the risky pull request in one click (BLOCK, contradicting ADR-012/013); on a phone the verdict scrolls into view.
+- The home page's "New:" pill opens the data incident; a recording's provenance button links a live run; the memory page links the recorded learning night; the explainer's labels stay on screen; on a phone the provenance graph points to its evidence and verdict columns.
+
 ## [1.4.2] - 2026-10-18
 
 ### Honest to the last tool call
