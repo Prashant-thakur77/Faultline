@@ -577,6 +577,7 @@ export function GraphView({
       const rr = rippleRole(n.id);
       const h = ripple?.blast.get(n.id) ?? null;
       const keyNode = keys.has(n.id);
+      const focusable = isRipple ? rr === "cause" || ripple!.blast.has(n.id) : interesting;
       return {
         id: n.id,
         type: "fl",
@@ -599,8 +600,10 @@ export function GraphView({
         },
         draggable: false,
         connectable: false,
-        focusable: isRipple ? rr === "cause" || ripple!.blast.has(n.id) : interesting,
-        ariaLabel: describe(n, proof?.nodes.length ?? 0, isRipple ? "ripple" : "path", rr, h),
+        focusable,
+        // a label only on a node that is in the tab order (React Flow gives it role=button then); a non-focusable
+        // node's wrapper has no role, so an aria-label there is prohibited and its caption is visible text anyway
+        ariaLabel: focusable ? describe(n, proof?.nodes.length ?? 0, isRipple ? "ripple" : "path", rr, h) : undefined,
       };
     });
 
