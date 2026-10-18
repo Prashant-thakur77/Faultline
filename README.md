@@ -230,6 +230,8 @@ git clone --depth 1 https://github.com/Prashant-thakur77/Faultline.git && cd Fau
 make setup && make judge-check     # several minutes; prints PASS
 ```
 
+Last run on a fresh `--depth 1` clone of `main` (2026-10-18, commit `2da0084`): **PASS**, 18 of 18 checks; the full summary is in [evals/results/judge_check_clean_clone.txt](evals/results/judge_check_clean_clone.txt). <!-- noclaim: a dated run log, not a results-file number -->
+
 `judge-check` starts the pinned FalkorDB, runs the engine smoke suite, seeds both tenants, runs the unit and live tests (isolation and concurrency included), checks the pipeline invariants, runs the lints and the claims check, and builds the frontend. CI runs the same steps on the pinned engine ([`ci.yml`](.github/workflows/ci.yml)). A `.devcontainer/` is included for a Codespace.
 
 To run the product:
