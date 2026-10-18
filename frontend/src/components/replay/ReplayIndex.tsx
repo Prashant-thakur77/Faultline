@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { plural } from "@/lib/format";
 import Link from "next/link";
 import { ArrowRight, Film } from "lucide-react";
 import { BASE_PATH, type ReplayManifest } from "@/lib/replay";
@@ -62,7 +63,7 @@ export function ReplayIndex() {
                     )}
                   </span>
                   <span className="text-xs text-[var(--fl-subtle)]">
-                    <span className="font-mono">{r.name}</span> · {r.incident} · {r.events} events
+                    <span className="font-mono">{r.name}</span> · {r.incident} · {plural(r.events, "event")}
                     {r.recorded ? ` · ended ${r.recorded.final_stage.toLowerCase()}` : ""}
                   </span>
                   <span className="mt-auto inline-flex items-center gap-1 text-sm text-zinc-200 group-hover:text-white">

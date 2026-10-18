@@ -1845,7 +1845,7 @@ def context_pack_route(req: ContextPackReq, tenant: str = "acme") -> dict:
     if out.get("error"):
         raise HTTPException(400, out["error"])
     return {k: out.get(k) for k in ("rows", "tokens", "budget", "seeds", "via", "truncated_sources", "notes", "template",
-                                    "evidence_id", "served_by")}
+                                    "cypher", "params", "digest", "ms", "evidence_id", "served_by")}
 
 
 @app.get("/api/brain/decisions")

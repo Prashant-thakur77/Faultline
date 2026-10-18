@@ -16,7 +16,10 @@ const COLUMNS: { head: string; items: Item[] }[] = [
     { label: "Preflight gate", route: "/preflight" },
     { label: "Company brain", route: "/brain" },
     { label: "Memory", route: "/memory" },
-    { label: "Inside FalkorDB", route: "/engine" },
+    { label: "Explore the graph", route: "/explore" },
+    // live server only: the static replay site has no API to break a graph copy or read the engine with
+    ...(STATIC_SITE ? [] : [{ label: "Break it", route: "/playground" }, { label: "Inside FalkorDB", route: "/engine" }]),
+    { label: "How FalkorDB decides", route: "/explainer" },
     { label: "Replay", route: "/replay" },
   ] },
   { head: "Evidence", items: [

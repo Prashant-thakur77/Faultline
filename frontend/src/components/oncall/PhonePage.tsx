@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { sentence } from "@/lib/format";
 import { AlarmClock, ArrowRight, ChevronDown, ChevronsUp, CircleCheck, LoaderCircle, Route, Users } from "lucide-react";
 import { ViaFalkor } from "@/components/cypher/ViaFalkor";
 import { fmtBreach } from "@/components/incident/ObligationsCard";
@@ -146,7 +147,7 @@ function PageBody({
         {waiting && !ackToken ? (
           <p className="text-center text-xs text-zinc-400">This link carries no ack token, so the server will ask for the approver key.</p>
         ) : null}
-        {p.reason ? <p className="text-center text-xs break-words text-zinc-400">Why you: {p.reason}</p> : null}
+        {p.reason ? <p className="text-center text-xs break-words text-zinc-400">Why you: {sentence(p.reason)}</p> : null}
         <DeliveryProblems page={p} />
         {incident ? (
           <Link

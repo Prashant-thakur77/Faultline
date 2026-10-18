@@ -80,7 +80,10 @@ export interface StatusResponse {
 
 export interface Scenario {
   id: string;
+  /** snake_case name from scenarios.yaml (shown in words). */
   name: string;
+  /** A human title, when the API provides one (shown instead of the name). */
+  title?: string;
   tenant: Tenant;
   report: string;
 }

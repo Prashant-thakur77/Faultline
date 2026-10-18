@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Bot, Cpu, Play } from "lucide-react";
+import { Bot, Cpu, Play, Star } from "lucide-react";
 import { api, ApiError, errorText } from "@/lib/api";
+import { slugWords } from "@/lib/format";
+import { HERO_SCENARIO, RUN_HERO_EVENT } from "@/lib/heroRun";
 import { tenantStore } from "@/lib/tenant";
 import Link from "next/link";
 import type { LlmMode, RunScenarioIncident, Scenario } from "@/lib/types";
@@ -13,7 +15,10 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { useAppStatus } from "./AppShell";
 import { StatusChip } from "./StatusChip";
 
-/** Lists GET /api/scenarios and starts one with POST /api/scenarios/{id}/run, then opens its incident room. */
+/**
+ * Lists GET /api/scenarios (the hero scenario first) and starts one with POST /api/scenarios/{id}/run, then opens its
+ * incident room. The home hero's "Run the hero incident" asks for the hero run with a window event (lib/heroRun).
+ */
 /** The scenario list scrolls inside the card on desktop and fades out at the bottom. */
 const SCROLL = "outline-none focus-visible:ring-2 focus-visible:ring-sky-400 lg:[mask-image:linear-gradient(to_bottom,#000_calc(100%-2.5rem),transparent)]";
 
@@ -30,21 +35,19 @@ export function ScenarioLauncher() {
     null,
   );
   const groupId = useId();
-
-  useEffect(() => {
-    const ctrl = new AbortController();
-    api
-      .scenarios(ctrl.signal)
-      .then(setScenarios)
-      .catch((e) => {
-        if (!(e instanceof DOMException && e.name === "AbortError")) setLoadErr(errorText(e));
-      });
-    return () => ctrl.abort();
-  }, []);
+  // the hero call to action may fire before the list has loaded: it is remembered and run once the list arrives
+  const heroPending = useRef(false);
 
   const effectiveLlm: LlmMode = llm === "anthropic" && !llmConfigured ? "baseline" : llm;
 
-  const launch = async (id: string) => {
+  // the hero first, the rest in the API's order
+  const ordered = useMemo(
+    () => (scenarios ? [...scenarios.filter((s) => s.id === HERO_SCENARIO), ...scenarios.filter((s) => s.id !== HERO_SCENARIO)] : null),
+    [scenarios],
+  );
+
+  /** `list`: the scenario list to read the tenant from when the state has not caught up yet (a pending hero run). */
+  const launch = async (id: string, list: Scenario[] | null = scenarios) => {
     setBusy(id);
     setRunErr(null);
     setOpened(null);
@@ -54,7 +57,7 @@ export function ScenarioLauncher() {
         throw new Error(r.error ? `run failed before the incident was written: ${r.error}` : "the run did not create an incident");
       }
       // The incident lives in its scenario's tenant graph: the whole UI follows it there.
-      const t = scenarios?.find((s) => s.id === id)?.tenant ?? null;
+      const t = list?.find((s) => s.id === id)?.tenant ?? null;
       if (t) tenantStore.set(t);
       if ((r.incidents?.length ?? 0) > 1) {
         // INTAKE split the alerts into several incidents: list them all instead of opening only the first
@@ -75,6 +78,43 @@ export function ScenarioLauncher() {
     }
   };
 
+  // the event listener below is registered once; it reads the launcher's current state through this ref
+  const latest = useRef({ scenarios, busy, launch });
+  useEffect(() => {
+    latest.current = { scenarios, busy, launch };
+  });
+
+  useEffect(() => {
+    const ctrl = new AbortController();
+    api
+      .scenarios(ctrl.signal)
+      .then((list) => {
+        setScenarios(list);
+        if (heroPending.current) {
+          heroPending.current = false;
+          if (list.some((s) => s.id === HERO_SCENARIO)) void latest.current.launch(HERO_SCENARIO, list);
+        }
+      })
+      .catch((e) => {
+        if (!(e instanceof DOMException && e.name === "AbortError")) setLoadErr(errorText(e));
+      });
+    return () => ctrl.abort();
+  }, []);
+
+  useEffect(() => {
+    const onHero = () => {
+      const cur = latest.current;
+      if (cur.busy !== null) return;
+      if (cur.scenarios === null) {
+        heroPending.current = true;
+        return;
+      }
+      if (cur.scenarios.some((s) => s.id === HERO_SCENARIO)) void cur.launch(HERO_SCENARIO);
+    };
+    window.addEventListener(RUN_HERO_EVENT, onHero);
+    return () => window.removeEventListener(RUN_HERO_EVENT, onHero);
+  }, []);
+
   return (
     <Card className="fl-glass rounded-3xl bg-transparent lg:h-full lg:min-h-0">
       <CardHeader>
@@ -93,35 +133,36 @@ export function ScenarioLauncher() {
               checked={effectiveLlm === "baseline"}
               onSelect={() => setLlm("baseline")}
               icon={<Cpu aria-hidden className="size-4" />}
-              label="Baseline"
-              hint="deterministic policy, no API key"
+              label="Deterministic"
+              hint="the investigator behind every published number"
             />
             {llmConfigured ? (
               <ModeButton
                 checked={effectiveLlm === "anthropic"}
                 onSelect={() => setLlm("anthropic")}
                 icon={<Bot aria-hidden className="size-4" />}
-                label="Anthropic"
-                hint={status ? `live LLM (${status.models.orchestrator})` : "live LLM"}
+                label="Claude"
+                hint={status ? `proposes and calls the graph tools (${status.models.orchestrator}); the gate decides` : "proposes; the gate decides"}
               />
             ) : (
               <Tooltip>
                 <TooltipTrigger
                   render={<span tabIndex={0} />}
                   className="rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-sky-400"
-                  aria-label="Anthropic investigator unavailable: ANTHROPIC_API_KEY is not configured on the server"
+                  aria-label="Claude investigator: runs on your own server with an Anthropic API key; this public demo is keyless"
                 >
                   <ModeButton
                     checked={false}
                     disabled
                     onSelect={() => undefined}
                     icon={<Bot aria-hidden className="size-4" />}
-                    label="Anthropic"
-                    hint="unavailable: no API key on the server"
+                    label="Claude"
+                    hint="on your own server, with an API key"
                   />
                 </TooltipTrigger>
                 <TooltipContent>
-                  The server has no ANTHROPIC_API_KEY, so live LLM runs are disabled. Baseline runs need no key.
+                  This public demo runs keyless. On your own server, set ANTHROPIC_API_KEY and Claude drives the
+                  investigation through the same graph tools while the same deterministic gate decides.
                 </TooltipContent>
               </Tooltip>
             )}
@@ -132,31 +173,42 @@ export function ScenarioLauncher() {
           <p role="alert" className="rounded-md border border-red-500/50 bg-red-500/10 p-2 text-sm text-red-200">
             Could not list scenarios: {loadErr}
           </p>
-        ) : scenarios === null ? (
+        ) : ordered === null ? (
           <p className="text-sm text-zinc-400">Loading scenarios…</p>
-        ) : scenarios.length === 0 ? (
+        ) : ordered.length === 0 ? (
           <p className="text-sm text-zinc-300">The API lists no scenarios (data/scenarios is empty).</p>
         ) : (
           <div className={"rounded-lg border border-zinc-800 lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:overscroll-contain lg:pb-6 " + SCROLL}
                role="region" aria-label="Scenarios (scrolls)" tabIndex={0} data-lenis-prevent>
           <ul className="divide-y divide-zinc-800">
-            {scenarios.map((s) => (
-              <li key={s.id} className="flex items-center gap-3 px-3 py-2.5">
+            {ordered.map((s) => {
+              const hero = s.id === HERO_SCENARIO;
+              return (
+              <li key={s.id} data-scenario={s.id} className={"flex items-center gap-3 px-3 py-2.5 " + (hero ? "bg-white/[0.03]" : "")}>
                 <span className="w-12 shrink-0 font-mono text-sm font-semibold text-zinc-100">{s.id}</span>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate font-mono text-xs text-zinc-400">{s.name}</p>
+                  {hero ? (
+                    <span className="mb-0.5 inline-flex items-center gap-1 rounded-full border border-amber-300/40 bg-amber-400/10 px-1.5 text-[10.5px] font-medium tracking-wide text-amber-100 uppercase">
+                      <Star aria-hidden className="size-3" /> hero
+                    </span>
+                  ) : null}
+                  {/* the readable name in full, wrapped; the raw id-style name stays in the tooltip */}
+                  <p className="text-xs break-words text-zinc-400" title={s.name}>
+                    {s.title ?? slugWords(s.name)}
+                  </p>
                   <p className="text-sm text-zinc-200">&ldquo;{s.report}&rdquo;</p>
                 </div>
                 <span className="hidden font-mono text-xs text-zinc-400 sm:inline">{s.tenant}</span>
                 <Button
                   onClick={() => launch(s.id)}
                   disabled={busy !== null}
-                  aria-label={`Run scenario ${s.id} with the ${effectiveLlm} investigator`}
+                  aria-label={`Run scenario ${s.id}${hero ? " (the hero incident)" : ""} with the ${effectiveLlm} investigator`}
                 >
                   <Play aria-hidden /> {busy === s.id ? "Starting…" : "Run"}
                 </Button>
               </li>
-            ))}
+              );
+            })}
           </ul>
           </div>
         )}
@@ -186,7 +238,9 @@ export function ScenarioLauncher() {
             </ul>
           </div>
         ) : null}
-        {busy ? <StatusChip tone="running">starting {busy}: preparing the clean-room graph…</StatusChip> : null}
+        <div role="status" aria-live="polite">
+          {busy ? <StatusChip tone="running">starting {busy}: preparing the clean-room graph…</StatusChip> : null}
+        </div>
       </CardContent>
     </Card>
   );

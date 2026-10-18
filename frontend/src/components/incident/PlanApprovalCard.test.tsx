@@ -9,6 +9,12 @@ import { describe, expect, it, vi } from "vitest";
 import { EXACT, HASH, option, plan, stubFetch } from "@/test/fixtures";
 import { PlanApprovalCard } from "./PlanApprovalCard";
 
+// GET /api/status as the app shell shares it: only `github` matters to this card
+const app = vi.hoisted(() => ({ github: undefined as "real" | "simulated" | undefined }));
+vi.mock("@/components/AppShell", () => ({
+  useAppStatus: () => ({ status: app.github ? { github: app.github } : null, error: null, loading: false }),
+}));
+
 function setup(
   options = [option({ status: "chosen", spec: EXACT, plan_hash: HASH })],
 ) {
@@ -180,5 +186,30 @@ describe("PlanApprovalCard: reject the exact action", () => {
     ).toBe(1); // not twice
     expect(items[1].textContent).toMatch(/leaves kpi\.exec_revenue exposed/);
     expect(items[2].textContent).toMatch(/predicted: does not contain/); // text, not colour alone
+  });
+});
+
+describe("PlanApprovalCard: simulated GitHub", () => {
+  it("says in one calm line that GitHub is simulated, with a link to the real pull requests", () => {
+    app.github = "simulated";
+    try {
+      setup();
+      const line = screen.getByText(/GitHub here is simulated/);
+      expect(line.closest("[role=alert]")).toBeNull(); // a note, not a warning
+      const link = within(line).getByRole("link", { name: /faultline-demo-infra repo/ });
+      expect(link.getAttribute("href")).toBe("https://github.com/Prashant-thakur77/faultline-demo-infra/pulls?q=is%3Apr");
+    } finally {
+      app.github = undefined;
+    }
+  });
+
+  it("says nothing about it on a server that acts on real GitHub", () => {
+    app.github = "real";
+    try {
+      setup();
+      expect(screen.queryByText(/GitHub here is simulated/)).toBeNull();
+    } finally {
+      app.github = undefined;
+    }
   });
 });

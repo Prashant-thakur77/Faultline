@@ -111,6 +111,20 @@ describe("layoutBrainGraph", () => {
 });
 
 describe("AnswerGraph", () => {
+  it("shows short ids whole, so ADR-012 and ADR-013 stay apart, and cuts long ids in the middle", async () => {
+    renderGraph();
+    await screen.findByRole("group", { name: /^Answer graph: 13 nodes/ });
+    const idText = (id: string) => {
+      const card = document.querySelector(`[data-node-id="${id}"]`)!;
+      return { card, spans: [...card.querySelectorAll("span")].map((x) => x.textContent) };
+    };
+    expect(idText("ADR-012").spans).toContain("ADR-012");
+    expect(idText("ADR-013").spans).toContain("ADR-013");
+    const long = idText("doc-chat-payment-timeouts");
+    expect(long.spans).toContain("doc-ch…eouts");
+    expect(long.card.getAttribute("title")).toContain("doc-chat-payment-timeouts");
+  });
+
   it("asks for the answer's citations and draws cited nodes filled, connecting nodes outlined and smaller", async () => {
     const { calls } = renderGraph();
     await screen.findByRole("group", { name: /^Answer graph: 13 nodes/ });

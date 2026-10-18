@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
+import { plural } from "@/lib/format";
 import { Eraser, LoaderCircle, ReceiptText, SearchCheck, ShieldCheck, TriangleAlert } from "lucide-react";
 import { api, ApiError, errorText } from "@/lib/api";
 import { useTenant } from "@/lib/tenant";
@@ -126,8 +127,8 @@ export function ForgetPanel() {
             <dl className="grid grid-cols-[max-content_minmax(0,1fr)] gap-x-3 gap-y-0.5">
               <dt className="text-zinc-400">would delete</dt>
               <dd className="text-zinc-100">
-                {plan.nodes} nodes (the document + {plan.owned.length} it alone produced) · {plan.relationships} relationships ·{" "}
-                {plan.vectors} vectors
+                {plural(plan.nodes, "node")} (the document + {plan.owned.length} it alone produced) ·{" "}
+                {plural(plan.relationships, "relationship")} · {plural(plan.vectors, "vector")}
               </dd>
               <dt className="text-zinc-400">ids</dt>
               <dd className="font-mono break-all text-zinc-100">{plan.owned.map((o) => `${o.id} (${o.label})`).join(", ") || "–"}</dd>
@@ -197,7 +198,7 @@ export function ForgetPanel() {
             <dl className="grid grid-cols-[max-content_minmax(0,1fr)] gap-x-3 gap-y-0.5">
               <dt className="text-zinc-400">deleted</dt>
               <dd className="text-zinc-100">
-                {receipt.nodes} nodes · {receipt.relationships} relationships · {receipt.vectors} vectors
+                {plural(receipt.nodes, "node")} · {plural(receipt.relationships, "relationship")} · {plural(receipt.vectors, "vector")}
               </dd>
               <dt className="text-zinc-400">forgotten</dt>
               <dd className="font-mono break-all text-zinc-100">{receipt.forgotten_ids.join(", ") || "–"}</dd>

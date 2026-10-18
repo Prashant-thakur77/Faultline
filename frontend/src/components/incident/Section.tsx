@@ -68,7 +68,10 @@ export function Section({
         </H>
         {aside ? <div className="flex flex-wrap items-center gap-1.5">{aside}</div> : null}
         {via ? (
-          <div className="ml-auto flex items-center">{foldable ? <ViaCompactProvider>{via}</ViaCompactProvider> : via}</div>
+          // min-w-0 + max-w-full: on a phone the chip takes its own line and truncates inside it, never widening the card
+          <div className="ml-auto flex max-w-full min-w-0 items-center *:min-w-0 *:shrink">
+            {foldable ? <ViaCompactProvider>{via}</ViaCompactProvider> : via}
+          </div>
         ) : null}
       </div>
       <div id={bodyId} hidden={!open}>

@@ -1,3 +1,5 @@
+import { API_BASE_URL } from "./api";
+
 /**
  * The Cypher shown on the home page's proof story: verbatim lines from backend/faultline/graph/templates,
  * with each `{algo:x}` placeholder written as the procedure the smoke suite resolved on the pinned engine
@@ -27,6 +29,17 @@ CALL algo.SPpaths({sourceNode: c, targetNode: s, relTypes: ['CHANGED', 'GATES', 
 CALL algo.maxFlow({sourceNodes: srcs, targetNodes: [t], relationshipTypes: ['PROPAGATES_TO'], capacityProperty: 'cap'}) YIELD maxFlow
 RETURN maxFlow AS max_flow, size(srcs) AS sources`,
   },
+  // the whole load-bearing query, runnable as shown (the For agents section shows it; every line is verbatim)
+  pathFull: {
+    id: "Q-GATE-1",
+    file: "gate_path.cypher",
+    code: `MATCH (c:Node {id:$cause}), (s:Node {id:$symptom})
+CALL algo.SPpaths({sourceNode: c, targetNode: s, relTypes: ['CHANGED', 'GATES', 'PROPAGATES_TO'], weightProp: 'w', relDirection: 'outgoing', maxLen: 8, pathCount: 3}) YIELD path, pathWeight
+RETURN [n IN nodes(path) | n.id] AS chain, [r IN relationships(path) | type(r)] AS rels, pathWeight AS weight, length(path) AS hops,
+[r IN relationships(path) | coalesce(r.from_incident, '')] AS learned_from
+ORDER BY weight, hops
+LIMIT 3`,
+  },
   proof: {
     id: "Q-GATE-1",
     file: "gate_path.cypher",
@@ -51,23 +64,24 @@ OPTIONAL MATCH (inc)-[:RESOLVED_BY]->(a:Action {id:$aid})`,
 /** The "plug it into your agent" tabs: the repo's own MCP entry, a REST call and a gate query (checked in the test). */
 export const API_TABS: { id: string; label: string; meta: string; lang: "json" | "shell" | "cypher"; code: string }[] = [
   {
-    id: "mcp", label: "MCP", meta: ".mcp.json", lang: "json",
+    id: "mcp", label: "MCP", meta: ".mcp.json · the live demo's graph, nothing to install (--url and --key for your own server)",
+    lang: "json",
     code: `{
   "mcpServers": {
     "faultline": {
-      "type": "stdio",
-      "command": "uv",
-      "args": ["run", "python", "-m", "faultline.mcp_server.server", "--stdio"],
-      "env": { "PYTHONPATH": "backend", "FAULTLINE_TENANT": "acme" }
+      "command": "npx",
+      "args": ["-y", "@prashantthakur77/faultline-mcp"]
     }
   }
 }`,
   },
   {
-    id: "rest", label: "REST", meta: "POST /api/context_pack", lang: "shell",
-    code: `curl -s -X POST "localhost:8400/api/context_pack?tenant=acme" \\
+    id: "rest", label: "REST", meta: "POST /api/context_pack · the answer carries its Cypher, parameters and row digest",
+    lang: "shell",
+    code: `curl -s -X POST "${API_BASE_URL}/api/context_pack?tenant=acme" \\
   -H 'content-type: application/json' \\
   -d '{"text": "checkout errors are spiking", "targets": ["checkout"], "budget_tokens": 500}'`,
   },
-  { id: "cypher", label: "Cypher", meta: `${SNIPPETS.path.id} · templates/${SNIPPETS.path.file}`, lang: "cypher", code: SNIPPETS.path.code },
+  { id: "cypher", label: "Cypher", lang: "cypher", code: SNIPPETS.pathFull.code,
+    meta: `${SNIPPETS.pathFull.id} · templates/${SNIPPETS.pathFull.file} · $cause 'payment', $symptom 'checkout': one path; 'recommendation': none, so no claim` },
 ];

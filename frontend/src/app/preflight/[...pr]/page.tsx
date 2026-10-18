@@ -1,6 +1,9 @@
+import type { Metadata } from "next";
 import { PreflightView } from "@/components/preflight/PreflightView";
 import { LiveOnly, PREFLIGHT_WHAT } from "@/components/site/LiveOnly";
 import { STATIC_SITE } from "@/lib/site";
+
+export const metadata: Metadata = { title: "Preflight · Faultline" };
 
 /**
  * Static replay site: one placeholder path so the export has something to render (a dynamic

@@ -1,7 +1,10 @@
+import type { Metadata } from "next";
 import { OnCallView } from "@/components/oncall/OnCallView";
 import { LiveOnly } from "@/components/site/LiveOnly";
 import { PageIntro } from "@/components/site/PageIntro";
 import { STATIC_SITE } from "@/lib/site";
+
+export const metadata: Metadata = { title: "On call · Faultline" };
 
 const ONCALL_WHAT =
   "On-call pages the person on call for the owning team, escalates when nobody acks, and handles a repeat under a standing contract; every page, ack and contract is a node in the tenant's FalkorDB graph.";

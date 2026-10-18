@@ -13,7 +13,7 @@ describe("ApiTabs", () => {
     render(<ApiTabs />);
     const mcp = screen.getByRole("tab", { name: "MCP" });
     expect(mcp.getAttribute("aria-selected")).toBe("true");
-    expect(screen.getByRole("tabpanel").textContent).toContain("faultline.mcp_server.server");
+    expect(screen.getByRole("tabpanel").textContent).toContain("@prashantthakur77/faultline-mcp");
 
     fireEvent.click(screen.getByRole("tab", { name: "REST" }));
     expect(screen.getByRole("tab", { name: "REST" }).getAttribute("aria-selected")).toBe("true");

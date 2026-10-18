@@ -12,11 +12,12 @@ import { fmtEngineMs, type QueryStats } from "@/lib/engine";
  */
 export function EngineVia({ what }: { what: string }) {
   return (
-    <span className="inline-flex min-h-6 max-w-full items-center gap-1.5 px-1 text-[11px] text-zinc-400">
-      <Database aria-hidden className="size-3 shrink-0 text-zinc-500" />
-      <span>via FalkorDB</span>
-      <span className="text-[var(--fl-subtle)]">·</span>
-      <span className="truncate font-mono">{what}</span>
+    // on a phone the command list wraps at its spaces (never cut: "db.constraints" stays readable)
+    <span className="inline-flex min-h-6 max-w-full items-baseline gap-1.5 px-1 py-0.5 text-[11px] text-zinc-400">
+      <Database aria-hidden className="size-3 shrink-0 translate-y-0.5 text-zinc-500" />
+      <span className="shrink-0 whitespace-nowrap">via FalkorDB</span>
+      <span className="shrink-0 text-[var(--fl-subtle)]">·</span>
+      <span className="min-w-0 font-mono break-words">{what}</span>
     </span>
   );
 }

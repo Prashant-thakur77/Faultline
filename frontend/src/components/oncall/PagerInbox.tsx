@@ -8,7 +8,7 @@ import { Section } from "@/components/incident/Section";
 import { StatusChip } from "@/components/StatusChip";
 import { Disclosure } from "@/components/ui/Disclosure";
 import type { Polled } from "@/hooks/usePolled";
-import { fmtClock } from "@/lib/format";
+import { fmtClock, sentence } from "@/lib/format";
 import {
   externalChannels,
   needsAck,
@@ -182,7 +182,7 @@ function PageItem({ page: p, tenant, onChanged }: { page: PageRow; tenant: strin
             {p.person?.name ? <span className="font-mono text-[11px] text-zinc-400"> {p.person.id}</span> : null}
             <span className="text-zinc-400"> · {channelText(p.channels.length ? p.channels : p.channel)}</span>
           </p>
-          {p.reason ? <p className="text-[11px] break-words text-zinc-400">Why them: {p.reason}</p> : null}
+          {p.reason ? <p className="text-[11px] break-words text-zinc-400">Why them: {sentence(p.reason)}</p> : null}
           {p.incident ? (
             <p className="text-xs break-words text-zinc-300">
               <Link

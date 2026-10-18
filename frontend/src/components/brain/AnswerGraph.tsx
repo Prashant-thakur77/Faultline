@@ -16,6 +16,7 @@ import {
 } from "@/lib/brainGraph";
 import type { BrainAnswer, BrainSubgraph } from "@/lib/types";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { midTruncate } from "@/lib/format";
 import { useTenant } from "@/lib/tenant";
 import { useCypherPanel } from "@/components/cypher/CypherPanelContext";
 import { cn } from "@/lib/utils";
@@ -381,8 +382,11 @@ function NodeCard({
         >
           {node.name}
         </span>
-        <span className={cn("mt-0.5 block truncate font-mono text-zinc-400", node.cited ? "text-[10.5px]" : "text-[10px]")}>
-          {node.label} · {node.id}
+        {/* the id stays whole (up to 12 characters; longer ones are cut in the middle) so ADR-012 and ADR-013 never
+            both read "ADR-0…"; the label gives way first. The button's tooltip carries the full name, label and id. */}
+        <span className={cn("mt-0.5 flex min-w-0 items-baseline gap-1 font-mono text-zinc-400", node.cited ? "text-[10.5px]" : "text-[10px]")}>
+          <span className="min-w-0 truncate">{node.label} ·</span>{" "}
+          <span className="shrink-0 whitespace-nowrap text-zinc-300">{midTruncate(node.id)}</span>
         </span>
       </span>
       <span className="sr-only">

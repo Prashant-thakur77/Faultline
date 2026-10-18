@@ -2,7 +2,7 @@
 
 import { useId, useState } from "react";
 import { ChevronRight, Flag, Hand, Radio, ShieldCheck, ShieldX, Wrench } from "lucide-react";
-import { fmtMs, fmtOffset } from "@/lib/format";
+import { fmtMs, fmtOffset, plural } from "@/lib/format";
 import { originText } from "@/lib/gate";
 import type { StreamState, TimelineItem } from "@/hooks/useIncident";
 import type { ToolCallRow } from "@/lib/types";
@@ -191,7 +191,7 @@ function StageGroup({
                   )}
                   <span className="truncate font-mono text-zinc-200">{it.row.cause}</span>
                   <span className="text-[11px] text-[var(--fl-subtle)]">
-                    {originText(it.row.origin)} · {it.row.checks.length} checks
+                    {originText(it.row.origin)} · {plural(it.row.checks.length, "check")}
                   </span>
                 </li>
               ))}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { plural } from "@/lib/format";
 import { ArrowRight, Database, LoaderCircle } from "lucide-react";
 import { api, errorText } from "@/lib/api";
 import { useTenant } from "@/lib/tenant";
@@ -195,7 +196,7 @@ export function PlaygroundView() {
               What moved
             </h2>
             <StatusChip tone={res.changed.length ? "warn" : "pass"}>
-              {res.changed.length ? `${res.changed.length} decision(s) changed` : "no decision changed"}
+              {res.changed.length ? `${plural(res.changed.length, "decision")} changed` : "no decision changed"}
             </StatusChip>
             <span className="text-xs text-[var(--fl-subtle)]">
               {res.perturbation.label} · applied{" "}

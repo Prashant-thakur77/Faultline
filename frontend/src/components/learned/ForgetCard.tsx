@@ -8,7 +8,7 @@ import { Section } from "@/components/incident/Section";
 import { StatusChip } from "@/components/StatusChip";
 import { Disclosure } from "@/components/ui/Disclosure";
 import { ApiError } from "@/lib/api";
-import { fmtAgo } from "@/lib/format";
+import { fmtAgo, plural } from "@/lib/format";
 import { learnedApi, type ForgetPlan, type ForgetReceipt, type LearnedState, type ReceiptRow } from "@/lib/learned";
 import { fmtWhen } from "@/lib/oncall";
 import { cn } from "@/lib/utils";
@@ -449,8 +449,8 @@ function PastReceipt({ r, now }: { r: ReceiptRow; now: number }) {
         <span className="ml-auto text-zinc-400">{r.at !== null ? fmtAgo(r.at, now) : "–"}</span>
       </p>
       <p className="mt-0.5 text-zinc-400">
-        {r.events ?? "–"} events, {r.guidelines ?? "–"} guidelines deleted · {r.eventsLeft ?? "–"} left, {r.preferencesStillCiting ?? "–"} preferences
-        still citing · token <span className="font-mono">{r.token ? r.token.slice(0, 12) : "–"}</span>
+        {plural(r.events, "event")}, {plural(r.guidelines, "guideline")} deleted · {r.eventsLeft ?? "–"} left,{" "}
+        {plural(r.preferencesStillCiting, "preference")} still citing · token <span className="font-mono">{r.token ? r.token.slice(0, 12) : "–"}</span>
       </p>
     </li>
   );

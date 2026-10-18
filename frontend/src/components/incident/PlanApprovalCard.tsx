@@ -15,6 +15,7 @@ import {
   GitBranch,
   GitPullRequest,
   History,
+  Info,
   LoaderCircle,
   Telescope,
   OctagonAlert,
@@ -35,6 +36,7 @@ import {
 } from "@/lib/api";
 import { useTenant } from "@/lib/tenant";
 import { fmtValue } from "@/lib/format";
+import { useAppStatus } from "@/components/AppShell";
 import { guidelineFrom409 } from "@/lib/learned";
 import { useNow } from "@/hooks/usePolled";
 import type {
@@ -159,6 +161,8 @@ export function PlanApprovalCard({
   learnedQuery = null,
 }: Props) {
   const tenant = useTenant();
+  // the server says whether approvals act on real GitHub or a simulated one (absent on older backends: no note)
+  const github = useAppStatus().status?.github;
   const options = plan?.options ?? [];
   const done =
     options.find((o) => o.status === "approved" || o.status === "executed") ??
@@ -385,8 +389,35 @@ export function PlanApprovalCard({
         ) : null
       }
     >
+      {!readOnly && github === "simulated" ? <SimulatedGitHubNote /> : null}
       {body}
     </Section>
+  );
+}
+
+/** Where the simulated pull requests of the public demo (no GitHub token on the server) are shown for real. */
+const DEMO_INFRA_PRS = "https://github.com/Prashant-thakur77/faultline-demo-infra/pulls?q=is%3Apr";
+
+/** One calm line on a server whose approvals act on a simulated GitHub (GET /api/status github: "simulated"). */
+function SimulatedGitHubNote() {
+  return (
+    <p className="mb-3 flex items-start gap-1.5 text-xs leading-relaxed text-zinc-400">
+      <Info aria-hidden className="mt-0.5 size-3.5 shrink-0 text-[var(--fl-subtle)]" />
+      <span>
+        GitHub here is simulated: the fix is a simulated pull request; the real-GitHub path is shown in the video and
+        the{" "}
+        <a
+          href={DEMO_INFRA_PRS}
+          target="_blank"
+          rel="noreferrer"
+          className="rounded text-sky-300 underline-offset-2 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-sky-400"
+        >
+          faultline-demo-infra repo
+          <span className="sr-only"> (opens in a new tab)</span>
+        </a>
+        .
+      </span>
+    </p>
   );
 }
 

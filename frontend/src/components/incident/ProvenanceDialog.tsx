@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
+import { plural } from "@/lib/format";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { CircleAlert, GitFork, LoaderCircle, RotateCw, X } from "lucide-react";
@@ -254,7 +255,7 @@ function SheetBody({
   const counts = data
     ? (() => {
         const n = (k: string) => data.nodes.filter((x) => x.kind === k).length;
-        return `${n("evidence")} evidence · ${n("call")} calls · ${n("agent")} agents`;
+        return `${n("evidence")} evidence · ${plural(n("call"), "call")} · ${plural(n("agent"), "agent")}`;
       })()
     : null;
 

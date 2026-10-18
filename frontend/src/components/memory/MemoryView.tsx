@@ -424,8 +424,9 @@ export function RunbooksCard({
                     {x.source ?? "human"}
                   </StatusChip>
                 )}
-                <span className="min-w-0 flex-1 text-zinc-100">{x.title ?? x.id}</span>
-                <span className="font-mono text-zinc-200" title="incidents this fix worked on">
+                {/* a long flag name in the title wraps inside its own column, never under the support count */}
+                <span className="min-w-0 flex-1 break-words text-zinc-100">{x.title ?? x.id}</span>
+                <span className="shrink-0 font-mono whitespace-nowrap text-zinc-200" title="incidents this fix worked on">
                   support {x.support}
                 </span>
               </p>

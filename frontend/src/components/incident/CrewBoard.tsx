@@ -26,7 +26,7 @@ import {
   type GateLine,
   type LaneState,
 } from "@/lib/crew";
-import { fmtMs, fmtOffset } from "@/lib/format";
+import { fmtMs, fmtOffset, plural } from "@/lib/format";
 import { CHECK_STATE_TEXT, checkState, originText, sortChecks, type CheckState, type Tone } from "@/lib/gate";
 import type { Crew, CrewCall, CrewMember, CrewStep, GateCheck, GateRun } from "@/lib/types";
 import { StatusChip } from "@/components/StatusChip";
@@ -103,7 +103,7 @@ function Board({ crew, gateRuns, onOpenCall, onOpenCheck, onOpenQuery }: CrewBoa
       title="Crew"
       aside={
         <span className="text-xs text-[var(--fl-subtle)]">
-          {crewCount} steps · {specCount} specialists
+          {plural(crewCount, "step")} · {plural(specCount, "specialist")}
         </span>
       }
     >

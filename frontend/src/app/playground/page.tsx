@@ -1,7 +1,10 @@
+import type { Metadata } from "next";
 import { PlaygroundView } from "@/components/playground/PlaygroundView";
 import { LiveOnly } from "@/components/site/LiveOnly";
 import { PageIntro } from "@/components/site/PageIntro";
 import { STATIC_SITE } from "@/lib/site";
+
+export const metadata: Metadata = { title: "Break it · Faultline" };
 
 const PLAYGROUND_WHAT =
   "Break the graph: change one edge, capacity or person on a GRAPH.COPY of the hero incident and see which decisions move.";

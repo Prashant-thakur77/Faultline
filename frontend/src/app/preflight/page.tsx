@@ -1,7 +1,10 @@
+import type { Metadata } from "next";
 import { PageIntro } from "@/components/site/PageIntro";
 import { PreflightView } from "@/components/preflight/PreflightView";
 import { LiveOnly, PREFLIGHT_WHAT } from "@/components/site/LiveOnly";
 import { STATIC_SITE } from "@/lib/site";
+
+export const metadata: Metadata = { title: "Preflight · Faultline" };
 
 /** /preflight[?pr=<pr id>&focus=<node>]: with ?pr= the latest recorded preflight for that PR is loaded. */
 export default async function PreflightPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {

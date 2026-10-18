@@ -1,6 +1,9 @@
+import type { Metadata } from "next";
 import { IncidentRoom } from "@/components/incident/IncidentRoom";
 import { INCIDENT_WHAT, LiveOnly } from "@/components/site/LiveOnly";
 import { STATIC_SITE } from "@/lib/site";
+
+export const metadata: Metadata = { title: "Incident room · Faultline" };
 
 /**
  * Static replay site: one placeholder path so the export has something to render (a dynamic

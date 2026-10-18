@@ -1,5 +1,8 @@
+import type { Metadata } from "next";
 import { PageIntro } from "@/components/site/PageIntro";
 import { ReplayIndex } from "@/components/replay/ReplayIndex";
+
+export const metadata: Metadata = { title: "Replay · Faultline" };
 
 export default function ReplayIndexPage() {
   return (

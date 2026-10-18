@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { PageIntro } from "@/components/site/PageIntro";
 import { ColdWarmCard } from "@/components/memory/ColdWarmCard";
 import { MemoryView } from "@/components/memory/MemoryView";
@@ -5,6 +6,8 @@ import { LiveOnly } from "@/components/site/LiveOnly";
 import { LearnedLiveOnly } from "@/components/learned/LearnedLiveOnly";
 import { LearnedPanel } from "@/components/learned/LearnedPanel";
 import { STATIC_SITE } from "@/lib/site";
+
+export const metadata: Metadata = { title: "Memory · Faultline" };
 
 /**
  * /memory[?incident=<id>]: the Memory tab for the tenant chosen in the top bar, then "What Faultline has learned"

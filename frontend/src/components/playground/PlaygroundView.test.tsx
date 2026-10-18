@@ -36,7 +36,7 @@ describe("PlaygroundView: break the graph", () => {
     expect(await screen.findByRole("radio", { name: /^Remove the call a → b/ })).toBeTruthy();
     expect(screen.getByText(/G4 still holds/)).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Break it" }));
-    await waitFor(() => expect(screen.getByText("2 decision(s) changed")).toBeTruthy());
+    await waitFor(() => expect(screen.getByText("2 decisions changed")).toBeTruthy());
     expect(calls.some((c) => c.url.includes("/api/playground/cut") && c.init?.method === "POST")).toBe(true);
     const row = screen.getByRole("rowheader", { name: /^outcome/ }).closest("tr")!;
     expect(within(row).getByText("(changed)")).toBeTruthy();                    // text, not colour alone

@@ -1,6 +1,9 @@
+import type { Metadata } from "next";
 import { PhonePage } from "@/components/oncall/PhonePage";
 import { LiveOnly } from "@/components/site/LiveOnly";
 import { STATIC_SITE } from "@/lib/site";
+
+export const metadata: Metadata = { title: "Page · On call · Faultline" };
 
 /**
  * Static replay site: one placeholder path so the export has something to render (a dynamic route needs at least

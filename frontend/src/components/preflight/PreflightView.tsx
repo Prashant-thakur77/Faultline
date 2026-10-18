@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { api, ApiError, errorText } from "@/lib/api";
 import { useTenant } from "@/lib/tenant";
-import { fmtMs, fmtTime, fmtValue, shortDigest } from "@/lib/format";
+import { fmtMs, fmtTime, fmtValue, plural, shortDigest } from "@/lib/format";
 import { buildGraphModel } from "@/lib/graphModel";
 import type { GraphResponse, PreflightRequest, PreflightResponse, PreflightVerdict, RecordedPreflight } from "@/lib/types";
 import { useCypherPanel } from "@/components/cypher/CypherPanelContext";
@@ -721,7 +721,7 @@ function FactsAndEvidence({
   return (
     <SectionFold>
     <div className="space-y-2">
-      <Section id="pf-facts" title="Extracted facts" aside={<span className="text-[11px] text-zinc-400">{r.facts.length} facts</span>}>
+      <Section id="pf-facts" title="Extracted facts" aside={<span className="text-[11px] text-zinc-400">{plural(r.facts.length, "fact")}</span>}>
         {missing?.has("facts") ? (
           <p className="text-sm text-zinc-300">Not in the recorded result (GET /api/preflight returns no facts).</p>
         ) : r.facts.length ? (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { LayoutMode } from "@falkordb/canvas";
@@ -308,7 +308,7 @@ export function ExploreView({ tenant: urlTenant, focus }: { tenant: string | nul
           <Legend labels={labelsPresent} domains={domainsPresent} />
         </section>
 
-        <section aria-labelledby="explore-table-h" className="flex min-h-0 flex-col fl-card rounded-2xl p-4">
+        <section aria-labelledby="explore-table-h" className="flex min-h-0 min-w-0 flex-col fl-card rounded-2xl p-4">
           <h2 id="explore-table-h" className="mb-2 text-sm font-semibold text-zinc-50">
             Nodes (text alternative), by betweenness
           </h2>
@@ -317,10 +317,10 @@ export function ExploreView({ tenant: urlTenant, focus }: { tenant: string | nul
               <caption className="sr-only">Nodes of the graph shown, with label, tier, betweenness and degree</caption>
               <thead className="sticky top-0 bg-zinc-900 text-zinc-400">
                 <tr>
-                  <th scope="col" className="py-1 pr-2 font-medium">node</th>
-                  <th scope="col" className="py-1 pr-2 font-medium">label</th>
-                  <th scope="col" className="py-1 pr-2 text-right font-medium">betw.</th>
-                  <th scope="col" className="py-1 pr-2 text-right font-medium">in/out</th>
+                  <th scope="col" className="py-1 pr-1.5 sm:pr-2 font-medium">node</th>
+                  <th scope="col" className="py-1 pr-1.5 sm:pr-2 font-medium">label</th>
+                  <th scope="col" className="py-1 pr-1.5 sm:pr-2 text-right font-medium">betw.</th>
+                  <th scope="col" className="py-1 pr-1.5 sm:pr-2 text-right font-medium">in/out</th>
                   <th scope="col" className="py-1 font-medium"><span className="sr-only">actions</span></th>
                 </tr>
               </thead>
@@ -330,21 +330,25 @@ export function ExploreView({ tenant: urlTenant, focus }: { tenant: string | nul
                   const isSel = n.id === selected || n.id === focus;
                   return (
                     <tr key={n.id} className={"border-t border-zinc-800 " + (isSel ? "bg-sky-500/10" : "")}>
-                      <th scope="row" className="py-1 pr-2 font-mono font-normal break-all text-zinc-100">
-                        {n.id}
+                      {/* ids wrap only between their words (after "." "_" "-"), never mid-word; a cell that is
+                          still too wide scrolls the table sideways inside this card */}
+                      <th scope="row" className="py-1 pr-1.5 sm:pr-2 font-mono font-normal text-zinc-100">
+                        <WordBreaks id={n.id} />
                         {n.id === focus ? <span className="ml-1 text-sky-300">(focus)</span> : null}
                       </th>
-                      <td className="py-1 pr-2 whitespace-nowrap text-zinc-300">
-                        <span aria-hidden className="mr-1 inline-block size-2 rounded-full" style={{ background: LABEL_COLOR[n.label] ?? OTHER_COLOR }} />
-                        {n.label}
-                        {n.tier !== null ? <span className="text-zinc-400"> · t{n.tier}</span> : null}
+                      <td className="py-1 pr-1.5 sm:pr-2 text-zinc-300">
+                        <span className="whitespace-nowrap">
+                          <span aria-hidden className="mr-1 inline-block size-2 rounded-full" style={{ background: LABEL_COLOR[n.label] ?? OTHER_COLOR }} />
+                          {n.label}
+                        </span>
+                        {n.tier !== null ? <>{" "}<span className="whitespace-nowrap text-zinc-400">· t{n.tier}</span></> : null}
                       </td>
-                      <td className="py-1 pr-2 text-right font-mono text-zinc-200">{n.betweenness == null ? "–" : n.betweenness.toFixed(1)}</td>
-                      <td className="py-1 pr-2 text-right font-mono text-zinc-300">
+                      <td className="py-1 pr-1.5 sm:pr-2 text-right font-mono text-zinc-200">{n.betweenness == null ? "–" : n.betweenness.toFixed(1)}</td>
+                      <td className="py-1 pr-1.5 sm:pr-2 text-right font-mono text-zinc-300">
                         {d?.in ?? 0}/{d?.out ?? 0}
                       </td>
                       <td className="py-1">
-                        <div className="flex gap-1">
+                        <div className="flex flex-wrap gap-1">
                           <button
                             type="button"
                             onClick={() => openNode(n.id)}
@@ -388,8 +392,8 @@ export function ExploreView({ tenant: urlTenant, focus }: { tenant: string | nul
                   <tbody>
                     {data.edges.map((e) => (
                       <tr key={`${e.source}>${e.target}`} className="border-t border-zinc-800">
-                        <td className="py-1 pr-2 font-mono break-all text-zinc-200">
-                          {e.source} → {e.target}
+                        <td className="py-1 pr-2 font-mono text-zinc-200">
+                          <WordBreaks id={e.source} /> → <WordBreaks id={e.target} />
                         </td>
                         <td className="py-1 pr-2 text-zinc-300">{e.domain}</td>
                         <td className="py-1 text-right font-mono text-zinc-200">{e.cap == null ? "–" : e.cap}</td>
@@ -403,6 +407,25 @@ export function ExploreView({ tenant: urlTenant, focus }: { tenant: string | nul
         </section>
       </div>
     </div>
+  );
+}
+
+/**
+ * A node id that may wrap only between its words: a break opportunity after each ".", "_" or "-" (so
+ * "marts.fct_revenue" wraps as "marts." / "fct_revenue", never "mar" / "ts"). Copying the id copies it unchanged.
+ */
+export function WordBreaks({ id }: { id: string }) {
+  // each piece ends with its separator (no look-behind: older Safari cannot parse it)
+  const parts = id.match(/[^._-]*[._-]+|[^._-]+$/g) ?? [id];
+  return (
+    <>
+      {parts.map((p, i) => (
+        <Fragment key={i}>
+          {p}
+          {i < parts.length - 1 ? <wbr /> : null}
+        </Fragment>
+      ))}
+    </>
   );
 }
 

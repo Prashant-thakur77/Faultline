@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Network, TriangleAlert, UserRound, Users } from "lucide-react";
-import { fmtValue } from "@/lib/format";
+import { fmtValue, plural } from "@/lib/format";
 import type { PlanItem, PlanResponse, WhoFixesRow } from "@/lib/types";
 import { StatusChip } from "@/components/StatusChip";
 import { ViaFalkor } from "@/components/cypher/ViaFalkor";
@@ -107,7 +107,7 @@ export function WhoFixesCard({
                     ) : null}
                     <span className="text-[var(--fl-subtle)]">{inactive ? "top contributor inactive" : "top contributor active"}</span>
                     {typeof bus.payload?.total_commits === "number" ? (
-                      <span className="text-[var(--fl-subtle)]">· {bus.payload.total_commits} commits counted</span>
+                      <span className="text-[var(--fl-subtle)]">· {plural(bus.payload.total_commits, "commit")} counted</span>
                     ) : null}
                   </p>
                 )}

@@ -26,11 +26,11 @@ describe("proof story snippets", () => {
 
 describe("API tabs", () => {
   const ROOT = path.resolve(__dirname, "../../..");
-  it("MCP tab is the repo's own faultline server entry", async () => {
+  it("MCP tab runs the repo's own published npm bridge", async () => {
     const { API_TABS } = await import("./proofSnippets");
     const shown = JSON.parse(API_TABS.find((t) => t.id === "mcp")!.code);
-    const real = JSON.parse(readFileSync(path.join(ROOT, ".mcp.json"), "utf8"));
-    expect(shown.mcpServers.faultline).toEqual(real.mcpServers.faultline);
+    const pkg = JSON.parse(readFileSync(path.join(ROOT, "packages/faultline-mcp/package.json"), "utf8"));
+    expect(shown.mcpServers.faultline).toEqual({ command: "npx", args: ["-y", pkg.name] });
   });
   it("REST tab calls a real route with fields its request model declares", async () => {
     const { API_TABS } = await import("./proofSnippets");

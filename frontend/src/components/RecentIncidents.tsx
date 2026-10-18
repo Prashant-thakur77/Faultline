@@ -5,7 +5,7 @@ import Link from "next/link";
 import { RefreshCw } from "lucide-react";
 import { api, errorText } from "@/lib/api";
 import { useTenant } from "@/lib/tenant";
-import { fmtAgo } from "@/lib/format";
+import { fmtAgo, plural } from "@/lib/format";
 import { outcomeMeta } from "@/lib/gate";
 import type { IncidentListItem } from "@/lib/types";
 import { Button } from "@/components/ui/button";
@@ -62,7 +62,7 @@ export function RecentIncidents() {
           </Button>
         </CardTitle>
         <CardDescription className="text-zinc-400">
-          From audit_{tenant} (the tenant&apos;s audit graph), newest first{items && items.length ? ` · ${items.length} runs` : ""}.
+          From audit_{tenant} (the tenant&apos;s audit graph), newest first{items && items.length ? ` · ${plural(items.length, "run")}` : ""}.
         </CardDescription>
       </CardHeader>
       <CardContent className="lg:flex lg:min-h-0 lg:flex-1 lg:flex-col">

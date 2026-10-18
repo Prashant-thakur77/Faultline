@@ -24,7 +24,7 @@ function SplitBar({ q }: { q: RecentQuery }) {
   ];
   const sum = parts.reduce((a, p) => a + p.v, 0);
   return (
-    <span aria-hidden className="flex h-1.5 w-20 shrink-0 overflow-hidden rounded-full bg-white/[0.06]">
+    <span aria-hidden className="flex h-1.5 w-12 shrink-0 overflow-hidden rounded-full bg-white/[0.06] sm:w-20">
       {sum > 0 ? parts.map((p, i) => (p.v > 0 ? <span key={i} className={p.cls} style={{ width: `${(100 * p.v) / sum}%` }} /> : null)) : null}
     </span>
   );
@@ -116,28 +116,30 @@ export function LiveTail({
         <ol aria-label="Most recent queries, newest first" className="divide-y divide-white/[0.05]">
           {rows.map((q, i) => (
             <li key={`${q.graph}:${q.at}:${q.id}:${i}`} className="py-1.5 text-xs">
-              <div className="flex items-center gap-x-2.5">
+              {/* a long id truncates (its full text is the tooltip) so the time and the bar stay inside the card */}
+              <div className="flex min-w-0 items-center gap-x-2 sm:gap-x-2.5">
                 <span className="w-[4.75rem] shrink-0 font-mono text-[11px] text-zinc-400 tabular-nums">{clock(q.at)}</span>
                 {q.kind === "template" ? (
                   <button
                     type="button"
                     onClick={() => open(q.id, byId.get(q.id) ?? null)}
-                    className={cn(QUERY_ID_CLS, "min-w-0 truncate text-sky-300 hover:text-sky-200")}
+                    title={q.id}
+                    className={cn(QUERY_ID_CLS, "min-w-0 shrink text-sky-300 hover:text-sky-200")}
                     aria-label={`${q.id}: open the Cypher panel for this template`}
                   >
-                    {q.id}
+                    <span className="truncate">{q.id}</span>
                   </button>
                 ) : (
-                  <span className="inline-flex min-w-0 items-center gap-1 truncate font-mono text-[11px] text-zinc-200">
+                  <span title={q.id} className="inline-flex min-w-0 items-center gap-1 font-mono text-[11px] text-zinc-200">
                     <PenLine aria-hidden className="size-3 shrink-0 text-amber-300" />
-                    {q.id}
+                    <span className="truncate">{q.id}</span>
                   </span>
                 )}
-                <span className="ml-auto w-16 shrink-0 text-right font-mono text-zinc-100 tabular-nums">{fmtEngineMs(q.totalMs)}</span>
+                <span className="ml-auto w-16 shrink-0 text-right font-mono whitespace-nowrap text-zinc-100 tabular-nums">{fmtEngineMs(q.totalMs)}</span>
                 <SplitBar q={q} />
               </div>
               {/* second line, under the id: which graph's stream, the split in numbers, the flags */}
-              <div className="mt-0.5 flex flex-wrap items-center gap-x-2.5 gap-y-1 pl-[5.375rem]">
+              <div className="mt-0.5 flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-1 pl-[5.25rem] sm:pl-[5.375rem]">
                 <span className="min-w-0 max-w-full truncate font-mono text-[11px] text-[var(--fl-subtle)]" title={q.graph}>
                   {q.graph}
                 </span>

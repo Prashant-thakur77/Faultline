@@ -37,8 +37,30 @@ describe("TopBar", () => {
     fireEvent.click(toggle);
     expect(screen.getByRole("button", { name: "Close menu" }).getAttribute("aria-expanded")).toBe("true");
     const menu = screen.getByRole("navigation", { name: "Sections (menu)" });
-    expect(within(menu).getAllByRole("link")).toHaveLength(8);
+    const menuLinks = within(menu).getAllByRole("link").map((a) => a.textContent);
+    expect(menuLinks).toHaveLength(10);
+    expect(menuLinks).toEqual(expect.arrayContaining(["Inside FalkorDB", "How it decides", "Explore", "Break it"]));
     expect(screen.getAllByText("FalkorDB 6.0.2 · sha256:107455e862a8").length).toBeGreaterThan(0);
+  });
+
+  it("puts Inside FalkorDB and the explainer behind More on desktop; Escape closes it and returns focus", () => {
+    nav.pathname = "/engine";
+    render(<TopBar state={{ status, error: null, loading: false }} />);
+    const sections = screen.getByRole("navigation", { name: "Sections" });
+    const more = within(sections).getByRole("button", { name: "More sections" });
+    expect(more.getAttribute("aria-expanded")).toBe("false");
+    fireEvent.click(more);
+    expect(more.getAttribute("aria-expanded")).toBe("true");
+    const panel = document.getElementById(more.getAttribute("aria-controls")!)!;
+    const links = within(panel).getAllByRole("link");
+    // below xl the bar's Explore, Break it and Replay also sit here (CSS hides these copies from xl up)
+    expect(links.map((a) => a.textContent)).toEqual(["Explore", "Break it", "Replay", "Inside FalkorDB", "How it decides"]);
+    expect(within(panel).getByRole("link", { name: "Inside FalkorDB" }).getAttribute("href")).toBe("/engine");
+    expect(within(panel).getByRole("link", { name: "Inside FalkorDB" }).getAttribute("aria-current")).toBe("page");
+    expect(within(panel).getByRole("link", { name: "How it decides" }).getAttribute("href")).toBe("/explainer");
+    fireEvent.keyDown(window, { key: "Escape" });
+    expect(more.getAttribute("aria-expanded")).toBe("false");
+    expect(document.activeElement).toBe(more);
   });
 
   it("never fills in a status it does not have", () => {

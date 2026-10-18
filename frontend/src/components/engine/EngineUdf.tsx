@@ -136,8 +136,11 @@ function Library({ name, lib, tenant }: { name: string; lib: UdfLibrary; tenant:
   const panel = useCypherPanel();
   const ours = OURS.has(name);
   // ours: every function the engine registered (or, when it has none loaded, the ones the queries call)
-  const all = ours && lib.functions.length > 0;
-  const fns = all ? lib.functions : lib.used;
+  // an API from before the function lists sends none: show the library without them instead of failing the page
+  const functions = lib.functions ?? [];
+  const all = ours && functions.length > 0;
+  const fns = all ? functions : (lib.used ?? []);
+  const templates = lib.templates ?? [];
   const fnLabel = all ? `Functions (${fns.length})` : "Called by our queries";
   const open = (id: string) =>
     panel.open({
@@ -210,9 +213,9 @@ function Library({ name, lib, tenant }: { name: string; lib: UdfLibrary; tenant:
             Templates that call {fns.length === 1 ? "it" : "them"}
           </dt>
           <dd>
-            {lib.templates.length ? (
+            {templates.length ? (
               <ul aria-label={`${name}: templates that call it`} className="flex flex-wrap gap-1">
-                {lib.templates.map((id) => (
+                {templates.map((id) => (
                   <li key={id}>
                     <button
                       type="button"

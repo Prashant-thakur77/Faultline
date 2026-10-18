@@ -13,15 +13,23 @@ import { DemoControls } from "./DemoControls";
 import { StatusChip } from "./StatusChip";
 import { IsolationBadge, TenantSwitch } from "./TenantSwitch";
 
-const NAV: { href: string; label: string; match: (p: string) => boolean; live?: boolean }[] = [
-  { href: "/", label: "Incidents", match: (p) => p === "/" || p.startsWith("/incidents") },
-  { href: "/oncall", label: "On-call", match: (p) => p.startsWith("/oncall") },
-  { href: "/preflight", label: "Preflight", match: (p) => p.startsWith("/preflight") },
-  { href: "/memory", label: "Memory", match: (p) => p.startsWith("/memory") },
-  { href: "/brain", label: "Brain", match: (p) => p.startsWith("/brain") },
-  { href: "/explore", label: "Explore", match: (p) => p.startsWith("/explore") },
-  { href: "/playground", label: "Break it", match: (p) => p.startsWith("/playground"), live: true },
-  { href: "/replay", label: "Replay", match: (p) => p.startsWith("/replay") },
+/**
+ * Where each section sits in the desktop bar: "main" always shows; "wide" shows from xl and sits in the More menu
+ * below that (the bar runs out of room at lg); "more" always sits in the More menu. The phone menu lists them all.
+ */
+type NavItem = { href: string; label: string; match: (p: string) => boolean; live?: boolean; place: "main" | "wide" | "more" };
+
+const NAV: NavItem[] = [
+  { href: "/", label: "Incidents", match: (p) => p === "/" || p.startsWith("/incidents"), place: "main" },
+  { href: "/oncall", label: "On-call", match: (p) => p.startsWith("/oncall"), place: "main" },
+  { href: "/preflight", label: "Preflight", match: (p) => p.startsWith("/preflight"), place: "main" },
+  { href: "/memory", label: "Memory", match: (p) => p.startsWith("/memory"), place: "main" },
+  { href: "/brain", label: "Brain", match: (p) => p.startsWith("/brain"), place: "main" },
+  { href: "/explore", label: "Explore", match: (p) => p.startsWith("/explore"), place: "wide" },
+  { href: "/playground", label: "Break it", match: (p) => p.startsWith("/playground"), live: true, place: "wide" },
+  { href: "/replay", label: "Replay", match: (p) => p.startsWith("/replay"), place: "wide" },
+  { href: "/engine", label: "Inside FalkorDB", match: (p) => p.startsWith("/engine"), live: true, place: "more" },
+  { href: "/explainer", label: "How it decides", match: (p) => p.startsWith("/explainer"), place: "more" },
 ];
 
 /** The Faultline mark: a fault line cutting through a node (the claim is only made along a path). */
@@ -87,12 +95,13 @@ export function TopBar({ state }: { state: StatusState }) {
           <span className="text-[15px] font-[590] tracking-[-0.01em] text-zinc-50">Faultline</span>
         </Link>
 
-        <nav aria-label="Sections" className="ml-6 hidden items-center gap-1 text-[14px] lg:flex">
-          {nav.map((n) => (
-            <NavLink key={n.href} href={n.href} active={n.match(pathname)}>
+        <nav aria-label="Sections" className="ml-6 hidden min-w-0 items-center gap-1 text-[14px] lg:flex">
+          {nav.filter((n) => n.place !== "more").map((n) => (
+            <NavLink key={n.href} href={n.href} active={n.match(pathname)} className={n.place === "wide" ? "hidden xl:inline-flex" : undefined}>
               {STATIC_SITE && n.href === "/" ? "Home" : n.label}
             </NavLink>
           ))}
+          <MoreMenu items={nav.filter((n) => n.place !== "main")} pathname={pathname} />
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
@@ -244,14 +253,88 @@ function SystemFacts({ state }: { state: StatusState }) {
   );
 }
 
-function NavLink({ href, active, children }: { href: string; active: boolean; children: React.ReactNode }) {
+/**
+ * Desktop "More": the sections that do not fit the bar (Inside FalkorDB and the explainer always; Explore, Break it
+ * and Replay below xl, where the bar shows them itself). A disclosure of plain links: Escape or a click outside closes
+ * it and focus returns to the button; any navigation closes it.
+ */
+function MoreMenu({ items, pathname }: { items: NavItem[]; pathname: string }) {
+  // remembers the page it was opened on, so a navigation closes it (as the phone menu does)
+  const [openedAt, setOpenedAt] = useState<string | null>(null);
+  const open = openedAt === pathname;
+  const id = useId();
+  const ref = useRef<HTMLDivElement>(null);
+  const btn = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: MouseEvent) => ref.current && !ref.current.contains(e.target as Node) && setOpenedAt(null);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      setOpenedAt(null);
+      btn.current?.focus();
+    };
+    document.addEventListener("mousedown", onDown);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+  if (!items.length) return null;
+  const activeMore = items.some((n) => n.place === "more" && n.match(pathname));
+  const activeWide = items.some((n) => n.place === "wide" && n.match(pathname));
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        ref={btn}
+        type="button"
+        onClick={() => setOpenedAt(open ? null : pathname)}
+        aria-expanded={open}
+        aria-controls={id}
+        className={
+          "relative inline-flex items-center gap-1 rounded-md px-3 py-1.5 outline-none transition-colors duration-150 hover:text-zinc-100 focus-visible:ring-2 focus-visible:ring-sky-400 " +
+          (activeMore ? "text-zinc-50" : activeWide ? "text-zinc-50 xl:text-[var(--fl-muted)]" : "text-[var(--fl-muted)]")
+        }
+      >
+        More
+        <ChevronDown aria-hidden className={"size-3.5 transition-transform " + (open ? "rotate-180" : "")} />
+        <span className="sr-only"> sections</span>
+      </button>
+      {open ? (
+        <div id={id} className="absolute left-0 top-[calc(100%+10px)] z-50 grid min-w-[13rem] gap-0.5 rounded-xl border border-white/10 bg-[oklch(0.17_0.006_285)] p-1.5 shadow-[0_24px_48px_-12px_oklch(0_0_0/0.7)]">
+          {items.map((n) => {
+            const active = n.match(pathname);
+            return (
+              <Link
+                key={n.href}
+                href={n.href}
+                aria-current={active ? "page" : undefined}
+                className={
+                  "flex items-center justify-between gap-3 rounded-lg px-3 py-2 outline-none transition-colors duration-150 hover:bg-white/[0.05] focus-visible:ring-2 focus-visible:ring-sky-400 " +
+                  (n.place === "wide" ? "xl:hidden " : "") +
+                  (active ? "text-zinc-50" : "text-[var(--fl-muted)] hover:text-zinc-100")
+                }
+              >
+                {n.label}
+                {active ? <span className="h-[2px] w-4 rounded-full bg-[linear-gradient(90deg,var(--fl-ember),var(--fl-iris))]" aria-hidden /> : null}
+              </Link>
+            );
+          })}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function NavLink({ href, active, children, className }: { href: string; active: boolean; children: React.ReactNode; className?: string }) {
   return (
     <Link
       href={href}
       aria-current={active ? "page" : undefined}
       className={
-        "relative rounded-md px-3 py-1.5 outline-none transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-sky-400 " +
-        (active ? "text-zinc-50" : "text-[var(--fl-muted)] hover:text-zinc-100")
+        "relative whitespace-nowrap rounded-md px-3 py-1.5 outline-none transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-sky-400 " +
+        (active ? "text-zinc-50" : "text-[var(--fl-muted)] hover:text-zinc-100") +
+        (className ? ` ${className}` : "")
       }
     >
       {active ? (

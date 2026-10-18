@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowRightLeft, History, UserRound } from "lucide-react";
-import { fmtTime } from "@/lib/format";
+import { fmtTime, plural } from "@/lib/format";
 import type { IncidentView, PlanItem, PlanResponse } from "@/lib/types";
 import { StatusChip } from "@/components/StatusChip";
 import { PlanPending } from "./ContainmentCard";
@@ -98,7 +98,7 @@ export function OwnershipCard({
                     <span className="font-mono text-[11px] text-zinc-300">{k.person}</span>
                     {k.active === false ? <StatusChip tone="warn">inactive</StatusChip> : null}
                     {typeof k.commits === "number" ? (
-                      <span className="text-[11px] text-zinc-400">{k.commits} commits</span>
+                      <span className="text-[11px] text-zinc-400">{plural(k.commits, "commit")}</span>
                     ) : null}
                     {k.other_teams.length ? (
                       <span className="text-[11px] text-zinc-400">now in {k.other_teams.join(", ")}</span>
