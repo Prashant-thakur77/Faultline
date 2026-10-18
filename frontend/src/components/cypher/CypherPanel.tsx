@@ -306,7 +306,7 @@ function PanelBody({
                 tabIndex={0}
                 role="region"
                 aria-label={`Cypher of ${tid}`}
-                className="max-h-64 overflow-auto rounded-md border border-zinc-800 bg-zinc-950 p-3 font-mono text-[12px] leading-5 whitespace-pre text-zinc-100 outline-none focus-visible:ring-2 focus-visible:ring-sky-400"
+                className="max-h-64 overflow-auto rounded-md border border-zinc-800 bg-zinc-950 p-3 font-mono text-[12px] leading-5 whitespace-pre-wrap break-words text-zinc-100 outline-none focus-visible:ring-2 focus-visible:ring-sky-400"
               >
                 {tpl.cypher}
               </pre>
@@ -537,7 +537,7 @@ function ProfileResult({ prof, rtt }: { prof: ProfileResponse; rtt: number }) {
         tabIndex={0}
         role="region"
         aria-label="GRAPH.PROFILE output"
-        className="max-h-64 overflow-auto rounded-md border border-zinc-800 bg-zinc-950 p-3 font-mono text-[12px] leading-5 whitespace-pre text-zinc-100 outline-none focus-visible:ring-2 focus-visible:ring-sky-400"
+        className="max-h-64 overflow-auto rounded-md border border-zinc-800 bg-zinc-950 p-3 font-mono text-[12px] leading-5 whitespace-pre-wrap break-words text-zinc-100 outline-none focus-visible:ring-2 focus-visible:ring-sky-400"
       >
         {text}
       </pre>
