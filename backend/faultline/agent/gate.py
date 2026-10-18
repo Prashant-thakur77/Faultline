@@ -37,6 +37,7 @@ from ..graph.ro import RO
 from ..graph.tenant import tenant_graph
 from ..mcp_server import context
 from ..mcp_server import tools as T
+from ..text import joined
 from .weights import weights
 
 log = logging.getLogger(__name__)
@@ -510,7 +511,8 @@ class Gate:
             ch = self.ro.run("Q-GATE-7", g7p).rows
             sources = sorted({r["source"] for r in ch if r["source"]})
             checks.append(Check("G7 agreement", len(sources) >= 2,
-                                f"independent channels on the chain: {sources}", "Q-GATE-7", g7p, downgrade_only=True))
+                                f"independent channels on the chain: {joined(sources)}", "Q-GATE-7", g7p,
+                                downgrade_only=True))
             # G7 structural correlation: change + code/data specialists name the same Deploy via CHANGED
             cp = {"run": self.run_id, "cause": cause_id, "chain": chain, "roles": list(CORR_ROLES)}
             corr = self.ro.run("Q-GATE-CORR", cp).rows

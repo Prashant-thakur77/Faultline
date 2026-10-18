@@ -21,6 +21,7 @@ from typing import Any
 from ..agent.weights import weights
 from ..graph import client, writes
 from ..graph import copy as gcopy
+from ..graph.errors import GraphNotReady
 from ..graph.ro import RO, QueryResult
 from ..graph.tenant import check_tenant, golden_graph, memory_graph
 
@@ -100,8 +101,10 @@ def remember(tenant: str, *, principal: str, text: str, about: list[str], kind: 
 def last_note(tenant: str, principal: str) -> str | None:
     """The newest note `principal` wrote (Q-NOTE-LAST), so a later step of the same run can reply to it."""
     t = check_tenant(tenant)
-    ensure_memory_graph(t)
-    rows = RO(t, memory_graph(t)).run("Q-NOTE-LAST", {"principal": principal}).rows
+    try:
+        rows = RO(t, memory_graph(t)).run("Q-NOTE-LAST", {"principal": principal}).rows
+    except GraphNotReady:   # no note has been written in this tenant yet
+        return None
     return rows[0]["id"] if rows else None
 
 
@@ -131,7 +134,7 @@ def recall(tenant: str, *, text: str = "", focus: str = "", viewer: str = "") ->
     t = check_tenant(tenant)
     if not text.strip() and not focus:
         raise ValueError("give text, focus or both")
-    ensure_memory_graph(t)
+    # read-only: no engine connection here (the hosted MCP server has none); the graph is made by the first write
     q = embed_one(text) if text.strip() else None
     return RO(t, memory_graph(t)).run("Q-NOTE-RECALL", {
         "focus": focus, "q": q, "hops": int(w["near_hops"]), "floor": float(w["min_similarity"]), "viewer": viewer,

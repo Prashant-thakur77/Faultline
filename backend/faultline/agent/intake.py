@@ -27,6 +27,7 @@ from ..graph import client, writes
 from ..graph.errors import GraphError
 from ..mcp_server import context
 from ..mcp_server import tools as T
+from ..text import joined
 from . import crew
 from .state import Stage
 
@@ -95,7 +96,7 @@ def intake_round(*, tenant: str, graph: str, since: int, until: int, onset: int 
         writes.link_alerts(g, inc=inc, links=[{"alert": a["id"], "how": "opened"} for a in rest], evidence=ev)
         if embed is not None:
             embed(g, inc, rest)
-        note = f"alerts: {[a['id'] for a in rest]}"
+        note = f"alerts: {joined(a['id'] for a in rest)}"
         if len(out["rows"]) > 1 or rnd.attached:
             note += f"; group {k} of {len(out['rows'])} (algo.WCC, evidence {ev})"
         writes.advance_stage(g, inc=inc, run=run, stage="INTAKE", ord_=1, note=note + stage_note)

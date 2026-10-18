@@ -31,6 +31,7 @@ from ..graph import writes
 from ..graph.errors import GraphNotReady
 from ..graph.ro import RO
 from ..graph.tenant import audit_graph, check_tenant, golden_graph, graph_belongs_to, oncall_graph
+from ..text import plural
 from . import channels
 
 log = logging.getLogger("faultline.oncall")
@@ -845,10 +846,11 @@ def report(tenant: str, *, since: int, until: int, graphs: Iterable[str] | None 
     counts = {k: len(v) for k, v in secs.items()}
     applied = sum(1 for a in secs["actions"] if a.get("verdict") == "APPLIED")
     people = sorted({p.get("person") for p in secs["pages"] if p.get("kind") in ("page", "escalation") and p.get("person")})
-    summary = (f"{counts['incidents']} incident(s) opened; {sum(1 for p in secs['pages'] if p.get('kind') in ('page', 'escalation'))} "
-               f"page(s) to {len(people)} person(s), {counts['acks']} acknowledged; {counts['actions']} approved action(s), "
-               f"{applied} verified APPLIED; {counts['contract_uses']} handled under a standing contract; "
-               f"{counts['handoffs']} hand-off(s).")
+    n_pages = sum(1 for p in secs["pages"] if p.get("kind") in ("page", "escalation"))
+    summary = (f"{plural(counts['incidents'], 'incident')} opened; {plural(n_pages, 'page')} to "
+               f"{plural(len(people), 'person')}, {counts['acks']} acknowledged; "
+               f"{plural(counts['actions'], 'approved action')}, {applied} verified APPLIED; "
+               f"{counts['contract_uses']} handled under a standing contract; {plural(counts['handoffs'], 'hand-off')}.")
     return {**secs, "counts": counts, "window": {"from": int(since), "to": int(until)}, "summary": summary,
             "template": "Q-SHIFT-REPORT", "params": {"from": int(since), "to": int(until)}, "ms": round(ms, 2),
             "graphs": queries}

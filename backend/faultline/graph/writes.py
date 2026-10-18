@@ -1825,10 +1825,12 @@ W_PAGE_DELIVERY = (
 
 
 def record_delivery(g: Graph, *, pid: str, delivery: dict, now: int) -> str | None:
-    """What each channel did with a page (in-app always; external ones as configured). A page whose every external
-    channel failed reads delivery_failed (still in the in-app pager, still escalating); an acked page keeps its status."""
+    """What each channel did with a page (in-app always; external ones as configured). A page whose every ATTEMPTED
+    external channel failed reads delivery_failed (still in the in-app pager, still escalating); a channel skipped on
+    purpose (`ok: None`, e.g. an anonymous demo run pages in-app only) is no failure. An acked page keeps its status."""
     ext = {k: v for k, v in delivery.items() if k != "in_app"}
-    failed = bool(ext) and not any(v.get("ok") for v in ext.values())
+    tried = [v for v in ext.values() if v.get("ok") is not None]
+    failed = bool(tried) and not any(v.get("ok") for v in tried)
     chans = ["in_app"] + sorted(ext)
     r = g.query(W_PAGE_DELIVERY, {"id": pid, "delivery": json.dumps(delivery, sort_keys=True, default=str),
                                   "channels": chans, "channel": ",".join(chans), "failed": failed, "now": int(now)},

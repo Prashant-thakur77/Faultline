@@ -603,13 +603,19 @@ def _stored_json(text: str | None, default: Any = None) -> Any:
 
 
 @app.get("/api/incidents")
-def incidents(tenant: str = "acme") -> list[dict]:
+def incidents(tenant: str = "acme", all: bool = False) -> list[dict]:  # noqa: A002 - the query parameter's name
+    """Recent runs from the audit index, each with `available` (its run graph still exists). The live demo collects
+    older run graphs, so by default only runs that can still be opened are listed (`all=true` lists every run)."""
     try:
-        return RO(check_tenant(tenant), audit_graph(tenant)).run("Q-RUNS-1", {}).rows
+        rows = RO(check_tenant(tenant), audit_graph(tenant)).run("Q-RUNS-1", {}).rows
     except GraphNotReady:
         return []
     except GraphError as e:
         raise _graph_error(e) from e
+    live = set(gclient.engine().list_graphs())
+    for r in rows:
+        r["available"] = not r.get("graph") or r["graph"] in live
+    return rows if all else [r for r in rows if r["available"]]
 
 
 def _collected_text(inc: str) -> str:

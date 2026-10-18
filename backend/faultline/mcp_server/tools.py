@@ -21,7 +21,7 @@ from pydantic import BaseModel, Field, ValidationError, model_validator
 from ..agent.weights import tier_weights_param, weights
 from ..graph import client, writes
 from ..graph.algo.maxflow import CutMismatch
-from ..graph.errors import GraphError, GraphUnavailable
+from ..graph.errors import GraphError, GraphNotReady, GraphUnavailable
 from ..graph.ro import RO, QueryResult
 from ..graph.templates import load
 from . import context
@@ -98,8 +98,8 @@ def _guard(fn: Callable[..., dict]) -> Callable[..., dict]:
             return fn(**kwargs)
         except ValidationError as e:
             return {"error": f"invalid arguments: {e.errors()[0]['msg']}"}
-        except GraphUnavailable as e:
-            return {"error": f"unavailable: {e}"}
+        except GraphUnavailable as e:  # never the engine's host, port or account in a client's answer
+            return {"error": "unavailable: " + re.sub(r"\s+at [\w.-]+:\d+", "", str(e)).split(": invalid username")[0]}
         except GraphError as e:
             return {"error": f"{type(e).__name__}: {e}"}
         except CutMismatch as e:
@@ -1106,7 +1106,10 @@ def recall_notes(text: str = "", focus_id: str = "", include_private: bool = Tru
     if not a.text.strip() and not a.focus_id:
         return {"error": "invalid arguments: give text, focus_id or both"}
     b = context.current()
-    r = notes.recall(b.tenant, text=a.text, focus=a.focus_id, viewer=_principal(b) if include_private else "")
+    try:
+        r = notes.recall(b.tenant, text=a.text, focus=a.focus_id, viewer=_principal(b) if include_private else "")
+    except GraphNotReady:   # no agent has left a note in this tenant yet: an empty answer, said plainly
+        return {"rows": [], "note": "no agent has left a note in this tenant yet", "template": "Q-NOTE-RECALL"}
     # about=[]: a note naming a component must never mark that component as seen (G1 grounds on graph facts only)
     return _envelope(r, tool="recall_notes", kind="notes", about=[],
                      via="db.idx.vector.queryNodes(Note) ∪ (focus)-[:PROPAGATES_TO*0..2]-()<-[:ABOUT]-(:Note), "

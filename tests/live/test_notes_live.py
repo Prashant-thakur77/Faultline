@@ -141,3 +141,16 @@ def test_a_private_note_is_its_authors_alone(acme):
     with pytest.raises(notes.NoteRefused, match="private"):     # and nobody else can reply to it
         notes.remember("acme", principal="agent-b", text="replying to something I cannot see", about=["cart"],
                        reply_to=mine["id"])
+
+
+def test_recall_needs_no_engine_connection(acme, monkeypatch):
+    """The hosted MCP server holds no engine credential: recall must read as the tenant's read-only user only."""
+    from faultline.graph import client as gclient
+    from faultline.graph.errors import GraphUnavailable
+
+    def no_engine():
+        raise GraphUnavailable("FalkorDB unreachable at falkordb:6379: invalid username-password pair")
+
+    monkeypatch.setattr(gclient, "engine", no_engine)
+    out = T.recall_notes(focus_id="payment")
+    assert "error" not in out and out["template"] == "Q-NOTE-RECALL"

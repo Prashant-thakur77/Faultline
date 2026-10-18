@@ -28,6 +28,7 @@ from ..graph.ro import RO
 from ..graph.tenant import check_tenant, graph_belongs_to, tenant_graph
 from ..mcp_server import context
 from ..mcp_server import tools as T
+from ..text import plural
 
 BRAIN_TOOLS = ["resolve_entity", "find_entities", "service_context", "people_who_worked_on", "decisions_about",
                "trace_decision", "missing_guardrails", "blast_radius", "runbook_for", "run_cypher_readonly",
@@ -442,16 +443,25 @@ def _baseline(s: _Session, q: str, user: str | None = None) -> tuple[str, str, l
         rows = r.get("rows") or []
         if not rows:
             return intent, f"Nobody has committed to [{ent['id']}] in the recorded history.", sources
-        lines = [f"- {x['name']} [{x['person']}]: {x['commits']} commits, resolved {x['incidents_resolved']} incident(s) there"
+        lines = [f"- {x['name']} [{x['person']}]: {plural(x['commits'], 'commit')}, resolved "
+                 f"{plural(x['incidents_resolved'], 'incident')} there"
                  + (f"; {', '.join('[' + t + ']' for t in x['teams'])}" if x["teams"] else "")
                  + ("" if x["active"] else " (no longer active)") for x in rows[:5]]
-        return intent, f"People who have worked on [{ent['id']}], most work first:\n" + "\n".join(lines), sources
+        # who owns it now, and who is on call for it, first: the question is usually "whose is this?"
+        ctx = (s.call("service_context", id=ent["id"], now=int(time.time() * 1000)).get("rows") or [{}])[0]
+        head = ""
+        if ctx.get("team"):
+            head = (f"[{ent['id']}] is owned by [{ctx['team']}]"
+                    + (f"; on call now: {', '.join('[' + p + ']' for p in ctx.get('oncall') or [])}" if ctx.get("oncall") else "")
+                    + ".\n")
+        return intent, head + f"People who have worked on [{ent['id']}], most work first:\n" + "\n".join(lines), sources
     if intent == "blast":
         r = s.call("blast_radius", id=ent["id"])
         rows = r.get("rows") or []
         if not rows:
             return intent, f"Nothing downstream depends on [{ent['id']}] in the graph.", sources
-        lines = [f"- [{x['id']}] ({x.get('label')}, tier {x.get('tier')}, {x.get('hops')} hop(s))" for x in rows[:10]]
+        lines = [f"- [{x['id']}] ({x.get('label')}, tier {x.get('tier')}, {plural(x.get('hops') or 0, 'hop')})"
+                 for x in rows[:10]]
         more = f"\n…and {len(rows) - 10} more." if len(rows) > 10 else ""
         hc = [x for x in s.call("hidden_coupling", component_ids=[ent["id"]]).get("rows") or [] if x["cause"] == ent["id"]]
         also = ("\nNot in the dependency graph, but incident history says it also hits: " + ", ".join(
