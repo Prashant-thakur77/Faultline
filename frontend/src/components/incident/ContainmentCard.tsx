@@ -63,7 +63,7 @@ export function TemplateButton({
 }
 
 /**
- * Containment: the min-cut (Q-CUT-1, algo.maxFlow edge flows) that separates the failing
+ * Containment: the min-cut (Q-CUT-3: algo.maxFlow and the residual cut in one engine query) that separates the failing
  * node from what must stay protected, and the what-if check on a GRAPH.COPY branch
  * (Q-WHATIF-1): does removing the cut contain the failure, and what stays connected.
  */

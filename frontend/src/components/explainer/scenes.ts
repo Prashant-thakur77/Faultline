@@ -95,9 +95,9 @@ export const SCENES: Scene[] = [
   },
   {
     id: "cut", title: "Contain it on a copy", duration: 8,
-    chips: [{ query: "algo.maxFlow → edgeFlows → min-cut", file: "templates/cut_flow.cypher", template: "Q-CUT-1" }, { query: "GRAPH.COPY → what-if branch", file: "graph/copy.py", template: "Q-WHATIF-1" }],
+    chips: [{ query: "algo.maxFlow → residual → min-cut, one query", file: "templates/cut_in_engine.cypher", template: "Q-CUT-3" }, { query: "GRAPH.COPY → what-if branch", file: "graph/copy.py", template: "Q-WHATIF-1" }],
     caption: (v) =>
-      `The smallest set of edges that contains the failure is the min-cut, read from max-flow's edge flows (${fmt(v, "profile.Q-CUT-1.engine_ms_p50")} ms). `
+      `The smallest set of edges that contains the failure is the min-cut: FalkorDB computes the max-flow (${fmt(v, "profile.Q-CUT-1.engine_ms_p50")} ms) and, in the same query, the edges it saturates. `
       + `It is tried first on a GRAPH.COPY branch (${fmt(v, "scale.1k.copy_ms")} ms for ${fmt(v, "scale.1k.nodes")} nodes): the protected services are no longer reached.`,
   },
   {

@@ -14,7 +14,7 @@ function withNotify(): PlanResponse {
       id: "tc-n",
       evidence_id: "ev-n",
       summary: "",
-      template: "Q-NOTIFY-1",
+      template: "Q-NOTIFY-2",
       params: { target_id: "payment" },
       at: 0,
       payload: { rows: [{ team: "t-pay", name: "Payments", owns_impacted: ["payment"], oncall: ["p-030"], impact: 3, nearest_hops: 0 }] },

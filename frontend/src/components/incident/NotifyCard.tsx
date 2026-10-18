@@ -12,7 +12,7 @@ import { IncidentPages, IncidentPagesChip, useIncidentPages } from "@/components
 import { Section } from "./Section";
 
 /**
- * Notify (plan.notify_set, Q-NOTIFY-1 over the algo.SSpaths blast radius): the teams that own
+ * Notify (plan.notify_set, Q-NOTIFY-2 over the algo.SSpaths blast radius): the teams that own
  * something the failure reaches, with who is on call for each now. This is who to TELL, not who
  * fixes it (that ranking is the "Who fixes it" card). Ordered by weighted impact (code + weights).
  * Live, it also lists the pages actually sent for the incident (GET /api/pages?incident=) and their ack state.

@@ -18,6 +18,7 @@ import { StatusChip } from "@/components/StatusChip";
 import { OfflineTemplatesProvider, ViaFalkor } from "@/components/cypher/ViaFalkor";
 import { Disclosure, FoldProvider } from "@/components/ui/Disclosure";
 import { cn } from "@/lib/utils";
+import { AgentNotesCard } from "./AgentNotesCard";
 import { AlertCoverageCard } from "./AlertCoverageCard";
 import { BlastTable } from "./BlastTable";
 import { ChainTable } from "./ChainTable";
@@ -97,7 +98,7 @@ export interface RoomSource {
 /**
  * Incident room: left = stage timeline, centre = graph view + text
  * alternatives + crew board, right = suspects → gate → root cause → residue → contradictions → why alerts
- * missed it → containment → who fixes it → ownership at the change → notify → memory →
+ * missed it → containment → who fixes it → ownership at the change → notify → notes from other agents (live) → memory →
  * plan & approval → evidence.
  */
 export function IncidentRoomLayout({ source }: { source: RoomSource }) {
@@ -181,6 +182,9 @@ export function IncidentRoomLayout({ source }: { source: RoomSource }) {
   const showAlerts = !noIncident && !abstain && !absent.has("alerts");
   const showOwnership = !noIncident && !absent.has("ownership");
   const showNotify = !noIncident && !absent.has("notify");
+  // Notes from other agents (live only) are read around one component: the confirmed cause's target (the hop after the
+  // change on the proof path), else the incident's main symptom.
+  const notesFocus = (chains.proof && chains.proof.chain.length >= 2 ? chains.proof.chain[1] : null) ?? view.incident.targets[0] ?? null;
   const remedyCall = actions.toolCallOf("remedy_stats");
   const learnedCall = actions.toolCallOf("learned_preferences"); // M21: what the team taught Faultline (the plan's learned order)
   // A crew call is a ToolCall node: open the recorded row (with its params) when the view has it, else the call as the
@@ -616,6 +620,7 @@ export function IncidentRoomLayout({ source }: { source: RoomSource }) {
                         incidentId={source.mode === "live" ? view.incident.id : null}
                       />
                     ) : null}
+                    {source.mode === "live" ? <AgentNotesCard focus={notesFocus} /> : null}
                     <MemoryCard
                       plan={plan}
                       error={source.planError}

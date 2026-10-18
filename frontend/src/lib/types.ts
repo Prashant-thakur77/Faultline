@@ -572,7 +572,7 @@ export interface BusFactorPayload {
   total_commits?: number;
 }
 
-/** Who to NOTIFY (Q-NOTIFY-1): teams owning something in the blast radius; not who fixes it. */
+/** Who to NOTIFY (Q-NOTIFY-2, ranked in the engine): teams owning something in the blast radius; not who fixes it. */
 export interface NotifyRow {
   team: string;
   name: string | null;
@@ -1130,6 +1130,54 @@ export interface BrainHistoryTurn {
 export interface BrainHistory {
   user: string;
   turns: BrainHistoryTurn[];
+}
+
+// ------------------------------------------------------------------ shared agent notes (T2, GET /api/notes, Q-NOTE-RECALL)
+
+export type AgentNoteKind = "lead" | "observation" | "hypothesis" | "handoff" | "verdict";
+export type AgentNoteStance = "confirms" | "refutes" | "adds";
+
+/** A reply another agent left on a note (a REPLY_TO edge with its stance). */
+export interface AgentNoteReply {
+  id: string;
+  /** The authenticated principal that wrote the reply. */
+  agent: string;
+  stance: AgentNoteStance | (string & {});
+  text: string;
+}
+
+/** One note recalled from agentmem_<tenant>: a lead left by an agent, never evidence (the gate does not read it). */
+export interface AgentNote {
+  id: string;
+  /** The authenticated principal that wrote it ("faultline:run-…", "key-ab12cd34", "local"). */
+  agent: string;
+  /** How the agent calls itself (self-declared; may be ""). */
+  name: string;
+  kind: AgentNoteKind | (string & {});
+  text: string;
+  created_at: EpochMs | null;
+  expires_at: EpochMs | null;
+  /** The component ids the note is ABOUT. */
+  about: string[];
+  /** Graph distance from the focus component (0 = about it); null when recalled by meaning only. */
+  hops: number | null;
+  /** Meaning similarity to the text asked for; null when recalled by graph distance only. */
+  similarity: number | null;
+  replies: AgentNoteReply[];
+  /** Rank score computed in the engine (faultline.noteScore). */
+  score: number;
+}
+
+/** GET /api/notes?tenant=&focus=&text=: one read-only query (Q-NOTE-RECALL) with its exact Cypher and params. */
+export interface AgentNotesResponse {
+  rows: AgentNote[];
+  via: string;
+  template: string;
+  cypher: string;
+  params: Record<string, unknown>;
+  ms: number;
+  served_by: string;
+  note: string | null;
 }
 
 // ------------------------------------------------------------------ M13: reject, contrast, memory tab, brain widgets

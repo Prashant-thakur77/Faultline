@@ -1,4 +1,5 @@
 import type {
+  AgentNotesResponse,
   EdgeProposal,
   OverrideResponse,
   PlaygroundMenu,
@@ -512,6 +513,23 @@ export const api = {
       `/api/incidents/${enc(inc)}/contrast?${q(tenant)}`,
       { signal },
     );
+  },
+
+  /**
+   * Shared agent notes (T2): what agents left about `focus` or a component near it (and, with `text`, by meaning),
+   * recalled and ranked in one read-only query on agentmem_<tenant> (Q-NOTE-RECALL). 400 for bad input, 503 when
+   * FalkorDB is down.
+   */
+  notes(
+    opts: { tenant?: string; focus?: string; text?: string },
+    signal?: AbortSignal,
+  ): Promise<AgentNotesResponse> {
+    const tenant = opts.tenant ?? DEFAULT_TENANT;
+    const focus = opts.focus ? `&focus=${enc(opts.focus)}` : "";
+    const text = opts.text ? `&text=${enc(opts.text)}` : "";
+    return request("notes", `/api/notes?${q(tenant)}${focus}${text}`, {
+      signal,
+    });
   },
 
   /** Memory tab: families, runbooks in effect and (for one incident) its recall. */
