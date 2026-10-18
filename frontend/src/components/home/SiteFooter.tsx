@@ -53,6 +53,11 @@ const linkCls = "rounded text-[var(--fl-muted)] outline-none transition-colors d
 /** The close (a centred call to action with a copyable keyless check), the site map, and a giant wordmark.
  *  `compact` (every page but home) is one quiet dark row (the mark, the pages, the evidence and the licence) over a
  *  faint echo of the home wordmark. */
+const QUICKSTART =
+  "curl -fsSLO https://raw.githubusercontent.com/Prashant-thakur77/Faultline/main/deploy/quickstart.yml\n" +
+  "docker compose -f quickstart.yml up";
+const MCP_NPX = "claude mcp add faultline -- npx -y @prashantthakur77/faultline-mcp";
+
 export function SiteFooter({ compact = false }: { compact?: boolean }) {
   const cmd = (REPO_URL ? `git clone ${REPO_URL}.git && cd Faultline\n` : "") + "make setup && make judge-check";
   return (
@@ -67,8 +72,10 @@ export function SiteFooter({ compact = false }: { compact?: boolean }) {
         <p className="mx-auto mt-5 max-w-md text-[17px] leading-relaxed text-[var(--fl-muted)]">
           One command, no API key, nothing remote: the pinned engine, the tests and every number on this site, checked. It prints PASS.
         </p>
-        <div className="mx-auto mt-9 max-w-[560px] text-left">
+        <div className="mx-auto mt-9 grid max-w-[560px] gap-3 text-left">
           <CodeCard title="judge-check" meta="keyless" code={cmd} lang="shell" />
+          <CodeCard title="Run it all, Docker only" meta="UI on localhost:3000" code={QUICKSTART} lang="shell" />
+          <CodeCard title="Give your agent the graph tools" meta="any MCP client" code={MCP_NPX} lang="shell" />
         </div>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
           <Link href="/replay" data-magnetic className="fl-press group inline-flex h-10 items-center gap-2 rounded-full bg-zinc-50 px-5 text-sm font-medium text-zinc-950 outline-none hover:bg-white focus-visible:ring-2 focus-visible:ring-sky-400">

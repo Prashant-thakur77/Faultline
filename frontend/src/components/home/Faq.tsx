@@ -15,7 +15,7 @@ export const FAQ_ITEMS: { q: string; a: ReactNode }[] = [
   },
   {
     q: "What does it need to run?",
-    a: <>Docker, <Code>uv</Code> and Node. <Code>make setup &amp;&amp; make judge-check</Code> runs every check keyless and prints <Code>PASS</Code>; <Code>make demo</Code> starts the API and the UI.</>,
+    a: <>To use it: Docker alone. <Code>docker compose -f quickstart.yml up</Code> pulls the images, seeds the demo graphs and serves the UI, the API and the MCP endpoint; an npm package gives any MCP client the read-only graph tools with one <Code>npx</Code> line (both below). To check every number: Docker, <Code>uv</Code> and Node, then <Code>make setup &amp;&amp; make judge-check</Code>, which runs every check keyless and prints <Code>PASS</Code>.</>,
   },
   {
     q: "What happens if FalkorDB is down?",

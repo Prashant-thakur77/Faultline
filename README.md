@@ -33,7 +33,7 @@
 | **Same graph, more jobs** | A pre-deploy gate that blocks risky PRs; a company brain ("who owns, knows and decided what", with cited node ids); standing approvals for repeat faults; learning from the people who use it; read-only MCP tools any agent can call. |
 | **FalkorDB depth** | The only database. <!-- claim:repo.algorithms -->10<!-- /claim --> `algo.*` procedures, each changing a decision; <!-- claim:repo.templates -->226<!-- /claim --> parameterised Cypher templates; one graph and one read-only ACL user per tenant; `GRAPH.COPY` clean rooms and what-if branches; vectors and full-text; <!-- claim:repo.constraints -->15<!-- /claim --> constraints; `WAITAOF` durability; the engine's own telemetry on a `/engine` page. |
 | **Proven** | <!-- claim:seedsall.deep.wrong_confident -->0<!-- /claim --> confident wrong blames in <!-- claim:seedsall.deep.cases -->1540<!-- /claim --> adversarial worlds (a telemetry heuristic: <!-- claim:seedsall.deep.T.wrong_any -->620<!-- /claim -->; a strong LLM alone: <!-- claim:llm_deep.deep.all.wrong_confident -->37<!-- /claim --> of <!-- claim:deep.fresh.all.cases -->140<!-- /claim -->); on the real OpenTelemetry Demo, <!-- claim:otel.faultline.wrong.k -->0<!-- /claim --> wrong blames in <!-- claim:otel.faultline.wrong.n -->40<!-- /claim --> windows; without `algo.maxFlow` the right cause drops from <!-- claim:decisive.full.g5_only.right_cause -->20<!-- /claim -->/<!-- claim:decisive.full.g5_only.cases -->20<!-- /claim --> to <!-- claim:decisive.no_maxflow.g5_only.right_cause -->0<!-- /claim -->. The cost is recall, stated next to every number ([Proof at a glance](#proof-at-a-glance)). |
-| **Run it** | Live: [13-203-185-119.sslip.io](https://13-203-185-119.sslip.io) (keyless; press Re-arm to reset). Locally: `make setup && make judge-check` prints PASS with no API key. |
+| **Run it** | Live: [13-203-185-119.sslip.io](https://13-203-185-119.sslip.io) (keyless; press Re-arm to reset). Your agent: `npx -y @prashantthakur77/faultline-mcp` (any MCP client). Your machine, Docker only: `docker compose -f quickstart.yml up` ([Use it](#use-it)). Every number: `make setup && make judge-check` prints PASS with no API key. |
 | **Stack** | FalkorDB 6.0.2 (pinned by digest) · Python 3.11 and FastAPI · Next.js 16, React Three Fiber · MCP over stdio and HTTP · Docker Compose on one AWS EC2 VM with Caddy. <!-- noclaim: versions --> |
 | **Built for** | Graph Hacks (WeMakeDevs × FalkorDB). Tracks: T1 Agents That Act on Connected Data ([how one incident flows](#how-one-incident-flows)) · T3 Company Brain ([memory and brain](#memory-company-brain-preflight-coordination)) · T2 Agent Memory & Coordination ([learning from the people who use it](#learns-from-the-people-who-use-it-t2)). |
 
@@ -199,7 +199,7 @@ Measured on the pinned engine (FalkorDB 6.0.2), in the terms FalkorDB uses for i
 
 ## Reproduce it
 
-One command checks everything offline. It needs Docker, `uv` and Node. There is no API key, no GitHub token and nothing remote.
+To *use* Faultline you need only Docker (the [quickstart](#use-it): `docker compose -f quickstart.yml up`) or Node (the MCP tools: `npx -y @prashantthakur77/faultline-mcp`). To *check* it, one command checks everything offline. It needs Docker, `uv` and Node. There is no API key, no GitHub token and nothing remote.
 
 ```bash
 git clone https://github.com/Prashant-thakur77/Faultline.git && cd Faultline
@@ -671,7 +671,7 @@ Vector search finds the entry points; FalkorDB walks from them to the changes up
 > - `[people] who can fix payment: p-030, p-004, p-017, p-036, p-038 (team team-payments)` ‹Q-ORG-1›
 > - `[decision] decision ADR-012 constrains payment: Payment client timeout must stay ≤ 2000 ms` ‹Q-DEC-ABOUT› <!-- noclaim: verbatim output of one pack on the S1 clean room -->
 
-**MCP.** `make mcp` serves every product read as a typed, tenant-bound tool over stdio, plus the schema, query and weights resources and the investigate, preflight and ask-brain prompts. `make mcp-http` serves the same tools over Streamable HTTP with a bearer key bound to one tenant; it is deployed at `https://13-203-185-119.sslip.io/mcp` (read-only, rate-limited). Tools that build scratch or branch graphs stay internal, and the MCP service gets no engine credential. The official FalkorDB MCP server is also configured, strict read-only, in [`.mcp.json`](.mcp.json). Details: [docs/MCP.md](docs/MCP.md).
+**MCP.** `make mcp` serves every product read as a typed, tenant-bound tool over stdio, plus the schema, query and weights resources and the investigate, preflight and ask-brain prompts. `make mcp-http` serves the same tools over Streamable HTTP with a bearer key bound to one tenant; it is deployed at `https://13-203-185-119.sslip.io/mcp` (read-only, rate-limited). From any stdio MCP client, `npx -y @prashantthakur77/faultline-mcp` connects to it with the public demo key ([npm package](https://www.npmjs.com/package/@prashantthakur77/faultline-mcp); `--url` and `--key` for your own server). Tools that build scratch or branch graphs stay internal, and the MCP service gets no engine credential. The official FalkorDB MCP server is also configured, strict read-only, in [`.mcp.json`](.mcp.json). Details: [docs/MCP.md](docs/MCP.md).
 
 ## Memory, company brain, preflight, coordination
 
@@ -1007,6 +1007,8 @@ Built with Claude Code (Anthropic) as the coding agent, under a written plan and
 ## Repo map
 
 `backend/faultline/` holds the graph layer (`graph/`: RO wrapper, writes, templates, `algo/`, guard, tenancy), the agent (`agent/`: loop, gate, score, phases, crew), `mcp_server/`, `actions/`, `memory/`, `brain/`, `preflight/`, `sim/`, `ingest/` and `api.py`. `frontend/` is the Next.js UI, `evals/` the harness and benches, `tests/` the unit and live suites. Full map: [docs/REPO_MAP.md](docs/REPO_MAP.md).
+
+Install and release: `packages/faultline-mcp/` is the npm package (a stdio MCP server forwarding to Faultline's hosted read-only tools; [npm](https://www.npmjs.com/package/@prashantthakur77/faultline-mcp)); `deploy/quickstart.yml` runs the whole product from the images that `.github/workflows/images.yml` publishes to ghcr.io on every release (`ghcr.io/prashant-thakur77/faultline-api`, `faultline-ui`); `deploy/docker-compose.prod.yml` is the live deployment.
 
 ## Team
 

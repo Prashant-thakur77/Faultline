@@ -150,5 +150,7 @@ We pinned 6.0.2 by digest after running our engine smoke suite on both candidate
 
 - The live demo: [13-203-185-119.sslip.io](https://13-203-185-119.sslip.io) (keyless; press Re-arm to reset it).
 - The code: [github.com/Prashant-thakur77/Faultline](https://github.com/Prashant-thakur77/Faultline). `make setup && make judge-check` runs every check offline, with no API key, and prints PASS.
+- Give your own agent the tools in one line: `claude mcp add faultline -- npx -y @prashantthakur77/faultline-mcp` (any MCP client works; [npm](https://www.npmjs.com/package/@prashantthakur77/faultline-mcp)).
+- Run the whole thing locally with Docker only: `curl -fsSLO https://raw.githubusercontent.com/Prashant-thakur77/Faultline/main/deploy/quickstart.yml && docker compose -f quickstart.yml up`, then open http://localhost:3000.
 - Every number in one place: [docs/PROOF.md](https://github.com/Prashant-thakur77/Faultline/blob/main/docs/PROOF.md).
 - Point your own agent at the hosted read-only MCP tools with the public demo key in [docs/MCP.md](https://github.com/Prashant-thakur77/Faultline/blob/main/docs/MCP.md), and ask for `causal_paths` from `recommendation` to `checkout`: no path, so no claim.
