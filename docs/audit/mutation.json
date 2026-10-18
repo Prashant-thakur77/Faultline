@@ -1,6 +1,6 @@
 {
-  "mutants": 41,
-  "killed": 41,
+  "mutants": 43,
+  "killed": 43,
   "survived": 0,
   "errors": 0,
   "rows": [
@@ -13,7 +13,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_scenarios_v2.py::test_s1_hero_confirms_payment_rejects_email_by_flow_and_rec_by_path",
-      "s": 5.4
+      "s": 5.1
     },
     {
       "id": "M-G5",
@@ -25,7 +25,29 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_scenarios_v2.py::test_s2_confirms_cutover_and_rejects_fx_by_flow",
-      "s": 8.1
+      "s": 8.0
+    },
+    {
+      "id": "M-G6-MODEL",
+      "invariant": "G6: an elimination an investigator (a model) asserted never clears a rival; only the graph eliminates",
+      "file": "backend/faultline/agent/gate.py",
+      "tests": [
+        "tests/live/test_model_cannot_move_g6.py"
+      ],
+      "status": "KILLED",
+      "detail": "FAILED tests/live/test_model_cannot_move_g6.py::test_a_model_cannot_eliminate_a_rival_and_win_g6",
+      "s": 3.3
+    },
+    {
+      "id": "M-TOOL-ELIM",
+      "invariant": "the investigator's tool refuses to eliminate a competitor (elimination is the gate's)",
+      "file": "backend/faultline/agent/loop.py",
+      "tests": [
+        "tests/live/test_model_cannot_move_g6.py"
+      ],
+      "status": "KILLED",
+      "detail": "FAILED tests/live/test_model_cannot_move_g6.py::test_a_model_cannot_eliminate_a_rival_and_win_g6",
+      "s": 3.0
     },
     {
       "id": "M-G1",
@@ -35,8 +57,8 @@
         "tests/live/test_gate_s2.py"
       ],
       "status": "KILLED",
-      "detail": "E        +  where False = GateResult(cause_id='D-never-seen', passed=False, confident=False, checks=[Check(name='G1 grounded', passed=True, deta...vidence_ids=[], downgrade_only=True, attach_only=True)], chain=[], gate_run_id='gr-inc-2c105b-2e37edd8', violations=[]).passed; FAILED tests/live/test_gate_s2.py::test_confirm_rejects_distractor_and_ungrounded_cause",
-      "s": 2.7
+      "detail": "E        +  where False = GateResult(cause_id='D-never-seen', passed=False, confident=False, checks=[Check(name='G1 grounded', passed=True, deta...vidence_ids=[], downgrade_only=True, attach_only=True)], chain=[], gate_run_id='gr-inc-0893b0-6e9695f3', violations=[]).passed; FAILED tests/live/test_gate_s2.py::test_confirm_rejects_distractor_and_ungrounded_cause",
+      "s": 2.8
     },
     {
       "id": "M-HASH-APPROVE",
@@ -47,7 +69,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_actions.py::test_stale_plan_hash_is_refused_and_approval_is_idempotent",
-      "s": 3.9
+      "s": 3.7
     },
     {
       "id": "M-HASH-EXEC",
@@ -58,7 +80,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_actions.py::test_execute_refuses_an_action_tampered_with_after_approval",
-      "s": 54.6
+      "s": 56.7
     },
     {
       "id": "M-UNKNOWN",
@@ -68,8 +90,8 @@
         "tests/live/test_actions.py"
       ],
       "status": "KILLED",
-      "detail": "ERROR    faultline.errors:public_errors.py:24 request 5aecdd0e7529: internal error: GitHubTimeout: GitHub API timed out (simulated); FAILED tests/live/test_actions.py::test_s9_github_timeout_is_unknown_and_escalated",
-      "s": 36.0
+      "detail": "ERROR    faultline.errors:public_errors.py:24 request 2230d49f4751: internal error: GitHubTimeout: GitHub API timed out (simulated); FAILED tests/live/test_actions.py::test_s9_github_timeout_is_unknown_and_escalated",
+      "s": 35.2
     },
     {
       "id": "M-UNKNOWN-WB",
@@ -79,8 +101,8 @@
         "tests/live/test_actions.py"
       ],
       "status": "KILLED",
-      "detail": "ERROR    faultline.errors:public_errors.py:24 request 4e9fa6390f0a: internal error: GitHubTimeout: GitHub API timed out (simulated); FAILED tests/live/test_actions.py::test_s9_github_timeout_is_unknown_and_escalated",
-      "s": 34.8
+      "detail": "ERROR    faultline.errors:public_errors.py:24 request 7bc36947b26f: internal error: GitHubTimeout: GitHub API timed out (simulated); FAILED tests/live/test_actions.py::test_s9_github_timeout_is_unknown_and_escalated",
+      "s": 35.2
     },
     {
       "id": "M-REORDER",
@@ -102,7 +124,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_gate_bench_regressions.py::test_previously_failing_bench_case_now_correct[gb068]",
-      "s": 14.8
+      "s": 13.0
     },
     {
       "id": "M-G5MULT",
@@ -113,7 +135,7 @@
       ],
       "status": "KILLED",
       "detail": "E         comparison failed; FAILED tests/graph/test_g5_bound_property.py::test_reconvergent_paths_break_the_plain_bound",
-      "s": 1.0
+      "s": 0.9
     },
     {
       "id": "M-G5ALONE",
@@ -135,7 +157,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_gate_bench_regressions.py::test_previously_failing_bench_case_now_correct[gb002]",
-      "s": 7.9
+      "s": 8.2
     },
     {
       "id": "M-RO",
@@ -158,7 +180,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/graph/test_ro_wrapper.py::test_ablation_flag_wins_even_after_warm_cache",
-      "s": 0.7
+      "s": 0.8
     },
     {
       "id": "M-LINT",
@@ -169,7 +191,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/graph/test_template_lint.py::test_lint_rejects[MATCH (n) SET n.x = 1 RETURN n.id ORDER BY n.id LIMIT 5-write clause]",
-      "s": 0.6
+      "s": 0.8
     },
     {
       "id": "M-GUARD",
@@ -180,7 +202,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/mcpserver/test_guard_blocks_writes.py::test_rejected[CREATE (n:Service {id:'x'}) RETURN n]",
-      "s": 0.5
+      "s": 0.6
     },
     {
       "id": "M-CITE",
@@ -191,7 +213,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/brain/test_citation_guard.py::test_guard_refuses_ids_not_seen_this_run",
-      "s": 1.4
+      "s": 1.6
     },
     {
       "id": "M-TENANT",
@@ -203,11 +225,11 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/graph/test_tenant_names.py::test_invalid_tenants_rejected[] - Fa...",
-      "s": 1.6
+      "s": 1.7
     },
     {
       "id": "M-G7CORR",
-      "invariant": "G7: a code/data specialist naming another change than the cause downgrades confidence (\u00a76.4)",
+      "invariant": "G7: a code/data specialist naming another change than the cause downgrades confidence",
       "file": "backend/faultline/agent/gate.py",
       "tests": [
         "tests/agent/test_gate_decide.py"
@@ -218,7 +240,7 @@
     },
     {
       "id": "M-STAGE-TOOLS",
-      "invariant": "a tool outside the stage whitelist is refused, logged and recorded (\u00a76.2)",
+      "invariant": "a tool outside the stage whitelist is refused, logged and recorded",
       "file": "backend/faultline/agent/loop.py",
       "tests": [
         "tests/agent/test_toolbox_whitelist.py"
@@ -229,14 +251,14 @@
     },
     {
       "id": "M-SPEC-CLAIM",
-      "invariant": "two dispatches of the same specialist work item never both run it (W-CLAIM-1, \u00a76.13): every caller wins the claim (claim_epoch returns an epoch to everyone)",
+      "invariant": "two dispatches of the same specialist work item never both run it (W-CLAIM-1): every caller wins the claim (claim_epoch returns an epoch to everyone)",
       "file": "backend/faultline/graph/writes.py",
       "tests": [
         "tests/live/test_specialists.py::test_two_dispatches_of_the_same_work_item_never_both_run_it"
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_specialists.py::test_two_dispatches_of_the_same_work_item_never_both_run_it",
-      "s": 2.7
+      "s": 2.4
     },
     {
       "id": "M-STORM-MERGE",
@@ -247,7 +269,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_alert_storm.py::test_s14_two_groups_and_each_gate_decides_its_own_cause",
-      "s": 6.2
+      "s": 5.1
     },
     {
       "id": "M-STORM-OPEN",
@@ -258,7 +280,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_alert_storm.py::test_a_resolved_incident_never_absorbs_a_new_alert",
-      "s": 5.6
+      "s": 6.9
     },
     {
       "id": "M-PRIMARY-CARRY",
@@ -269,7 +291,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_alert_storm.py::test_ungrouped_storm_is_escalated_not_blamed_on_one_change",
-      "s": 4.0
+      "s": 3.9
     },
     {
       "id": "M-VERIFY-ALLOW",
@@ -280,7 +302,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_alert_storm.py::test_the_real_fix_is_applied_once_the_other_incidents_share_is_allowed",
-      "s": 5.1
+      "s": 6.1
     },
     {
       "id": "M-VERIFY-OWN",
@@ -291,7 +313,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_alert_storm.py::test_a_failed_fix_stays_not_applied_while_another_incident_is_open",
-      "s": 5.6
+      "s": 6.1
     },
     {
       "id": "M-VERIFY-MAXFLOW",
@@ -302,11 +324,11 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_alert_storm.py::test_a_partial_fix_that_leaves_our_own_leak_stays_not_applied",
-      "s": 5.7
+      "s": 6.0
     },
     {
       "id": "M-VERDICT-UNCOND",
-      "invariant": "a verdict is written only while its intent is PENDING and leased to the writer (review round 4, M5): an unconditional verdict lets a late reconciler or a stalled execute job overwrite the settled outcome",
+      "invariant": "a verdict is written only while its intent is PENDING and leased to the writer: an unconditional verdict lets a late reconciler or a stalled execute job overwrite the settled outcome",
       "file": "backend/faultline/graph/writes.py",
       "tests": [
         "tests/live/test_review4_live.py::test_the_job_settles_first_and_the_reconciler_writes_nothing",
@@ -314,11 +336,11 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_review4_live.py::test_the_job_settles_first_and_the_reconciler_writes_nothing",
-      "s": 5.0
+      "s": 8.8
     },
     {
       "id": "M-REPAIR-FIXTURE",
-      "invariant": "a data repair is executed and verified on its incident's own warehouse fixture (review round 5, M2): without re-establishing the recorded mode and sources digest, a healthy-mode run in between makes a patch that fixes nothing verify APPLIED",
+      "invariant": "a data repair is executed and verified on its incident's own warehouse fixture: without re-establishing the recorded mode and sources digest, a healthy-mode run in between makes a patch that fixes nothing verify APPLIED",
       "file": "backend/faultline/actions/act.py",
       "tests": [
         "tests/live/test_review5_live.py::test_an_unrelated_patch_never_verifies_applied_after_a_healthy_switch",
@@ -326,40 +348,40 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_review5_live.py::test_an_unrelated_patch_never_verifies_applied_after_a_healthy_switch",
-      "s": 15.7
+      "s": 14.3
     },
     {
       "id": "M-SQL-ACCEPT",
-      "invariant": "an LLM-authored transform must be one plain CTAS of its own target (review round 5, M4): a validator that accepts anything lets `COPY \u2026 TO` write files from the build",
+      "invariant": "an LLM-authored transform must be one plain CTAS of its own target: a validator that accepts anything lets `COPY \u2026 TO` write files from the build",
       "file": "backend/faultline/repair.py",
       "tests": [
         "tests/test_review5_units.py::test_the_validator_refuses_anything_but_one_plain_ctas[copy-to]"
       ],
       "status": "KILLED",
       "detail": "FAILED tests/test_review5_units.py::test_the_validator_refuses_anything_but_one_plain_ctas[copy-to]",
-      "s": 0.9
+      "s": 0.8
     },
     {
       "id": "M-SESS-PREFIX",
-      "invariant": "brain session ids are server-issued (sess-\u2026) and never take another node's id (review round 4, M1): unprefixed client sessions make a second node with a component's id",
+      "invariant": "brain session ids are server-issued (sess-\u2026) and never take another node's id: unprefixed client sessions make a second node with a component's id",
       "file": "backend/faultline/brain/ask.py",
       "tests": [
         "tests/live/test_review4_live.py::test_a_session_can_never_take_a_component_id"
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_review4_live.py::test_a_session_can_never_take_a_component_id",
-      "s": 2.4
+      "s": 2.1
     },
     {
       "id": "M-FUTURE-BRANCH",
-      "invariant": "each containment candidate's future is read on its own GRAPH.COPY branch with ITS cut edges removed (M14 #1): a branch that keeps them predicts every flag fails, and the plan buries the working lever",
+      "invariant": "each containment candidate's future is read on its own GRAPH.COPY branch with ITS cut edges removed: a branch that keeps them predicts every flag fails, and the plan buries the working lever",
       "file": "backend/faultline/mcp_server/tools.py",
       "tests": [
         "tests/live/test_futures.py::test_each_candidate_has_its_own_predicted_future"
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_futures.py::test_each_candidate_has_its_own_predicted_future",
-      "s": 4.2
+      "s": 3.9
     },
     {
       "id": "M-FUTURE-CLASS",
@@ -370,7 +392,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/test_futures_units.py::test_history_never_lifts_an_option_across_a_predicted_future_class",
-      "s": 0.8
+      "s": 0.7
     },
     {
       "id": "M-G4-UPSTREAM",
@@ -381,7 +403,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_gate_upstream.py::test_strict_elimination_removes_a_lookalike_on_the_alerting_service",
-      "s": 7.2
+      "s": 7.6
     },
     {
       "id": "M-G4-UPSTREAM-SLACK",
@@ -392,7 +414,7 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_gate_upstream.py::test_no_wrong_confident_blame_where_the_first_shipped_rule_made_one[db062]",
-      "s": 9.5
+      "s": 9.9
     },
     {
       "id": "M-N0-UNMEASURED",
@@ -414,11 +436,11 @@
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_futures.py::test_verification_records_whether_the_prediction_came_true",
-      "s": 3.7
+      "s": 3.9
     },
     {
       "id": "M-WHO-PAGES",
-      "invariant": "who_fixes reads every page of its projection (M14 #6): stopping after the first silently drops the pairs of a busy component, the LIMIT-100 truncation the Cypher move fixed",
+      "invariant": "who_fixes reads every page of its projection: stopping after the first silently drops the pairs of a busy component, the LIMIT-100 truncation the Cypher move fixed",
       "file": "backend/faultline/mcp_server/tools.py",
       "tests": [
         "tests/live/test_who_fixes_cypher.py::test_pairs_are_paged_disjoint_and_complete_on_the_busiest_component"
@@ -429,36 +451,36 @@
     },
     {
       "id": "M-OVERRIDE-ANY",
-      "invariant": "only an INTENTIONAL reviewer answer takes a decision out of G8 for that change (M15 #3): honouring any answer would let \"accidental\" or \"discuss\" silently waive a violation",
+      "invariant": "only an INTENTIONAL reviewer answer takes a decision out of G8 for that change: honouring any answer would let \"accidental\" or \"discuss\" silently waive a violation",
       "file": "backend/faultline/agent/rules.py",
       "tests": [
         "tests/live/test_decision_override.py::test_accidental_keeps_the_violation_and_names_the_answer"
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_decision_override.py::test_accidental_keeps_the_violation_and_names_the_answer",
-      "s": 3.9
+      "s": 4.2
     },
     {
       "id": "M-LEARN-UNVERIFIED",
-      "invariant": "the graph learns a failure link only from a fix VERIFIED APPLIED (M15 #4): learning from an unverified or failed rollback turns a wrong human guess into a wrong edge",
+      "invariant": "the graph learns a failure link only from a fix VERIFIED APPLIED: learning from an unverified or failed rollback turns a wrong human guess into a wrong edge",
       "file": "backend/faultline/memory/edges.py",
       "tests": [
         "tests/live/test_learned_edges.py::test_a_wrong_human_guess_verifies_not_applied_and_teaches_nothing"
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_learned_edges.py::test_a_wrong_human_guess_verifies_not_applied_and_teaches_nothing",
-      "s": 2.7
+      "s": 2.9
     },
     {
       "id": "M-EDGE-APPROVE-RECHECK",
-      "invariant": "approving a learned link re-checks, in the write itself, that its fix is still APPLIED, the approver is an active person and the graph still has no path (prejudge 2026-10-13)",
+      "invariant": "approving a learned link re-checks, in the write itself, that its fix is still APPLIED, the approver is an active person and the graph still has no path",
       "file": "backend/faultline/graph/writes.py",
       "tests": [
         "tests/live/test_learned_edges.py::test_approval_re_checks_at_write_time"
       ],
       "status": "KILLED",
       "detail": "FAILED tests/live/test_learned_edges.py::test_approval_re_checks_at_write_time",
-      "s": 2.5
+      "s": 2.6
     }
   ]
 }

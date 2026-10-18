@@ -22,6 +22,7 @@ from faultline.agent.loop import run_incident
 from faultline.graph import client as gclient
 from faultline.graph import copy as gcopy
 from faultline.graph import writes
+from faultline.graph.ro import RO
 
 pytestmark = pytest.mark.live
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "evals"))
@@ -34,6 +35,7 @@ class RivalEliminator:
 
     def __init__(self):
         self.refused: dict | None = None
+        self.tool_wrote: list = []
 
     async def investigate(self, box, run, packet):
         from faultline.agent import specialists
@@ -47,6 +49,10 @@ class RivalEliminator:
             rival = next(c for c in cands if c != keep)
             out = run.update_hypothesis(rival, "eliminated", evidence, "the model is sure")
             self.refused = self.refused or out
+            # the tool must not have written an elimination, whatever it answered
+            st = {h["cause"]: (h["status"], h.get("status_by"))
+                  for h in RO(run.tenant, run.graph).run("Q-HYP-1", {"inc": run.inc}).rows}
+            self.tool_wrote.append(st.get(rival))
             # even an elimination written around the tool (an investigator's, not the graph's) must not count
             writes.upsert_hypothesis(run.g(), inc=run.inc, hid=f"hyp-{run.inc}-{rival}", cause=rival,
                                      status="eliminated", reason="asserted, not shown", refutes=[], origin="investigator")
@@ -70,4 +76,5 @@ def test_a_model_cannot_eliminate_a_rival_and_win_g6(db):
     finally:
         gcopy.delete_if_exists(gclient.engine(), p.graph)
     assert inv.refused and "gate" in inv.refused.get("error", "")      # the tool refuses the elimination
+    assert ("eliminated", "investigator") not in inv.tool_wrote          # and writes none
     assert res.outcome != "CONFIRMED" and not res.confident              # and G6 still sees the rival

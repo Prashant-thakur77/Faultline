@@ -185,6 +185,16 @@ def summarize(out: dict) -> dict:
     if c.get("mutation"):
         for kk in ("mutants", "killed", "survived", "errors"):
             s[f"mutation.{kk}"] = c["mutation"][kk]
+    # a later full `make mutants` run (docs/audit/mutation.json, written only by a full run) supersedes the eval run's
+    import json
+    from pathlib import Path
+
+    audit = Path(__file__).resolve().parents[1] / "docs" / "audit" / "mutation.json"
+    if audit.exists():
+        m = json.loads(audit.read_text())
+        if m.get("mutants", 0) >= int(s.get("mutation.mutants") or 0):
+            for kk in ("mutants", "killed", "survived", "errors"):
+                s[f"mutation.{kk}"] = m[kk]
     for k in ("S7", "S8", "S11"):
         if k in c:
             s.update({f"{k.lower()}.{kk}": vv for kk, vv in c[k].items()})

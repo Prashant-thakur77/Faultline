@@ -30,7 +30,7 @@ Every measured number below is tagged and checked against `evals/results/latest.
 - futures: each candidate's own branch, ordering that never crosses a predicted outcome, and the simulated world keeping its base rates through verification;
 - RO-only reads, the A4 ablation, the template lint, the text2cypher guard, the citation guard and tenant validation.
 
-On the eval run <!-- claim:mutation.killed -->41<!-- /claim --> of <!-- claim:mutation.mutants -->41<!-- /claim --> were caught (<!-- claim:mutation.errors -->0<!-- /claim --> errors). Each mutant runs under its own memory cap. A mutant must change behaviour, never hang: one early mutant made a loop infinite and exhausted the machine's RAM before the cap existed. Blind spots found and closed along the way:
+On the eval run <!-- claim:mutation.killed -->43<!-- /claim --> of <!-- claim:mutation.mutants -->43<!-- /claim --> were caught (<!-- claim:mutation.errors -->0<!-- /claim --> errors). Each mutant runs under its own memory cap. A mutant must change behaviour, never hang: one early mutant made a loop infinite and exhausted the machine's RAM before the cap existed. Blind spots found and closed along the way:
 - a change to an approved action went unnoticed until its test was added;
 - tests that import eval modules were running against unmutated code.
 
