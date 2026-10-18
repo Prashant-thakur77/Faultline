@@ -1,0 +1,63 @@
+# Container images for the one-command quickstart (deploy/quickstart.yml): the API/MCP image and the UI image, on
+# ghcr.io under the repository owner. Published on every release, or by hand for an existing tag.
+name: Images
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Tag to build (e.g. v1.1.0)"
+        required: true
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  images:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      REF: ${{ github.event.release.tag_name || inputs.ref }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ env.REF }}
+
+      - name: Version and image names
+        run: |
+          v="${REF#v}"
+          owner="$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')"
+          echo "VERSION=$v" >> "$GITHUB_ENV"
+          echo "API_IMAGE=ghcr.io/$owner/faultline-api" >> "$GITHUB_ENV"
+          echo "UI_IMAGE=ghcr.io/$owner/faultline-ui" >> "$GITHUB_ENV"
+          echo "SOURCE=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}" >> "$GITHUB_ENV"
+
+      - name: Log in to ghcr.io
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: API and MCP image
+        run: |
+          docker build -f deploy/Dockerfile.api \
+            --label org.opencontainers.image.source="$SOURCE" \
+            --label org.opencontainers.image.description="Faultline API and MCP server (FalkorDB on-call agent)" \
+            --label org.opencontainers.image.licenses=Apache-2.0 \
+            --label org.opencontainers.image.version="$VERSION" \
+            -t "$API_IMAGE:$VERSION" -t "$API_IMAGE:latest" .
+          docker push "$API_IMAGE:$VERSION"
+          docker push "$API_IMAGE:latest"
+
+      - name: UI image (talks to the API on localhost:8400, as the quickstart runs it)
+        run: |
+          docker build -f deploy/Dockerfile.ui \
+            --build-arg NEXT_PUBLIC_FAULTLINE_API_URL=http://localhost:8400 \
+            --build-arg NEXT_PUBLIC_FAULTLINE_REPO_URL="$SOURCE" \
+            --label org.opencontainers.image.source="$SOURCE" \
+            --label org.opencontainers.image.description="Faultline web UI" \
+            --label org.opencontainers.image.licenses=Apache-2.0 \
+            --label org.opencontainers.image.version="$VERSION" \
+            -t "$UI_IMAGE:$VERSION" -t "$UI_IMAGE:latest" .
+          docker push "$UI_IMAGE:$VERSION"
+          docker push "$UI_IMAGE:latest"

@@ -102,7 +102,7 @@ EXPLAINER = ["x_tenant", "x_matrices", "x_blast", "x_path", "x_flow", "x_cut", "
 ONCALL = ["oc_page", "oc_ack", "oc_contract"]  # the page, the ack, a standing approval
 # The beats, in narration order (cut v4). The recorder refuses a narration whose segments differ.
 SEGMENT_IDS = ["problem", "whyhard", "idea", "cube", *EXPLAINER, "run", "g2", "g5", "proof", "contain", "act", *ONCALL,
-               "brain", "learn", "engine", "numbers", "cost", "close"]   # "preflight" has a beat; out of the short cut
+               "brain", "learn", "engine", "breakit", "numbers", "cost", "close"]   # "preflight" has a beat; out of the short cut
 # The proof beats' charts (media/proof.html#<name>), per segment, in the order shown; several in one segment share it
 # evenly, or "name@word" shows it when the voice reaches that word. "close" shows its charts before "Any agent".
 # Every name listed must be drawn into docs/media/charts/<name>.svg (scripts/gen_charts.py), copied byte for byte to
@@ -797,6 +797,29 @@ def read_room(page: Page, a: argparse.Namespace) -> tuple[SimpleNamespace, dict]
     if not L.choose.count():
         raise fail(f"the option 'flag {a.flag}' is not offered (is the flag already off at GitHub main?)")
     return L, {"flow": m.group(1), "needed": m.group(2), "suspects": suspects, "chain": chain}
+
+
+def beat_breakit(d: "Director", page: Page, ui: str, choice: str) -> dict:
+    """Break it (/playground): one change to a GRAPH.COPY of the graph, the product runs again, and the decisions that
+    moved are shown. Checks: the run finishes without an error and at least one decision changed."""
+    d.begin("breakit")
+    d.go(f"{ui}/playground")
+    radio = page.get_by_role("radio", name=re.compile(choice))
+    expect(radio).to_be_visible(timeout=20_000)
+    d.at_cue(("remove", "break"), 0.15, lead=0.3)
+    d.click(radio)
+    d.click(page.get_by_role("button", name="Break it", exact=True))
+    moved = page.get_by_role("heading", name="What moved")
+    pgerr = page.get_by_role("alert").filter(has_text=re.compile(r"^(Playground unavailable|Run failed):"))
+    expect(moved.or_(pgerr).first).to_be_visible(timeout=90_000)
+    if pgerr.count() and pgerr.first.is_visible():
+        raise fail(f"playground: {pgerr.first.inner_text()}")
+    dec, before, after = first_changed(page)
+    sect = page.locator("section[aria-labelledby='pg-diff']")
+    d.at_cue(("verdict move", "verdict", "move"), 0.6, lead=0.3)
+    d.show(sect)
+    d.flash(sect.locator("tbody tr").filter(has_text="(changed)").first)
+    return {"decision": dec, "before": before, "after": after}
 
 
 def first_changed(page: Page) -> tuple[str, str, str]:
@@ -1516,16 +1539,20 @@ def record(a: argparse.Namespace, work: Path, segs: list[Seg], llm: dict, issue:
             if win < MIN_ACK_WINDOW_S:
                 raise fail(f"pages wait only {win:.0f} s for an ack (FAULTLINE_ONCALL_DEMO_WINDOWS?): B would escalate "
                            f"before oc_ack; restart the API without it (at least {MIN_ACK_WINDOW_S} s)")
-            # the validation incident's pages are the pre-roll's, not the take's: settle them now, or the inbox the
-            # on-call beats film shows them waiting (and escalating) while the voice says nobody was woken. One ack
-            # with the approver key (anonymous: no person credited, nothing learned) supersedes the incident's others.
+            # pages still open before the take (the validation incident's, and any earlier run's) are not the take's:
+            # settle them now, or the inbox the on-call beats film shows them waiting and escalating while the voice
+            # says nobody was woken. One ack per incident with the approver key (anonymous: no person credited,
+            # nothing learned) supersedes that incident's other open pages.
             if key or api_key:
-                api_req(a.api, "POST", f"/api/pages/{urllib.parse.quote(open_v[0]['id'])}/ack?{t.q}", {},
-                        {"X-Faultline-Approver-Key": key or api_key})
-                left = [p for p in pages_of(t, inc_v) if open_page(p)]
+                stale = [p for p in t.api("GET", f"/api/pages?{t.q}&status=open").get("rows") or [] if open_page(p)]
+                for inc_s in sorted({p.get("incident") for p in stale if p.get("incident")}):
+                    one = next(p for p in stale if p.get("incident") == inc_s)
+                    api_req(a.api, "POST", f"/api/pages/{urllib.parse.quote(one['id'])}/ack?{t.q}", {},
+                            {"X-Faultline-Approver-Key": key or api_key})
+                left = [p for p in t.api("GET", f"/api/pages?{t.q}&status=open").get("rows") or [] if open_page(p)]
                 if left:
-                    raise fail(f"the validation incident {inc_v} still has {len(left)} open page(s) after its ack")
-                facts["validation_pages_settled"] = True
+                    raise fail(f"{len(left)} page(s) are still open after settling the pre-take incidents")
+                facts["pre_take_pages_settled"] = len({p.get("incident") for p in stale})
             if "learn" in S and numbers_said(S["learn"].text, r"moved up from (?:number |#)?(\w+)"):
                 mv = moved_up(t.api("GET", f"/api/incidents/{urllib.parse.quote(inc_v)}/plan?{t.q}").get("options") or [])
                 facts["moved_on_validation_plan"] = mv
@@ -1816,6 +1843,9 @@ def record(a: argparse.Namespace, work: Path, segs: list[Seg], llm: dict, issue:
             beat_learn(t)
         if want("engine"):
             beat_engine(t)
+        # ---------------- breakit: one change to a copy of the graph, the verdict moves (the graph is load-bearing)
+        if want("breakit"):
+            facts["break_it"] = beat_breakit(d, page, ui, a.pg_choice)
 
         # ---------------- numbers, cost: the proof charts (PROOF_CHARTS), then close: live now, any agent over MCP
         def chart(name: str) -> None:

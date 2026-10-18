@@ -1,0 +1,49 @@
+{
+  "name": "@prashantthakur77/faultline-mcp",
+  "version": "1.1.0",
+  "description": "Faultline's read-only FalkorDB graph tools for any MCP client: causal paths, impact bounds, blast radius, who fixes it, the company brain. No path, no claim.",
+  "type": "module",
+  "bin": {
+    "faultline-mcp": "bin/faultline-mcp.js"
+  },
+  "files": [
+    "bin/",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.26.0"
+  },
+  "scripts": {
+    "test": "node test/smoke.mjs"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "falkordb",
+    "graph-database",
+    "knowledge-graph",
+    "incident-response",
+    "root-cause-analysis",
+    "sre",
+    "on-call",
+    "ai-agents"
+  ],
+  "homepage": "https://github.com/Prashant-thakur77/Faultline/tree/main/packages/faultline-mcp#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Prashant-thakur77/Faultline.git",
+    "directory": "packages/faultline-mcp"
+  },
+  "bugs": {
+    "url": "https://github.com/Prashant-thakur77/Faultline/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Prashant Thakur",
+  "publishConfig": {
+    "access": "public"
+  }
+}

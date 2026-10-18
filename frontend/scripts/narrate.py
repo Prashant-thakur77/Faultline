@@ -73,37 +73,43 @@ SEGMENTS: list[tuple[str, float, str]] = [
      "The smallest containment, tested on a copy, and who should fix it."),
     ("act", 0.4,
      "A human approves the exact change, bound to its plan hash. Faultline opens a real pull request, merges it, and "
-     "verifies it. Applied. Then it writes the decision back into FalkorDB."),
+     "verifies it. Applied. Then it writes the decision back into FalkorDB. That pull request is real, on GitHub, with "
+     "the plan hash in its body; it counts only once GitHub's main has the change and checkout is healthy again. "
+     "Meanwhile the on-call has been paged: in the app, by email, on Telegram or through PagerDuty."),
     # --- 3b. on call, then the same graph's other jobs. The recorder checks each claim against the page and the
     # graph: "on call for the owning team", the ack stopping the escalation, "one use" / "seven days", "zero people
     # woken", "moved up from number two". Beats time their actions to cue words with a fallback.
     ("oc_page", 0.4,
-     "Faultline also runs the pager. It pages whoever the graph says is on call for the owning team. On their phone: "
-     "the verdict, the proof path, and who fixes it."),
+     "Faultline pages whoever the graph says is on call for the owning team. On their phone: the verdict, the proof "
+     "path, and who fixes it."),
     ("oc_ack", 0.3,
      "One tap acknowledges it, and the escalation stops."),
     ("oc_contract", 0.4,
      "After a verified fix, the on-call can grant a standing approval: one use, seven days. When the same fault comes "
      "back, the gate still proves the cause, and a second real pull request merges and verifies. Handled while you "
-     "slept. Zero people woken."),
+     "slept. Zero people woken. That second incident came in through the API, like a real alert. The contract is now "
+     "spent, so the next repeat pages a person again, and the on-call gets only a quiet notice, never a wake-up."),
     ("brain", 0.4,
      "It's the team's memory, too. Who decided the payment timeout? Every name in the answer comes from a query."),
     ("learn", 0.4,
-     "And it learns from the people using it: the fixes your team prefers, the guidelines they set, who actually "
-     "answers. The next plan puts your team's choice first: moved up from number two."),
+     "And it learns from the people using it: the fixes your team prefers and the guidelines they set. The next plan "
+     "puts your team's choice first: moved up from number two."),
     ("engine", 0.4,
      "And FalkorDB shows its own work: the memory each graph takes, every query's timing, and the live tail."),
+    ("breakit", 0.3,
+     "Now break it yourself: remove one call from a copy of the graph, and watch the verdict move. The graph is "
+     "load-bearing."),
     # --- 4. the proof, honestly
     ("numbers", 0.5,
-     "The numbers, honestly. On {deep.fresh.all.cases} worlds built to fool it: {deep.fresh.all.wrong_confident} "
+     "The numbers. On {deep.fresh.all.cases} worlds built to fool it: {deep.fresh.all.wrong_confident} "
      "confident wrong blames, the right cause in {deep.fresh.all.right_cause} of {deep.fresh.all.cause_cases}, and not "
      "sure on the rest. A strong language model blamed an innocent change {llm_deep.deep.all.wrong_confident} times. "
      "On a real system, the OpenTelemetry Demo: the right cause in {otel.faultline.right_cause.k} of "
      "{otel.faultline.right_cause.n} faults, {otel.faultline.wrong.k} wrong blames in {otel.faultline.wrong.n} windows. "
      "A telemetry threshold was wrong {otel.Tplus.wrong.k} times."),
     ("cost", 0.3,
-     "Refusing is cheap: no path in {perf.acme.shortest_causal_path.falkordb_engine_p50} milliseconds, and zero tokens. "
-     "And it scales: {tenants.n} customer graphs on one engine, {tenants.acl.leaks} leaks."),
+     "Refusing is cheap: no path in {perf.acme.shortest_causal_path.falkordb_engine_p50} milliseconds and zero tokens. "
+     "And it scales: {tenants.n} customer graphs, {tenants.acl.leaks} leaks."),
     ("close", 0.4,
      "It's live now: {live.hero.applied} of {live.hero.n} real runs, verified. Any agent can use the same tools over "
      "M.C.P. Faultline, built on FalkorDB. No path, no claim."),
@@ -158,7 +164,7 @@ def main() -> int:
     ap.add_argument("--engine", choices=["kokoro", "chatterbox"], default="kokoro")
     ap.add_argument("--voice", default="af_heart",
                     help="kokoro: a built-in voice id (af_heart, af_bella, af_sarah); chatterbox: a reference WAV to clone")
-    ap.add_argument("--speed", type=float, default=1.25)          # kokoro speaking rate: brisk, for a cut under 4:30
+    ap.add_argument("--speed", type=float, default=1.28)          # kokoro speaking rate: brisk, for a cut under 4:30
     ap.add_argument("--out", default=str(ROOT / "tmp" / "narration"))
     ap.add_argument("--exaggeration", type=float, default=0.6)    # energy: above the 0.5 default, below theatrical
     ap.add_argument("--cfg", type=float, default=0.3)             # low pacing weight: deliberate pace for a fast reference voice

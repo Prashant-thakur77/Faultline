@@ -1,0 +1,62 @@
+# Faultline in one command, no API key, no build tools: FalkorDB (pinned by digest), the demo graphs, the API, the
+# hosted-style MCP endpoint and the UI, all on this machine (ports bound to 127.0.0.1 only).
+#
+#   curl -fsSLO https://raw.githubusercontent.com/Prashant-thakur77/Faultline/main/deploy/quickstart.yml
+#   docker compose -f quickstart.yml up
+#   open http://localhost:3000            (the API is on :8400, the MCP endpoint on :8401/mcp)
+#
+# Images come from ghcr.io (published by .github/workflows/images.yml on each release). From a clone of the repo,
+# `docker compose -f deploy/quickstart.yml up --build` builds them locally instead. Keyless: the deterministic
+# investigator and a simulated GitHub. Stop with Ctrl-C; `docker compose -f quickstart.yml down -v` removes the data.
+name: faultline-quickstart
+
+x-api: &api
+  image: ghcr.io/prashant-thakur77/faultline-api:${FAULTLINE_VERSION:-1.1.1}
+  build: {context: .., dockerfile: deploy/Dockerfile.api}
+  environment:
+    FALKORDB_HOST: falkordb
+    FAULTLINE_GITHUB: sim
+    # the local MCP endpoint's bearer key (127.0.0.1 only; change it if you expose the port)
+    FAULTLINE_MCP_KEYS: "quickstart-local-key-change-me:acme"
+
+services:
+  falkordb:
+    image: falkordb/falkordb@sha256:107455e862a824e45e8e9f5a7fbfdf5e00a08b14e13eae2577c72fd9e3f59ba6
+    mem_limit: 4g
+    environment:
+      REDIS_ARGS: "--appendonly yes --maxmemory 3500mb --maxmemory-policy noeviction"
+      FALKORDB_ARGS: "TIMEOUT_MAX 10000 TIMEOUT_DEFAULT 2000 RESULTSET_SIZE 100000 MAX_QUEUED_QUERIES 50 QUERY_MEM_CAPACITY 268435456"
+    volumes: [falkordb-data:/var/lib/falkordb/data]
+    healthcheck: {test: ["CMD", "redis-cli", "PING"], interval: 5s, timeout: 3s, retries: 20}
+
+  seed:   # one-shot: engine settings, constraints and indexes, then both demo tenants and their golden copies
+    <<: *api
+    command: ["sh", "-c", "/app/.venv/bin/python scripts/configure_falkordb.py && /app/.venv/bin/python scripts/seed.py --tenant all --summary"]
+    depends_on: {falkordb: {condition: service_healthy}}
+    restart: "no"
+
+  api:
+    <<: *api
+    ports: ["127.0.0.1:8400:8400"]
+    depends_on: {seed: {condition: service_completed_successfully}}
+    restart: unless-stopped
+
+  mcp:
+    <<: *api
+    command: ["/app/.venv/bin/python", "-m", "faultline.mcp_server.http", "--host", "0.0.0.0", "--port", "8401"]
+    ports: ["127.0.0.1:8401:8401"]
+    depends_on: {seed: {condition: service_completed_successfully}}
+    restart: unless-stopped
+
+  ui:
+    image: ghcr.io/prashant-thakur77/faultline-ui:${FAULTLINE_VERSION:-1.1.1}
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.ui
+      args: {NEXT_PUBLIC_FAULTLINE_API_URL: "http://localhost:8400"}
+    ports: ["127.0.0.1:3000:3000"]
+    depends_on: [api]
+    restart: unless-stopped
+
+volumes:
+  falkordb-data: {}

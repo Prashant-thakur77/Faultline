@@ -1,196 +1,204 @@
 1
-00:00:00,800 --> 00:00:03,342
+00:00:00,801 --> 00:00:03,289
 It's two in the morning, and checkout is failing.
 
 2
-00:00:03,342 --> 00:00:06,455
+00:00:03,289 --> 00:00:06,336
 In ten minutes, three changes went live. Which one broke it?
 
 3
-00:00:06,455 --> 00:00:09,089
+00:00:06,336 --> 00:00:08,919
 Roll back the wrong one, and it gets worse.
 
 4
-00:00:09,089 --> 00:00:11,132
+00:00:08,919 --> 00:00:10,914
 The answer lives in the connections.
 
 5
-00:00:11,132 --> 00:00:16,185
+00:00:10,914 --> 00:00:15,862
 Dashboards show symptoms, and today's AI agents answer with confidence, not proof.
 
 6
-00:00:16,185 --> 00:00:19,619
+00:00:15,862 --> 00:00:19,223
 What if an agent could only blame what it can prove as a path?
 
 7
-00:00:19,619 --> 00:00:24,737
+00:00:19,223 --> 00:00:24,240
 That's Faultline. No path, no claim. And the engine that makes it possible is FalkorDB.
 
 8
-00:00:24,737 --> 00:00:31,266
+00:00:24,240 --> 00:00:30,635
 This cube is a real system's graph. Open it: services, deploys, people, and the proof path between them.
 
 9
-00:00:31,266 --> 00:00:33,854
+00:00:30,635 --> 00:00:33,191
 Inside FalkorDB, alerts, deploys, lineage,
 
 10
-00:00:33,854 --> 00:00:39,395
+00:00:33,191 --> 00:00:38,663
 docs and people stream into one graph per customer, each with its own read-only user.
 
 11
-00:00:39,395 --> 00:00:49,570
+00:00:38,663 --> 00:00:48,541
 Every relationship is a sparse matrix, walked with linear algebra: 296 thousand nodes and 1.1 million edges fit in 490 megabytes.
 
 12
-00:00:49,570 --> 00:00:56,647
+00:00:48,541 --> 00:00:55,599
 Checkout alerts. A breadth-first search spreads out inside the database: the blast radius, in a fraction of a millisecond.
 
 13
-00:00:56,647 --> 00:01:02,488
+00:00:55,599 --> 00:01:01,221
 Three deploys landed. For the recommendation deploy, the shortest-path procedure returns zero rows.
 
 14
-00:01:02,488 --> 00:01:04,677
+00:01:01,221 --> 00:01:03,338
 No path, so it cannot be blamed.
 
 15
-00:01:04,677 --> 00:01:10,836
+00:01:03,338 --> 00:01:09,371
 But a path is not enough. Max flow shows the email deploy can carry only 2 percent of checkout's traffic.
 
 16
-00:01:10,836 --> 00:01:12,368
+00:01:09,371 --> 00:01:10,877
 Rejected, with proof.
 
 17
-00:01:12,368 --> 00:01:19,082
+00:01:10,877 --> 00:01:17,444
 The minimum cut is the smallest containment, tried first on a graph copy made in 383 milliseconds.
 
 18
-00:01:19,082 --> 00:01:23,979
+00:01:17,444 --> 00:01:22,263
 Centrality ranks who should fix it, and a spanning forest draws the escalation chain.
 
 19
-00:01:23,979 --> 00:01:30,029
+00:01:22,263 --> 00:01:28,235
 The model can only point: every read is read-only, and one atomic write records a human's approval.
 
 20
-00:01:30,029 --> 00:01:36,543
+00:01:28,235 --> 00:01:34,648
 All 10 graph algorithms change a decision. Without max flow, the right cause drops from 20 of 20 to 0.
 
 21
-00:01:36,543 --> 00:01:41,834
+00:01:34,648 --> 00:01:39,863
 Switch FalkorDB off, and Faultline confirms nothing. FalkorDB is the brain.
 
 22
-00:01:41,834 --> 00:01:47,171
+00:01:39,863 --> 00:01:45,152
 Now, live. The incident opens, and a crew of agents gets to work: recall, scope, suspects.
 
 23
-00:01:47,171 --> 00:01:49,247
+00:01:45,152 --> 00:01:47,216
 Every step lands in the graph.
 
 24
-00:01:49,247 --> 00:01:54,171
+00:01:47,216 --> 00:01:52,038
 The gate rejects the recommendation deploy: the exact Cypher, and its zero rows.
 
 25
-00:01:54,171 --> 00:01:58,110
+00:01:52,038 --> 00:01:55,880
 The email deploy's path is too narrow: max flow rejects it.
 
 26
-00:01:58,110 --> 00:02:03,411
+00:01:55,880 --> 00:02:01,076
 The payment deploy passes. Here's the proof path, and every piece of evidence behind it.
 
 27
-00:02:04,488 --> 00:02:08,409
+00:02:01,871 --> 00:02:05,716
 The smallest containment, tested on a copy, and who should fix it.
 
 28
-00:02:08,409 --> 00:02:11,938
-A human approves the exact change, bound to its plan hash.
+00:02:05,716 --> 00:02:12,028
+A human approves the exact change, bound to its plan hash. Faultline opens a real pull request, merges it, and verifies it.
 
 29
-00:02:11,938 --> 00:02:16,379
-Faultline opens a real pull request, merges it, and verifies it. Applied.
+00:02:12,028 --> 00:02:16,851
+Applied. Then it writes the decision back into FalkorDB. That pull request is real, on GitHub,
 
 30
-00:02:16,379 --> 00:02:19,838
-Then it writes the decision back into FalkorDB.
+00:02:16,851 --> 00:02:27,970
+with the plan hash in its body; it counts only once GitHub's main has the change and checkout is healthy again. Meanwhile the on-call has been paged: in the app, by email, on Telegram or through PagerDuty.
 
 31
-00:02:38,324 --> 00:02:43,614
-Faultline also runs the pager. It pages whoever the graph says is on call for the owning team.
+00:02:36,151 --> 00:02:39,831
+Faultline pages whoever the graph says is on call for the owning team.
 
 32
-00:02:43,614 --> 00:02:47,703
+00:02:39,831 --> 00:02:43,690
 On their phone: the verdict, the proof path, and who fixes it.
 
 33
-00:02:48,720 --> 00:02:52,044
+00:02:44,936 --> 00:02:48,232
 One tap acknowledges it, and the escalation stops.
 
 34
-00:02:52,044 --> 00:02:56,835
-After a verified fix, the on-call can grant a standing approval: one use, seven days.
+00:02:48,232 --> 00:02:58,461
+After a verified fix, the on-call can grant a standing approval: one use, seven days. When the same fault comes back, the gate still proves the cause, and a second real pull request merges and verifies.
 
 35
-00:02:56,835 --> 00:03:03,374
-When the same fault comes back, the gate still proves the cause, and a second real pull request merges and verifies.
+00:02:58,461 --> 00:03:03,930
+Handled while you slept. Zero people woken. That second incident came in through the API, like a real alert.
 
 36
-00:03:03,374 --> 00:03:06,398
-Handled while you slept. Zero people woken.
+00:03:03,930 --> 00:03:10,911
+The contract is now spent, so the next repeat pages a person again, and the on-call gets only a quiet notice, never a wake-up.
 
 37
-00:03:22,112 --> 00:03:25,367
+00:03:18,119 --> 00:03:21,324
 It's the team's memory, too. Who decided the payment timeout?
 
 38
-00:03:25,367 --> 00:03:27,968
+00:03:21,324 --> 00:03:23,887
 Every name in the answer comes from a query.
 
 39
-00:03:27,968 --> 00:03:33,970
-And it learns from the people using it: the fixes your team prefers, the guidelines they set, who actually answers.
+00:03:23,887 --> 00:03:28,733
+And it learns from the people using it: the fixes your team prefers and the guidelines they set.
 
 40
-00:03:33,970 --> 00:03:37,874
+00:03:28,733 --> 00:03:32,517
 The next plan puts your team's choice first: moved up from number two.
 
 41
-00:03:37,874 --> 00:03:44,025
+00:03:32,517 --> 00:03:38,497
 And FalkorDB shows its own work: the memory each graph takes, every query's timing, and the live tail.
 
 42
-00:03:44,025 --> 00:03:52,571
-The numbers, honestly. On 140 worlds built to fool it: 0 confident wrong blames, the right cause in 51 of 100, and not sure on the rest.
+00:03:38,497 --> 00:03:43,329
+Now break it yourself: remove one call from a copy of the graph, and watch the verdict move.
 
 43
-00:03:52,571 --> 00:04:03,065
-A strong language model blamed an innocent change 37 times. On a real system, the OpenTelemetry Demo: the right cause in 11 of 20 faults, 0 wrong blames in 40 windows.
+00:03:43,329 --> 00:03:44,945
+The graph is load-bearing.
 
 44
-00:04:03,065 --> 00:04:05,835
-A telemetry threshold was wrong 8 times.
+00:03:44,945 --> 00:03:52,713
+The numbers. On 140 worlds built to fool it: 0 confident wrong blames, the right cause in 51 of 100, and not sure on the rest.
 
 45
-00:04:05,835 --> 00:04:11,027
-Refusing is cheap: no path in 0.053 milliseconds, and zero tokens.
+00:03:52,713 --> 00:04:03,008
+A strong language model blamed an innocent change 37 times. On a real system, the OpenTelemetry Demo: the right cause in 11 of 20 faults, 0 wrong blames in 40 windows.
 
 46
-00:04:11,027 --> 00:04:15,843
-And it scales: 250 customer graphs on one engine, 0 leaks.
+00:04:03,008 --> 00:04:05,726
+A telemetry threshold was wrong 8 times.
 
 47
-00:04:15,843 --> 00:04:18,736
-It's live now: 5 of 5 real runs, verified.
+00:04:05,726 --> 00:04:11,005
+Refusing is cheap: no path in 0.053 milliseconds and zero tokens.
 
 48
-00:04:18,736 --> 00:04:23,833
-Any agent can use the same tools over M.C.P. Faultline, built on FalkorDB.
+00:04:11,005 --> 00:04:14,833
+And it scales: 250 customer graphs, 0 leaks.
 
 49
-00:04:23,833 --> 00:04:25,672
+00:04:14,833 --> 00:04:17,671
+It's live now: 5 of 5 real runs, verified.
+
+50
+00:04:17,671 --> 00:04:22,671
+Any agent can use the same tools over M.C.P. Faultline, built on FalkorDB.
+
+51
+00:04:22,671 --> 00:04:24,487
 No path, no claim.
 

@@ -15,6 +15,18 @@ Then ask, for example: *"Use causal_paths from payment to checkout, then impact_
 
 ## Try the hosted server now (public demo key)
 
+**From any MCP client that speaks stdio** (Claude Desktop, Cursor, Claude Code, …), the npm bridge [`@prashantthakur77/faultline-mcp`](https://www.npmjs.com/package/@prashantthakur77/faultline-mcp) connects to this server with the demo key, no setup:
+
+```bash
+claude mcp add faultline -- npx -y @prashantthakur77/faultline-mcp
+```
+
+```json
+{ "mcpServers": { "faultline": { "command": "npx", "args": ["-y", "@prashantthakur77/faultline-mcp"] } } }
+```
+
+`--url https://your-host/mcp --key <bearer key>` (or `FAULTLINE_MCP_URL`, `FAULTLINE_MCP_KEY`) points it at your own deployment. Clients that speak Streamable HTTP can also connect directly:
+
 The live deployment serves the hosted tools at `https://13-203-185-119.sslip.io/mcp`. This key is public on purpose: it is bound to the synthetic `acme` tenant, reads only (`GRAPH.RO_QUERY` as `ro_acme`, no write credential on the server) and is rate-limited per key, so anyone can try it.
 
 ```bash

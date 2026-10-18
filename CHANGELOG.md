@@ -2,6 +2,20 @@
 
 All notable changes to Faultline. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [1.1.1] - 2026-10-18
+
+### Use it
+- An npm package, [`@prashantthakur77/faultline-mcp`](https://www.npmjs.com/package/@prashantthakur77/faultline-mcp): `npx -y @prashantthakur77/faultline-mcp` gives any stdio MCP client (Claude Desktop, Cursor, Claude Code) Faultline's read-only graph tools, on the live demo by default or on your own server.
+- A one-command quickstart, `deploy/quickstart.yml`: FalkorDB, the demo graphs, the API, the MCP endpoint and the UI from images published on ghcr.io by a new release workflow.
+
+### Fixed
+- Stored evidence and tool-call payloads are always valid JSON: they were cut at a fixed length, which could end inside a string and break every later read of that run's plan.
+- The hosted MCP endpoint runs the current build (its image was not rebuilt by the deploy script); it serves <!-- claim:repo.mcp_tools_hosted -->51<!-- /claim --> tools.
+- The gate's G4 upstream checks record the exact parameters they ran with, so a replay re-runs them.
+
+### Video
+- The narration fills the waits while real pull requests merge (what "APPLIED" means, and the pager's channels: in the app, email, Telegram, PagerDuty), and a new scene breaks the graph live on `/playground`. 4:25, recorded in one real take.
+
 ## [1.1.0] - 2026-10-18
 
 The version deployed at [13-203-185-119.sslip.io](https://13-203-185-119.sslip.io) at submission (tracks T1, T3 and T2). Every number below is checked against `evals/results/latest.json` where the README quotes it.
@@ -24,7 +38,7 @@ The version deployed at [13-203-185-119.sslip.io](https://13-203-185-119.sslip.i
 - Upstream: a fix to GraphRAG-SDK (#345), FalkorDB issues #3349, #3376 and #3377, new evidence on #3150 and #2502, and one private report.
 
 ### Video and docs
-- A 4:27 narrated video recorded in one real take, with two real pull requests; "Proof at a glance" and "Why FalkorDB, in numbers" in the README; refreshed screenshots.
+- A 4:25 narrated video recorded in one real take, with two real pull requests; "Proof at a glance" and "Why FalkorDB, in numbers" in the README; refreshed screenshots.
 
 ## [1.0.0] - 2026-10-16
 
@@ -51,5 +65,6 @@ First public release: the version deployed at [13-203-185-119.sslip.io](https://
 - Live deployment: one VM with Docker Compose (FalkorDB never exposed, ACL users per tenant, Caddy with TLS), public mode with run tokens, rate limits and no LLM spend.
 - Keyless reproduction: `make setup && make judge-check` prints PASS with no API key.
 
+[1.1.1]: https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.1.1
 [1.1.0]: https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.1.0
 [1.0.0]: https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.0.0

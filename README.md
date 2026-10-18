@@ -10,6 +10,7 @@
 <a href="docs/FALKORDB_COMPAT.md"><img alt="FalkorDB 6.0.2, pinned by digest" src="https://img.shields.io/badge/FalkorDB-6.0.2%20pinned%20by%20digest-ff4e00"></a>
 <a href="#reproduce-it"><img alt="make judge-check: keyless" src="https://img.shields.io/badge/make%20judge--check-keyless-2ea44f"></a>
 <a href="docs/MCP.md"><img alt="MCP: stdio and hosted HTTP" src="https://img.shields.io/badge/MCP-stdio%20%2B%20hosted%20HTTP-6f42c1"></a>
+<a href="https://www.npmjs.com/package/@prashantthakur77/faultline-mcp"><img alt="npm: @prashantthakur77/faultline-mcp" src="https://img.shields.io/npm/v/@prashantthakur77/faultline-mcp?label=npm%20%C2%B7%20faultline-mcp&color=cb3837"></a>
 <a href="LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-blue"></a>
 <br>
 <img alt="Python 3.11+" src="https://img.shields.io/badge/python-3.11%2B-3776ab"> <!-- noclaim: version -->
@@ -20,7 +21,7 @@
 
 ![The gate at work: a no-path rejection (G2), a max-flow rejection (G5), then the proof path](docs/media/hero.gif)
 
-<p align="center"><b><a href="https://13-203-185-119.sslip.io">Live demo</a> · <a href="https://github.com/Prashant-thakur77/Faultline/releases/download/v1.1.0/faultline-demo.mp4">Watch the video (4:27)</a> · <a href="docs/MCP.md#try-the-hosted-server-now-public-demo-key">Hosted MCP</a> · <a href="docs/PROOF.md">Every number, with intervals</a> · <a href="https://prashant-thakur77.github.io/Faultline/">Replay (no backend)</a> · <a href="https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.1.0">Release v1.1.0</a></b></p>
+<p align="center"><b><a href="https://13-203-185-119.sslip.io">Live demo</a> · <a href="https://github.com/Prashant-thakur77/Faultline/releases/latest/download/faultline-demo.mp4">Watch the video (4:25)</a> · <a href="docs/MCP.md#try-the-hosted-server-now-public-demo-key">Hosted MCP</a> · <a href="docs/PROOF.md">Every number, with intervals</a> · <a href="https://prashant-thakur77.github.io/Faultline/">Replay (no backend)</a> · <a href="https://github.com/Prashant-thakur77/Faultline/releases/tag/v1.1.1">Release v1.1.1</a></b></p>
 
 ## At a glance
 
@@ -36,9 +37,18 @@
 | **Stack** | FalkorDB 6.0.2 (pinned by digest) · Python 3.11 and FastAPI · Next.js 16, React Three Fiber · MCP over stdio and HTTP · Docker Compose on one AWS EC2 VM with Caddy. <!-- noclaim: versions --> |
 | **Built for** | Graph Hacks (WeMakeDevs × FalkorDB). Tracks: T1 Agents That Act on Connected Data ([how one incident flows](#how-one-incident-flows)) · T3 Company Brain ([memory and brain](#memory-company-brain-preflight-coordination)) · T2 Agent Memory & Coordination ([learning from the people who use it](#learns-from-the-people-who-use-it-t2)). |
 
-**[Video](https://github.com/Prashant-thakur77/Faultline/releases/download/v1.1.0/faultline-demo.mp4) (4:27, narrated, captioned)** chapters: 0:16 thesis · 0:31 how FalkorDB decides, in 3D · 1:41 the live incident · 2:08 a real PR, APPLIED · 2:38 on call · 3:22 company brain · 3:27 what it learned · 3:37 inside FalkorDB · 3:44 the numbers. Every number in it is read from the results file at record time; script: [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md). <!-- noclaim: chapter times -->
+**[Video](https://github.com/Prashant-thakur77/Faultline/releases/latest/download/faultline-demo.mp4) (4:25, narrated, captioned)** chapters: 0:15 thesis · 0:30 how FalkorDB decides, in 3D · 1:39 the live incident · 2:05 a real PR, APPLIED · 2:36 on call · 3:18 company brain · 3:23 what it learned · 3:32 inside FalkorDB · 3:38 break it · 3:44 the numbers. Every number in it is read from the results file at record time; script: [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md). <!-- noclaim: chapter times -->
 
 ---
+
+## Use it
+
+| You want to | Do this |
+|---|---|
+| Give your own agent Faultline's graph tools (Claude Code, Claude Desktop, Cursor, any MCP client) | `npx -y @prashantthakur77/faultline-mcp` ([npm](https://www.npmjs.com/package/@prashantthakur77/faultline-mcp)); with Claude Code: `claude mcp add faultline -- npx -y @prashantthakur77/faultline-mcp`. It connects to the live demo's read-only tools; `--url` and `--key` point it at your own server. |
+| Run the whole product on your machine, Docker only | `curl -fsSLO https://raw.githubusercontent.com/Prashant-thakur77/Faultline/main/deploy/quickstart.yml && docker compose -f quickstart.yml up`, then open http://localhost:3000 (API on :8400, MCP on :8401). FalkorDB, the demo graphs, the API, the MCP endpoint and the UI; no API key. |
+| Reproduce every number in this README | `git clone https://github.com/Prashant-thakur77/Faultline && cd Faultline && make setup && make judge-check` (prints PASS, no API key); see [Reproduce it](#reproduce-it). |
+| Just look | the [live demo](https://13-203-185-119.sslip.io) (press Re-arm to reset it), the [video](https://github.com/Prashant-thakur77/Faultline/releases/latest), or the [replay](https://prashant-thakur77.github.io/Faultline/) with no backend. |
 
 ## In short
 
@@ -158,6 +168,7 @@ Measured on the pinned engine (FalkorDB 6.0.2), in the terms FalkorDB uses for i
 
 ## Contents
 
+- [Use it](#use-it)
 - [Proof at a glance](#proof-at-a-glance)
 - [See it](#see-it)
 - [What the judges asked for](#what-the-judges-asked-for)

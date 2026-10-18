@@ -14,7 +14,7 @@
 
 - Live demo (keyless, simulated GitHub): https://13-203-185-119.sslip.io
 - Hosted read-only MCP server, public demo key: docs/MCP.md (`https://13-203-185-119.sslip.io/mcp`)
-- Narrated video (4:27): docs/media/demo.mp4 and the GitHub release asset
+- Narrated video (4:25): docs/media/demo.mp4 and the GitHub release asset
 - Reproduce everything offline with no API key: `make setup && make judge-check` (prints PASS)
 
 ## What it proves (measured, with 95 % intervals in docs/PROOF.md)
