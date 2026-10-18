@@ -1,141 +1,141 @@
 {
   "base": "https://13-203-185-119.sslip.io",
   "runs": 5,
-  "at": "2026-10-18T04:57:07Z",
+  "at": "2026-10-18T11:58:59Z",
   "status": {
     "http": 200,
     "engine": "6.0.2",
-    "templates": 226,
-    "version": "1.1.0",
+    "templates": 241,
+    "version": "1.4.0",
     "acl": "ro_user",
     "llm_configured": false
   },
   "api_status_ms": {
     "n": 20,
-    "p50": 164.8,
-    "p95": 248.5
+    "p50": 191.5,
+    "p95": 265.9
   },
   "pages": {
     "/": {
       "ok": true,
-      "ttfb_p50": 160.8,
-      "load_p50": 320.4,
-      "kb": 184.6
+      "ttfb_p50": 175.3,
+      "load_p50": 359.7,
+      "kb": 189.2
     },
     "/preflight": {
       "ok": true,
-      "ttfb_p50": 220.9,
-      "load_p50": 317.4,
-      "kb": 47.5
+      "ttfb_p50": 243.3,
+      "load_p50": 349.5,
+      "kb": 48.8
     },
     "/brain": {
       "ok": true,
-      "ttfb_p50": 205.0,
-      "load_p50": 279.8,
-      "kb": 54.9
+      "ttfb_p50": 171.6,
+      "load_p50": 261.1,
+      "kb": 57.3
     },
     "/memory": {
       "ok": true,
-      "ttfb_p50": 182.5,
-      "load_p50": 243.1,
-      "kb": 37.5
+      "ttfb_p50": 185.6,
+      "load_p50": 272.4,
+      "kb": 38.2
     },
     "/explore": {
       "ok": true,
-      "ttfb_p50": 167.2,
-      "load_p50": 211.0,
-      "kb": 36.1
+      "ttfb_p50": 183.9,
+      "load_p50": 231.5,
+      "kb": 36.9
     },
     "/replay": {
       "ok": true,
-      "ttfb_p50": 151.4,
-      "load_p50": 191.0,
-      "kb": 33.2
+      "ttfb_p50": 172.9,
+      "load_p50": 219.4,
+      "kb": 34.0
     },
     "/replay/s1-hero": {
       "ok": true,
-      "ttfb_p50": 152.2,
-      "load_p50": 191.3,
-      "kb": 30.4
+      "ttfb_p50": 172.2,
+      "load_p50": 221.4,
+      "kb": 32.8
     }
   },
   "pages_ok": 7,
-  "pages_ttfb_p50": 167.2,
-  "pages_load_max_p50": 320.4,
+  "pages_ttfb_p50": 175.3,
+  "pages_load_max_p50": 359.7,
   "hero": {
     "runs": [
       {
-        "incident": "inc-s1-eb76a18f",
+        "incident": "inc-s1-cf76a320",
         "stage_at_verdict": "AWAITING_APPROVAL",
-        "verdict_ms": 4177.0,
+        "verdict_ms": 4153.0,
         "outcome": "CONFIRMED",
         "cause": "D-pay-417",
         "cause_correct": true,
         "choose": 200,
         "approve": 200,
         "final": "RESOLVED",
-        "act_ms": 1980.2,
-        "total_ms": 6908.5,
+        "act_ms": 1513.7,
+        "total_ms": 6037.4,
         "applied": true,
         "action": "rollback_deploy"
       },
       {
-        "incident": "inc-s1-a8f90b4d",
+        "incident": "inc-s1-40fe7d01",
         "stage_at_verdict": "AWAITING_APPROVAL",
-        "verdict_ms": 2165.0,
+        "verdict_ms": 2383.8,
         "outcome": "CONFIRMED",
         "cause": "D-pay-417",
         "cause_correct": true,
         "choose": 200,
         "approve": 200,
         "final": "RESOLVED",
-        "act_ms": 1913.3,
-        "total_ms": 4438.3,
+        "act_ms": 1532.0,
+        "total_ms": 4301.1,
         "applied": true,
         "action": "rollback_deploy"
       },
       {
-        "incident": "inc-s1-d384590e",
+        "incident": "inc-s1-a066beed",
         "stage_at_verdict": "AWAITING_APPROVAL",
-        "verdict_ms": 1737.5,
+        "verdict_ms": 2333.6,
         "outcome": "CONFIRMED",
         "cause": "D-pay-417",
         "cause_correct": true,
         "choose": 200,
         "approve": 200,
         "final": "RESOLVED",
-        "act_ms": 1921.5,
-        "total_ms": 4019.4,
+        "act_ms": 2078.4,
+        "total_ms": 4788.4,
         "applied": true,
         "action": "rollback_deploy"
       },
       {
-        "incident": "inc-s1-ed4f5cfc",
+        "incident": "inc-s1-e5d7a035",
         "stage_at_verdict": "AWAITING_APPROVAL",
-        "verdict_ms": 1716.2,
+        "verdict_ms": 1901.9,
         "outcome": "CONFIRMED",
         "cause": "D-pay-417",
         "cause_correct": true,
         "choose": 200,
         "approve": 200,
         "final": "RESOLVED",
-        "act_ms": 1890.4,
-        "total_ms": 3943.8,
+        "act_ms": 2571.9,
+        "total_ms": 4843.3,
         "applied": true,
         "action": "rollback_deploy"
       },
       {
-        "incident": "inc-s1-4dda0ff8",
+        "incident": "inc-s1-25d75f8e",
         "stage_at_verdict": "AWAITING_APPROVAL",
-        "verdict_ms": 1815.2,
+        "verdict_ms": 2494.3,
         "outcome": "CONFIRMED",
         "cause": "D-pay-417",
         "cause_correct": true,
         "choose": 200,
         "approve": 200,
         "final": "RESOLVED",
-        "act_ms": 1956.8,
-        "total_ms": 4144.5,
+        "act_ms": 1516.5,
+        "total_ms": 4412.7,
         "applied": true,
         "action": "rollback_deploy"
       }
@@ -144,31 +144,31 @@
     "cause_correct": 5,
     "resolved": 5,
     "applied": 5,
-    "verdict_ms_p50": 1815.2,
-    "verdict_ms_max": 4177.0,
-    "act_ms_p50": 1921.5,
-    "total_ms_p50": 4144.5
+    "verdict_ms_p50": 2383.8,
+    "verdict_ms_max": 4153.0,
+    "act_ms_p50": 1532.0,
+    "total_ms_p50": 4788.4
   },
   "s2": {
     "stage": "AWAITING_APPROVAL",
-    "verdict_ms": 8700.4,
+    "verdict_ms": 8457.6,
     "cause": "D-cutover-1",
     "cause_correct": true
   },
   "brain": {
     "n": 3,
     "ok": 3,
-    "ms_p50": 301.5
+    "ms_p50": 186.3
   },
   "preflight": {
     "http": 200,
     "decision": "block",
-    "ms": 286.2
+    "ms": 336.1
   },
   "mcp_unauthenticated_http": 401,
   "rearm": {
     "http": 200,
     "status": "re-armed"
   },
-  "seconds": 113.7
+  "seconds": 110.1
 }

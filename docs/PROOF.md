@@ -39,16 +39,16 @@ How to read it: **k/n** counts independent cases (identical re-runs of a determi
 
 ## The live deployment, measured from outside
 
-[`evals/live_bench.py`](../evals/live_bench.py) drives the public site at [13-203-185-119.sslip.io](https://13-203-185-119.sslip.io) over HTTPS the way a visitor does (network latency included) and writes its results into the same checked results file. Measured <!-- claim:live.at -->2026-10-18T04:57:07Z<!-- /claim --> on the deployment of release <!-- claim:live.version -->1.1.0<!-- /claim --> (with on-call, learning and `/engine` live). The run waits for the run index to record each outcome before grading it; an earlier version read the index a moment too soon and graded one confirmed run as wrong.
+[`evals/live_bench.py`](../evals/live_bench.py) drives the public site at [13-203-185-119.sslip.io](https://13-203-185-119.sslip.io) over HTTPS the way a visitor does (network latency included) and writes its results into the same checked results file. Measured <!-- claim:live.at -->2026-10-18T11:58:59Z<!-- /claim --> on the deployment of release <!-- claim:live.version -->1.4.0<!-- /claim --> (with on-call, learning and `/engine` live). The run waits for the run index to record each outcome before grading it; an earlier version read the index a moment too soon and graded one confirmed run as wrong.
 
 | What | Result |
 |---|---|
 | Hero incident, run end to end <!-- claim:live.hero.n -->5<!-- /claim --> times | right cause <!-- claim:live.hero.cause_correct -->5<!-- /claim -->, resolved <!-- claim:live.hero.resolved -->5<!-- /claim -->, verified APPLIED <!-- claim:live.hero.applied -->5<!-- /claim --> |
-| Alert to a gate verdict | p50 <!-- claim:live.hero.verdict_ms_p50 -->1815.2<!-- /claim --> ms |
-| Approve to verified write-back | p50 <!-- claim:live.hero.act_ms_p50 -->1921.5<!-- /claim --> ms |
-| Alert to RESOLVED, end to end | p50 <!-- claim:live.hero.total_ms_p50 -->4144.5<!-- /claim --> ms |
-| Data incident (S2) to its verdict, warehouse rebuild included | <!-- claim:live.s2.verdict_ms -->8700.4<!-- /claim --> ms, right cause = <!-- claim:live.s2.cause_correct -->True<!-- /claim --> |
-| Company brain | <!-- claim:live.brain.ok -->3<!-- /claim -->/<!-- claim:live.brain.n -->3<!-- /claim --> answered, p50 <!-- claim:live.brain.ms_p50 -->301.5<!-- /claim --> ms |
+| Alert to a gate verdict | p50 <!-- claim:live.hero.verdict_ms_p50 -->2383.8<!-- /claim --> ms |
+| Approve to verified write-back | p50 <!-- claim:live.hero.act_ms_p50 -->1532.0<!-- /claim --> ms |
+| Alert to RESOLVED, end to end | p50 <!-- claim:live.hero.total_ms_p50 -->4788.4<!-- /claim --> ms |
+| Data incident (S2) to its verdict, warehouse rebuild included | <!-- claim:live.s2.verdict_ms -->8457.6<!-- /claim --> ms, right cause = <!-- claim:live.s2.cause_correct -->True<!-- /claim --> |
+| Company brain | <!-- claim:live.brain.ok -->3<!-- /claim -->/<!-- claim:live.brain.n -->3<!-- /claim --> answered, p50 <!-- claim:live.brain.ms_p50 -->186.3<!-- /claim --> ms |
 | Preflight on a PR that must block | `<!-- claim:live.preflight.decision -->block<!-- /claim -->` |
 | Hosted MCP without a key | HTTP <!-- claim:live.mcp_unauthenticated -->401<!-- /claim --> |
 

@@ -749,19 +749,19 @@ Confusion (the gate as it ships, whole history):
 
 ## The public deployment, measured over HTTPS (evals/live_bench.py)
 
-Measured 2026-10-18T04:57:07Z against https://13-203-185-119.sslip.io (engine 6.0.2, release 1.1.0, 226 templates, read path `ro_user`), from outside the server; network latency to the server is included.
+Measured 2026-10-18T11:58:59Z against https://13-203-185-119.sslip.io (engine 6.0.2, release 1.4.0, 241 templates, read path `ro_user`), from outside the server; network latency to the server is included.
 
 | what | result |
 |---|---|
 | hero incident (S1), 5 runs | right cause 5/5, resolved 5/5, verified APPLIED 5/5 |
-| time to a gate verdict (S1) | p50 1815.2 ms, max 4177.0 ms |
-| choose + approve to verified write-back | p50 1921.5 ms |
-| alert to RESOLVED, end to end | p50 4144.5 ms |
-| data incident (S2) to its verdict | 8700.4 ms, right cause = True |
-| company brain | 3/3 answered, p50 301.5 ms |
-| preflight on a PR that must block | decision `block`, 286.2 ms |
-| /api/status | p50 164.8 ms, p95 248.5 ms |
-| pages (7) | 7/7 load; time to first byte p50 167.2 ms |
+| time to a gate verdict (S1) | p50 2383.8 ms, max 4153.0 ms |
+| choose + approve to verified write-back | p50 1532.0 ms |
+| alert to RESOLVED, end to end | p50 4788.4 ms |
+| data incident (S2) to its verdict | 8457.6 ms, right cause = True |
+| company brain | 3/3 answered, p50 186.3 ms |
+| preflight on a PR that must block | decision `block`, 336.1 ms |
+| /api/status | p50 191.5 ms, p95 265.9 ms |
+| pages (7) | 7/7 load; time to first byte p50 175.3 ms |
 | hosted MCP without a key | HTTP 401 (refused) |
 
 ## Safety invariants under mutation (scripts/mutation_check.py)
