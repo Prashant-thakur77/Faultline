@@ -1,10 +1,11 @@
-"""Min-cut from FalkorDB's `algo.maxFlow` output.
+"""Min-cut from FalkorDB's `algo.maxFlow` output: the reference implementation (test oracle).
 
 `algo.maxFlow` returns the max-flow value and the edges carrying positive flow (`edges`, aligned
-`edgeFlows`), but no explicit cut. The cut is recovered here by residual reachability over the
-capacities of ALL candidate edges (Q-CUT-2, zero-flow edges included). This is the only graph
-routine computed in Python (a deliberate exception); the flow itself always comes from
-the engine.
+`edgeFlows`), but no explicit cut. The product computes the cut INSIDE FalkorDB, in the same read-only
+query as the flow (Q-CUT-3: residual reachability as a list fixpoint, then the edges leaving the source
+side). This routine computes the same cut in Python from Q-CUT-1 + Q-CUT-2; the smoke suite, the live
+template tests and evals/udf_equivalence.py hold the engine's cut to it. `CutMismatch` is what the product
+raises when the engine's cut does not match its own flow.
 """
 
 from __future__ import annotations

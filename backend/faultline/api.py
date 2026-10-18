@@ -1359,6 +1359,19 @@ def _act_job(c, loc: dict, aid: str) -> None:
             stage(Stage.UNKNOWN_ESCALATED, note + "; second-channel re-read incomplete, escalated", force=True, settled=True)
             return
         verified_ok = True  # success written AND fully re-read (n == m): the only path that may end RESOLVED
+        try:  # T2: leave the verified outcome as a note other agents recall (agentmem_<t>; a lead, never evidence)
+            from .memory import notes as agent_notes
+
+            done = act._action(c, aid)
+            target = (c.ro().run("Q-CHANGE-1", {"id": cause}).rows or [{}])[0].get("target")
+            left = agent_notes.leave_verdict(
+                c.tenant, principal=f"faultline:{c.run}", about=[target, *list(w.get("symptom") or [])],
+                text=f"{cause} caused {c.inc}; fixed by {done['option']} ({done.get('external_ref') or 'no ref'}), "
+                     f"verified {v['verdict']} on a second channel; write-back re-read {wb['verified']}.")
+            shift.note(f"left note {left['id']} for other agents about {', '.join(left['about'])}")
+        except Exception as e:  # noqa: BLE001 - a note is advisory: logged and shown, never a failed fix
+            logging.getLogger("faultline.notes").warning("verdict note after %s not written: %s", aid, e)
+            note += f"; note for other agents skipped: {_client_error_text(e)}"[:160]
         try:  # LEARN: family (labelPropagation) → derived runbook; decay
             from .memory.learn import learn
 
@@ -1787,6 +1800,20 @@ def memory_overview(tenant: str = "acme", incident: str | None = None) -> dict:
         out["recall"] = _tool(t, graph, "similar_incidents", incident_id=incident, now=int(onset or _now_ms()))
         out["recalled"] = _qr(RO(t, graph).run("Q-MEM-4", {"inc": incident}))
     return out
+
+
+@app.get("/api/notes")
+def agent_notes_route(tenant: str = "acme", focus: str = "", text: str = "") -> dict:
+    """Shared agent notes (T2), read-only: what agents (Faultline's own runs, MCP clients) noted about a component or
+    near it, and by meaning (the `recall_notes` MCP tool: Q-NOTE-RECALL on agentmem_<tenant>, ranked in the engine)."""
+    if len(text) > 200 or len(focus) > 120:
+        raise HTTPException(400, "text is at most 200 characters and focus at most 120")
+    if not text.strip() and not focus:
+        raise HTTPException(400, "give focus, text or both")
+    out = _tool(check_tenant(tenant), None, "recall_notes", text=text, focus_id=focus)
+    if out.get("error"):
+        raise HTTPException(400, out["error"])
+    return {k: out.get(k) for k in ("rows", "via", "template", "cypher", "params", "ms", "served_by", "note")}
 
 
 class ContextPackReq(BaseModel):
@@ -2264,13 +2291,13 @@ class TemplateParams(BaseModel):
     incident: str | None = None
     tenant: str = "acme"
     # which of the tenant's own durable graphs to read (default: the template's `// home:`); an incident's clean room
-    # is chosen with `incident` instead. Never a graph name: only these three words
-    graph: str | None = Field(default=None, pattern="^(tenant|oncall|audit)$")
+    # is chosen with `incident` instead. Never a graph name: only these four words
+    graph: str | None = Field(default=None, pattern="^(tenant|oncall|audit|agentmem)$")
 
 
 def _template_graph(t: str, tmpl, body: "TemplateParams") -> str:
     """Where a re-run or a profile reads: the incident's run graph when `incident` is given (as before), else the
-    tenant graph the caller names (`graph`: tenant, oncall or audit), else the template's home graph: learned state,
+    tenant graph the caller names (`graph`: tenant, oncall, audit or agentmem), else the template's home graph: learned state,
     pages and contracts live in oncall_<t>, the run index and receipts in audit_<t>, so a re-run of them on tenant_<t>
     returned nothing."""
     from .actions import oncall
@@ -2279,7 +2306,12 @@ def _template_graph(t: str, tmpl, body: "TemplateParams") -> str:
         graph = _locate(body.incident, t)["graph"]
     else:
         home = body.graph or tmpl.home
-        graph = oncall.home_graph(t) if home == "oncall" else audit_graph(t) if home == "audit" else tenant_graph(t)
+        if home == "agentmem":  # shared agent notes (made on first use, like the on-call home)
+            from .memory import notes
+
+            graph = notes.ensure_memory_graph(t)
+        else:
+            graph = oncall.home_graph(t) if home == "oncall" else audit_graph(t) if home == "audit" else tenant_graph(t)
     if not graph_belongs_to(graph, t):
         raise HTTPException(403, "graph does not belong to tenant")
     return graph

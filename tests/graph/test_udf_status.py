@@ -33,4 +33,13 @@ def test_load_refuses_a_changed_file(tmp_path):
     with pytest.raises(udf.UdfMismatch, match="sha256"):
         udf.load_udfs(r, {"flex": (str(bad), udf.UDF_LIBS["flex"][1])})
     assert r.loaded == []
-    assert udf.load_udfs(r) == {"flex": udf.UDF_LIBS["flex"][1][:12]} and r.loaded[0][:4] == ("GRAPH.UDF", "LOAD", "REPLACE", "flex")
+    assert udf.load_udfs(r) == {lib: sha[:12] for lib, (_p, sha) in udf.UDF_LIBS.items()}
+    assert [c[:4] for c in r.loaded] == [("GRAPH.UDF", "LOAD", "REPLACE", lib) for lib in udf.UDF_LIBS]
+
+
+def test_faultline_library_is_pure_arithmetic():
+    """Our own library is reviewed like a vendored one: pure functions, nothing that reaches outside the engine."""
+    src = (udf.ROOT / udf.UDF_LIBS["faultline"][0]).read_text()
+    for banned in ("require", "eval(", "Function(", "fetch", "import ", "graph.", "getNeighbors"):
+        assert banned not in src.split("*/", 1)[1], banned
+    assert hashlib.sha256(src.encode()).hexdigest() == udf.UDF_LIBS["faultline"][1]

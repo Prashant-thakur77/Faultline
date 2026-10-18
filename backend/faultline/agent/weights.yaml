@@ -37,6 +37,17 @@ memory:
   consolidate_min: 2    # Two applied fixes in one family is the smallest evidence of a repeatable procedure.
   find_min_similarity: 0.65  # On seeded text, unrelated queries top out near 0.58 cosine and real matches start near 0.69.
   recall_recency_w: 0.2  # Recall (Q-MEM-1) ranks its structurally confirmed precedents by 0.8 × similarity + 0.2 × recency (half_life_days): among incidents that look alike, the recent one comes first, but recency alone cannot lift a precedent more than 0.2 above a closer match (0 = similarity only, the order before M21).
+notes:                  # shared agent notes (T2): leads other agents leave in agentmem_<tenant>; never evidence
+  w_meaning: 0.6        # A note that answers the question by meaning matters most.
+  w_near: 0.3           # A note about the component itself (1/(1+0)) or one hop away (1/2) is next; three hops away adds 0.075.
+  w_fresh: 0.1          # Among equal notes the newer one first, but age alone never lifts a note above a closer match.
+  fresh_tau_min: 1440   # Freshness decays over a day: on-call notes go stale with the shift.
+  min_similarity: 0.65  # Same model and floor as memory.find_min_similarity: unrelated text reaches about 0.62 against a note, real matches start near 0.7.
+  near_hops: 2          # Graph neighbourhood for recall: the component, its callers and callees, and theirs.
+  ttl_days: 7           # A note expires after a week unless someone replies to it; recall never returns an expired note.
+  quota_per_day: 200    # Writes per agent principal (MCP key or process) per day, checked in the same query as the write.
+  max_chars: 500        # A note is a lead, not a document.
+  max_about: 10         # A note is about a few components, never the whole graph.
 remedy:
   min_n: 2              # A fix kind needs two recorded outcomes on similar incidents before its history may reorder the plan (same bar as consolidate_min).
 knowledge:

@@ -18,6 +18,8 @@ x-api: &api
     FAULTLINE_GITHUB: sim
     # the local MCP endpoint's bearer key (127.0.0.1 only; change it if you expose the port)
     FAULTLINE_MCP_KEYS: "quickstart-local-key-change-me:acme"
+    # your own server: its MCP endpoint also offers `remember` (shared agent notes; writes agentmem_acme only)
+    FAULTLINE_MCP_NOTES: "true"
 
 services:
   falkordb:

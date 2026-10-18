@@ -1,9 +1,11 @@
-"""Connection factory. Two roles, never mixed:
+"""Connection factory. Three roles, never mixed:
 
 * `engine()`: the engine user (seed, write-back, scratch/what-if graphs). Never given to the model.
 * `ro_graph(tenant)`: a read-only connection whose ACL user may only run GRAPH.RO_QUERY /
   GRAPH.EXPLAIN on its own tenant keys. It uses `falkordb.Graph(redis.Redis(...))` because the
   `FalkorDB()` constructor issues INFO, which the minimal RO ACL user may not run (smoke item 22).
+* `mem_graph(tenant)`: the shared-notes writer. Its ACL user mem_<tenant> may run GRAPH.QUERY on exactly one key,
+  agentmem_<tenant>, so FalkorDB itself refuses a note write aimed at the graph the gate reads.
 """
 
 from __future__ import annotations
@@ -19,7 +21,7 @@ from falkordb import FalkorDB, Graph
 
 from ..config import settings
 from .errors import GraphUnavailable
-from .tenant import check_tenant, graph_belongs_to, tenant_graph
+from .tenant import check_tenant, graph_belongs_to, memory_graph, tenant_graph
 
 _SOCKET_TIMEOUT_S = 10.0
 
@@ -119,9 +121,38 @@ def ro_graph(tenant: str, graph_name: str | None = None, fresh: bool = False) ->
     return Graph(_ro_redis(tenant, fresh), name)
 
 
+def mem_acl_enabled() -> bool:
+    return bool(settings.falkordb_mem_password)
+
+
+_MEM_POOLS: dict[str, redis.Redis] = {}
+
+
+def mem_graph(tenant: str) -> Graph:
+    """Write handle on agentmem_<tenant> as the mem_<tenant> ACL user (GRAPH.QUERY on that key only). Without
+    FALKORDB_MEM_PASSWORD (local dev without ACL) it is the engine user, and /api/status says so."""
+    _disabled_guard()
+    t = check_tenant(tenant)
+    if t not in _MEM_POOLS:
+        kwargs: dict = dict(host=settings.falkordb_host, port=settings.falkordb_port, socket_timeout=_SOCKET_TIMEOUT_S,
+                            socket_connect_timeout=3.0)
+        if mem_acl_enabled():
+            kwargs.update(username=f"mem_{t}", password=settings.falkordb_mem_password)
+        else:
+            kwargs.update(username=settings.falkordb_engine_user or None, password=settings.falkordb_engine_password or None)
+        _MEM_POOLS[t] = redis.Redis(**kwargs)
+    return Graph(_MEM_POOLS[t], memory_graph(t))
+
+
 def reset_connections() -> None:
     """For tests and settings changes: drop cached connections and close RO pools."""
     _engine.cache_clear()
+    while _MEM_POOLS:
+        _, conn = _MEM_POOLS.popitem()
+        try:
+            conn.close()
+        except Exception:
+            pass
     while _RO_POOLS:
         _, conn = _RO_POOLS.popitem()
         try:

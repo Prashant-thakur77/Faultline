@@ -121,7 +121,7 @@ def test_find_entities_unions_full_text_and_vector_seeds(acme):
     by = {x["id"]: x for x in r["rows"]}
     assert set(by["rb-kafka-lag"]["via"]) == {"fulltext", "vector"}           # found by name and by meaning
     assert any(x["label"] == "Incident" and x["via"] == ["vector"] for x in r["rows"])  # past incidents by meaning only
-    assert "Q-FIND-INCIDENT-VEC" in r["template"] and "Q-FIND-SERVICE" in r["template"]
+    assert r["template"] == "Q-FIND-HYBRID"                                   # one query; the engine merges the seeds
     assert T.find_entities(text="quantum router")["rows"] == []              # below the similarity floor: nothing
     only = T.find_entities(text="payment", labels=["Service"])
     assert only["rows"] and all(x["via"] == ["fulltext"] for x in only["rows"])  # explicit labels: no vector seed

@@ -487,6 +487,44 @@ def advance_stage(g: Graph, *, inc: str, run: str, stage: str, ord_: int, note: 
                         timeout=WRITE_TIMEOUT_MS).result_set)
 
 
+# ------------------------------------------------------------------ shared agent notes (T2, agentmem_<tenant>)
+W_NOTE = (
+    # ONE query, so every condition and the write are atomic together: every `about` id is a component of the graph,
+    # the reply target exists, and the author is under its daily quota on the ENGINE clock (concurrent writers cannot
+    # both take the last slot). A reply keeps the note it answers alive at least as long as itself.
+    "OPTIONAL MATCH (p:Note {id: $reply_to}) "
+    "WITH p "
+    "MATCH (x:Node) WHERE x.id IN $about "
+    "WITH p, collect(DISTINCT x) AS targets "
+    "WHERE size(targets) = size($about) AND ($reply_to = '' OR p IS NOT NULL) "
+    "MERGE (a:Author {id: $principal}) "
+    "WITH p, targets, a, size([(a)-[:WROTE]->(r:Note) WHERE r.created_at >= timestamp() - 86400000 | r]) AS used "
+    "WHERE used < $quota "
+    "CREATE (n:Note {id: $id, agent: $principal, name: $name, session: $session, kind: $kind, text: $text, "
+    "created_at: timestamp(), expires_at: timestamp() + $ttl_ms, embedding: vecf32($vec)}) "
+    "CREATE (a)-[:WROTE]->(n) "
+    "FOREACH (x IN targets | CREATE (n)-[:ABOUT]->(x)) "
+    "FOREACH (q IN CASE WHEN p IS NULL THEN [] ELSE [p] END | CREATE (n)-[:REPLY_TO {stance: $stance}]->(q) "
+    "SET q.expires_at = CASE WHEN q.expires_at < n.expires_at THEN n.expires_at ELSE q.expires_at END) "
+    "RETURN n.id AS id, used + 1 AS used, n.created_at AS created_at, n.expires_at AS expires_at"
+)
+
+
+def write_note(g: Graph, *, id: str, principal: str, name: str, session: str, kind: str, text: str, about: list[str],
+               vec: list[float], ttl_ms: int, quota: int, reply_to: str = "", stance: str = "adds") -> dict | None:
+    """W-NOTE-1 on agentmem_<tenant> (`g` is client.mem_graph: the mem_<tenant> ACL user, that key only). Returns the
+    written note's id, the author's count today and its times, or None when a condition refused it (unknown component,
+    unknown reply target, or the quota): the caller reads which one, read-only."""
+    rows = g.query(W_NOTE, {"id": id, "principal": principal, "name": name, "session": session, "kind": kind,
+                            "text": text, "about": sorted(set(about)), "vec": [float(v) for v in vec],
+                            "ttl_ms": int(ttl_ms), "quota": int(quota), "reply_to": reply_to or "", "stance": stance},
+                   timeout=WRITE_TIMEOUT_MS).result_set
+    if not rows:
+        return None
+    nid, used, created, expires = rows[0]
+    return {"id": nid, "used": int(used), "created_at": int(created), "expires_at": int(expires)}
+
+
 W_HYPOTHESIS = (
     "MATCH (i:Incident {id: $inc}) MATCH (c:Node {id: $cause}) "
     "MERGE (h:Hypothesis:Node {id: $hid}) "

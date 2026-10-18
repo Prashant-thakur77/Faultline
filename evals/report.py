@@ -552,6 +552,7 @@ def side_summaries(s: dict) -> dict:
     k.update(_deep_fresh_hop_keys())
     k.update(llm_deep_keys())
     k.update(faultbench_otel_keys())
+    k.update(udf_equivalence_keys())
     k.update(oncall_keys())
     k.update(learn_keys())
     k.update(tenants_keys())   # tenant density + concurrency
@@ -758,6 +759,20 @@ def llm_deep_keys() -> dict:
 
 
 OTEL_ARMS = (("faultline", "faultline"), ("faultline_prefix", "faultline_prefix"), ("t", "T"), ("tplus", "Tplus"), ("n", "N"))
+
+
+def udf_equivalence_keys(x: dict | None = None) -> dict:
+    """udf.eq.*: what FalkorDB now computes in one query (ranking by our `faultline` UDF library, the min-cut) against
+    the previous Python code
+    (evals/udf_equivalence.py → evals/results/udf_equivalence.json): identical answers / calls, per tool."""
+    x = _side("udf_equivalence.json") if x is None else x
+    if not x:
+        return {}
+    k = {"udf.eq.texts": x.get("texts")}
+    for tool in ("blast", "notify", "find", "cut"):
+        v = x.get(tool) or {}
+        k[f"udf.eq.{tool}.k"], k[f"udf.eq.{tool}.n"] = v.get("k"), v.get("n")
+    return k
 
 
 def faultbench_otel_keys(x: dict | None = None, dry: dict | None = None) -> dict:

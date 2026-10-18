@@ -56,8 +56,9 @@ _CLAUSE = re.compile(r"\b(OPTIONAL\s+MATCH|MATCH|WITH|RETURN|UNWIND|CALL|ORDER\s
 
 
 # which of a tenant's durable graphs a template is read from (`// home:`): tenant_<t> (default), oncall_<t> (pages,
-# contracts, hand-offs, what Faultline learned) or audit_<t> (the run index, receipts, the LLM ledger)
-HOMES = ("tenant", "oncall", "audit")
+# contracts, hand-offs, what Faultline learned), audit_<t> (the run index, receipts, the LLM ledger) or agentmem_<t>
+# (shared agent notes)
+HOMES = ("tenant", "oncall", "audit", "agentmem")
 
 
 class TemplateLintError(ValueError):
@@ -79,7 +80,7 @@ class Template:
     path: str
     seen: tuple[str, ...] = field(default_factory=tuple)
     internal: bool = False   # `// internal: true`: product-only (Telegram ids, consents, offers); never run for a client
-    home: str = "tenant"     # `// home: oncall|audit`: the tenant graph the product reads it from (a re-run defaults to it)
+    home: str = "tenant"     # `// home: oncall|audit|agentmem`: the tenant graph the product reads it from (a re-run defaults to it)
 
 
 def mask_strings(s: str) -> str:
@@ -111,6 +112,11 @@ def inline_map_after_match(query: str) -> bool:
     return False
 
 
+def _brace_depth(masked: str, pos: int) -> int:
+    """Brace depth at `pos` of a template with its strings masked (map literals and CALL { … } subqueries)."""
+    return masked.count("{", 0, pos) - masked.count("}", 0, pos)
+
+
 def lint(tid: str, raw_body: str, returns: str, seen: tuple[str, ...]) -> tuple[str, int]:
     """Lint a template body (comments included, for markers). Returns (code, limit)."""
     code = strip_comments(raw_body).strip()
@@ -123,8 +129,10 @@ def lint(tid: str, raw_body: str, returns: str, seen: tuple[str, ...]) -> tuple[
         raise TemplateLintError(f"{tid}: LIMIT must be 1..{MAX_LIMIT}")
     if _BAD_LIMIT.search(m_code):
         raise TemplateLintError(f"{tid}: LIMIT/SKIP must be literal integers")
-    if re.search(r"\bUNION\b", m_code, re.I):
-        raise TemplateLintError(f"{tid}: UNION is not allowed in templates")
+    # a top-level UNION would let its last branch's LIMIT stand for the whole result; inside a `CALL { … }` subquery
+    # the template's own final LIMIT still caps every row it returns (Q-FIND-HYBRID merges its index branches so)
+    if any(_brace_depth(m_code, u.start()) == 0 for u in re.finditer(r"\bUNION\b", m_code, re.I)):
+        raise TemplateLintError(f"{tid}: UNION is only allowed inside a CALL {{ … }} subquery")
     if returns != "single-row" and not re.search(r"\bORDER\s+BY\b", m_code, re.I):
         raise TemplateLintError(f"{tid}: ORDER BY required (or declare `returns: single-row`)")
     for lo, dots, hi in _VARLEN.findall(m_code):

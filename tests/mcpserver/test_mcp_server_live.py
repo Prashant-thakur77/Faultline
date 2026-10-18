@@ -40,11 +40,14 @@ def test_tools_are_listed_read_only():
         async with Client(build_server()) as c:
             return (await c.list_tools()).tools
     from faultline.agent.phases import INTERNAL_TOOLS
+    from faultline.mcp_server.server import WRITE_TOOLS
 
     tools = anyio.run(go)
     assert len(tools) >= 17
-    # honest annotations: tools that build a scratch graph say so; every other tool is read-only
-    assert all(t.annotations.read_only_hint is (t.name not in INTERNAL_TOOLS) for t in tools)
+    # honest annotations: tools that build a scratch graph, and `remember` (a note to agentmem_<t>), say they write;
+    # every other tool is read-only
+    assert all(t.annotations.read_only_hint is (t.name not in INTERNAL_TOOLS | WRITE_TOOLS) for t in tools)
+    assert {t.name for t in tools} >= WRITE_TOOLS
 
 
 def test_hero_answers_through_mcp():

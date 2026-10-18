@@ -1,9 +1,9 @@
-"""Exercise the real ACL path in judge-check: create the shipped ro_<tenant> users for one run, run the isolation suite
-(S7) through them, delete them.
+"""Exercise the real ACL path in judge-check: create the shipped ro_<tenant> and mem_<tenant> users for one run, run the
+isolation suite (S7) through them, delete them.
 
-The users get exactly the rules in deploy/users.acl.template (the `user ro_*` lines), with a random password made
-here, held in memory, handed to the test process through its environment and never printed or written to disk. The
-default user is left as it is (a dev engine), so this proves the ro_<tenant> rules, not a hardened deployment
+The users get exactly the rules in deploy/users.acl.template (the `user ro_*` and `user mem_*` lines), with a random
+password per role made here, held in memory, handed to the test process through its environment and never printed or
+written to disk. The default user is left as it is (a dev engine), so this proves those rules, not a hardened deployment
 (deploy/LIVE.md does that). The users are deleted in a `finally`, also when the tests fail.
 
     PYTHONPATH=backend uv run python scripts/acl_ephemeral.py [pytest args…]   (default: tests/isolation)
@@ -25,23 +25,33 @@ if __import__("importlib.util").util.find_spec("faultline") is None:
 from faultline.graph import client  # noqa: E402
 
 
-def ro_rules(password: str) -> dict[str, list[str]]:
-    """{user: [rule tokens]} for every `user ro_*` line of the template, the password substituted."""
+ROLES = {"ro": "FALKORDB_RO_PASSWORD", "mem": "FALKORDB_MEM_PASSWORD"}   # role → the env name of its secret
+
+
+def acl_rules(secret: dict[str, str]) -> dict[str, list[str]]:
+    """{user: [rule tokens]} for every `user ro_*` / `user mem_*` line of the template, each role's secret
+    substituted."""
     out = {}
     for line in (ROOT / "deploy/users.acl.template").read_text().splitlines():
-        m = re.match(r"user\s+(ro_\w+)\s+(.*)$", line.strip())
+        m = re.match(r"user\s+((ro|mem)_\w+)\s+(.*)$", line.strip())
         if m:
-            out[m.group(1)] = [">" + password if t == ">${FALKORDB_RO_PASSWORD}" else t for t in m.group(2).split()]
-    if not out:
+            var = ">${" + ROLES[m.group(2)] + "}"
+            out[m.group(1)] = [">" + secret[m.group(2)] if t == var else t for t in m.group(3).split()]
+    if not any(u.startswith("ro_") for u in out):
         raise SystemExit("acl_ephemeral: no `user ro_*` line in deploy/users.acl.template")
     if any("${" in t for rules in out.values() for t in rules):
-        raise SystemExit("acl_ephemeral: an unexpected template variable is left in a ro_* rule")
+        raise SystemExit("acl_ephemeral: an unexpected template variable is left in a ro_*/mem_* rule")
     return out
 
 
+def ro_rules(secret: str) -> dict[str, list[str]]:
+    """The ro_* users only (for callers that create just the read-only users)."""
+    return {u: r for u, r in acl_rules({"ro": secret, "mem": secret}).items() if u.startswith("ro_")}
+
+
 def main(argv: list[str]) -> int:
-    password = secrets.token_urlsafe(32)
-    rules = ro_rules(password)
+    secret = {role: secrets.token_urlsafe(32) for role in ROLES}
+    rules = acl_rules(secret)
     conn = client.engine().connection
     existing = set(conn.execute_command("ACL", "USERS"))
     if existing & set(rules):  # never overwrite users someone configured (a real ACL deploy)
@@ -51,7 +61,7 @@ def main(argv: list[str]) -> int:
     try:
         for user, toks in rules.items():
             conn.execute_command("ACL", "SETUSER", user, "reset", *toks)
-        env = dict(os.environ, FALKORDB_RO_PASSWORD=password, PYTHONPATH=str(ROOT / "backend"))
+        env = dict(os.environ, **{ROLES[role]: s for role, s in secret.items()}, PYTHONPATH=str(ROOT / "backend"))
         cmd = [sys.executable, "-m", "pytest", "-q", "-p", "no:warnings", *(argv or ["tests/isolation"])]
         return subprocess.call(cmd, cwd=ROOT, env=env)
     finally:

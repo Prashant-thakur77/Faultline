@@ -1,5 +1,5 @@
 // id: Q-CUT-1
-// purpose: containment: max-flow from the failing component to the protected set over cut_cost (edges + edgeFlows; cut computed in code)
+// purpose: containment: max-flow from the failing component to the protected set over cut_cost (edges + edgeFlows; the reference input for graph/algo/maxflow.py, the oracle of Q-CUT-3)
 // returns: single-row
 // seen: flow_edges
 MATCH (f:Node {id:$failing})

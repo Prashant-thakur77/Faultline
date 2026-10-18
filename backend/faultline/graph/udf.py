@@ -1,7 +1,8 @@
-"""FalkorDB UDF libraries (GRAPH.UDF): vendored, pinned by sha256 (deploy/udf/README.md).
+"""FalkorDB UDF libraries (GRAPH.UDF): FLEX, vendored, and our own `faultline`, both pinned by sha256.
 
-`load_udfs` is what `make up`, seed and API startup run (REPLACE is idempotent); `udf_status` is what /api/status
-and judge-check report. Both are engine-operator commands on the engine connection, never tenant data reads.
+See deploy/udf/README.md. `load_udfs` is what `make up`, seed and API startup run (REPLACE is idempotent);
+`udf_status` is what /api/status and judge-check report. Both are engine-operator commands on the engine
+connection, never tenant data reads.
 """
 
 from __future__ import annotations
@@ -11,7 +12,12 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[3]
-UDF_LIBS = {"flex": ("deploy/udf/flex-1.0.1.js", "e7e833ba87f88c1e31913b58bb9bdeab231714f8af4b43b437d84277ee653ece")}
+# flex: FalkorDB's FLEX, vendored unmodified. faultline: ours, the in-engine scoring (impact, capImpact, round4).
+UDF_LIBS = {
+    "flex": ("deploy/udf/flex-1.0.1.js", "e7e833ba87f88c1e31913b58bb9bdeab231714f8af4b43b437d84277ee653ece"),
+    "faultline": ("deploy/udf/faultline-1.0.0.js",
+                  "55cd126a097dbea6e402b297c3ace79f827cb68a9455784c5bdbf09a0354ee7f"),
+}
 
 
 class UdfMismatch(RuntimeError):

@@ -73,6 +73,11 @@ CONSTRAINTS: tuple[Constraint, ...] = (
     Constraint("MANDATORY", "NODE", "Page", ("id", "kind", "person", "status", "sent_at", "ack_due_at"),
                "a page has a recipient, a status and a deadline (escalation reads ack_due_at)"),
     Constraint("MANDATORY", "NODE", "Contract", ("id", "status", "hash"), "a standing approval is bound to its hash"),
+    # shared agent notes (T2, agentmem_<tenant>): one note per id, and none without its author, time, expiry and text
+    Constraint("UNIQUE", "NODE", "Note", ("id",), "one shared agent note per id"),
+    Constraint("MANDATORY", "NODE", "Note", ("agent", "kind", "text", "created_at", "expires_at"),
+               "a shared note always says who wrote it, what kind it is, when, and when it expires"),
+    Constraint("MANDATORY", "RELATIONSHIP", "REPLY_TO", ("stance",), "a reply confirms, refutes or adds to a note"),
     # relationships the decisions read
     Constraint("MANDATORY", "RELATIONSHIP", "PROPAGATES_TO", ("cap",),
                "a failure-flow edge has a capacity (the min-cut and G5 are undefined without it)"),

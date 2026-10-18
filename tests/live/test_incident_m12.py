@@ -1,5 +1,5 @@
 """Live (M12): the incident-time additions on the hero S1, each checked against a direct read of the same graph.
-Who to notify (Q-NOTIFY-1), why alerts missed it (Q-CHAIN-MON), ownership when the change shipped (Q-OWN-AT) and the
+Who to notify (Q-NOTIFY-2), why alerts missed it (Q-CHAIN-MON), ownership when the change shipped (Q-OWN-AT) and the
 "possible missing edge" note for a suspect G2 rejected (Q-COUPLE-1). Grading literals live here, never in the product."""
 
 import anyio

@@ -37,6 +37,8 @@ NODE_LABELS = frozenset({
     # company rules as data (M20 #6): a change-freeze Policy (weekly wall-clock window, fixed UTC offset) the preflight
     # gate evaluates in the engine with temporal accessors
     "Policy",
+    # shared agent notes (T2, in agentmem_<t>): a lead one agent leaves for others about components, and its author
+    "Note", "Author",
 })
 
 REL_TYPES = frozenset({
@@ -67,6 +69,8 @@ REL_TYPES = frozenset({
     "DID", "RESPONDED",
     # change freeze (M20 #6): Policy -[:FREEZES]-> the component it freezes (Person -[:DECIDED]-> Policy names who)
     "FREEZES",
+    # shared agent notes (T2): Author -[:WROTE]-> Note -[:ABOUT]-> component; Note -[:REPLY_TO {stance}]-> Note
+    "WROTE", "REPLY_TO",
 })
 
 
@@ -89,6 +93,8 @@ BASE_LABEL = "Node"
 # Relationship types created only at runtime (agent runs, actions, write-back, scratch projections), so a freshly
 # seeded tenant graph may not contain them. Each one is written by graph/writes.py (or a scratch projection).
 RUNTIME_RELS = frozenset({
+    # shared agent notes (T2), written at runtime in agentmem_<t> only (Author -[:WROTE]-> Note, Note -[:REPLY_TO]-> Note)
+    "WROTE", "REPLY_TO",
     # run state, evidence and coordination (agent runs, MCP tool calls)
     "HAS_RUN", "HAS_STAGE", "HAS_TOOL_CALL", "SAW", "PRODUCED_EVIDENCE", "HAS_GATE_RUN", "HYPOTHESIZES",
     "SUPPORTS", "REFUTES", "BLAMES", "RECALLED", "PRECEDENT_FOR", "CLAIMED_BY", "HANDED_OFF_TO", "HAS_TURN",

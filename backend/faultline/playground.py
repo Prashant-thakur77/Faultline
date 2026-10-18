@@ -54,7 +54,7 @@ def perturbations() -> dict[str, Perturbation]:
 
 # which templates make each decision (the UI opens their Cypher next to the diff)
 DECIDED_BY = {"outcome": ["Q-GATE-1", "Q-GATE-3", "Q-GATE-ORIGIN"], "cause": ["Q-GATE-1", "Q-GATE-3", "Q-GATE-G1"],
-              "proof_path": ["Q-GATE-1"], "min_cut": ["Q-CUT-1"], "who_fixes": ["Q-ORG-KNOWS", "Q-ORG-HARM"],
+              "proof_path": ["Q-GATE-1"], "min_cut": ["Q-CUT-3"], "who_fixes": ["Q-ORG-KNOWS", "Q-ORG-HARM"],
               "escalation": ["Q-ORG-COLLAB-W", "Q-ORG-MSF"], "options": ["Q-LEVER-1", "Q-LEVER-PATH", "Q-FUTURE-1"]}
 GATE_TEMPLATE = {"G2": "Q-GATE-1", "G5": "Q-GATE-3", "G4": "Q-GATE-ORIGIN", "G1": "Q-GATE-G1"}
 

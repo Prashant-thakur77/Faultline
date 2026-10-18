@@ -14,7 +14,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 TIMING = re.compile(r"(_ms|ms_|_p50|_p95|\.p50|\.p95|seconds|_s$|run_s)")
-COUNTS = {"repo.templates", "repo.mcp_tools", "repo.mcp_tools_hosted", "repo.algorithms", "mutation.killed",
+COUNTS = {"repo.templates", "repo.mcp_tools", "repo.mcp_tools_hosted", "repo.algorithms", "repo.constraints", "mutation.killed",
           "mutation.mutants"}
 DRIFT = re.compile(r"^\s*(\S+?):(\d+) claim (\S+) = '([^']*)' but latest.json says (.*)$", re.M)
 

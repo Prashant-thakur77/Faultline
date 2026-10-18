@@ -73,6 +73,9 @@ retag:  ## after `make eval`: regenerate the query catalogue, retag timing/count
 results:  ## regenerate evals/RESULTS.md + latest.json from the newest run (never hand-edit RESULTS.md)
 	$(PY) evals/regen.py
 
+udf-eq:  ## the in-engine ranking (our UDF library) vs the previous Python code on every node → evals/results/udf_equivalence.json
+	$(GUARD) 2500 $(PY) evals/udf_equivalence.py
+
 mutants:  ## break each safety invariant in a scratch copy; prove a test notices → docs/audit/mutation.json
 	$(GUARD) 3000 $(UV) python scripts/mutation_check.py
 

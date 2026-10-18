@@ -13,15 +13,14 @@ from __future__ import annotations
 import functools
 import time
 import hashlib
-import math
 import re
 from typing import Any, Callable
 
 from pydantic import BaseModel, Field, ValidationError, model_validator
 
-from ..agent.weights import tier_weight, weights
+from ..agent.weights import tier_weights_param, weights
 from ..graph import client, writes
-from ..graph.algo.maxflow import CutMismatch, min_cut
+from ..graph.algo.maxflow import CutMismatch
 from ..graph.errors import GraphError, GraphUnavailable
 from ..graph.ro import RO, QueryResult
 from ..graph.templates import load
@@ -136,47 +135,34 @@ _FIND_VEC = {"Incident": "Q-FIND-INCIDENT-VEC", "Runbook": "Q-FIND-RUNBOOK-VEC"}
 
 @_guard
 def find_entities(text: str, labels: list[str] | None = None) -> dict[str, Any]:
-    """Seed entities by name and meaning (tier 1): full-text over Service/Table/Runbook/Decision names, unioned with
-    the FalkorDB vector index over Incident/Runbook embeddings (similarity ≥ memory.find_min_similarity)."""
+    """Seed entities by name and meaning (tier 1), in ONE query: full-text over Service/Table/Runbook/Decision names
+    unioned with the FalkorDB vector index over Incident/Runbook embeddings (similarity ≥ memory.find_min_similarity);
+    the engine merges them, one row per entity with its best score and every index that found it (Q-FIND-HYBRID)."""
     a = _Text(text=text, labels=labels)
+    if a.labels and not set(a.labels) & (set(_FIND) | set(_FIND_VEC)):
+        return {"error": "invalid arguments: no supported labels"}
     q = _ft_query(a.text)
-    ro = _ro()
-    rows, results = [], []
-    for label, tid in _FIND.items():
-        if a.labels and label not in a.labels:
-            continue
-        results.append(ro.run(tid, {"text": q}))
-        rows += [{**r, "via": "fulltext"} for r in results[-1].rows]
-    vec_labels = [lab for lab in _FIND_VEC if not a.labels or lab in a.labels]
+    params: dict[str, Any] = {"text": q, "labels": sorted(set(a.labels or []))}
     note = ""
-    if vec_labels:
+    qv = None
+    if not a.labels or set(a.labels) & set(_FIND_VEC):
         try:
             from ..memory.embed import embed
 
             qv = embed([a.text])[0]
         except Exception as e:  # noqa: BLE001  (model missing: say so; full-text still answers)
-            qv, note = None, f"vector seed unavailable ({type(e).__name__}); full-text only"
-        if qv is not None:
-            floor = float(weights()["memory"]["find_min_similarity"])
-            for lab in vec_labels:
-                results.append(ro.run(_FIND_VEC[lab], {"q": qv}))
-                rows += [{"id": r["id"], "label": r["label"], "score": round(float(r["similarity"]), 4), "via": "vector"}
-                         for r in results[-1].rows if float(r["similarity"]) >= floor]
-    if not results:
-        return {"error": "invalid arguments: no supported labels"}
-    best: dict[str, dict] = {}
-    for r in rows:  # one row per id: keep the best score and every seed that found it
-        b = best.get(r["id"])
-        if b is None:
-            best[r["id"]] = {**r, "via": [r["via"]]}
-        else:
-            b["via"] = sorted(set(b["via"]) | {r["via"]})
-            b["score"] = max(float(b["score"]), float(r["score"]))
-    merged = sorted(best.values(), key=lambda r: (-float(r["score"]), r["id"]))[:20]
-    res = _combine(results, merged)
-    return _envelope(res, tool="find_entities", via=f"db.idx.fulltext.queryNodes('{q}') ∪ db.idx.vector.queryNodes",
-                     kind="lookup", about=[r["id"] for r in merged[:5]], extra={"note": note} if note else None,
-                     summary=f"{len(merged)} matches for {a.text!r}" + (f" ({note})" if note else ""))
+            note = f"vector seed unavailable ({type(e).__name__}); full-text only"
+    if qv is None:
+        r = _ro().run("Q-FIND-TEXT", params)
+    else:
+        r = _ro().run("Q-FIND-HYBRID", {**params, "q": qv, "floor": float(weights()["memory"]["find_min_similarity"])})
+    for row in r.rows:
+        if row.get("status") is None:
+            row.pop("status", None)  # only decisions carry a status
+    return _envelope(r, tool="find_entities", via=f"db.idx.fulltext.queryNodes('{q}') ∪ db.idx.vector.queryNodes"
+                     + (" (full-text only)" if qv is None else ""), kind="lookup", about=[x["id"] for x in r.rows[:5]],
+                     extra={"note": note} if note else None,
+                     summary=f"{len(r.rows)} matches for {a.text!r}" + (f" ({note})" if note else ""))
 
 
 class _IdArg(BaseModel):
@@ -226,6 +212,9 @@ def service_context(id: str, now: int) -> dict[str, Any]:
                      kind="context", about=[a.id], summary=f"context of {a.id}")
 
 
+CUT_MAX_EDGES = 100  # candidate edges in a containment region (the old Q-CUT-2 LIMIT): more → refuse, never cut blind
+
+
 # ------------------------------------------------------------------ scope and impact (algo.BFS / SSpaths)
 @_guard
 def upstream_scope(symptom_id: str) -> dict[str, Any]:
@@ -236,27 +225,14 @@ def upstream_scope(symptom_id: str) -> dict[str, Any]:
                      about=[a.id], summary=f"{len(r.rows)} upstream nodes")
 
 
-def impact(tier: int | None, hops: int, traffic: float = 1.0) -> float:
-    """impact(n) = tier_weight × 1/(1+hops) × log(1+traffic) (weights.yaml; numbers from code)."""
-    return round(tier_weight(tier) * (1.0 / (1 + hops)) * math.log1p(max(traffic, 0.0) + 1.0), 4)
-
-
 @_guard
 def blast_radius(id: str) -> dict[str, Any]:
-    """What breaks if this fails: algo.BFS over PROPAGATES_TO, ranked by impact (tier × hops, in code)."""
+    """What breaks if this fails: algo.BFS over PROPAGATES_TO, ranked by impact inside the engine (Q-BLAST-3: the
+    faultline.impact UDF scores tier × 1/(1+hops) × traffic from algo.SSpaths, with the weights.yaml tier weights)."""
     a = _IdArg(id=id)
-    ro = _ro()
-    reach = ro.run("Q-BLAST-1", {"id": a.id})
-    hops = {r["id"]: r for r in ro.run("Q-BLAST-2", {"id": a.id}).rows}
-    ranked = []
-    for row in reach.rows:
-        h = hops.get(row["id"], {})
-        ranked.append({**row, "hops": h.get("hops"), "max_cap": h.get("max_cap"),
-                       "impact": impact(row.get("tier"), int(h.get("hops") or 1), float(h.get("max_cap") or 0) * 100)})
-    ranked.sort(key=lambda x: (-x["impact"], x["id"]))
-    reach.rows = ranked
-    return _envelope(reach, tool="blast_radius", via=f"algo.BFS(({a.id}), 8, 'PROPAGATES_TO')", kind="blast",
-                     about=[a.id], summary=f"{len(ranked)} impacted nodes")
+    r = _ro().run("Q-BLAST-3", {"id": a.id, "tw": tier_weights_param()})
+    return _envelope(r, tool="blast_radius", via=f"algo.BFS(({a.id}), 8, 'PROPAGATES_TO') + algo.SSpaths, "
+                     "ranked by faultline.impact", kind="blast", about=[a.id], summary=f"{len(r.rows)} impacted nodes")
 
 
 @_guard
@@ -641,29 +617,29 @@ def reachable_from_changes(now: int, window_min: int, anomalous_ids: list[str]) 
 
 @_guard
 def containment_cut(failing_id: str, protect_ids: list[str]) -> dict[str, Any]:
-    """Smallest containment: algo.maxFlow (cut_cost) failing → protected set; min-cut recovered in code by
-    residual reachability over ALL candidate edges (Q-CUT-2). Fails loudly if cut ≠ maxFlow."""
+    """Smallest containment, in ONE read-only query (Q-CUT-3): algo.maxFlow (cut_cost) from the failing component to
+    the protected set, then the min-cut inside FalkorDB: residual reachability over every candidate edge of the region,
+    and the edges that leave it. Fails loudly if the cut's capacity is not the max-flow or a protected node is not cut
+    off."""
     f = _IdArg(id=failing_id).id
     prot = [_IdArg(id=p).id for p in protect_ids][:10]
-    ro = _ro()
-    flow = ro.run("Q-CUT-1", {"failing": f, "protect": prot})
-    if not flow.rows:
+    r = _ro().run("Q-CUT-3", {"failing": f, "protect": prot})
+    if not r.rows:
         return {"error": f"containment: {f} or protected set {prot} not found in the graph"}
-    cand = ro.run("Q-CUT-2", {"failing": f})
-    if cand.truncated:
+    row = r.rows[0]
+    if int(row["candidates"]) >= CUT_MAX_EDGES:
         return {"error": "candidate edge set truncated; containment region too large to cut safely"}
-    row = flow.rows[0]
-    edges = [(e["u"], e["v"], f"{e['u']}>{e['v']}") for e in cand.rows]
-    cap = {f"{e['u']}>{e['v']}": float(e["cut_cost"]) for e in cand.rows}
-    fl = {f"{u}>{v}": float(x) for (u, v), x in zip(row["flow_edges"], row["flows"])}
-    cut, side = min_cut({f}, edges, cap, fl, float(row["max_flow"]), targets=set(prot))
-    dom = {f"{e['u']}>{e['v']}": e["domain"] for e in cand.rows}
-    cut_rows = [{"u": u, "v": v, "cut_cost": cap[eid], "domain": dom[eid]} for u, v, eid in cut]
-    flow.rows = cut_rows
-    return _envelope(flow, tool="containment_cut", via=f"algo.maxFlow({f} → {prot}, cut_cost) + residual min-cut",
-                     kind="flow", about=[f] + prot + [c["u"] for c in cut_rows], value=float(row["max_flow"]),
-                     summary=f"cut {[(c['u'], c['v']) for c in cut_rows]} total {row['max_flow']}",
-                     extra={"max_flow": float(row["max_flow"]), "source_side": sorted(side)})
+    max_flow = float(row["max_flow"])
+    if row["protected_on_source_side"]:
+        raise CutMismatch(f"targets {row['protected_on_source_side']} reachable in the residual graph; cut is not separating")
+    if abs(float(row["cut_total"]) - max_flow) > 1e-6 * max(1.0, max_flow):
+        raise CutMismatch(f"cut capacity {row['cut_total']} != maxFlow {max_flow}; the engine's cut does not match its flow")
+    side = row["source_side"]
+    r.rows = list(row["cut"])
+    return _envelope(r, tool="containment_cut", via=f"algo.maxFlow({f} → {prot}, cut_cost) + residual min-cut in the engine",
+                     kind="flow", about=[f] + prot + [c["u"] for c in r.rows], value=max_flow,
+                     summary=f"cut {[(c['u'], c['v']) for c in r.rows]} total {row['max_flow']}",
+                     extra={"max_flow": max_flow, "source_side": sorted(side)})
 
 
 @_guard
@@ -727,23 +703,17 @@ def notify_set(target_id: str, now: int, priority_ids: list[str] | None = None) 
     obligation_clock returned when it pages; every row then names which of them it owns. Otherwise ranked by impact."""
     a = _AtArg(id=target_id, at=now)
     pri = {_IdArg(id=i).id for i in _Priority(ids=priority_ids or []).ids}
-    ro = _ro()
-    b2 = ro.run("Q-BLAST-2", {"id": a.id})
-    blast = {r["id"]: r for r in b2.rows if r["id"] != a.id}
-    r = ro.run("Q-NOTIFY-1", {"ids": sorted(blast), "now": a.at})
-    r.truncated = r.truncated or b2.truncated  # a truncated blast radius may leave teams out: say so
-    for row in r.rows:  # numbers from code + weights.yaml: tier weight × bottleneck cap / (1 + hops), summed per team
-        row["impact"] = round(sum(tier_weight(blast[n]["tier"]) * float(blast[n]["max_cap"] or 0) / (1 + int(blast[n]["hops"]))
-                                  for n in row["owns_impacted"] if n in blast), 4)
-        row["nearest_hops"] = min((int(blast[n]["hops"]) for n in row["owns_impacted"] if n in blast), default=None)
-        if pri:
-            row["priority"] = [n for n in row["owns_impacted"] if n in pri]
-    r.rows.sort(key=lambda x: (not x.get("priority"), -x["impact"], x["team"]))
-    return _envelope(r, tool="notify_set", via=f"algo.SSpaths({a.id}, PROPAGATES_TO) → (:Team)-[:OWNS]->(impacted)",
+    # one query: the blast radius, the owning teams, their summed impact (faultline.capImpact) and the order
+    r = _ro().run("Q-NOTIFY-2", {"id": a.id, "now": a.at, "tw": tier_weights_param(), "priority": sorted(pri)})
+    if not pri:
+        for row in r.rows:
+            row.pop("priority", None)
+    return _envelope(r, tool="notify_set", via=f"algo.SSpaths({a.id}, PROPAGATES_TO) → (:Team)-[:OWNS]->(impacted), "
+                     "summed by faultline.capImpact",
                      kind="people", about=[a.id] + [x["team"] for x in r.rows[:5]],
                      summary=f"{len(r.rows)} teams to notify: " + ", ".join(x["team"] for x in r.rows[:4])
                      + (" (owners of obligated nodes first)" if pri else "")
-                     + (" (blast radius truncated: more teams may need notifying)" if r.truncated else ""),
+                     + (" (capped at 20 teams: more may need notifying)" if r.truncated else ""),
                      extra={"priority_ids": sorted(pri)} if pri else None)
 
 
@@ -1031,6 +1001,71 @@ def decisions_about(target_id: str) -> dict[str, Any]:
 
 class _User(BaseModel):
     user: str = Field(..., pattern=r"^[A-Za-z0-9_.@-]{1,80}$")
+
+
+# ------------------------------------------------------------------ shared agent notes (T2: memory across agents)
+class _Remember(BaseModel):
+    text: str = Field(..., min_length=3, max_length=500)
+    about: list[str] = Field(..., min_length=1, max_length=10)
+    kind: str = Field("lead", pattern="^(lead|observation|hypothesis|handoff|verdict)$")
+    agent_name: str = Field("", max_length=60)
+    reply_to: str = Field("", max_length=40, pattern=r"^(note-[0-9a-f]{12})?$")
+    stance: str = Field("adds", pattern="^(confirms|refutes|adds)$")
+
+
+def _principal(b: context.Binding) -> str:
+    """Who writes, for the quota and the record: the hosted bearer key's id, the agent run, or this process."""
+    return b.caller or (f"faultline:{b.run_id}" if b.run_id else "local")
+
+
+@_guard
+def remember(text: str, about: list[str], kind: str = "lead", agent_name: str = "", reply_to: str = "",
+             stance: str = "adds") -> dict[str, Any]:
+    """Leave a note for other agents about components (track T2: shared memory). `about`: 1-10 component ids that
+    must exist in the graph; `kind`: lead | observation | hypothesis | handoff | verdict; `reply_to` (a note id) with
+    `stance` confirms | refutes | adds answers another agent's note. Written in ONE atomic query to the tenant's
+    agentmem graph by an ACL user that can touch only that graph (the graph the gate reads stays read-only), under a
+    daily quota per caller. A note is a lead for people and agents, never evidence: the evidence gate does not read it."""
+    from ..memory import notes
+
+    a = _Remember(text=text, about=[_IdArg(id=i).id for i in about], kind=kind, agent_name=agent_name,
+                  reply_to=reply_to, stance=stance)
+    b = context.current()
+    try:
+        out = notes.remember(b.tenant, principal=_principal(b), name=a.agent_name, session=b.run_id or "",
+                             text=a.text, about=a.about, kind=a.kind, reply_to=a.reply_to, stance=a.stance)
+    except notes.NoteRefused as e:
+        return {"error": f"refused: {e}"}
+    except ValueError as e:
+        return {"error": f"invalid arguments: {e}"}
+    return {**out, "via": "W-NOTE-1 (atomic: components exist, reply target exists, quota on the engine clock)",
+            "note": "a lead for other agents; never evidence for the gate"}
+
+
+class _Recall(BaseModel):
+    text: str = Field("", max_length=200)
+    focus_id: str = Field("", max_length=120)
+
+
+@_guard
+def recall_notes(text: str = "", focus_id: str = "") -> dict[str, Any]:
+    """What other agents noted (track T2): notes recalled by meaning (`text`, the vecf32 index) and by graph distance
+    (`focus_id`: notes about that component or one within two PROPAGATES_TO hops), unexpired, ranked inside FalkorDB
+    (faultline.noteScore: similarity, nearness, freshness), each with its components and its replies (confirms,
+    refutes, adds). One read-only query on the agentmem graph. Leads only: nothing here grounds a claim."""
+    from ..memory import notes
+
+    a = _Recall(text=text, focus_id=_IdArg(id=focus_id).id if focus_id else "")
+    if not a.text.strip() and not a.focus_id:
+        return {"error": "invalid arguments: give text, focus_id or both"}
+    b = context.current()
+    r = notes.recall(b.tenant, text=a.text, focus=a.focus_id)
+    # about=[]: a note naming a component must never mark that component as seen (G1 grounds on graph facts only)
+    return _envelope(r, tool="recall_notes", kind="notes", about=[],
+                     via="db.idx.vector.queryNodes(Note) ∪ (focus)-[:PROPAGATES_TO*0..2]-()<-[:ABOUT]-(:Note), "
+                     "ranked by faultline.noteScore",
+                     summary=f"{len(r.rows)} notes" + (f" near {a.focus_id}" if a.focus_id else ""),
+                     extra={"note": "leads left by agents; never evidence"})
 
 
 @_guard
@@ -1967,4 +2002,5 @@ TOOLS: dict[str, Callable[..., dict]] = {f.__name__: f for f in (
     graph_schema,
     oncall_now, pages, oncall_stats,
     learned_preferences, learned_responders, knowledge_gaps, learned_state,
+    remember, recall_notes,
 )}

@@ -78,6 +78,7 @@ def test_status_reports_flex_loaded_and_shows_missing_loudly(acme, monkeypatch):
 
     c = TestClient(api.app)
     s = c.get("/api/status?tenant=acme").json()
-    assert s["status"] == "ok" and s["udf"] == {"flex": "loaded"} and s["udf_detail"]["flex"]["loaded_sha"]
+    assert s["status"] == "ok" and s["udf"] == {"flex": "loaded", "faultline": "loaded"}
+    assert s["udf_detail"]["flex"]["loaded_sha"] and s["udf_detail"]["faultline"]["loaded_sha"]
     monkeypatch.setattr(udf, "udf_status", lambda r: {"flex": {"state": "missing", "pinned_sha": "x", "loaded_sha": None}})
     assert c.get("/api/status?tenant=acme").json()["udf"] == {"flex": "missing"}

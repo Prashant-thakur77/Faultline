@@ -3,7 +3,7 @@ on-call numbers. Pages, acks and the escalation order are FalkorDB nodes and edg
 each); every decision reads a template (graph/templates/*.cypher) through the RO wrapper:
 
 * who is paged: the on-call person of the team that owns the failing component (who_fixes, Q-ORG-WHO) and of every
-  team that owns something in its blast radius (notify_set, Q-NOTIFY-1); urgency from the obligation clock;
+  team that owns something in its blast radius (notify_set, Q-NOTIFY-2); urgency from the obligation clock;
 * who is next when nobody acknowledges: the incident's escalation order (algo.MSF tree, ranked in Cypher on write,
   read by Q-PAGE-NEXT); what is overdue: Q-PAGE-OVERDUE; windows from weights.yaml `oncall`;
 * who may approve: Q-APPROVER-1 (on call for, or member of, a team that owns an impacted component);
@@ -219,7 +219,7 @@ def index_graph(tenant: str, graph: str, now: int | None = None) -> None:
 def recipients(who: dict | None, notify: dict | None, target: str | None,
                learned: list[dict] | None = None) -> list[dict]:
     """The people to page, in order: the owner team's on-call for the failing component (who_fixes → Q-ORG-WHO's
-    on-call column), then the on-call of every team that owns something in the blast radius (notify_set → Q-NOTIFY-1),
+    on-call column), then the on-call of every team that owns something in the blast radius (notify_set → Q-NOTIFY-2),
     as those tools ranked them. One page per person (a person on call for two teams is paged once, for the first).
     `learned` (M21, memory/learning.first_wave: who actually answers this component's pages, Q-LEARN-RESP) go FIRST;
     they are added, never instead of anyone the rota pages."""

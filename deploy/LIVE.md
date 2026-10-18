@@ -25,7 +25,7 @@
 1. Create the VM (2 vCPU, 4 GB RAM is enough; add a 4 GB swap file so the UI image builds next to the engine). Open ports 80/443; SSH from your address only. Set `FALKORDB_MAXMEMORY=2000mb` and `FALKORDB_MEM_LIMIT=2560m` on a 4 GB host (the seeded tenants use well under 100 MB).
 2. Point a DNS A record at the VM and set `FAULTLINE_DOMAIN`.
 3. On the VM, put the secrets in `.env` (never committed):
-   - `FALKORDB_ENGINE_PASSWORD` and `FALKORDB_RO_PASSWORD`;
+   - `FALKORDB_ENGINE_PASSWORD`, `FALKORDB_RO_PASSWORD` and `FALKORDB_MEM_PASSWORD` (the `mem_<tenant>` users that may write only the shared-notes graph `agentmem_<tenant>`);
    - `FAULTLINE_MCP_KEYS` (one judge key → acme);
    - optionally `FAULTLINE_PREFLIGHT_KEY`.
 4. Render the ACL: `python scripts/render_acl.py > deploy/users.acl`.

@@ -19,3 +19,9 @@ def weights() -> dict[str, Any]:
 def tier_weight(tier: int | None) -> float:
     tw = weights()["impact"]["tier_weight"]
     return float(tw.get(int(tier or 3), tw[3]))
+
+
+def tier_weights_param() -> list[float]:
+    """The tier weights as the `$tw` list the in-engine scoring takes (index 0 = tier 1; faultline.tierWeight)."""
+    tw = weights()["impact"]["tier_weight"]
+    return [float(tw.get(t, tw[3])) for t in range(1, max(int(k) for k in tw) + 1)]

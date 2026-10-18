@@ -264,3 +264,12 @@ def test_comprehension_filter_then_disconnected_match_is_refused():
     lint("T", "MATCH (n:N {id:$a}) WHERE size([(n)<-[:R]-(x:X) | x]) = 0 MATCH (n)-[:T]->(m) RETURN m.id AS id ORDER BY id LIMIT 1", "rows", ())
     lint("T", "MATCH (n:N {id:$a}) WITH n, size([(n)<-[:R]-(x:X) | x]) AS k WHERE k = 0 MATCH (p:P {id:$p}) "
               "RETURN p.id AS id ORDER BY id LIMIT 1", "rows", ())
+
+
+def test_union_only_inside_a_call_subquery(tmp_path):
+    # the final LIMIT caps the merged rows; a top-level UNION would let its last branch's LIMIT stand for all of them
+    body = ("CALL {\n  MATCH (a:A) RETURN a.id AS id\n  UNION ALL\n  MATCH (b:B) RETURN b.id AS id\n}\n"
+            "RETURN id ORDER BY id LIMIT 5")
+    assert parse(_write(tmp_path, body)).id == "T-1"
+    with pytest.raises(TemplateLintError, match="UNION"):
+        parse(_write(tmp_path, "MATCH (a {k:{x:1}}) RETURN a.id AS id LIMIT 5 UNION MATCH (b) RETURN b.id AS id ORDER BY id LIMIT 5"))

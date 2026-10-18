@@ -23,11 +23,13 @@ def code_counts() -> dict:
     from faultline.graph.algo import registry
     from faultline.graph.templates import catalogue
     from faultline.mcp_server import tools as T
+    from faultline.mcp_server.server import WRITE_TOOLS
 
     from faultline.graph.constraints import CONSTRAINTS
 
     return {"repo.templates": len(catalogue()), "repo.algorithms": len(registry.resolved()), "repo.mcp_tools": len(T.TOOLS),
-            "repo.mcp_tools_hosted": len([t for t in T.TOOLS if t not in INTERNAL_TOOLS]),
+            # hosted = what the public HTTP server offers: no internal tools, and no write tool unless a host opts in
+            "repo.mcp_tools_hosted": len([t for t in T.TOOLS if t not in INTERNAL_TOOLS and t not in WRITE_TOOLS]),
             # engine-enforced invariants (M20 #1): MANDATORY / UNIQUE constraints on nodes and relationships
             "repo.constraints": len(CONSTRAINTS)}
 

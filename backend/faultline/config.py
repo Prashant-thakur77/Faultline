@@ -33,6 +33,7 @@ class Settings(BaseSettings):
     falkordb_engine_user: str = ""          # empty = default user (local dev without ACL)
     falkordb_engine_password: str = ""
     falkordb_ro_password: str = ""          # empty = RO connection via the default user (dev; /status says so)
+    falkordb_mem_password: str = ""         # mem_<tenant>: writes agentmem_<tenant> only; empty = engine user (dev)
     falkordb_timeout_ms: int = 2000         # per-query TIMEOUT for templates
     falkordb_timeout_max_ms: int = 10000    # server TIMEOUT_MAX (configure_falkordb.py); requests are clamped to it
     falkordb_cypher_timeout_ms: int = 3000  # guarded text2cypher
@@ -41,6 +42,7 @@ class Settings(BaseSettings):
     # MCP over Streamable HTTP: comma-separated "<bearer key>:<tenant>" pairs (secret; .env only)
     faultline_mcp_keys: str = ""
     faultline_mcp_rate_per_min: int = 30
+    faultline_mcp_notes: bool = False       # hosted HTTP MCP offers `remember` (a write to agentmem_<t> only); stdio always
     # required to approve actions when FAULTLINE_GITHUB=real (secret; .env only)
     faultline_approver_key: str = ""
     # optional bearer key for POST /api/preflight when the API is public (secret; .env only)

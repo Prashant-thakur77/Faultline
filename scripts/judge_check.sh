@@ -55,7 +55,7 @@ else
   step "seed" "failed (see $JC/seed.log)" FAIL
 fi
 
-# the pinned UDF library is loaded in the engine at its pinned sha (GRAPH.UDF LIST WITHCODE), not merely present on disk
+# each pinned UDF library (FLEX and our own faultline) is loaded in the engine at its pinned sha (GRAPH.UDF LIST WITHCODE), not merely present on disk
 if U=$(uv run python - 2>"$JC/udf.log" <<'PY'
 import sys
 from faultline.graph import client, udf
@@ -64,9 +64,9 @@ print("; ".join(f"{k} {v['state']} at sha {v['loaded_sha'] or '-'} (pinned {v['p
 sys.exit(0 if all(v["state"] == "loaded" for v in st.values()) else 1)
 PY
 ); then
-  step "UDF flex (GRAPH.UDF LIST)" "$U" PASS
+  step "UDFs flex + faultline (LIST)" "$U" PASS
 else
-  step "UDF flex (GRAPH.UDF LIST)" "${U:-error} (see $JC/udf.log)" FAIL
+  step "UDFs flex + faultline (LIST)" "${U:-error} (see $JC/udf.log)" FAIL
 fi
 
 echo "④ unit tests …"
@@ -86,9 +86,9 @@ else
 fi
 echo "⑤b tenant isolation through the real ro_<tenant> ACL users (created for this run, random password, deleted after) …"
 if uv run python scripts/acl_ephemeral.py tests/isolation --junitxml="$JC/acl.xml" >"$JC/acl.log" 2>&1; then
-  step "ACL isolation (S7, ro users)" "$(junit "$JC/acl.xml")" PASS
+  step "ACL isolation (S7, ro+mem users)" "$(junit "$JC/acl.xml")" PASS
 else
-  step "ACL isolation (S7, ro users)" "$(junit "$JC/acl.xml") (see $JC/acl.log)" FAIL
+  step "ACL isolation (S7, ro+mem users)" "$(junit "$JC/acl.xml") (see $JC/acl.log)" FAIL
 fi
 
 echo "⑥ replay the committed examples' gate verdicts, re-read their write-back artefacts, gate bench (fast) …"
