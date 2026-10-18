@@ -59,7 +59,7 @@ const QUICKSTART =
 const MCP_NPX = "claude mcp add faultline -- npx -y @prashantthakur77/faultline-mcp";
 
 export function SiteFooter({ compact = false }: { compact?: boolean }) {
-  const cmd = (REPO_URL ? `git clone ${REPO_URL}.git && cd Faultline\n` : "") + "make setup && make judge-check";
+  const cmd = (REPO_URL ? `git clone --depth 1 ${REPO_URL}.git && cd Faultline\n` : "") + "make setup && make judge-check";
   return (
     <footer aria-labelledby={compact ? undefined : "footer-title"} aria-label={compact ? "Site footer" : undefined}
             className="relative isolate overflow-hidden">

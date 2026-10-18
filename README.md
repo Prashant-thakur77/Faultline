@@ -47,7 +47,7 @@
 |---|---|
 | Give your own agent Faultline's graph tools (Claude Code, Claude Desktop, Cursor, any MCP client) | `npx -y @prashantthakur77/faultline-mcp` ([npm](https://www.npmjs.com/package/@prashantthakur77/faultline-mcp)); with Claude Code: `claude mcp add faultline -- npx -y @prashantthakur77/faultline-mcp`. It connects to the live demo's read-only tools; `--url` and `--key` point it at your own server. |
 | Run the whole product on your machine, Docker only | `curl -fsSLO https://raw.githubusercontent.com/Prashant-thakur77/Faultline/main/deploy/quickstart.yml && docker compose -f quickstart.yml up`, then open http://localhost:3000 (API on :8400, MCP on :8401). FalkorDB, the demo graphs, the API, the MCP endpoint and the UI; no API key. |
-| Reproduce every number in this README | `git clone https://github.com/Prashant-thakur77/Faultline && cd Faultline && make setup && make judge-check` (prints PASS, no API key); see [Reproduce it](#reproduce-it). |
+| Reproduce every number in this README | `git clone --depth 1 https://github.com/Prashant-thakur77/Faultline && cd Faultline && make setup && make judge-check` (prints PASS, no API key); see [Reproduce it](#reproduce-it). |
 | Just look | the [live demo](https://13-203-185-119.sslip.io) (press Re-arm to reset it), the [video](https://github.com/Prashant-thakur77/Faultline/releases/latest), or the [replay](https://prashant-thakur77.github.io/Faultline/) with no backend. |
 
 ## In short
@@ -202,7 +202,7 @@ Measured on the pinned engine (FalkorDB 6.0.2), in the terms FalkorDB uses for i
 To *use* Faultline you need only Docker (the [quickstart](#use-it): `docker compose -f quickstart.yml up`) or Node (the MCP tools: `npx -y @prashantthakur77/faultline-mcp`). To *check* it, one command checks everything offline. It needs Docker, `uv` and Node. There is no API key, no GitHub token and nothing remote.
 
 ```bash
-git clone https://github.com/Prashant-thakur77/Faultline.git && cd Faultline
+git clone --depth 1 https://github.com/Prashant-thakur77/Faultline.git && cd Faultline   # --depth 1: the history holds earlier video cuts
 make setup && make judge-check     # several minutes; prints PASS
 ```
 
@@ -408,9 +408,6 @@ flowchart LR
     OR["People, teams, ADRs, runbooks"]
   end
 
-<details><summary>Show the architecture: components, data flow and the safety envelope</summary>
-
-
   subgraph FDB["FalkorDB, pinned engine"]
     T1[("tenant_acme")]
     T2[("tenant_globex")]
@@ -473,8 +470,6 @@ flowchart LR
 ```
 
 **The crew.** Each stage is worked by a named, least-privilege role: Triage, Historian, Cartographer, Profiler, the Lead investigator with its five investigators (topology, telemetry, data, change, code), the Gatekeeper, Containment, Dispatcher, Planner, Operator, Auditor and Librarian ([docs/AGENTS.md](docs/AGENTS.md), generated from `agent/crew.py`). Each role is deterministic code with its own tool whitelist, enforced in code; only the lead may use a model, and the Gatekeeper never does. The Operator is the only holder of `execute_action`. Every step is a record in FalkorDB: `(:Run)-[:HAS_TASK]->(:Task)-[:CLAIMED_BY]->(:Agent)`, the graph calls it made (`MADE`) and the hand-off order (`NEXT`). The incident room's Crew board reads it back (`Q-CREW-1`), and "Why do you believe this?" draws the verdict's provenance (`Q-PROV-1`): which agent's call produced which evidence that supports the confirmed cause. Crew records are records, not locks: execution is serialised by the Intent lease, and a crew record never counts as a G7 vote. Per-stage tool whitelists: [docs/STAGE_TOOLS.md](docs/STAGE_TOOLS.md).
-
-</details>
 
 ## Graph model
 
